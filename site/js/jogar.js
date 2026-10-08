@@ -1,7 +1,7 @@
 /* Porto Sombrio — página Jogar: liga a fita, tela cheia, aviso de girar o celular. */
 (function () {
   'use strict';
-  var JOGO = '/jogo/porto-sombrio.html';
+  var JOGO = '/jogo/';
   var monitor = document.getElementById('monitor'), tela = document.getElementById('tela');
   var antes = document.getElementById('antes'), botao = document.getElementById('iniciar');
   var bFs = document.getElementById('tela-cheia'), gire = document.getElementById('gire');

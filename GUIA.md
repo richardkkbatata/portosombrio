@@ -1,46 +1,66 @@
 # Guia passo a passo — Porto Sombrio
 
-Instruções clique por clique. Os nomes dos botões podem variar um pouco conforme a GoDaddy atualiza o painel; se algo não bater, procure o nome mais parecido.
+Instruções clique por clique. Os nomes dos botões podem variar um pouco (GoDaddy e Cloudflare mudam o painel às vezes, e alguns aparecem em inglês). Se algo não bater, procure o nome mais parecido ou mande um print pro Claude.
 
 > **Nunca** passe senha, código de verificação ou dados do cartão para ninguém, nem para o Claude. Nenhum passo aqui precisa disso.
 
 ---
 
-## A) Subir o site no cPanel da GoDaddy e ativar o SSL grátis
+## A) Colocar o site no ar de graça (Cloudflare Pages) com o seu domínio da GoDaddy
+
+O site fica hospedado de graça na Cloudflare, com cadeado (https) grátis. Na GoDaddy fica só o domínio.
 
 ### 1. Baixar o pacote
-1. No GitHub, abra o repositório `portosombrio`, entre na pasta `entregas/` e clique em `porto-sombrio-site.zip`.
-2. Clique em **Download** (ou "View raw"). Salve no computador. **Não** precisa descompactar.
+1. Baixe o `porto-sombrio-site.zip` que o Claude mandou na conversa, ou pegue no GitHub: repositório `portosombrio` → pasta `entregas/` → `porto-sombrio-site.zip` → **Download**.
+2. **Não** descompacte.
 
-### 2. Abrir o Gerenciador de Arquivos
-1. Entre em **godaddy.com** → **Entrar**.
-2. Vá em **Meus produtos**.
-3. Em **Hospedagem na Web**, clique em **Gerenciar** ao lado do seu plano.
-4. Clique em **Administrador do cPanel** (cPanel Admin).
-5. No cPanel, na seção **Arquivos**, clique em **Gerenciador de Arquivos** (File Manager).
-6. Clique em **Configurações** (Settings, canto superior direito) → marque **Mostrar arquivos ocultos (dotfiles)** → **Salvar**. Isso é necessário para ver o `.htaccess`.
+### 2. Criar a conta grátis na Cloudflare
+1. Abra **dash.cloudflare.com/sign-up**, crie a conta com e-mail e senha, e confirme o e-mail.
+2. Se perguntar plano, escolha sempre **Free** (grátis). Não precisa de cartão.
 
-### 3. Enviar e extrair
-1. Na coluna da esquerda, clique em **public_html**.
-2. Se tiver algo de exemplo lá dentro (por exemplo uma página padrão da GoDaddy), selecione e **Excluir**. Não apague a pasta `.well-known` nem `cgi-bin` se existirem.
-3. Clique em **Carregar** (Upload) → **Selecionar arquivo** → escolha `porto-sombrio-site.zip`. Espere a barra chegar em 100% e clique em **Voltar para /home/.../public_html**.
-4. Clique com o botão direito em `porto-sombrio-site.zip` → **Extrair** (Extract) → confirme que o destino é `/public_html` → **Extract Files**.
-5. Confira: dentro de `public_html` devem aparecer `index.html`, `.htaccess`, as pastas `jogar`, `jogo`, `css`, `js`, `img` etc. (e não uma pasta `site` com tudo dentro).
-6. Apague o `porto-sombrio-site.zip` de dentro da `public_html` (botão direito → Excluir).
+### 3. Publicar o site
+1. No menu da esquerda, clique em **Workers e Pages** (Workers & Pages).
+2. Clique em **Criar** (Create / Create application).
+3. Escolha a aba **Pages** e depois **Arrastar e soltar seus arquivos** / **Fazer upload de ativos** (Drag and drop your files / Upload assets).
+4. Nome do projeto: `porto-sombrio` → **Criar projeto**.
+5. Arraste o `porto-sombrio-site.zip` para o quadro (ou clique em **selecionar do computador**) → **Implantar site** (Deploy site).
+6. Em uns segundos aparece um endereço tipo `porto-sombrio.pages.dev`. Abra para ver o site funcionando.
 
-### 4. SSL grátis (cadeado do https)
-Os planos de hospedagem cPanel da GoDaddy costumam incluir SSL. Faça nesta ordem:
-1. No painel da GoDaddy (**Meus produtos** → **Hospedagem na Web** → **Gerenciar**), procure **SSL** / **Certificados SSL** / **Configurar SSL**. Se aparecer um botão **Configurar** ou **Ativar** para o seu domínio, clique e siga.
-2. Se não aparecer: no **cPanel**, seção **Segurança**, clique em **SSL/TLS Status**. Marque o seu domínio e o `www.` dele e clique em **Run AutoSSL**. Espere alguns minutos.
-3. Se não existir nenhuma das duas opções, abra o chat do suporte da GoDaddy e peça: "quero ativar o SSL gratuito do meu plano de hospedagem no domínio X".
-4. Teste: abra `http://seudominio.com.br` — ele deve ir sozinho para `https://seudominio.com.br` com cadeado. Teste também `www.seudominio.com.br` (deve ir para o endereço sem www).
+### 4. Ligar o seu domínio da GoDaddy
+**4a. Adicionar o domínio na Cloudflare**
+1. No menu da esquerda da Cloudflare, vá em **Início** (Account Home) → **Adicionar um domínio** (Add a domain / Onboard a domain).
+2. Digite o seu domínio (sem www, ex.: `seudominio.com.br`) → deixe marcado **Verificar registros DNS automaticamente** → **Continuar**.
+3. Plano: role até o fim e escolha **Free** → **Continuar**.
+4. Na lista de registros DNS, só clique em **Continuar**.
+5. A Cloudflare mostra **2 servidores de nomes** (algo como `ana.ns.cloudflare.com` e `bob.ns.cloudflare.com`). **Deixe essa aba aberta.**
 
-> O `.htaccess` já força HTTPS. Se o SSL ainda não estiver ativo, o navegador vai mostrar aviso de segurança até o certificado ficar pronto. Isso é normal nas primeiras horas.
+**4b. Trocar os servidores de nomes na GoDaddy**
+1. Em outra aba: **godaddy.com** → entre → **Meus produtos** → **Domínios** → clique no seu domínio.
+2. Clique em **DNS** → aba **Servidores de nomes** → **Alterar servidores de nomes**.
+3. Escolha **Usarei meus servidores de nomes** (ou "Vou usar meus próprios servidores de nomes").
+4. Apague o que estiver lá e cole os **2 endereços** que a Cloudflare mostrou (um em cada campo) → **Salvar** → confirme.
+   - Se pedir código, é o da verificação em duas etapas (só você vê).
+   - Se aparecer aviso de **DNSSEC**, desative o DNSSEC na GoDaddy primeiro.
+5. Volte na aba da Cloudflare e clique em **Verificar servidores de nomes agora**. Pode levar de minutos até 24 horas. A Cloudflare manda um e-mail quando o domínio estiver **Ativo**.
 
-### 5. Dizer ao site qual é o seu domínio
-Mande para o Claude: **"meu domínio é xxxxx.com.br"**. Ele troca em `site/js/config.js`, regenera (sitemap, links, verificação "Jogue no site oficial") e te diz quais arquivos subir de novo.
+**4c. Apontar o domínio para o site**
+1. Na Cloudflare: **Workers e Pages** → clique no projeto **porto-sombrio** → aba **Domínios personalizados** (Custom domains) → **Configurar um domínio personalizado**.
+2. Digite `seudominio.com.br` → **Continuar** → **Ativar domínio**.
+3. Repita e adicione também `www.seudominio.com.br`.
+4. Espere ficar **Ativo** (o cadeado/SSL é criado sozinho, pode levar alguns minutos).
 
-### 6. Google Search Console (opcional, ajuda a aparecer no Google)
+### 5. Ligar o HTTPS obrigatório e tirar o www
+1. Na Cloudflare, clique no seu domínio (na página inicial da conta).
+2. **SSL/TLS** → **Certificados de borda** (Edge Certificates) → ligue **Sempre usar HTTPS** (Always Use HTTPS).
+3. **Regras** (Rules) → **Visão geral** → **Criar regra** → em **Modelos** escolha **Redirecionar de WWW para raiz** (Redirect from WWW to root) → **Implantar** (Deploy).
+4. Teste: `http://seudominio.com.br` e `www.seudominio.com.br` devem cair em `https://seudominio.com.br` com cadeado.
+
+> As proteções de segurança (CSP, HSTS, nosniff etc.) vão dentro do próprio zip, no arquivo `_headers`. Você não precisa configurar nada disso.
+
+### 6. Dizer ao site qual é o seu domínio
+Mande para o Claude: **"meu domínio é xxxxx.com.br"**. Ele troca em `site/js/config.js`, regenera tudo e te manda um zip novo. Aí é só fazer uma nova implantação (veja a parte C).
+
+### 7. Google Search Console (opcional, ajuda a aparecer no Google)
 1. Abra **search.google.com/search-console** → **Adicionar propriedade** → **Prefixo do URL** → `https://seudominio.com.br`.
 2. Verifique pelo método **Tag HTML** ou **Arquivo HTML** (mande para o Claude o que o Google pedir; ele coloca no site).
 3. Em **Sitemaps**, envie `https://seudominio.com.br/sitemap.xml`.
@@ -65,12 +85,9 @@ Mande para o Claude: **"meu domínio é xxxxx.com.br"**. Ele troca em `site/js/c
 Mande para o Claude: **"meu ca-pub é ca-pub-1234567890123456"**. Ele:
 - coloca o ID em `site/js/config.js` (o único lugar);
 - atualiza o `ads.txt` automaticamente;
-- regenera o site e diz o que subir no cPanel (normalmente `js/config.js`, `ads.txt` e `jogo/porto-sombrio.html`).
+- regenera o site e gera o zip novo.
 
-Se preferir fazer sozinho: no cPanel, abra `public_html/js/config.js` → botão direito → **Edit** → troque `ca-pub-XXXXXXXXXXXXXXXX` pelo seu → **Save Changes**. Depois edite `public_html/ads.txt` e deixe só esta linha (com o seu número):
-```
-google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0
-```
+Depois o Claude te manda o zip novo, e você faz uma **nova implantação** na Cloudflare (parte C, passo 4).
 
 ### 4. Verificar o site no AdSense
 1. No AdSense, vá em **Sites** → seu domínio → **Verificar**.
@@ -91,28 +108,13 @@ O "assistir um anúncio para continuar depois de morrer" usa o **H5 Games Ads**,
 
 ## C) Atualizar o site quando sair versão nova do jogo
 
-1. Coloque o novo arquivo do jogo (o `.html`) na pasta **`novo-jogo/`** do repositório. Se tiver versão Windows nova, coloque junto `Porto Sombrio.exe`, `resources.neu` e `LEIA-ME.txt`.
-   - Pelo site do GitHub: abra a pasta `novo-jogo` → **Add file** → **Upload files** → arraste o arquivo → **Commit changes**.
-   - Ou simplesmente anexe o arquivo na conversa com o Claude.
+1. Mande o novo arquivo do jogo (o `.html`) aqui na conversa, ou coloque na pasta `novo-jogo/` do repositório. Se tiver versão Windows nova, mande junto `Porto Sombrio.exe`, `resources.neu` e `LEIA-ME.txt`.
 2. Peça ao Claude: **"atualizar jogo"** (ou `/atualizar-jogo`). Se quiser, diga o que mudou na versão.
-3. O Claude troca o jogo, adiciona a versão em **Atualizações**, gera o zip e te manda a lista exata, por exemplo:
-   ```
-   [trocar]   jogo/porto-sombrio.html
-   [trocar]   jogo/.htaccess
-   [trocar]   dados/updates.json
-   [trocar]   index.html ...
-   ```
-4. No cPanel → **Gerenciador de Arquivos** → **public_html**, o jeito mais fácil:
-   1. Baixe do GitHub o `entregas/porto-sombrio-atualizacao.zip`.
-   2. **Carregar** → escolha o zip.
-   3. Botão direito no zip → **Extrair** → destino `/public_html` → confirme a substituição.
-   4. Apague o zip. Apague também os arquivos marcados como **[apagar]** na lista (se houver).
-5. Abra o site com **Ctrl + F5** (ou numa aba anônima) e confira a versão nova no carimbo da página inicial.
-6. Avise o Claude que subiu, para ele registrar o envio.
-
-> Importante: sempre troque o `jogo/.htaccess` junto com o `jogo/porto-sombrio.html`. Ele contém a "impressão digital" exata do jogo; se só um dos dois for trocado, o navegador bloqueia o jogo por segurança.
-
----
+3. O Claude troca o jogo, adiciona a versão em **Atualizações** e te manda um `porto-sombrio-site.zip` novo.
+4. Na Cloudflare: **Workers e Pages** → projeto **porto-sombrio** → **Criar nova implantação** (Create deployment) → arraste o zip novo → **Salvar e implantar**.
+   - Na Cloudflare você sempre manda o zip **inteiro**. Ela troca tudo de uma vez, então não tem como esquecer arquivo.
+5. Abra o site numa aba anônima e confira a versão nova no carimbo da página inicial.
+6. Deu problema? Na mesma tela do projeto, em **Implantações**, clique nos três pontinhos da implantação anterior → **Reverter** (Rollback). O site volta como estava.
 
 ## D) O que VOCÊ precisa fazer de segurança
 
@@ -120,6 +122,9 @@ O "assistir um anúncio para continuar depois de morrer" usa o **H5 Games Ads**,
 - **GoDaddy:** foto do perfil → **Minha conta** (Account Settings) → **Login e PIN** (Login & PIN) → **Verificação em duas etapas** → **Adicionar** → escolha **App autenticador** (Google Authenticator ou Microsoft Authenticator). Evite usar só SMS.
 - **Google** (AdSense e Gmail): **myaccount.google.com** → **Segurança** → **Verificação em duas etapas** → **Ativar**. Melhor ainda: crie uma **chave de acesso (passkey)** no mesmo lugar.
 - **GitHub:** foto → **Settings** → **Password and authentication** → **Enable two-factor authentication** → use app autenticador. **Guarde os códigos de recuperação** num lugar seguro (impresso ou num gerenciador de senhas).
+
+### Cloudflare
+- **dash.cloudflare.com** → ícone do perfil → **Perfil** → **Autenticação** → **Autenticação de dois fatores** → ative com app autenticador e guarde os códigos de backup.
 
 ### Bloqueio do domínio (Domain Lock)
 1. GoDaddy → **Meus produtos** → **Domínios** → clique no seu domínio.

@@ -3,7 +3,7 @@
 Integra o jogo ao site SEM reescrever o jogo.
 
 Pega jogo-original/porto-sombrio.html (cópia intacta do jogo) e grava
-site/jogo/porto-sombrio.html com, no final do arquivo:
+site/jogo/index.html com, no final do arquivo:
   1. um script pequeno que mostra "Jogue no site oficial" fora do seu domínio;
   2. /js/config.js e /jogo/integracao.js (anúncio premiado opcional).
 Também calcula o hash (sha256) dos scripts do jogo e grava site/jogo/.htaccess
@@ -16,7 +16,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 ORIGEM = RAIZ / 'jogo-original' / 'porto-sombrio.html'
-DESTINO = RAIZ / 'site' / 'jogo' / 'porto-sombrio.html'
+DESTINO = RAIZ / 'site' / 'jogo' / 'index.html'
 HTACCESS = RAIZ / 'site' / 'jogo' / '.htaccess'
 MARCA = '<!-- PS-INTEGRACAO'
 
@@ -89,7 +89,44 @@ def integrar():
         '    Header set Cache-Control "no-cache, must-revalidate"\n'
         '  </FilesMatch>\n'
         '</IfModule>\n', encoding='utf-8')
+    escrever_headers_cloudflare(csp)
     return versao_do_jogo(jogo), len(hashes), dominio
+
+
+def csp_do_site():
+    """A mesma CSP do site que está no .htaccess (fonte única: site/.htaccess)."""
+    txt = (RAIZ / 'site' / '.htaccess').read_text(encoding='utf-8')
+    m = re.search(r'Header always set Content-Security-Policy "([^"]+)"', txt)
+    return m.group(1)
+
+
+def escrever_headers_cloudflare(csp_jogo):
+    """site/_headers: as mesmas proteções do .htaccess, no formato da Cloudflare Pages."""
+    (RAIZ / 'site' / '_headers').write_text(
+        '# Gerado por ferramentas/integrar.py — NÃO edite à mão.\n'
+        '# Segurança e cache do site na Cloudflare Pages (equivale ao .htaccess).\n'
+        '/*\n'
+        f'  Content-Security-Policy: {csp_do_site()}\n'
+        '  Strict-Transport-Security: max-age=31536000\n'
+        '  X-Content-Type-Options: nosniff\n'
+        '  Referrer-Policy: strict-origin-when-cross-origin\n'
+        '  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)\n'
+        '  X-Frame-Options: SAMEORIGIN\n'
+        '  Cross-Origin-Opener-Policy: same-origin-allow-popups\n'
+        '\n'
+        '# o jogo tem a política dele, com o hash exato desta versão\n'
+        '/jogo/*\n'
+        '  ! Content-Security-Policy\n'
+        f'  Content-Security-Policy: {csp_jogo}\n'
+        '\n'
+        '/css/*\n  Cache-Control: public, max-age=604800\n'
+        '/js/*\n  Cache-Control: public, max-age=604800\n'
+        '/jogo/integracao.js\n  Cache-Control: public, max-age=604800\n'
+        '/img/*\n  Cache-Control: public, max-age=31536000\n'
+        '/fonts/*\n  Cache-Control: public, max-age=31536000\n'
+        '/favicon.ico\n  Cache-Control: public, max-age=31536000\n'
+        '/dados/*\n  Cache-Control: no-cache\n',
+        encoding='utf-8')
 
 
 if __name__ == '__main__':

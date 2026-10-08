@@ -11,7 +11,7 @@ Como usar:
 
 O script:
   - descobre a versão escrita dentro do jogo ("Versão 1.4.0" na tela de título);
-  - guarda o jogo intacto em jogo-original/ e gera site/jogo/porto-sombrio.html integrado
+  - guarda o jogo intacto em jogo-original/ e gera site/jogo/index.html integrado
     (verificação de domínio, anúncio premiado opcional, CSP com o hash certo);
   - adiciona a versão no topo de site/dados/updates.json;
   - se tiver versão Windows, gera o .zip novo de download;
@@ -118,7 +118,7 @@ def main():
     empacotar.main(marcar=False)
     print('=' * 60)
     print(f'\nJogo atualizado: {antiga} -> {versao}.')
-    print('Depois de subir no cPanel, rode:  python3 ferramentas/empacotar.py --marcar')
+    print('Agora: Cloudflare -> Workers e Pages -> porto-sombrio -> Criar nova implantação -> arraste entregas/porto-sombrio-site.zip')
 
 
 if __name__ == '__main__':
