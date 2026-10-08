@@ -48,6 +48,7 @@ BASE = """<!doctype html>
 <meta name="robots" content="{robots}">
 <meta name="theme-color" content="#b89a62">
 <meta name="author" content="Richard Klettke (richardkkbatata)">
+{meta_adsense}
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Porto Sombrio">
@@ -154,7 +155,7 @@ def main():
         out = BASE.format(
             titulo=html.escape(meta['titulo']), descricao=html.escape(meta['descricao']),
             url=f'https://{dominio}{caminho}', robots=meta.get('robots', 'index, follow'),
-            dominio=dominio, v=v, scripts=scripts, slug=meta['slug'], abas=abas,
+            dominio=dominio, v=v, meta_adsense=(f'<meta name="google-adsense-account" content="{cfg["pub"]}">' if re.fullmatch(r'ca-pub-\d{16}', cfg['pub']) else ''), scripts=scripts, slug=meta['slug'], abas=abas,
             conteudo=corpo.rstrip(), ano=datetime.date.today().year, versao=versao)
         destino = SITE / ('404.html' if meta['slug'] == '404' else (caminho.strip('/') + '/index.html' if caminho != '/' else 'index.html'))
         destino.parent.mkdir(parents=True, exist_ok=True)

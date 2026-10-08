@@ -15,7 +15,7 @@
 */
 window.PS_CONFIG = {
   DOMINIO: 'SEUDOMINIO.com.br',
-  ADSENSE_CLIENT: 'ca-pub-XXXXXXXXXXXXXXXX',
+  ADSENSE_CLIENT: 'ca-pub-2897231611604599',
   ADSENSE_SLOT: 'XXXXXXXXXX',
   EMAIL: 'contato@SEUDOMINIO.com.br',
   INSTAGRAM: 'https://www.instagram.com/richardklettke',
