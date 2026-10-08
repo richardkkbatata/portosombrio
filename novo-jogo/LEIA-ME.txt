@@ -1,0 +1,8 @@
+COLOQUE AQUI A VERSÃO NOVA DO JOGO
+
+1. Copie para esta pasta o novo arquivo do jogo (o .html, por exemplo porto-sombrio.html).
+2. Se tiver versão nova para Windows, copie também: "Porto Sombrio.exe", "resources.neu" e "LEIA-ME.txt".
+3. Peça para o Claude: /atualizar-jogo   (ou escreva: "atualizar jogo")
+
+Ele troca o jogo no site, anota a versão em Atualizações, gera o .zip
+e diz exatamente quais arquivos substituir no cPanel.

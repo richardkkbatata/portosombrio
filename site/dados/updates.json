@@ -1,0 +1,75 @@
+{
+  "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista.",
+  "versao_atual": "1.3.2",
+  "versoes": [
+    {
+      "versao": "1.3.2",
+      "data": "",
+      "titulo": "Navegador e Windows",
+      "resumo": "Jogue no navegador, aqui no site, ou baixe para Windows.",
+      "mudancas": [
+        "Versão para jogar direto no navegador, aqui no site oficial.",
+        "Versão para Windows 10/11 (Porto Sombrio.exe), que abre em tela cheia. Esc pausa.",
+        "Ajustes e correções em cima da 1.3."
+      ]
+    },
+    {
+      "versao": "1.3",
+      "data": "",
+      "titulo": "Tutorial, bancada, música e a Sonia",
+      "resumo": "A Sonia liga do outro lado do rio, e o apartamento da Dona Cida vira tutorial.",
+      "mudancas": [
+        "A Sonia, namorada do Richard, liga de Navegantes e dá dicas pelo telefone quando você fica perdido.",
+        "Tutorial dentro do apartamento da Dona Cida: andar, lanterna, agachar, mochila, garrafa e salvar.",
+        "Bancada de armas nos abrigos: peças de arma viram pente estendido, recarga rápida e mira ajustada.",
+        "Música nova: piano triste no menu e um tema pesado para os chefes.",
+        "Tudo que dá pra usar agora fica marcado no mapa da cidade.",
+        "Cena nova do Perseguidor depois da clínica da Brava."
+      ]
+    },
+    {
+      "versao": "1.2",
+      "data": "",
+      "titulo": "Marlon, Nicolas e o professor Rese",
+      "resumo": "Três personagens novos, cada um com a sua parte da história, e todos aparecem no porto no final.",
+      "mudancas": [
+        "Marlon no terraço do Edifício Yacht, na Barra Sul, com a carabina do avô.",
+        "Nicolas e o drone na surf shop da Brava, com o scanner do Exército.",
+        "Professor Alex Rese no Mercado Público de Itajaí, com um plano para o T-00.",
+        "Batalha final no porto com os três.",
+        "Câmera que se aproxima nos lugares apertados e se afasta nos abertos.",
+        "Mochilas largadas, caixas térmicas e 12 fotos escondidas pelo litoral.",
+        "Sinalizador e rojão para arremessar. Fuzil no fim do jogo e limite de 3 armas de fogo.",
+        "Dutos no Hospital Santa Clara.",
+        "Mapa com missões secundárias e personagens.",
+        "Menos zumbis na rua, mas cada mordida dói mais.",
+        "Apresentações novas do Bombeiro e do Perseguidor."
+      ]
+    },
+    {
+      "versao": "1.1",
+      "data": "",
+      "titulo": "Esforço, vozes e a cabeça do Richard",
+      "resumo": "Portas que não abrem na hora, gente pedindo socorro no escuro e o medo pesando.",
+      "mudancas": [
+        "Cortar corrente, empurrar porta emperrada, acender pavio: tudo com esforço e barulho.",
+        "Vozes no escuro: gente presa pedindo socorro.",
+        "Medo: passos que param um segundo depois dos seus, alguém dizendo o seu nome, rádio de quem já morreu.",
+        "Sons da noite ao longe: cachorro, sirene, alarme de carro."
+      ]
+    },
+    {
+      "versao": "1.0",
+      "data": "",
+      "titulo": "A primeira noite",
+      "resumo": "Balneário Camboriú, Laranjeiras, Praia Brava, Cabeçudas e Itajaí. Um jipe, um bondinho e um helicóptero.",
+      "mudancas": [
+        "Litoral inteiro de Balneário Camboriú até o Porto de Itajaí, de norte a sul como no mapa real.",
+        "Dia e noite: de dia eles se escondem nos prédios, de noite a rua é deles.",
+        "Abrigos de luz verde com máquina de escrever para salvar.",
+        "Chefes, o Perseguidor e três finais diferentes.",
+        "Teclado e mouse ou tela de toque."
+      ]
+    }
+  ]
+}

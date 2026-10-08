@@ -1,0 +1,4 @@
+Fontes usadas no site, todas sob a SIL Open Font License 1.1 (https://openfontlicense.org):
+- Special Elite (Astigmatic)
+- Caveat (Impallari Type)
+- League Gothic (The League of Moveable Type)

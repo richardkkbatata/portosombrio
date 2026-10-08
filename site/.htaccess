@@ -1,0 +1,90 @@
+# =====================================================================
+#  PORTO SOMBRIO — configuração do servidor (Apache / GoDaddy cPanel)
+#  Este arquivo vai na raiz da public_html. Ele é "oculto" (começa com
+#  ponto): no Gerenciador de Arquivos, ative "Mostrar arquivos ocultos".
+# =====================================================================
+
+# Sem listagem de pastas e página 404 própria
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+ErrorDocument 403 /404.html
+AddDefaultCharset utf-8
+AddCharset utf-8 .html .css .js .json .txt .xml .webmanifest
+
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+  AddType image/svg+xml .svg
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1) Bloqueia arquivos e pastas ocultos (.git, .env, .htpasswd...).
+  #    Deixa passar só /.well-known/ (usado pelo SSL grátis do cPanel).
+  RewriteRule (^|/)\.(?!well-known(/|$)) - [F,L]
+
+  # 2) www.seudominio -> https://seudominio (sem www), num pulo só
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+  # 3) Força HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Arquivos que nunca devem ser baixados por visitantes
+<FilesMatch "(^\.(?!well-known)|\.(bak|old|orig|swp|tmp|log|sql|sh|py|ini|md|yml|yaml|lock|dist)$|~$)">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  # Content-Security-Policy: só o próprio site + o necessário do Google AdSense.
+  # (A pasta /jogo/ tem a política dela, com o hash exato do jogo.)
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com https://*.gstatic.com https://*.doubleclick.net https://*.googletagservices.com https://*.adtrafficquality.google https://fundingchoicesmessages.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google https://*.gstatic.com; frame-src 'self' https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com https://*.adtrafficquality.google; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+
+  # HTTPS obrigatório por 1 ano no navegador do visitante (só é enviado via HTTPS)
+  Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
+  Header unset X-Powered-By
+
+  # Páginas e dados sempre conferem se há versão nova
+  <FilesMatch "\.(html|json|xml|txt|webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # CSS e JS: 7 dias (o endereço muda com ?v=versão quando sai atualização)
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  # Imagens e fontes: 1 ano
+  <FilesMatch "\.(webp|png|jpg|jpeg|gif|svg|ico|woff2)$">
+    Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 0 seconds"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType text/javascript "access plus 7 days"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript text/javascript application/json application/manifest+json image/svg+xml
+</IfModule>

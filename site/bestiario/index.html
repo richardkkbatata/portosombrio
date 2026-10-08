@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bestiário de Porto Sombrio — zumbis, chefes, fraquezas e dicas</title>
+<meta name="description" content="Todos os inimigos e chefes de Porto Sombrio, tirados do código do jogo: comportamento, fraqueza e dica de cada um. Mais o arsenal: onde achar cada arma.">
+<link rel="canonical" href="https://seudominio.com.br/bestiario/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#b89a62">
+<meta name="author" content="Richard Klettke (richardkkbatata)">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Porto Sombrio">
+<meta property="og:title" content="Bestiário de Porto Sombrio — zumbis, chefes, fraquezas e dicas">
+<meta property="og:description" content="Todos os inimigos e chefes de Porto Sombrio, tirados do código do jogo: comportamento, fraqueza e dica de cada um. Mais o arsenal: onde achar cada arma.">
+<meta property="og:url" content="https://seudominio.com.br/bestiario/">
+<meta property="og:image" content="https://seudominio.com.br/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/special-elite.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/league-gothic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/site.css?v=448123d0e5">
+<script src="/js/js.js?v=448123d0e5"></script>
+<script src="/js/config.js?v=448123d0e5" defer></script>
+<script src="/js/site.js?v=448123d0e5" defer></script>
+<script src="/js/anuncios.js?v=448123d0e5" defer></script>
+<script src="/js/bestiario.js?v=448123d0e5" defer></script>
+</head>
+<body class="pagina-bestiario">
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<div class="sinal on" id="sinal" aria-hidden="true"><canvas width="160" height="100"></canvas><b>SINAL</b></div>
+<header class="topo">
+  <div class="topo-linha">
+    <a class="marca" href="/" aria-label="Porto Sombrio, página inicial"><small>ARQUIVO PS-0417</small><b>Porto Sombrio</b></a>
+    <div class="protocolo">
+      <div>Defesa Civil · Balneário Camboriú</div>
+      <div><span>Material recolhido 48 h após o surto</span></div>
+      <div class="controles-topo" style="justify-content:flex-end;margin-top:6px"><button class="botao-som" id="botao-som" type="button" aria-pressed="false">Som: desligado</button></div>
+    </div>
+  </div>
+  <nav class="abas" aria-label="Seções do arquivo">
+    <a class="aba" href="/"><i>01</i>Início</a>
+    <a class="aba" href="/jogar/"><i>02</i>Jogar</a>
+    <a class="aba" href="/documentario/"><i>03</i>Documentário</a>
+    <a class="aba" href="/personagens/"><i>04</i>Personagens</a>
+    <a class="aba" href="/mapa/"><i>05</i>Mapa</a>
+    <a class="aba" href="/bestiario/" aria-current="page"><i>06</i>Bestiário</a>
+    <a class="aba" href="/como-jogar/"><i>07</i>Como jogar</a>
+    <a class="aba" href="/atualizacoes/"><i>08</i>Atualizações</a>
+  </nav>
+</header>
+<main class="folha" id="conteudo">
+  <div class="folha-papel">
+<div class="cabecalho-doc"><span>Anexo <b>D</b> · espécimes</span><span>Fonte: <b>Vértice, depoimentos, observação</b></span><span>Desenhos: <b>do próprio jogo</b></span></div>
+
+<h1 style="font-size:clamp(44px,8vw,86px)">Bestiário</h1>
+<div class="grade duas" style="align-items:end">
+  <p class="olho">Fichas de campo de tudo que anda pela rua depois das 22h16. Os chefes e as coisas que perseguem você ficam no fim, carimbados. Leia por sua conta.</p>
+  <div class="filtros" role="group" aria-label="Filtrar fichas">
+    <button type="button" data-f="todos" aria-pressed="true">Todos</button>
+    <button type="button" data-f="comum" aria-pressed="false">Da rua</button>
+    <button type="button" data-f="perseguidor" aria-pressed="false">Perseguidores</button>
+    <button type="button" data-f="chefe" aria-pressed="false">Chefes</button>
+  </div>
+</div>
+
+<p class="mao" style="margin:18px 0 0">resistência = quanto aguenta. velocidade = se dá pra fugir.</p>
+
+<div class="especimes">
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/zumbi.webp" alt="Desenho do Zumbi visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 01 · em toda parte</span><h3>Zumbi</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Anda devagar, morde e não sente nada. De dia se enfia no escuro dos prédios; de noite sai pra rua, mais rápido e em maior número. Alguns ficam deitados no chão como mortos.</dd>
+  <dt>Fraqueza</dt><dd>Enxerga mal no escuro. Com a lanterna apagada, só te vê quase encostando.</dd>
+  <dt>Dica</dt><dd>Nem tudo que cai, fica. Se um te agarrar, toque na tela ou aperte qualquer tecla várias vezes.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/corr.webp" alt="Desenho do Corredor visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 02 · Porto, Itajaí, BC</span><h3>Corredor</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Corre atrás de você e enxerga mais longe que os outros. Costuma chegar em grupo quando a luz da avenida apaga ou quando alguém grita.</dd>
+  <dt>Fraqueza</dt><dd>É o mais frágil de todos. Poucos tiros derrubam.</dd>
+  <dt>Dica</dt><dd>Não tente fugir correndo. Esquive (Espaço) e atire.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/incha.webp" alt="Desenho do Inchado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 03 · hospedeiro obeso</span><h3>Inchado</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Acumula ácido. Quando morre, rompe e deixa uma poça que queima por vários segundos.</dd>
+  <dt>Fraqueza</dt><dd>Lento. Dá pra matar de longe antes que chegue.</dd>
+  <dt>Dica</dt><dd>Nunca na faca. Se ele estourar perto de outros, melhor ainda.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/cusp.webp" alt="Desenho do Cuspidor visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 04 · Porto, Itajaí, BC</span><h3>Cuspidor</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Te vê de longe e cospe à distância.</dd>
+  <dt>Fraqueza</dt><dd>Precisa de linha reta até você.</dd>
+  <dt>Dica</dt><dd>Chegue por trás de carro, parede ou esquina. Em campo aberto ele leva vantagem.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/cao.webp" alt="Desenho do Cão infectado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 05 · obras, postos, praias</span><h3>Cão infectado</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Comportamento</dt><dd>O mais rápido da rua. Fareja: te acha no escuro mais de perto que os outros. "Uivo... cachorro. Mais de um. Eles tão vindo pelo cheiro."</dd>
+  <dt>Fraqueza</dt><dd>Morre fácil.</dd>
+  <dt>Dica</dt><dd>Escopeta resolve. Lanterna apagada não resolve.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/brut.webp" alt="Desenho do Brutamontes visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 06 · Porto, Itajaí</span><h3>Brutamontes</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Hipertrofia muscular de quem virou sob estresse. Investe em linha reta e quase não recua com tiro.</dd>
+  <dt>Fraqueza</dt><dd>Se bater na parede, fica tonto.</dd>
+  <dt>Dica</dt><dd>Fique de costas pra uma parede, espere a investida e saia de lado no último segundo.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/rast.webp" alt="Desenho do Rastejante visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 07 · cemitério, praias</span><h3>Rastejante</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Fica escondido no chão e quase não enxerga. Espera você passar perto. "Caiu do lado de mim. As pernas viraram pro lado errado."</dd>
+  <dt>Fraqueza</dt><dd>Lento e fraco, se você souber onde ele está.</dd>
+  <dt>Dica</dt><dd>Corpo no chão em lugar estranho? Dê a volta.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/grita.webp" alt="Desenho da Gritadeira vista de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 08 · BC em caos</span><h3>Gritadeira</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Quando te vê, para, enche o peito e grita. Todo mundo em volta vem ver onde você está, e chegam corredores.</dd>
+  <dt>Fraqueza</dt><dd>Morre com pouco. O problema é o grito.</dd>
+  <dt>Dica</dt><dd>"Mata ela antes do grito!" A besta é silenciosa.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/soldado.webp" alt="Desenho do Soldado infectado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 09 · acampamento, Porto</span><h3>Soldado infectado</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Gente do Exército que ficou pra trás, de capacete. O Cabo Nunes deixou o Peixoto andando pelo acampamento.</dd>
+  <dt>Fraqueza</dt><dd>Lento. E sempre deixa munição de 9 mm ou cartuchos quando cai.</dd>
+  <dt>Dica</dt><dd>Vale a bala gasta.</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/manequim.webp" alt="Desenho do Manequim visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 10 · Shopping Atlântico</span><h3>Manequim</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Comportamento</dt><dd>Só muda de lugar quando ninguém está olhando. "Por que estão virados pra porta?"</dd>
+  <dt>Fraqueza</dt><dd>A sua lanterna. Enquanto a luz está neles, não andam.</dd>
+  <dt>Dica</dt><dd>Não tira a lanterna deles. Quebre cinco e ganhe "Não pisque".</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/afog.webp" alt="Desenho do Afogado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 11 · Laranjeiras, Cabeçudas</span><h3>Afogado</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>O mar está trazendo eles de volta, um por um, andando pela areia. Enrolados em alga, mais duros que um zumbi comum.</dd>
+  <dt>Fraqueza</dt><dd>Lentos fora da água.</dd>
+  <dt>Dica</dt><dd>Não espere o barco. Derrube dez e ganhe "Maré cheia".</dd></dl>
+</article>
+
+<article class="especime revela" data-tipo="comum">
+  <div class="lamina"><img src="/img/especimes/esfol.webp" alt="Desenho do Esfolado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Ficha 12 · Porto, Itajaí, Brava</span><h3>Esfolado</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>"As coisas sem pele, as vermelhas que andam de quatro." Cegas. Ouvem tudo: passo, tiro, vidro.</dd>
+  <dt>Fraqueza</dt><dd>Não enxergam. Andando devagar, você passa do lado e elas nem viram a cabeça.</dd>
+  <dt>Dica</dt><dd>Se correr, elas vêm. Se atirar, elas vêm. Use a besta. "O Beto não acreditou."</dd></dl>
+</article>
+
+<!-- perseguidores -->
+<article class="especime chefe revela" data-tipo="perseguidor">
+  <span class="carimbo pequeno solto">Não destruir</span>
+  <div class="lamina"><img src="/img/especimes/pers.webp" alt="Desenho do Perseguidor, homem de sobretudo, visto de cima" loading="lazy"><span class="escala">≈ 2,30 m</span></div>
+  <span class="cod">Protótipo T-Sobretudo</span><h3>O Perseguidor</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Sobretudo escuro, chapéu. Não fala, não corre, não para. <span class="tarja">Segue sinais de rádio, e a partir do arsenal da Delegacia segue o seu. Aparece num orelhão que toca no meio da rua.</span></dd>
+  <dt>Fraqueza</dt><dd>Não pode ser destruído, só atrasado. Cai por um tempo e levanta.</dd>
+  <dt>Dica</dt><dd>Não lute, suma. Ele não entra nas arenas dos chefes. Derrube três vezes: "Ele sempre levanta".</dd></dl>
+</article>
+
+<article class="especime chefe revela" data-tipo="perseguidor">
+  <span class="carimbo pequeno solto">Não destruir</span>
+  <div class="lamina"><img src="/img/especimes/bombeiro.webp" alt="Desenho do Bombeiro com machado, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Balneário em silêncio</span><h3>O Bombeiro</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>O rosto derreteu no capacete. Arrasta um machado. <span class="tarja">Estava no posto da Avenida do Estado quando explodiu. Sai do fogo quando alguém pede socorro no posto queimado.</span></dd>
+  <dt>Fraqueza</dt><dd>Cai por pouco tempo. Não dá pra matar.</dd>
+  <dt>Dica</dt><dd>Orelhão tocando e caixinha de música chamam ele. Derrube uma vez: "Fogo amigo".</dd></dl>
+</article>
+
+<article class="especime chefe revela" data-tipo="perseguidor">
+  <span class="carimbo pequeno solto">Imune a bala</span>
+  <div class="lamina"><img src="/img/especimes/ouvinte.webp" alt="Desenho da Ouvinte, mulher alta e cega, vista de cima" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Paciente 31 · Hospital Santa Clara</span><h3>A Ouvinte</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Cega desde o primeiro dia. Escuta a respiração do outro lado da parede. Anda pelos corredores sem esbarrar em nada <span class="tarja">e pelos dutos do teto.</span></dd>
+  <dt>Fraqueza</dt><dd>Vai até o barulho, qualquer barulho.</dd>
+  <dt>Dica</dt><dd>Agachado, devagar. Garrafa jogada longe. Nunca corra. Bala não faz efeito.</dd></dl>
+</article>
+
+<!-- chefes -->
+<article class="especime chefe revela" data-tipo="chefe">
+  <span class="carimbo pequeno solto">Chefe</span>
+  <div class="lamina"><img src="/img/especimes/gordo.webp" alt="Desenho do Frentista, chefe inchado, visto de cima" loading="lazy"><span class="escala">ocupa a porta inteira</span></div>
+  <span class="cod">Posto da Av. do Estado</span><h3>O Frentista</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>O "Gordo do caixa". Passou mal e não para de crescer. Fica parado no meio das bombas e cospe ácido em leque.</dd>
+  <dt>Fraqueza</dt><dd>Muito lento, e não te vê no escuro.</dd>
+  <dt>Dica</dt><dd>Quando cai, estoura numa poça ácida grande: afaste-se. Ou nem lute: lanterna apagada, passo leve.</dd></dl>
+</article>
+
+<article class="especime chefe revela" data-tipo="chefe">
+  <span class="carimbo pequeno solto">Chefe</span>
+  <div class="lamina"><img src="/img/especimes/pescador.webp" alt="Desenho do Pescador, chefe enrolado em rede, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Cabeçudas</span><h3>O Pescador</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>"Isso saiu do mar!" <span class="tarja">Aparece quando a cancela da Vértice abre.</span> Joga água em leque e chama Afogados da areia.</dd>
+  <dt>Fraqueza</dt><dd>Lento e grande: difícil errar.</dd>
+  <dt>Dica</dt><dd>Mate os Afogados primeiro. O que ele traz na rede vale a pena.</dd></dl>
+</article>
+
+<article class="especime chefe revela" data-tipo="chefe">
+  <span class="carimbo pequeno solto">Chefe</span>
+  <div class="lamina"><img src="/img/especimes/especime.webp" alt="Desenho do Espécime T-07, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">Espécime T-07 · Shopping Atlântico</span><h3>O Espécime</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Caça pelo movimento e pelo som. Agacha e salta em linha reta. De tempos em tempos, grita e chama mais.</dd>
+  <dt>Fraqueza</dt><dd>Se errar o salto e bater na parede, fica tonto.</dd>
+  <dt>Dica</dt><dd>Não desperdice munição tentando segurar ele. Faça ele bater na parede. <span class="tarja">Ou fuja: a chave da casa de máquinas, na sala da segurança, destrava as portas.</span></dd></dl>
+</article>
+
+<article class="especime chefe revela" data-tipo="chefe">
+  <span class="carimbo pequeno solto">Chefe final</span>
+  <div class="lamina"><img src="/img/especimes/boss.webp" alt="Desenho da Abominação, chefe final, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
+  <span class="cod">T-00 · Porto de Itajaí</span><h3>A Abominação</h3>
+  <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+  <dt>Velocidade</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
+  <dt>Comportamento</dt><dd>Atraída por rádio de alta potência. Atravessa tudo: contêiner, carro, parede. Bate no chão antes de atacar, arremessa pedaços e fica pior quando perde metade da vida.</dd>
+  <dt>Fraqueza</dt><dd>O tecido regenera e bala só irrita. <span class="tarja">Cloro concentrado derrete a camada externa, e aí a bala entra.</span></dd>
+  <dt>Dica</dt><dd>Não fique atrás de nada: ela derruba. Quando ela parar, saia de perto.</dd></dl>
+</article>
+
+<article class="especime chefe revela" data-tipo="chefe">
+  <span class="carimbo pequeno solto preto">Arquivo antigo</span>
+  <div class="lamina"><img src="/img/especimes/enferm.webp" alt="Desenho da Enfermeira, visto de cima" loading="lazy"><span class="escala">"do tamanho da ambulância"</span></div>
+  <span class="cod">Hospital Ruth Cardoso · plantão</span><h3>A Enfermeira</h3>
+  <dl><dt>Comportamento</dt><dd>A chefe da enfermagem foi a primeira a se aplicar uma dose de V-7. Não funcionou do jeito que deveria. Levaram ela amarrada numa maca, junto com o lote. Os registros dizem que ela para, mira e investe em linha reta.</dd>
+  <dt>Situação</dt><dd>A ficha dela está no código do jogo, mas ela não foi vista nas ruas na versão atual.</dd>
+  <dt>Dica</dt><dd>"Se a enfermeira aparecer, apaga a luz e some." — Dra. Helena</dd></dl>
+</article>
+
+</div>
+
+<div class="anuncio" data-formato="auto"></div>
+
+<section class="secao">
+  <h2>Arsenal</h2>
+  <p style="margin-top:14px">Você começa sem nada. Só dá pra carregar três armas de fogo; pegar a quarta faz largar uma no chão. Pólvora vira munição em Fabricar, na mochila.</p>
+  <div class="arsenal">
+    <div class="arma"><img src="/img/armas/faca.webp" alt="Faca de cozinha" loading="lazy"><h3>Faca de cozinha</h3><p>Cozinha do seu Moacir, atrás do altar da Santa Inês. Quebra depois de alguns golpes. Contra-ataque quando te agarram.</p></div>
+    <div class="arma"><img src="/img/armas/pistola.webp" alt="Pistola 9mm" loading="lazy"><h3>Pistola 9 mm</h3><p>Arsenal da Delegacia (trava elétrica: precisa de fusível). Doze balas, cada uma conta. Aceita silenciador.</p></div>
+    <div class="arma"><img src="/img/armas/escopeta.webp" alt="Escopeta" loading="lazy"><h3>Escopeta</h3><p>Armário da segurança do Ruth Cardoso. Oito chumbos por tiro, derruba quem estiver perto.</p></div>
+    <div class="arma"><img src="/img/armas/smg.webp" alt="Submetralhadora" loading="lazy"><h3>Submetralhadora</h3><p>Presa na rede de alguém que saiu do mar. Gasta 9 mm rápido.</p></div>
+    <div class="arma"><img src="/img/armas/magnum.webp" alt="Revólver Magnum" loading="lazy"><h3>Revólver Magnum</h3><p>Atravessa vários alvos. Tem um num cofre de banco e outro numa vitrine de museu. As senhas estão nos arquivos.</p></div>
+    <div class="arma"><img src="/img/armas/besta.webp" alt="Besta" loading="lazy"><h3>Besta</h3><p>Na Praia Brava. Não faz barulho nenhum. A melhor amiga perto dos cegos.</p></div>
+    <div class="arma"><img src="/img/armas/chamas.webp" alt="Lança-chamas" loading="lazy"><h3>Lança-chamas</h3><p>Armazém 4, no porto. Faz pouco barulho e deixa tudo queimando.</p></div>
+    <div class="arma"><img src="/img/armas/lgran.webp" alt="Lança-granadas" loading="lazy"><h3>Lança-granadas</h3><p>No Porto de Itajaí. Projétil de 40 mm, explode em área.</p></div>
+    <div class="arma"><img src="/img/armas/fuzil.webp" alt="Fuzil FAL" loading="lazy"><h3>Fuzil FAL</h3><p>No fim do jogo, no Laboratório Vértice. Munição 7,62 que atravessa dois de uma vez.</p></div>
+    <div class="arma"><img src="/img/armas/maos.webp" alt="Mãos nuas" loading="lazy"><h3>Mãos nuas</h3><p>Tecla 9. Não mata ninguém, mas um empurrão salva.</p></div>
+  </div>
+</section>
+  </div>
+</main>
+<footer class="rodape">
+  <div class="rodape-grade">
+    <div>
+      <h4>Porto Sombrio</h4>
+      <p class="credito">feito por richardkkbatata<br>(Richard Klettke)</p>
+      <p><a href="https://github.com/richardkkbatata" rel="me noopener" target="_blank">GitHub</a> · <a href="https://www.instagram.com/richardklettke" rel="me noopener" target="_blank">Instagram</a></p>
+    </div>
+    <div>
+      <h4>Mais do arquivo</h4>
+      <ul>
+        <li><a href="/criador/">Criador</a></li>
+        <li><a href="/contato/">Contato</a></li>
+        <li><a href="/privacidade/">Privacidade e cookies</a></li>
+        <li><a href="/termos/">Termos de uso</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Rádio do arquivo</h4>
+      <p style="margin:0">Achado junto com a pasta. Ainda chia.</p>
+      <div class="dial"><label for="dial" class="sr">Frequência do rádio</label><input id="dial" type="range" min="1" max="12" value="3"><output id="dial-out" for="dial">canal 3</output></div>
+      <p id="dial-msg" class="mao" style="font-size:20px;margin:6px 0 0;min-height:1.2em" aria-live="polite"></p>
+    </div>
+  </div>
+  <p class="ficcao">Obra de ficção. A Vértice, o surto e o "Arquivo PS-0417" existem só dentro do jogo; lugares reais de SC aparecem como cenário. © 2026 Richard Klettke. Versão do jogo: <span data-versao>1.3.2</span>.</p>
+</footer>
+<div class="rec-fixo" aria-hidden="true"><span class="rec-dot"></span>REC · CAM 03<br><span id="relogio">QUA 23:40:00</span></div>
+</body>
+</html>

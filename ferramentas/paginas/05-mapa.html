@@ -1,0 +1,185 @@
+<!-- {"slug":"mapa","caminho":"/mapa/","titulo":"Mapa de Porto Sombrio — Balneário Camboriú, Praia Brava, Cabeçudas e Itajaí","descricao":"Mapa do litoral de Porto Sombrio: Laranjeiras, Barra Sul, Centro e Barra Norte de Balneário Camboriú, Estrada da Rainha, Praia Brava, Cabeçudas, Itajaí e o Porto.","prioridade":"0.7","scripts":["/js/mapa.js"]} -->
+<div class="cabecalho-doc"><span>Anexo <b>C</b> · cartografia</span><span>Escala: <b>nenhuma, foi desenhado à mão</b></span><span>Norte: <b>pra cima</b></span></div>
+
+<h1 style="font-size:clamp(44px,8vw,86px)">Mapa</h1>
+<p class="olho">O caminho do Richard vai de sul a norte, como no mapa de verdade: do apartamento da Dona Cida, no Centro de Balneário Camboriú, até o heliponto do Porto de Itajaí. Toque numa área para abrir a ficha.</p>
+
+<div class="mapa-grade">
+  <div>
+    <div class="mapa-papel" id="mapa-papel">
+      <span class="fita t1"></span><span class="fita t2"></span>
+      <svg viewBox="0 0 420 900" role="group" aria-label="Mapa estilizado do litoral, de Laranjeiras (sul) ao Porto de Itajaí (norte)">
+        <defs>
+          <pattern id="ondas" width="26" height="14" patternUnits="userSpaceOnUse"><path d="M0 7 q6.5 -6 13 0 t13 0" fill="none" stroke="#5f7e8c" stroke-width="1" opacity=".55"/></pattern>
+          <pattern id="mata" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="2.2" fill="#5d6b44" opacity=".45"/><circle cx="13" cy="12" r="1.8" fill="#5d6b44" opacity=".4"/></pattern>
+          <pattern id="quadras" width="18" height="18" patternUnits="userSpaceOnUse"><rect x="2" y="2" width="13" height="13" fill="none" stroke="#6c6250" stroke-width=".7" opacity=".5"/></pattern>
+        </defs>
+        <!-- mar -->
+        <path d="M300 0 H420 V900 H232 C246 860 268 842 262 812 C256 790 236 788 238 760 C240 720 262 700 262 660 C262 600 268 560 264 520 C262 492 290 470 300 440 C306 420 290 400 300 380 C312 352 336 340 330 300 C326 276 304 266 314 244 C324 222 318 196 312 170 C306 140 330 118 318 96 L310 0 Z" fill="url(#ondas)" stroke="#2f4a55" stroke-width="2"/>
+        <text x="372" y="470" class="rotulo-mao" transform="rotate(90 372 470)">Oceano Atlântico</text>
+        <!-- rio Itajaí-Açu -->
+        <path d="M0 64 C70 70 120 52 180 66 C230 78 272 70 318 84" fill="none" stroke="#5f7e8c" stroke-width="16" stroke-linecap="round" opacity=".55"/>
+        <text x="40" y="54" class="rotulo-mao" style="font-size:17px">rio Itajaí-Açu</text>
+        <text x="150" y="28" class="rotulo-mao" style="font-size:18px">Navegantes · a Sonia tá aqui</text>
+        <!-- morros -->
+        <path d="M0 390 C60 380 120 400 190 392 C240 388 270 410 300 440 L300 452 C250 446 200 456 130 450 C80 446 30 456 0 452 Z" fill="url(#mata)"/>
+        <path d="M0 760 C80 770 160 760 238 760 L232 800 C170 790 80 800 0 792 Z" fill="url(#mata)"/>
+        <path d="M0 0 V900" stroke="#6c6250" stroke-width="1" opacity=".3"/>
+        <!-- BR-101 -->
+        <path d="M24 100 C30 300 18 500 30 700 L34 880" fill="none" stroke="#3b352b" stroke-width="2.4" stroke-dasharray="10 5"/>
+        <text x="18" y="600" class="rotulo-mao" style="font-size:16px" transform="rotate(-90 18 600)">BR-101 · bloqueada</text>
+
+        <g class="regiao" data-r="porto" tabindex="0" role="button" aria-label="Porto de Itajaí">
+          <path class="area" d="M180 92 C230 98 280 92 316 100 C326 122 306 140 310 158 L170 158 Z"/>
+          <text x="186" y="126" class="nome">Porto de Itajaí</text>
+          <circle class="alfinete" cx="290" cy="138" r="7"/><text x="246" y="150" class="rotulo-mao" style="font-size:15px">heliponto</text>
+        </g>
+        <g class="regiao" data-r="itajai" tabindex="0" role="button" aria-label="Itajaí, centro histórico">
+          <path class="area" d="M60 92 C110 86 150 92 178 92 L170 158 L310 160 C316 188 322 214 314 234 L60 234 Z"/>
+          <text x="84" y="196" class="nome">Itajaí</text><text x="84" y="214" class="rotulo-mao" style="font-size:15px">centro histórico</text>
+          <circle class="alfinete" cx="200" cy="198" r="6"/>
+        </g>
+        <g class="regiao" data-r="cabecudas" tabindex="0" role="button" aria-label="Cabeçudas">
+          <path class="area" d="M150 236 L314 236 C306 256 322 270 328 290 L150 290 Z"/>
+          <text x="166" y="268" class="nome">Cabeçudas</text>
+          <circle class="alfinete" cx="304" cy="262" r="6"/>
+        </g>
+        <g class="regiao" data-r="brava" tabindex="0" role="button" aria-label="Praia Brava">
+          <path class="area" d="M120 292 L328 292 C332 330 310 350 300 380 L120 380 Z"/>
+          <text x="136" y="338" class="nome">Praia Brava</text>
+          <circle class="alfinete" cx="268" cy="330" r="6"/>
+        </g>
+        <g class="regiao" data-r="estrada" tabindex="0" role="button" aria-label="Estrada da Rainha">
+          <path class="area" d="M150 382 L298 382 C292 404 304 424 296 446 L150 446 Z"/>
+          <text x="160" y="416" class="nome" style="font-size:13px">Estrada da Rainha</text>
+          <text x="170" y="436" class="rotulo-mao" style="font-size:14px">Morro do Careca</text>
+        </g>
+        <g class="regiao" data-r="barra-norte" tabindex="0" role="button" aria-label="Barra Norte, Balneário Camboriú">
+          <path class="area" d="M60 448 L296 448 C276 480 262 500 264 540 L60 540 Z"/>
+          <rect x="70" y="470" width="180" height="62" fill="url(#quadras)"/>
+          <text x="76" y="466" class="nome">Barra Norte</text>
+          <circle cx="240" cy="486" r="13" fill="none" stroke="#3b352b" stroke-width="1.6"/><path d="M240 473v26M227 486h26M231 477l18 18M249 477l-18 18" stroke="#3b352b" stroke-width=".8"/>
+          <text x="176" y="512" class="rotulo-mao" style="font-size:14px">barricada ↑</text>
+        </g>
+        <g class="regiao" data-r="centro" tabindex="0" role="button" aria-label="Centro de Balneário Camboriú">
+          <path class="area" d="M60 542 L264 542 C266 580 262 620 262 662 L60 662 Z"/>
+          <rect x="70" y="560" width="184" height="96" fill="url(#quadras)"/>
+          <text x="76" y="556" class="nome">Centro · BC</text>
+          <circle class="alfinete" cx="224" cy="600" r="7"/><text x="150" y="630" class="rotulo-mao" style="font-size:15px">D. Cida (início)</text>
+        </g>
+        <g class="regiao" data-r="barra-sul" tabindex="0" role="button" aria-label="Barra Sul, Balneário Camboriú">
+          <path class="area" d="M60 664 L262 664 C262 700 240 720 238 758 L60 758 Z"/>
+          <rect x="70" y="678" width="164" height="72" fill="url(#quadras)"/>
+          <text x="76" y="676" class="nome">Barra Sul</text>
+          <circle class="alfinete" cx="200" cy="728" r="6"/><text x="120" y="745" class="rotulo-mao" style="font-size:14px">oficina do Tião</text>
+        </g>
+        <g class="regiao" data-r="laranjeiras" tabindex="0" role="button" aria-label="Praia das Laranjeiras">
+          <path class="area" d="M90 802 L238 802 C252 830 262 846 240 890 L90 890 Z"/>
+          <text x="100" y="842" class="nome">Laranjeiras</text>
+          <circle class="alfinete" cx="208" cy="866" r="6"/>
+        </g>
+        <!-- bondinho -->
+        <path d="M196 734 L150 784 L196 852" fill="none" stroke="#1d1a15" stroke-width="1.4"/>
+        <rect x="144" y="778" width="12" height="9" fill="#1d1a15"/><text x="44" y="786" class="rotulo-mao" style="font-size:14px">bondinho · Mata Atlântica</text>
+
+        <!-- rota (spoiler) -->
+        <path class="rota" d="M224 600 L200 728 L150 784 L208 866 L150 784 L200 728 L190 560 L210 470 L220 420 L260 340 L230 600 L262 330 L300 262 L200 198 L290 138"/>
+      </svg>
+    </div>
+    <p class="botoes" style="margin-top:16px"><button class="botao claro" type="button" id="mostrar-rota" aria-pressed="false">Mostrar a rota do Richard (spoiler)</button></p>
+    <p class="mao">Itajaí em cima, Laranjeiras embaixo. O Richard começa no meio.</p>
+  </div>
+
+  <div class="ficha-local" id="ficha-local" aria-live="polite">
+
+    <article class="doc ficha-regiao" data-regiao="centro" id="centro">
+      <figure class="polaroid cctv"><img src="/img/polaroids/shop.webp" width="560" height="480" alt="Cena do jogo: dentro do Shopping Atlântico" loading="lazy"><figcaption>Shopping Atlântico</figcaption></figure>
+      <div class="rotulo"><span>Área 07</span><span>Balneário Camboriú</span></div>
+      <h2>Centro</h2>
+      <p>Onde tudo começa. Quadras entre as avenidas, do morro até o mar: Avenida do Estado, Quinta, Quarta, Terceira, Brasil e Atlântica. "Ontem a gente tava comendo pastel aqui às duas da manhã. Ontem."</p>
+      <p><b>Pontos:</b> apartamento da Dona Cida (luz verde) · prédio do seu Moacir · posto da Avenida do Estado · Shopping Atlântico · Hospital Ruth Cardoso · Rodoviária · Ressaca Club · obra do Residencial Marea.</p>
+      <p style="margin-bottom:4px"><b>Na rua:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Corredor</li><li>Inchado</li><li>Cuspidor</li><li>Rastejante</li><li>Gritadeira</li><li>Manequim</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="barra-sul" id="barra-sul">
+      <figure class="polaroid"><img src="/img/polaroids/cemiterio.webp" width="560" height="480" alt="Cena do jogo: cemitério da Barra Sul" loading="lazy"><figcaption>"de noite eles levantam"</figcaption></figure>
+      <div class="rotulo"><span>Área 08</span><span>Balneário Camboriú</span></div>
+      <h2>Barra Sul</h2>
+      <p>O sul da Avenida Brasil. "O bondinho ainda tá rodando... vazio." Aqui fica a oficina do Tião, com a luz verde que dá pra ver da Quarta Avenida.</p>
+      <p><b>Pontos:</b> oficina do Tião e pátio de sucata · estação Barra Sul do bondinho · Edifício Yacht · trapiche · cemitério · Cristo Luz, no morro a oeste.</p>
+      <p style="margin-bottom:4px"><b>Na rua:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Rastejante</li><li>Cão infectado</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="laranjeiras" id="laranjeiras">
+      <figure class="polaroid"><img src="/img/polaroids/colonia.webp" width="560" height="480" alt="Cena do jogo: a vila de pescadores nas Laranjeiras" loading="lazy"><figcaption>Colônia Z-7</figcaption></figure>
+      <div class="rotulo"><span>Área 09</span><span>só de bondinho</span></div>
+      <h2>Laranjeiras</h2>
+      <p>A Interpraias desabou, com um ônibus esmagado embaixo. Só se chega pelo bondinho do Parque Unipraias, parando na estação Mata Atlântica e descendo a trilha no escuro.</p>
+      <p><b>Pontos:</b> estação Mata Atlântica · trilha · Colônia de Pescadores Z-7 · Rancho das Laranjeiras · píer e quiosques · capela dos Navegantes · Taquarinhas, "o acampamento que ninguém deixou".</p>
+      <p style="margin-bottom:4px"><b>Na areia:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Afogado</li><li>Rastejante</li><li>Cão infectado</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="barra-norte" id="barra-norte">
+      <figure class="polaroid cctv"><img src="/img/polaroids/roda.webp" width="560" height="480" alt="Cena do jogo: a roda-gigante da Barra Norte" loading="lazy"><figcaption>a roda-gigante</figcaption></figure>
+      <div class="rotulo"><span>Área 06</span><span>Balneário Camboriú</span></div>
+      <h2>Barra Norte</h2>
+      <p>"A roda-gigante está girando sozinha, com as luzes acesas. Ninguém desligou." No fim dela, o Exército fechou a Estrada da Rainha com carros empilhados e arame.</p>
+      <p><b>Pontos:</b> roda-gigante · acampamento do Exército · Supermercado Bom Preço · Delegacia · Banco Popular · Paróquia Santa Inês · Ginásio Municipal · Colégio Estadual · Praça Tamandaré (coreto) · posto 3 dos guarda-vidas.</p>
+      <p style="margin-bottom:4px"><b>Na rua:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Corredor</li><li>Inchado</li><li>Cuspidor</li><li>Rastejante</li><li>Cão infectado</li><li>Soldado infectado</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="estrada" id="estrada">
+      <figure class="polaroid"><img src="/img/polaroids/mirante.webp" width="560" height="480" alt="Cena do jogo: o mirante do Morro do Careca" loading="lazy"><figcaption>mirante</figcaption></figure>
+      <div class="rotulo"><span>Área 05</span><span>ligação BC – Brava</span></div>
+      <h2>Estrada da Rainha</h2>
+      <p>"Só mato dos dois lados. Se esse jipe morrer aqui, eu morro junto." A estrada contorna o Morro do Careca e passa pela Praia dos Amores antes da Brava.</p>
+      <p><b>Pontos:</b> barricada do Exército · mirante do Morro do Careca · acampamento largado.</p>
+      <p style="margin-bottom:4px"><b>No mato:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Corredor</li><li>Cão infectado</li><li>Inchado</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="brava" id="brava">
+      <figure class="polaroid"><img src="/img/polaroids/clinica.webp" width="560" height="480" alt="Cena do jogo: a Clínica da Brava" loading="lazy"><figcaption>Clínica da Brava</figcaption></figure>
+      <div class="rotulo"><span>Área 04</span><span>Itajaí</span></div>
+      <h2>Praia Brava</h2>
+      <p>"O mar está parado demais. Nem as ondas fazem barulho." Na foto achada aqui: surfistas de madrugada e, no verso, "tem gente boiando em pé lá no fundo. Não entra no mar."</p>
+      <p><b>Pontos:</b> Clínica da Brava · Resort Brava Mar · surf shop · condomínio Morada da Brava (câmeras, casa 4) · Mercado da Brava.</p>
+      <p style="margin-bottom:4px"><b>Na rua:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Corredor</li><li>Cão infectado</li><li>Rastejante</li><li>Esfolado</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="cabecudas" id="cabecudas">
+      <div class="rotulo"><span>Área 03</span><span>Itajaí</span></div>
+      <h2>Cabeçudas</h2>
+      <p>"Casa de pescador, barco virado... e uma cancela da Vértice no meio da rua." O bloqueio só abre com o cartão de acesso da Vértice. Na foto achada aqui, tirada escondida: o portão cheio de caminhões brancos. "Contêiner 44. Tem respiração."</p>
+      <p style="margin-bottom:4px"><b>Na rua:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Cão infectado</li><li>Rastejante</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="itajai" id="itajai">
+      <figure class="polaroid"><img src="/img/polaroids/hosp.webp" width="560" height="480" alt="Cena do jogo: rua de Itajaí com a pichação NÃO FAÇA BARULHO" loading="lazy"><figcaption>"não faça barulho"</figcaption></figure>
+      <div class="rotulo"><span>Área 02</span><span>Itajaí</span></div>
+      <h2>Itajaí</h2>
+      <p>"O centro histórico. As igrejas ainda estão com as luzes acesas." Na frente do hospital, pichado na rua: NÃO FAÇA BARULHO.</p>
+      <p><b>Pontos:</b> Hospital Santa Clara · Igreja Matriz e o sino · praça da Matriz · Mercado Público (abrigo) · Museu Histórico (o revólver do coronel numa vitrine) · Corpo de Bombeiros.</p>
+      <p style="margin-bottom:4px"><b>Na rua:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Corredor</li><li>Cuspidor</li><li>Inchado</li><li>Brutamontes</li><li>Cão infectado</li><li>Esfolado</li></ul>
+    </article>
+
+    <article class="doc ficha-regiao" data-regiao="porto" id="porto">
+      <figure class="polaroid cctv"><img src="/img/polaroids/porto.webp" width="560" height="480" alt="Cena do jogo: o laboratório no Porto de Itajaí" loading="lazy"><figcaption>Lab. Vértice</figcaption></figure>
+      <div class="rotulo"><span>Área 01</span><span>destino final</span></div>
+      <h2>Porto de Itajaí</h2>
+      <p>"Daqui dá pra sentir o cheiro de química do laboratório." Do mirante do Morro do Careca alguém escreveu: só o porto de Itajaí ainda tem luz. Se tem luz, tem gente. Embaixo, com outra letra: "ele não foi."</p>
+      <p><b>Pontos:</b> Laboratório Vértice · Armazéns 4 e 5 · guindaste · heliponto · cais.</p>
+      <p style="margin-bottom:4px"><b>No cais:</b></p>
+      <ul class="ameacas"><li>Zumbi</li><li>Corredor</li><li>Cuspidor</li><li>Brutamontes</li><li>Inchado</li><li>Rastejante</li><li>Esfolado</li><li>Soldado infectado</li></ul>
+    </article>
+
+  </div>
+</div>
+<div class="anuncio" data-formato="auto"></div>

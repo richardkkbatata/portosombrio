@@ -1,0 +1,2 @@
+# Troque pelo seu ID depois de aprovado no AdSense (o Claude faz isso pra você):
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
