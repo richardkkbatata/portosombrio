@@ -47,7 +47,7 @@ BASE = """<!doctype html>
 <link rel="canonical" href="{url}">
 <meta name="robots" content="{robots}">
 <meta name="theme-color" content="#b89a62">
-<meta name="author" content="Richard Klettke (richardkkbatata)">
+<meta name="author" content="Richard Klettke (richardkkbatata) e Eduardo Ramos (caf3ziin)">
 {meta_adsense}
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
@@ -97,13 +97,14 @@ BASE = """<!doctype html>
   <div class="rodape-grade">
     <div>
       <h4>Porto Sombrio</h4>
-      <p class="credito">feito por richardkkbatata<br>(Richard Klettke)</p>
-      <p><a href="https://github.com/richardkkbatata" rel="me noopener" target="_blank">GitHub</a> · <a href="https://www.instagram.com/richardklettke" rel="me noopener" target="_blank">Instagram</a></p>
+      <p class="credito">feito por richardkkbatata<br>(Richard Klettke)<br>e caf3ziin (Eduardo Ramos)</p>
+      <p>Richard: <a href="https://github.com/richardkkbatata" rel="me noopener" target="_blank">GitHub</a> · <a href="https://www.instagram.com/richardklettke" rel="me noopener" target="_blank">Instagram</a><br>Eduardo: <a href="https://github.com/caf3ziin" rel="noopener" target="_blank">GitHub</a> · <a href="https://www.instagram.com/ramos._eduuyz/" rel="noopener" target="_blank">Instagram</a></p>
     </div>
     <div>
       <h4>Mais do arquivo</h4>
       <ul>
-        <li><a href="/criador/">Criador</a></li>
+        <li><a href="/jogar/#baixar">Baixar o jogo (Windows)</a></li>
+        <li><a href="/criador/">Criadores</a></li>
         <li><a href="/contato/">Contato</a></li>
         <li><a href="/privacidade/">Privacidade e cookies</a></li>
         <li><a href="/termos/">Termos de uso</a></li>
@@ -116,7 +117,7 @@ BASE = """<!doctype html>
       <p id="dial-msg" class="mao" style="font-size:20px;margin:6px 0 0;min-height:1.2em" aria-live="polite"></p>
     </div>
   </div>
-  <p class="ficcao">Obra de ficção. A Vértice, o surto e o "Arquivo PS-0417" existem só dentro do jogo; lugares reais de SC aparecem como cenário. © {ano} Richard Klettke. Versão do jogo: <span data-versao>{versao}</span>.</p>
+  <p class="ficcao">Obra de ficção. A Vértice, o surto e o "Arquivo PS-0417" existem só dentro do jogo; lugares reais de SC aparecem como cenário. © {ano} Richard Klettke e Eduardo Ramos. Versão do jogo: <span data-versao>{versao}</span>.</p>
 </footer>
 <div class="rec-fixo" aria-hidden="true"><span class="rec-dot"></span>REC · CAM 03<br><span id="relogio">QUA 23:40:00</span></div>
 </body>

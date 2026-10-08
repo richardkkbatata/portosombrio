@@ -254,6 +254,6 @@
   // para quem abre o console
   try {
     console.log('%cSE VOCÊ ESTÁ LENDO ISSO, PRESTA ATENÇÃO.', 'font:700 16px monospace;color:#a8231b');
-    console.log('As coisas sem pele não enxergam. Ouvem tudo. Se correr, elas vêm.\nPorto Sombrio, feito por richardkkbatata — https://github.com/richardkkbatata');
+    console.log('As coisas sem pele não enxergam. Ouvem tudo. Se correr, elas vêm.\nPorto Sombrio, feito por richardkkbatata (https://github.com/richardkkbatata) e caf3ziin (https://github.com/caf3ziin)');
   } catch (e) {}
 })();
