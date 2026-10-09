@@ -1,7 +1,21 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.5.1",
+  "versao_atual": "1.6",
   "versoes": [
+    {
+      "versao": "1.6",
+      "data": "2026-10-09",
+      "titulo": "Noite Zero",
+      "resumo": "Multiplayer local (beta): até cinco pessoas na mesma rede Wi-Fi, cada uma com um dos amigos (Richard, Edu, Matheus, Marlon ou Nicolas). Sem servidor: quem cria a sala manda um código de convite e o amigo devolve um código de resposta, dá pra trocar pelo WhatsApp.",
+      "mudancas": [
+        "Multiplayer local (beta): até cinco pessoas na mesma rede Wi-Fi, cada uma com um dos amigos (Richard, Edu, Matheus, Marlon ou Nicolas). Sem servidor: quem cria a sala manda um código de convite e o amigo devolve um código de resposta, dá pra trocar pelo WhatsApp.",
+        "Noite Zero, história curta só do multiplayer: a turma se reúne na Oficina do Tião, pega suprimentos no mercado, religa a força da delegacia, atravessa o túnel da BR-101 e segura a biblioteca da Univali até o amanhecer. Não mexe no jogo solo.",
+        "Conta de jogador: nome, apelido, cor, personagem preferido e uma frase. O apelido aparece em cima do boneco no multiplayer, e a conta guarda partidas e vitórias.",
+        "Flashback do Matheus: depois da Univali, você joga como ele, com o Seu Zé, no porto às 19h do primeiro dia, até o contêiner T-00 abrir.",
+        "Clima que muda sozinho: chuva fina, tempestade (os zumbis enxergam e ouvem menos), neblina e apagão num bairro. A BR e a Univali ficaram mais claras de dia.",
+        "Brava: binóculo no mirante e um barco encalhado pra revistar. Univali: as três folhas da prova do Rese pra entregar na Sala 102, o fone do Matheus no Bloco 9 e o que sobrou da formatura no Foyer."
+      ]
+    },
     {
       "versao": "1.5.1",
       "data": "2026-10-09",

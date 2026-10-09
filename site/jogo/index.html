@@ -2592,7 +2592,7 @@ function updEnemy(e,dt){
     // visão curta: com a lanterna apagada (e fora da luz dos postes) só te veem quase encostando
     // de dia todo mundo está "iluminado": eles te veem de mais longe, com ou sem lanterna
     const dl=daylight(), lit=lampOn()||G.pLit||P.inCar||(dl>.55&&G.inB<0), boss=e.t.boss||e.type==='boss';
-    let sr=lit?e.t.sight*(boss?.95:.62)*(P.inCar?1.6:1)*(1+.3*dl):(e.type==='cao'?105:boss?120:62);
+    let sr=(lit?e.t.sight*(boss?.95:.62)*(P.inCar?1.6:1)*(1+.3*dl):(e.type==='cao'?105:boss?120:62))*(G.wxSight||1);
     if(P.running)sr+=45; if(P.crouch&&!lit)sr*=.6; else if(P.crouch)sr*=.8;
     const close=(lit?64:40)*(P.crouch?.7:1), fov=e.state==='search'?1.6:e.state==='investigate'?1.25:1.0;
     const inCone=Math.abs(angDiff(e.face,Math.atan2(dy,dx)))<fov;
@@ -3977,7 +3977,7 @@ function drawPlayer(){
   const wid=WEAPONS[P.w].id;
   if(P.inv>0&&((renderT*20)|0)%2)ctx.globalAlpha=.55;
   if(wid==='chamas'){ctx.save();ctx.translate(P.x,P.y);ctx.rotate(P.ang);ctx.fillStyle='#3e432c';for(const s of [-4,4]){rrect(ctx,-15,s-3.2,9,6.4,3);ctx.fill();}ctx.fillStyle='#d07a24';ctx.fillRect(-12,-7,1.6,14);ctx.restore();}
-  drawHuman(P.x,P.y,P.ang,{crouch:P.crouch,richard:true,coat:'#1f2b4e',skin:'#d29d7c',hair:'#3a2415',pants:'#24262c',legAng:P.legAng??P.ang,walk:P.walk,moving:P.moving,wid:wid==='maos'?null:wid,knife:wid==='faca',loaded:P.mags[P.w]>0,firing:P.firing&&P.cool>0,slash:P.slash,recoil:P.recoil,pack:true});
+  drawHuman(P.x,P.y,P.ang,{...(P.lookO||{richard:true,coat:'#1f2b4e',skin:'#d29d7c',hair:'#3a2415',pants:'#24262c'}),crouch:P.crouch,legAng:P.legAng??P.ang,walk:P.walk,moving:P.moving,wid:wid==='maos'?null:wid,knife:wid==='faca',loaded:P.mags[P.w]>0,firing:P.firing&&P.cool>0,slash:P.slash,recoil:P.recoil,pack:true});
   ctx.globalAlpha=1;
   if(P.crouch&&!P.inCar){ctx.save();ctx.setLineDash([3,4]);ctx.lineDashOffset=-renderT*6;ctx.strokeStyle='rgba(150,190,230,.45)';ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(P.x,P.y,17,0,6.283);ctx.stroke();ctx.restore();}
   if(P.slash>0){const k=1-P.slash/.16;ctx.strokeStyle=`rgba(230,230,220,${.5*(1-k)})`;ctx.lineWidth=3;ctx.beginPath();ctx.arc(P.x,P.y,36,P.ang-.8,P.ang-.8+1.6*k);ctx.stroke();}
@@ -4103,7 +4103,7 @@ function renderLighting(sx,sy,showPlayer){
   lx.clearRect(0,0,lc.width,lc.height);
   // noite fechada, amanhecer, dia nublado e entardecer; dentro dos prédios é sempre mais escuro
   const dl=G.mode==='title'?0:daylight(), bf=BRIS[OPT.bri].f/.93, inside=G.mode!=='title'&&G.inB>=0&&buildings[G.inB]&&!buildings[G.inB].safe;
-  let dk=G.mode==='title'?.74:lerp(Math.min(.95,.9*bf),(inside?.62:.24)*bf,dl); if(G._dkSew&&G.mode!=='title')dk=Math.max(dk,G._dkSew*bf); if(G.blackout>0)dk=Math.min(.96,dk+.05); dk*=1-clamp(G.light||0,0,1)*.75*(typeof flsF==='function'?flsF():1); if(DBG.bright)dk=.12;
+  let dk=G.mode==='title'?.74:lerp(Math.min(.95,.9*bf),(inside?.62:.24)*bf,dl); if(G._dkSew&&G.mode!=='title')dk=Math.max(dk,G._dkSew*bf); if(G._dkZone&&G.mode!=='title')dk*=G._dkZone; if(G._dkWx&&G.mode!=='title')dk=Math.min(.97,dk+G._dkWx); if(G.blackout>0)dk=Math.min(.96,dk+.05); dk*=1-clamp(G.light||0,0,1)*.75*(typeof flsF==='function'?flsF():1); if(DBG.bright)dk=.12;
   lx.fillStyle=`rgba(3,5,9,${dk})`;lx.fillRect(0,0,lc.width,lc.height);
   lx.globalCompositeOperation='destination-out';
   lx.setTransform(z,0,0,z,(-cam.x*view.z+sx)*LS,(-cam.y*view.z+sy)*LS);
@@ -10393,6 +10393,16 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.6',d:'09/10/2026',t:'Noite Zero',itens:[
+    'Multiplayer local (beta): até 5 pessoas na mesma rede Wi-Fi, cada uma com um dos amigos: Richard, Edu, Matheus, Marlon ou Nicolas. Sem servidor: quem cria a sala manda um código de convite e o amigo devolve um código de resposta (dá pra mandar pelo WhatsApp).',
+    'Noite Zero: uma história curta só do multiplayer, da Oficina do Tião até a biblioteca da Univali. Quem cai levanta perto de um amigo. Não mexe no seu jogo solo nem no registro.',
+    'Conta: ao abrir o jogo você cria sua conta com nome, apelido, cor, personagem preferido e uma frase. Ela aparece no lobby e em cima do seu boneco no multiplayer. Por enquanto fica salva no aparelho.',
+    'Flashback: depois da Univali, o Matheus conta o que viu no porto às 19h do primeiro dia. Você joga como ele, com o Seu Zé, até o contêiner T-00 abrir.',
+    'Clima que muda sozinho: chuva fina, tempestade (os zumbis enxergam menos e ouvem menos), neblina e apagão geral na cidade.',
+    'A região da BR-101 e da Univali ficou bem mais clara durante o dia.',
+    'Brava: binóculo no mirante pra ver a cidade de longe e um barco encalhado na areia pra revistar (cuidado com quem ainda está lá dentro).',
+    'Univali: missões pequenas. Junte as três folhas da prova do Rese e entregue na Sala 102, devolva o fone do Matheus que ficou no Bloco 9 e veja o que sobrou da formatura no Foyer.',
+    'Conquistas novas e menu de debug atualizado com clima, flashback, missões e multiplayer.']},
   {v:'1.5.1',d:'09/10/2026',t:'Maleta de verdade',itens:[
     'Maleta estilo RE4 de verdade: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.',
     'Se uma coisa não couber do jeito que está, o jogo avisa que dá pra arrumar a maleta pra caber.',
@@ -10485,6 +10495,9 @@ UI.debug=function(){
   let body='';
   switch(tab){
     case 'nov':body=
+      sec('1.6 · Clima',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
+      sec('1.6 · Flashback e missões',bt('v16:flash','Começar o flashback do Matheus')+bt('v16:flashEnd','Terminar o flashback')+bt('v16:prova','Ganhar as 3 folhas da prova')+bt('v16:fone','Ganhar o fone do Matheus')+tp('sala102','Sala 102 (entregar a prova)')+tp('foyerIn','Foyer (formatura)')+tp('binoculo','Binóculo do mirante (Brava)')+tp('barco','Barco encalhado (Brava)'))+
+      sec('1.6 · Multiplayer beta',bt('v16:mp','Abrir o multiplayer')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:conta','Editar conta'))+
       sec('1.5.1',bt('v151:org','Organizar a maleta')+bt('v15:combo:desarme','Quick time difícil do Brandt')+bt('v14:maleta','Maleta grande')+bt('j:galeria2','Galeria · comportas (testar a escada)')+bt('v14:drain','Resolver as comportas'))+
       sec('Brandt (1.5)',bt('v14:brandtNow','Começar a luta agora')+bt('v15:combo:faca','Quick time · faca')+bt('v15:combo:desarme','Quick time · desarme')+bt('v15:combo:parede','Quick time · parede')+bt('v15:combo:judo','Quick time · judô')+bt('v14:brandtLow','Deixar com pouca vida')+bt('v14:brandtWin','Vencer o Brandt'))+
       sec('Univali e BR-101 (1.5)',bt('j:univali','Pular · chegando pelo túnel')+bt('j:uniBib','Pular · porta da biblioteca (com a chave)')+bt('v15:uniWave','Começar a defesa da biblioteca')+bt('v15:uniDone','Terminar a missão da Univali')+tp('tunel','Túnel em Balneário')+tp('caculinha','Caçulinha do Marlon')+tp('neusa','Cantina da Dona Neusa')+tp('sala102','Sala 102 (prova do Rese)'))+
@@ -10518,7 +10531,7 @@ UI.debug=function(){
         sec('Controle',bt('kill','Matar todos por perto')+tg('freeze','Congelar inimigos')+tg('ai','Mostrar estado da IA'));break;}
     case 'medo':body=sec('Medo',tg('fearMax','Medo no máximo')+bt('name','Sussurrar o nome')+bt('echo','Passos que param depois')+bt('glitch','Objetivo falhando')+bt('ghost','Rádio do Tião (morto)')+bt('amb','Som da noite'))+
       sec('Gente pedindo ajuda',bt('cry','Grito de socorro')+bt('trap','Alguém preso num prédio')+bt('v15:pinned','Preso embaixo de carro')+bt('v15:drag','Arrastado pro escuro')+bt('v15:fall','Caindo do prédio')+bt('v15:roda','Preso na roda-gigante'));break;
-    case 'mundo':body=sec('Mundo',`<button class="dbgt" data-a="dbg" data-k="clock">Hora<span>${clockStr()}</span></button>`+tg('bright','Luz total')+bt('light','Raio agora')+bt('blackout','Apagão')+bt('v14:smoke','Fumaça aqui')+bt('gates','Abrir todos os portões')+bt('map','Revelar o mapa')+bt('car','Jipe consertado aqui')+tg('fps','Mostrar FPS'))+
+    case 'mundo':body=sec('Mundo',`<button class="dbgt" data-a="dbg" data-k="clock">Hora<span>${clockStr()}</span></button>`+tg('bright','Luz total')+bt('light','Raio agora')+bt('blackout','Apagão')+bt('v14:smoke','Fumaça aqui')+bt('gates','Abrir todos os portões')+bt('map','Revelar o mapa')+bt('car','Jipe consertado aqui')+tg('fps','Mostrar FPS'))+sec('Clima (1.6)',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
       sec('Interface',bt('v14:notas','Mostrar "Novidades" de novo no título'));break;
     case 'fim':body=sec('Final',bt('end','Pular para o heliponto')+bt('wave','Chamar o resgate (15 s)')+bt('j:final','Batalha final com os três')+bt('win','Vencer agora')+bt('die','Morrer agora'));break;
   }
@@ -10534,6 +10547,19 @@ UI.debug=function(){
   const da=UI.dbgAct.bind(UI);
   UI.dbgAct=function(k,ds){
     if(k==='v151:org'){this.close();mOrganize();return toast('Maleta organizada.');}
+    if(k.startsWith('v16:')){const c=k.slice(4),F=G.flags;
+      if(c==='mp')return this.mp(); if(c==='conta')return this.conta('title');
+      this.close();
+      if(c.startsWith('wx:')){const w=c.slice(3);wxSet(w==='off'?null:w);return toast(w==='off'?'Tempo limpo.':'Clima: '+WX[w].n);}
+      switch(c){
+        case 'flash':if(FB.on)return toast('O flashback já está rolando.');F.uniDone=true;F.uniMat=true;return STORY.flashStart();
+        case 'flashEnd':if(!FB.on)return toast('Nenhum flashback rolando.');return flashEnd();
+        case 'prova':{const l=invAdd('folhaProva',3-invCount('folhaProva'));if(l)boxAdd('folhaProva',l);return toast('Folhas da prova na maleta.');}
+        case 'fone':{const l=invAdd('foneMat',1);if(l)boxAdd('foneMat',l);return toast('Fone do Matheus na maleta.');}
+        case 'mpSolo':{if(MP.on)return toast('Já está numa partida.');MP.role='host';MP.myId='0';MP.players={};MP.peers=[];const c2=contaGet()||{};MP.me={nome:c2.nome||'Teste',apelido:c2.apelido||'teste',cor:c2.cor||'#d9a33c',char:c2.fav||'richard'};return mpBegin(mpStartInfo());}
+        case 'mpNext':{if(!MP.on||MP.role!=='host')return toast('Só funciona como anfitrião da Noite Zero.');const s=MPST[MP.stage];if(s){const L=s.at();if(L){P.x=L.x;P.y=L.y+20;snapCamera();flowTile=-1;}if(s.hold)MP.prog=s.hold;}return;}
+      }
+      return;}
     if(!k.startsWith('v15:'))return da(k,ds);
     const c=k.slice(4),F=G.flags; this.close();
     if(c.startsWith('combo:')){const n=c.slice(6);let e=enemies.find(x=>x.alive&&x.type==='brandt');if(!e){F.brFight=true;e=spawnBrandt(P.x+40,P.y);}e.x=P.x+30;e.y=P.y;e.mode='stalk';e.lastCombo=null;
@@ -10804,6 +10830,495 @@ sewLid=function(){
   G.struggle=null; G.qte=null; sewExit();
 };
 Object.assign(INT_LABEL,{tampaSaida:'Subir a escada (saída)'});
+// ===================== 1.6: FLASHBACK · CLIMA · BRAVA E UNIVALI · (multiplayer em 19-mp.js) =====================
+const LOOKS={
+  richard:{richard:true,coat:'#1f2b4e',skin:'#d29d7c',hair:'#3a2415',pants:'#24262c'},
+  edu:{coat:'#18191c',skin:'#e2b79a',hair:'#2a1c12',pants:'#2a2c34',look:'edu'},
+  matheus:{coat:'#e8e6e0',skin:'#d9aa8c',hair:'#140f0c',pants:'#1c2230',look:'math'},
+  marlon:{coat:'#1c1e21',skin:'#e0b090',hair:'#1c120a',pants:'#22242a',look:'marlon'},
+  nicolas:{coat:'#d6c93a',skin:'#ecc8ae',hair:'#1a1210',pants:'#2a2a30',look:'nico'},
+};
+
+// ---------- CLIMA DINÂMICO ----------
+// chuva (normal) · tempestade (abafa passos, mais escuro) · neblina do mar (ninguém enxerga longe) · apagão (postes do bairro apagam)
+const WX={chuva:{n:'Chuva fina',sight:1,noise:1,dk:0},tempestade:{n:'Tempestade',sight:.85,noise:.6,dk:.06},neblina:{n:'Neblina do mar',sight:.55,noise:1,dk:.02},apagao:{n:'Apagão no bairro',sight:1,noise:1,dk:.08}};
+function wxSet(k,quiet){
+  if(!WX[k])return; G.wx=k; G.wxT=rr(170,320); G.wxSight=WX[k].sight; G._dkWx=WX[k].dk;
+  if(k==='apagao'){G.wxD=dAt((P.x/TILE)|0,(P.y/TILE)|0);}
+  if(quiet)return;
+  const msg={tempestade:'A chuva engrossou. O barulho abafa os seus passos... e os deles.',neblina:'A neblina subiu do mar. Não dá pra ver nada a dez metros.',apagao:'Os postes apagaram, um por um. O bairro inteiro ficou no escuro.',chuva:'A chuva afinou.'}[k];
+  toast(msg); if(k==='tempestade'){AU.thunder();G.light=Math.max(G.light,.5);} if(k==='apagao'){AU.thud(.6);AU.static(.6,.4);}
+}
+function wxTick(dt){
+  if(!G.wx)wxSet('chuva',true);
+  if(inSew()){G.wxSight=1;G._dkWx=0;return;}
+  G.wxSight=WX[G.wx].sight; G._dkWx=WX[G.wx].dk;
+  G.wxT-=dt; if(G.wxT<=0){const pd=dAt((P.x/TILE)|0,(P.y/TILE)|0), coast=pd===3||pd===7||pd===8||pd===2;
+    const opts=G.wx==='chuva'?{tempestade:3,neblina:coast?4:1.5,apagao:(pd>=5&&pd<=7)||pd===10?3:0}:{chuva:6};
+    wxSet(wpick(opts));}
+  if(G.wx==='tempestade'){G.lightT=Math.min(G.lightT,rr(4,9));if(AU.rainG&&AU.ctx&&!inSew())AU.rainG.gain.setTargetAtTime(.11,AU.ctx.currentTime,.8);}
+  else if(AU.rainG&&AU.ctx&&!inSew()&&G.ev.wxR!==G.wx)AU.rainG.gain.setTargetAtTime(.05,AU.ctx.currentTime,.8);
+  G.ev.wxR=G.wx;
+}
+let WXFOG=null;
+function drawWx(){
+  if(G.mode!=='play'&&G.mode!=='menu')return; if(inSew()||!G.wx)return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  if(G.wx==='tempestade'&&G.inB<0){ctx.strokeStyle='rgba(170,190,210,.16)';ctx.lineWidth=1.2;ctx.beginPath();for(let i=0;i<90;i++){const x=((i*137+renderT*900)%(view.w+200))-100,y=((i*251+renderT*1400)%(view.h+60))-30;ctx.moveTo(x,y);ctx.lineTo(x-6,y-22);}ctx.stroke();}
+  if(G.wx==='neblina'){
+    if(!WXFOG){WXFOG=document.createElement('canvas');WXFOG.width=256;WXFOG.height=256;const g=WXFOG.getContext('2d');for(let i=0;i<40;i++){const x=Math.random()*256,y=Math.random()*256,r=rr(30,80),gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(190,200,205,.14)');gr.addColorStop(1,'rgba(190,200,205,0)');g.fillStyle=gr;g.fillRect(0,0,256,256);}}
+    const ox=-(renderT*12+cam.x*.4)%256,oy=-(cam.y*.4)%256; ctx.globalAlpha=G.inB>=0?.35:.9;
+    for(let y=oy-256;y<view.h;y+=256)for(let x=ox-256;x<view.w;x+=256)ctx.drawImage(WXFOG,x,y);
+    ctx.globalAlpha=1; const g=ctx.createRadialGradient(view.w/2,view.h/2,Math.min(view.w,view.h)*.15,view.w/2,view.h/2,Math.max(view.w,view.h)*.6);g.addColorStop(0,'rgba(150,160,165,0)');g.addColorStop(1,`rgba(150,160,165,${G.inB>=0?.12:.38})`);ctx.fillStyle=g;ctx.fillRect(0,0,view.w,view.h);}
+}
+(function(){
+  const lo=lightOn; lightOn=function(l){if(G.wx==='apagao'&&(l.c==='lamp'||l.c==='neon'||l.c==='flood')&&l.b==null){const d=dAt((l.x/TILE)|0,(l.y/TILE)|0);if(d===G.wxD)return false;}return lo(l);};
+  const an=alertNoise; alertNoise=function(x,y,r){return an(x,y,r*(G.wx&&WX[G.wx]?WX[G.wx].noise:1));};
+})();
+
+// ---------- a região da BR e da Univali, mais clara de dia ----------
+function zoneLightTick(){ if(inZone()&&G.inB<0&&!inSew())G._dkZone=lerp(1,.62,daylight()); else if(inZone())G._dkZone=.85; else G._dkZone=0; }
+
+// ---------- FLASHBACK: 19h, o Matheus no porto, o contêiner T-00 ----------
+const FB={on:false,save:null,stage:0};
+STORY.flashStart=function(){
+  const F=G.flags; if(F.flashDone||FB.on)return;
+  F.flashDone=true; FB.save=JSON.parse(JSON.stringify(serialize())); FB.save.flags.flashDone=true;
+  playCut([{say:'matheus',m:'t',t:'Richard... antes de tudo isso. Eu tava no porto. No turno das sete. Eu vi quando abriram aquele contêiner.'},
+    {say:'matheus',m:'s',t:'Eu nunca contei pra ninguém o que eu vi. Nem pro Marlon.'},
+    {fx:'blackout',v:2},{do:()=>flashSetup()}],
+    ()=>{G.banner={t:'Porto de Itajaí · 19h04 · seis horas antes',life:4};});
+};
+function flashSetup(){
+  FB.on=true; FB.stage=0; G.flags.fbStage=0;
+  enemies=[]; projs=[]; G.comps=[]; G.wx='chuva'; G.clock=19*60+4;
+  for(let i=0;i<P.owned.length;i++)P.owned[i]=false; P.owned[8]=true; P.w=8; P.hp=P.max=100; P.lookO=LOOKS.matheus;
+  const c=LM.cais||{x:tc(140),y:tc(11)}; const [x,y]=freeTileNear(((c.x/TILE)|0)-28,((c.y/TILE)|0)+14,true); P.x=tc(x); P.y=tc(y); snapCamera(); flowTile=-1;
+  const [cx,cy]=freeTileNear((c.x/TILE)|0,((c.y/TILE)|0)+5,false); FB.cont={x:tc(cx),y:tc(cy)};
+  const [zx,zy]=freeTileNear(((c.x/TILE)|0)-4,((c.y/TILE)|0)+7,false);
+  npcs.push({id:'zeFB',name:'Seu Zé',look:null,x:tc(zx),y:tc(zy),col:'#d07a24',hair:'#5a5a56',skin:'#c89878',ang:0,cond:()=>FB.on&&FB.stage<3});
+  PCH.ze=PCH.ze||{name:'Seu Zé',skin:'#c89878',shade:'#9a6a50',hair:'#6a6a66',iris:'#3a2a1a',bg:['#3a2410','#120a04'],glow:'240,150,60',voice:100};
+}
+function flashObjective(){
+  const s=FB.stage, c=FB.cont||{x:P.x,y:P.y};
+  if(s===0)return {t:'(Matheus) Bata o ponto e fale com o Seu Zé perto do cais',at:{x:c.x-120,y:c.y+60}};
+  if(s===1)return {t:'(Matheus) Tem um caminhão branco da Vértice no cais. Chegue perto do contêiner T-00 sem ser visto',at:c};
+  if(s===2)return {t:'(Matheus) O que tem dentro bate na porta. Escute.',at:c};
+  return {t:'(Matheus) CORRE! Até o portão do porto!',at:FB.exit};
+}
+function flashTick(dt){
+  if(!FB.on||CUT.on)return; const c=FB.cont; if(!c)return;
+  G.clock=Math.min(G.clock,19*60+30);
+  if(FB.stage===0){const z=npcs.find(n=>n.id==='zeFB');if(z&&hyp(P.x-z.x,P.y-z.y)<120){FB.stage=1;
+    playCut([{npc:z,id:'ze'},{say:'ze',m:'n',t:'Matheus! Chegou atrasado de novo, guri. A faculdade te deixa assim.'},
+      {say:'matheus',m:'n',t:'Prova amanhã, Seu Zé. Que caminhão é aquele?'},
+      {say:'ze',m:'t',t:'Vértice. Chegaram às seis com papelada do Ministério. Não deixam ninguém chegar perto do contêiner zero.'},
+      {say:'ze',m:'s',t:'E ele tá batendo, Matheus. Faz uma hora que tá batendo por dentro.'}]);}}
+  else if(FB.stage===1){if(hyp(P.x-c.x,P.y-c.y)<140){FB.stage=2;FB.t=0;AU.knock();}
+    FB.bt=(FB.bt||0)-dt;if(FB.bt<=0){FB.bt=rr(1.2,2.2);AU.thud(clamp(1-hyp(P.x-c.x,P.y-c.y)/700,.1,.9));G.shake+=1;}}
+  else if(FB.stage===2){FB.t+=dt;FB.bt=(FB.bt||0)-dt;if(FB.bt<=0){FB.bt=rr(.5,.9);AU.thud(1);AU.knock();G.shake+=3;FB.door=(FB.door||0)+1;}
+    if(FB.t>4.5){FB.stage=3;flashBurst();}}
+  else if(FB.stage===3){if(FB.exit&&hyp(P.x-FB.exit.x,P.y-FB.exit.y)<90)flashEnd();
+    if(P.hp<25)P.hp=25;}
+}
+function flashBurst(){
+  const c=FB.cont, z=npcs.find(n=>n.id==='zeFB');
+  playCut([{fx:'shake',v:20},{sfx:'bigBoom',v:.5},{do:()=>{FB.open=1;for(let i=0;i<40;i++)parts.push({k:'debris',x:c.x,y:c.y,vx:rr(-300,300),vy:rr(-300,300),life:.8,max:.8,s:rr(2,5),c:'#5a6068'});}},
+    {cam:{x:c.x,y:c.y},t:.8},{fx:'slow',v:.8},
+    {say:'matheus',m:'s',t:'A porta... a porta do contêiner entortou pra fora.'},
+    {do:()=>{FB.arm=1;AU.roar();AU.scream(1);if(z){bloodBurst(z.x,z.y,40,0);GORE.push({k:'corpse',x:z.x,y:z.y,rot:1,type:'zumbi',col:'#d07a24',skin:'#c89878',r:11});addDecal({k:'blood',x:z.x,y:z.y,r:34,rot:0,seed:.4});}}},{fx:'shake',v:14},
+    {say:'matheus',m:'s',t:'SEU ZÉ!'},
+    {say:'matheus',m:'s',think:true,t:'Um braço. Branco. Do tamanho de um carro. Puxou ele pra dentro inteiro.',dur:2.4},
+    {do:()=>{for(let i=0;i<6;i++){const a=Math.random()*6.283,d=rr(160,260);const [x,y]=freeTileNear(((c.x+Math.cos(a)*d)/TILE)|0,((c.y+Math.sin(a)*d)/TILE)|0,false);const e=makeEnemy(i<2?'corr':'zumbi',tc(x),tc(y),null);e.col='#d07a24';e.state='chase';e.hunt=true;e.huntT=60;e.lx=P.x;e.ly=P.y;enemies.push(e);}
+      const [ex,ey]=freeTileNear(((P.x/TILE)|0)-30,((P.y/TILE)|0)+12,true);FB.exit={x:tc(ex),y:tc(ey)};}},
+    {say:'matheus',m:'s',think:true,t:'Os outros estivadores... estão levantando. CORRE.',dur:1.6},{camFree:1}]);
+}
+function flashEnd(){
+  FB.stage=4;
+  playCut([{fx:'blackout',v:2},{say:'matheus',m:'t',t:'Eu corri até a Univali. Três horas andando no escuro. Não contei pra ninguém. Achei que ninguém ia acreditar.'},
+    {say:'matheus',m:'s',t:'Aquilo é o T-00, Richard. E ele ainda tá no porto.'}],
+    ()=>{FB.on=false;const s=FB.save;FB.save=null;P.lookO=null;try{loadState(s);G.mode='play';G.flags.flashDone=true;toast('De volta ao presente.');if(typeof ach==='function')ach('flash');}catch(e){console.error(e);}});
+}
+function drawFlash(){
+  if(!FB.on||!FB.cont)return; const c=FB.cont; if(!inV(c.x,c.y,200))return;
+  ctx.save();ctx.translate(c.x,c.y);ctx.fillStyle='#3a4a5a';ctx.fillRect(-60,-26,120,52);ctx.fillStyle='#2a3440';for(let x=-56;x<60;x+=8)ctx.fillRect(x,-26,3,52);
+  ctx.fillStyle='#d8d4c8';ctx.font='700 14px sans-serif';ctx.textAlign='center';ctx.fillText('T-00',0,4);
+  const shake=FB.stage===2?rr(-2,2):0;ctx.fillStyle=FB.open?'#1a1e22':'#4a5a6a';ctx.fillRect(56+shake,-24,FB.open?18:6,48);
+  if(FB.arm){ctx.fillStyle='#d8d0c0';ctx.beginPath();ctx.moveTo(60,-12);ctx.quadraticCurveTo(110,-40,150,-6);ctx.lineTo(160,4);ctx.quadraticCurveTo(110,-10,60,12);ctx.closePath();ctx.fill();ctx.strokeStyle='#8a3a30';ctx.lineWidth=2;for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(150,-4+i*3);ctx.lineTo(168,-10+i*6);ctx.stroke();}}
+  ctx.restore();
+  ctx.fillStyle='#e8e8e4';ctx.fillRect(c.x-160,c.y-20,70,34);ctx.fillStyle='#1a1a1a';ctx.font='700 9px sans-serif';ctx.textAlign='center';ctx.fillText('VÉRTICE',c.x-125,c.y);
+}
+
+// ---------- BRAVA: mais coisas pra fazer ----------
+(function(){
+  const g=genV12; genV12=function(){g();
+    if(LM.mirante){const [x,y]=freeTileNear(((LM.mirante.x/TILE)|0)+2,(LM.mirante.y/TILE)|0,false);addInteract(x,y,'binoculo',37);LM.binoculo={x:tc(x),y:tc(y)};}
+    // barco encalhado na areia da Brava
+    let sp=null;for(let y=126;y<138&&!sp;y++)for(let x=176;x<200;x++)if(getT(x,y)===T.SAND&&getT(x+1,y)===T.SAND&&getT(x+2,y)===T.SAND&&getT(x,y+1)===T.SAND){sp=[x,y];break;}
+    if(sp){addInteract(sp[0],sp[1],'barco',27);LM.barco={x:tc(sp[0]),y:tc(sp[1])};}
+  };
+})();
+function binoculoUse(){
+  const F=G.flags; const B=LM.oficina||{x:tc(140),y:tc(300)};
+  playCut([{say:'rafa',m:'n',t:'Um binóculo de moeda, desses de turista. Ainda tem uma moeda presa.'},
+    {cam:{x:tc(110),y:tc(250)},t:2.6},{fx:'zoom',v:.8},
+    {say:'rafa',m:'s',think:true,t:F.inibidorDone?'Balneário inteira apagada. Só o fogo. E alguma coisa enorme andando na Avenida Atlântica.':'Dá pra ver Balneário inteira daqui. Os prédios pegando fogo, um atrás do outro, como vela.',dur:3},
+    {cam:{x:tc(60),y:tc(30)},t:2.2},
+    {say:'rafa',m:'t',think:true,t:'E lá longe, o porto. Com as luzes acesas. Ainda tem alguém lá.',dur:2.4},{fx:'zoom',v:1},{camFree:1}],
+    ()=>{if(!F.binoc){F.binoc=true;ach('binoculo');}});
+}
+function barcoUse(){
+  const F=G.flags; if(F.barco)return toast('O barco está vazio. Só água e areia lá dentro.');
+  F.barco=true; AU.creak(.6);
+  for(const [id,q] of [['m9',14],['ervaV',1],['pilha',1]]){const l=invAdd(id,q);if(l)boxAdd(id,l);}
+  toast('Dentro do barco: munição, uma erva e uma pilha. E um celular com 47 chamadas perdidas.');
+  later(900,()=>{const a=Math.random()*6.283;for(let i=0;i<3;i++){const [x,y]=freeTileNear(((P.x+Math.cos(a+i)*140)/TILE)|0,((P.y+Math.sin(a+i)*140)/TILE)|0,false);const e=makeEnemy('afog',tc(x),tc(y),null);e.rising=1;e.state='chase';e.lx=P.x;e.ly=P.y;enemies.push(e);}AU.splash(1);bark('rafa','s','Tem gente saindo da água!');});
+}
+
+// ---------- UNIVALI: missões pequenas ----------
+// A prova do Rese: três folhas espalhadas · o fone do Matheus · a formatura no Foyer
+(function(){
+  const g=genV12; genV12=function(){g();
+    const B=n=>buildings.find(b=>b.name&&b.name.startsWith(n));
+    let k=0; for(const n of ['Bloco 4','Bloco 5','Bloco 9']){const b=B(n);if(!b)continue;const [x,y]=freeTileNear(b.x+((b.w/2)|0),b.y+((b.h/2)|0),false);pickups.push({uid:'prova'+k,tx:x,ty:y,x:tc(x),y:tc(y),id:'folhaProva',q:1,kind:'item'});pickOcc.add(idx(x,y));k++;}
+    {const b=B('Bloco 9');if(b){const [x,y]=freeTileNear(b.x+2,b.y+2,false);pickups.push({uid:'foneMat',tx:x,ty:y,x:tc(x),y:tc(y),id:'foneMat',q:1,kind:'item'});pickOcc.add(idx(x,y));}}
+    {const b=B('Foyer');if(b){LM.foyerIn={x:tc(b.x+b.w/2),y:tc(b.y+b.h/2)};}}
+  };
+})();
+Object.assign(ITEMS,{
+  folhaProva:{n:'Folha da prova do Rese',s:'PROVA',c:'#e8e4d8',st:3,k:'key',d:'Uma folha da prova de recuperação, com o nome RICHARD escrito no topo pelo professor. Tem mais duas espalhadas pelos blocos.'},
+  foneMat:{n:'Fone do Matheus',s:'FONE',c:'#2a2a2e',st:1,k:'key',d:'O fone de ouvido do Matheus, todo enrolado. Ele esqueceu no estúdio do Bloco 9.'},
+});
+Object.assign(INT_LABEL,{binoculo:'Binóculo de moeda',barco:'Barco encalhado'});
+function uniMissionsTick(dt){
+  const F=G.flags;
+  if(!F.provaDone&&invCount('folhaProva')>=3&&LM.sala102&&hyp(P.x-LM.sala102.x,P.y-LM.sala102.y)<120&&!CUT.on){F.provaDone=true;invRemove('folhaProva',3);
+    playCut([{say:'rafa',m:'h',think:true,t:'Três folhas. A prova inteira. Vou deixar na mesa dele.',dur:2},
+      ...(F.matFollow?[{say:'matheus',m:'a',t:'Tu vai FAZER a prova? No meio do apocalipse?'},{say:'rafa',m:'h',t:'Ele disse que eu ia fazer nem que fosse no helicóptero.'}]:[]),
+      {do:()=>{const l=invAdd('calmante',2);if(l)boxAdd('calmante',l);ach('prova');toast('Prova entregue. Na gaveta do professor: dois calmantes e um bilhete: "Bom trabalho. Nota 7."');}}]);}
+  if(!F.foneDone&&invCount('foneMat')>0&&F.matFollow&&compOf('matheus')&&hyp(compOf('matheus').x-P.x,compOf('matheus').y-P.y)<120&&!CUT.on){F.foneDone=true;invRemove('foneMat',1);
+    playCut([{say:'rafa',m:'h',t:'Matheus. Toma. Teu fone de nerd.'},{say:'matheus',m:'h',t:'MEU FONE! ...Valeu, mano. Sério.'},{say:'matheus',m:'a',t:'Mas não é de nerd.'},
+      {do:()=>{const l=invAdd('pecas',2);if(l)boxAdd('pecas',l);toast('O Matheus te deu duas peças de arma que ele guardava na mochila.');}}]);}
+  // a formatura que não aconteceu
+  if(!F.formatura&&LM.foyerIn&&inZone()&&hyp(P.x-LM.foyerIn.x,P.y-LM.foyerIn.y)<160&&!CUT.on){F.formatura=true;
+    AU.tn(392,392,.6,'triangle',.05);AU.tn(523,523,.6,'triangle',.05,.6);AU.tn(659,659,1.2,'triangle',.05,1.2);
+    for(let i=0;i<8;i++)AU.nz(.2,1800,1,.06,'bandpass',2+i*.12);
+    psyFloat(LM.foyerIn.x,LM.foyerIn.y-40,'(aplausos)',{life:2.4,c:'#d8d0b8',size:13});
+    later(2600,()=>{bark('rafa','s','Tem gente de beca no palco... de chapéu de formatura. Aplaudindo. Não tem plateia.');
+      for(let i=0;i<5;i++){const [x,y]=freeTileNear(((LM.foyerIn.x)/TILE|0)+ri(-4,4),((LM.foyerIn.y)/TILE|0)-ri(2,4),false);const e=makeEnemy('zumbi',tc(x),tc(y),null);e.col='#141418';e.state='chase';e.lx=P.x;e.ly=P.y;enemies.push(e);}AU.roar();});}
+}
+if(typeof ACH!=='undefined')ACH.push({id:'prova',n:'Nota 7',d:'Entregue a prova de recuperação do professor Rese.'},{id:'binoculo',n:'Vista do mirante',d:'Olhe Balneário pelo binóculo do Morro do Careca.'},{id:'flash',n:'Seis horas antes',d:'Jogue a lembrança do Matheus no porto.'});
+
+// ---------- ganchos ----------
+(function(){
+  const vi=v12Interact; v12Interact=function(o){if(o.type==='binoculo')return binoculoUse();if(o.type==='barco')return barcoUse();return vi(o);};
+  const vt=v16Tick; v16Tick=function(dt){vt(dt);if(G.mode!=='play')return;zoneLightTick();if(CUT.on)return;wxTick(dt);flashTick(dt);uniMissionsTick(dt);
+    // o flashback começa logo depois que o Matheus entra no grupo (fora de perigo)
+    const F=G.flags; if(F.uniDone&&F.uniMat&&!F.flashDone&&!FB.on&&!G.ev.uniWave&&!enemies.some(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<500)){G.ev.fbT=(G.ev.fbT||0)+dt;if(G.ev.fbT>6)STORY.flashStart();}};
+  const ob=objective; objective=function(){if(FB.on)return flashObjective();return ob();};
+  const dp=drawParts; drawParts=function(){dp();drawFlash();};
+  const ds=drawPsy; drawPsy=function(){drawWx();ds();};
+  const rs=resetState; resetState=function(d){rs(d);G.wx=null;FB.on=false;P.lookO=null;};
+  // durante o flashback não dá pra salvar
+  const sv=UI.save.bind(UI); UI.save=function(){if(FB.on){toast('Isso é uma lembrança. Não dá pra salvar aqui.');return;}return sv();};
+  const di=die; die=function(){if(FB.on){P.hp=30;toast('O Matheus tropeçou, mas levantou. Corre!');return;}return di();};
+})();
+// no flashback só o Matheus (e quem estava no porto) fala: nada de comentários do Richard ou do grupo
+(function(){const b=bark;bark=function(who){if(FB.on&&who!=='matheus'&&who!=='zeFB'&&who!=='ze')return;return b.apply(this,arguments);};})();
+// ===================== MULTIPLAYER LOCAL (BETA) · CONTA =====================
+// Até 5 jogadores na mesma rede, sem servidor: os aparelhos se ligam direto (WebRTC) trocando um código
+// de convite. Quem cria a sala roda o mundo (zumbis, objetivos) e manda a "foto" do jogo pros outros.
+// O modo solo não é afetado: o multiplayer é um modo separado, com uma história curta (Noite Zero).
+
+// ---------- CONTA (fica salva neste aparelho) ----------
+const CONTA_KEY='ps-conta';
+const CONTA_CORES=['#d9a33c','#c84a3a','#4a9ad8','#5ac07a','#b06ad8','#e8e0d0','#e87aa8','#3ac8c0'];
+const MP_CHARS=[['richard','Richard'],['edu','Edu'],['matheus','Matheus'],['marlon','Marlon'],['nicolas','Nicolas']];
+function contaGet(){try{return JSON.parse(localStorage.getItem(CONTA_KEY)||'null');}catch(e){return null;}}
+function contaSave(c){try{localStorage.setItem(CONTA_KEY,JSON.stringify(c));}catch(e){}}
+UI.conta=function(from){
+  this.contaFrom=from||'title'; const c=contaGet()||{nome:'',apelido:'',cor:CONTA_CORES[0],fav:'richard',frase:''};
+  this.open(`<div class="sheet narrow"><p class="kick">${contaGet()?'Sua conta':'Bem-vindo'}</p><h2>${contaGet()?'Editar conta':'Criar conta'}</h2>
+    <p class="hint">A conta fica salva neste aparelho e aparece pros outros no multiplayer. Mais pra frente, com servidor, ela vai pra nuvem.</p>
+    <div class="opts">
+      <div class="opt"><h3>Nome</h3><input id="ct-nome" class="inp" maxlength="24" value="${esc(c.nome)}" placeholder="Richard Klettke"></div>
+      <div class="opt"><h3>Apelido (aparece em cima do boneco)</h3><input id="ct-apel" class="inp" maxlength="14" value="${esc(c.apelido)}" placeholder="richardkkbatata"></div>
+      <div class="opt"><h3>Cor</h3><div class="seg">${CONTA_CORES.map(k=>`<button data-a="ct-cor" data-k="${k}" class="${k===c.cor?'on':''}" style="background:${k};min-width:34px" aria-label="Cor ${k}">${k===c.cor?'✓':'&nbsp;'}</button>`).join('')}</div></div>
+      <div class="opt"><h3>Personagem preferido</h3><div class="seg">${MP_CHARS.map(([k,n])=>`<button data-a="ct-fav" data-k="${k}" class="${k===c.fav?'on':''}">${n}</button>`).join('')}</div></div>
+      <div class="opt"><h3>Frase (aparece no lobby)</h3><input id="ct-frase" class="inp" maxlength="40" value="${esc(c.frase||'')}" placeholder="Bora sobreviver"></div>
+      ${c.jogos?`<p class="hint">Partidas no multiplayer: ${c.jogos||0} · Vitórias: ${c.vit||0}</p>`:''}
+    </div>
+    <div class="row"><button class="btn primary" data-a="ct-ok" data-focus>Salvar</button><button class="btn ghost" data-a="ct-back">${contaGet()?'Voltar':'Depois'}</button></div></div>`,'','conta');
+  this.ctTmp=c;
+};
+function contaRead(){const t=UI.ctTmp||{};const v=id=>{const e=document.getElementById(id);return e&&e.value!=null?String(e.value).trim():'';};
+  const c=Object.assign({},contaGet()||{},{nome:v('ct-nome')||t.nome||'Sobrevivente',apelido:v('ct-apel')||t.apelido||'',cor:t.cor||CONTA_CORES[0],fav:t.fav||'richard',frase:v('ct-frase')||t.frase||''});
+  if(!c.apelido)c.apelido=c.nome.split(' ')[0].slice(0,14); if(!c.criado)c.criado=Date.now(); if(!c.id)c.id=Math.random().toString(36).slice(2,10); return c;}
+
+// ---------- WEBRTC sem servidor: códigos de convite ----------
+const MP={on:false,role:null,peers:[],me:null,players:{},myId:'0',sendT:0,snapT:0,lobby:[],stage:0,prog:0,objT:'',objAt:null,startT:0,nid:1,ghosts:new Map()};
+function b64e(buf){let s='';const b=new Uint8Array(buf);for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s);}
+function b64d(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}
+async function mpEnc(o){const s=JSON.stringify(o);try{if(typeof CompressionStream!=='undefined'){const cs=new CompressionStream('deflate-raw');const w=cs.writable.getWriter();w.write(new TextEncoder().encode(s));w.close();return 'Z'+b64e(await new Response(cs.readable).arrayBuffer());}}catch(e){}return 'J'+btoa(unescape(encodeURIComponent(s)));}
+async function mpDec(code){code=String(code||'').replace(/\s+/g,'');if(code[0]==='Z'){const ds=new DecompressionStream('deflate-raw');const w=ds.writable.getWriter();w.write(b64d(code.slice(1)));w.close();return JSON.parse(new TextDecoder().decode(await new Response(ds.readable).arrayBuffer()));}return JSON.parse(decodeURIComponent(escape(atob(code.slice(1)))));}
+function mpIce(pc){return new Promise(r=>{if(pc.iceGatheringState==='complete')return r();const t=setTimeout(r,3000);pc.addEventListener('icegatheringstatechange',()=>{if(pc.iceGatheringState==='complete'){clearTimeout(t);r();}});});}
+function mpPC(){return new RTCPeerConnection({iceServers:[]});}
+function mpWire(peer){
+  const dc=peer.dc;
+  dc.onopen=()=>{peer.open=true;if(MP.role==='guest')mpSend({t:'hello',c:MP.me});UI.cur==='mp'&&UI.mp();};
+  dc.onclose=()=>{peer.open=false;if(MP.role==='host'){delete MP.players[peer.id];mpLobbyCast();toast('Um jogador saiu da sala.');}else{toast('A conexão com a sala caiu.');}UI.cur==='mp'&&UI.mp();};
+  dc.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}mpRecv(m,peer);};
+}
+async function mpHostInvite(){
+  if(MP.peers.filter(p=>p.open||p.pending).length>=4){toast('A sala já tem 5 jogadores.');return;}
+  const pc=mpPC(), dc=pc.createDataChannel('ps',{ordered:true}), id=String(MP.nid++), peer={id,pc,dc,pending:true,open:false};
+  MP.peers.push(peer); mpWire(peer);
+  await pc.setLocalDescription(await pc.createOffer()); await mpIce(pc);
+  peer.code=await mpEnc({t:'o',id,s:pc.localDescription.sdp}); UI.mp();
+}
+async function mpHostAnswer(id,code){
+  const peer=MP.peers.find(p=>p.id===id); if(!peer)return;
+  try{const a=await mpDec(code);if(a.t!=='a')throw 0;await peer.pc.setRemoteDescription({type:'answer',sdp:a.s});peer.pending=false;peer.code=null;toast('Conectando...');}catch(e){toast('Código de resposta inválido.');}
+  UI.mp();
+}
+async function mpJoin(code){
+  try{const o=await mpDec(code);if(o.t!=='o')throw 0;
+    const pc=mpPC(), peer={id:'0',pc,open:false}; MP.peers=[peer]; MP.myId=o.id;
+    pc.ondatachannel=e=>{peer.dc=e.channel;mpWire(peer);};
+    await pc.setRemoteDescription({type:'offer',sdp:o.s}); await pc.setLocalDescription(await pc.createAnswer()); await mpIce(pc);
+    MP.answer=await mpEnc({t:'a',s:pc.localDescription.sdp}); UI.mp();
+  }catch(e){toast('Código de convite inválido.');}
+}
+function mpSend(m,peer){const s=JSON.stringify(m);if(peer){if(peer.open&&peer.dc.readyState==='open')peer.dc.send(s);return;}for(const p of MP.peers)if(p.open&&p.dc&&p.dc.readyState==='open')try{p.dc.send(s);}catch(e){}}
+function mpLobbyCast(){if(MP.role!=='host')return;MP.lobby=[{id:'0',...MP.me},...Object.entries(MP.players).map(([id,p])=>({id,...p.c}))];mpSend({t:'lobby',l:MP.lobby});}
+function mpFreeChar(want,taken){if(!taken.includes(want))return want;return (MP_CHARS.find(([k])=>!taken.includes(k))||['richard'])[0];}
+
+// ---------- mensagens ----------
+function mpRecv(m,peer){
+  switch(m.t){
+    case 'hello':{if(MP.role!=='host')return;const taken=[MP.me.char,...Object.values(MP.players).map(p=>p.c.char)];
+      const c=Object.assign({},m.c,{char:mpFreeChar(m.c.char||m.c.fav||'edu',taken)});MP.players[peer.id]={c,peer,x:0,y:0,ang:0,hp:100,w:1};
+      mpSend({t:'you',id:peer.id,char:c.char},peer);mpLobbyCast();UI.cur==='mp'&&UI.mp();toast(`${c.apelido||c.nome} entrou na sala.`);if(MP.on)mpSend({t:'start',...mpStartInfo()},peer);break;}
+    case 'you':MP.myId=m.id;MP.me.char=m.char;UI.cur==='mp'&&UI.mp();break;
+    case 'lobby':MP.lobby=m.l;UI.cur==='mp'&&UI.mp();break;
+    case 'pick':{if(MP.role!=='host')return;const p=MP.players[peer.id];if(!p)return;const taken=[MP.me.char,...Object.entries(MP.players).filter(([i])=>i!==peer.id).map(([,q])=>q.c.char)];if(!taken.includes(m.char))p.c.char=m.char;mpSend({t:'you',id:peer.id,char:p.c.char},peer);mpLobbyCast();UI.cur==='mp'&&UI.mp();break;}
+    case 'start':if(MP.role==='guest')mpBegin(m);break;
+    case 'st':{const p=MP.role==='host'?MP.players[peer.id]:null;if(p){Object.assign(p,m.s);}break;}
+    case 'snap':if(MP.role==='guest')mpApplySnap(m);break;
+    case 'shot':{if(MP.role==='host'){mpHostShot(m,peer.id);mpSend(m);}else mpFxShot(m);break;}
+    case 'mel':if(MP.role==='host')mpHostMelee(m);break;
+    case 'hurt':if(MP.role==='guest'&&G.mode==='play'){mpHurtLocal(m.d,m.x,m.y);}break;
+    case 'tp':if(G.mode==='play'){const [x,y]=freeTileNear(((m.x+rr(-40,40))/TILE)|0,((m.y+rr(-40,40))/TILE)|0,true);P.x=tc(x);P.y=tc(y);snapCamera();flowTile=-1;}break;
+    case 'bark':bark(m.w,m.m||'n',m.s,{radio:!!m.r});break;
+    case 'gift':for(const [id,q] of m.g){const l=invAdd(id,q);if(l)boxAdd(id,l);}toast(m.msg||'Você recebeu suprimentos.');AU.pickup();break;
+    case 'end':mpEnd(m.win);break;
+  }
+}
+
+// ---------- tela do multiplayer ----------
+UI.mp=function(){
+  if(!contaGet())return this.conta('mp');
+  if(!MP.me){const c=contaGet();MP.me={nome:c.nome,apelido:c.apelido,cor:c.cor,frase:c.frase||'',char:c.fav||'richard',cid:c.id};}
+  const hasRTC=typeof RTCPeerConnection!=='undefined';
+  const lst=(MP.role==='host'?[{id:'0',...MP.me},...Object.entries(MP.players).map(([id,p])=>({id,...p.c}))]:MP.lobby).map(p=>`<div class="mpp"><span class="dot" style="background:${p.cor}"></span><b>${esc(p.apelido||p.nome)}</b> <span class="dim">· ${esc((MP_CHARS.find(c=>c[0]===p.char)||[0,p.char])[1])}${p.id==='0'?' · anfitrião':''}</span>${p.frase?`<small>"${esc(p.frase)}"</small>`:''}</div>`).join('')||'<p class="hint">Ninguém na sala ainda.</p>';
+  const taken=(MP.role==='host'?[MP.me.char,...Object.values(MP.players).map(p=>p.c.char)]:MP.lobby.map(p=>p.char));
+  const chars=`<div class="seg">${MP_CHARS.map(([k,n])=>`<button data-a="mp-char" data-k="${k}" class="${MP.me.char===k?'on':''}" ${taken.includes(k)&&MP.me.char!==k?'disabled':''}>${n}</button>`).join('')}</div>`;
+  let body='';
+  if(!hasRTC)body='<p class="hint">Este navegador não tem a conexão direta entre aparelhos (WebRTC). Use o Chrome, o Edge ou o Safari atualizados.</p>';
+  else if(!MP.role)body=`<p class="hint">Todo mundo precisa estar na <b>mesma rede Wi-Fi</b>. Um cria a sala; os outros entram com o código de convite (mande pelo WhatsApp, por exemplo).</p>
+    <div class="row"><button class="btn primary" data-a="mp-host">Criar sala</button><button class="btn" data-a="mp-joinui">Entrar numa sala</button></div>`;
+  else if(MP.role==='host'){
+    const pend=MP.peers.filter(p=>p.pending).map(p=>`<div class="opt"><h3>Convite ${p.id}</h3>${p.code?`<p class="hint">1. Copie este código e mande pro amigo:</p><textarea class="inp code" readonly rows="3" onclick="this.select()">${p.code}</textarea><button class="btn ghost" data-a="mp-copy" data-k="${p.id}">Copiar código</button>
+      <p class="hint">2. Cole aqui o código de resposta que ele te mandar:</p><textarea id="mp-ans-${p.id}" class="inp code" rows="3" placeholder="código de resposta"></textarea><button class="btn" data-a="mp-ans" data-k="${p.id}">Conectar</button>`:'<p class="hint">Gerando código...</p>'}</div>`).join('');
+    body=`<h3>Seu personagem</h3>${chars}<h3>Jogadores (${1+Object.keys(MP.players).length}/5)</h3><div class="mplist">${lst}</div>
+      <div class="opts">${pend}</div>
+      <div class="row"><button class="btn" data-a="mp-invite" ${MP.peers.filter(p=>p.open||p.pending).length>=4?'disabled':''}>Convidar jogador</button><button class="btn primary" data-a="mp-start">Começar a Noite Zero</button></div>`;
+  } else {
+    const open=MP.peers[0]&&MP.peers[0].open;
+    body=open?`<h3>Seu personagem</h3>${chars}<h3>Na sala</h3><div class="mplist">${lst}</div><p class="hint">Esperando o anfitrião começar...</p>`
+      :MP.answer?`<p class="hint">Mande este código de resposta pro anfitrião e espere ele conectar:</p><textarea class="inp code" readonly rows="3" onclick="this.select()">${MP.answer}</textarea><button class="btn ghost" data-a="mp-copy" data-k="ans">Copiar código</button>`
+      :`<p class="hint">Cole o código de convite que o anfitrião te mandou:</p><textarea id="mp-inv" class="inp code" rows="4" placeholder="código de convite"></textarea><div class="row"><button class="btn primary" data-a="mp-join">Entrar</button></div>`;
+  }
+  this.open(`<div class="sheet wide"><div class="tabs"><p class="kick">Beta · mesma rede, até 5 jogadores</p><h2 style="margin-right:auto">Multiplayer</h2><button class="btn ghost" data-a="mp-leave">Sair</button></div>
+    <div class="mpme"><span class="dot" style="background:${MP.me.cor}"></span><b>${esc(MP.me.apelido)}</b> <button class="btn ghost mini" data-a="conta" data-from="mp">Editar conta</button></div>
+    ${body}
+    <p class="hint">Noite Zero (beta): uma história curta só do multiplayer. Não mexe no seu jogo solo nem no save.</p></div>`,'','mp');
+};
+function mpStartInfo(){const pl={'0':{...MP.me}};for(const [id,p] of Object.entries(MP.players))pl[id]={...p.c};return {pl,diff:'normal'};}
+function mpEnd(win){
+  if(!MP.on)return; MP.on=false; G.mp=null; const c=contaGet(); if(c){c.jogos=(c.jogos||0)+1;if(win)c.vit=(c.vit||0)+1;contaSave(c);}
+  if(MP.role==='host')mpSend({t:'end',win});
+  G.mode='menu';
+  UI.open(`<div class="sheet narrow win"><p class="kick">Noite Zero · beta</p><h2 class="endt">${win?'Vocês sobreviveram':'Ninguém saiu da biblioteca'}</h2>
+    <p>${win?'A turma inteira atravessou a BR e segurou a Univali até o amanhecer. Por enquanto.':'A noite venceu dessa vez.'}</p>
+    <p class="hint">O multiplayer completo vem numa próxima versão. Obrigado por testar!</p>
+    <div class="row"><button class="btn primary" data-a="mp-leave">Voltar ao título</button></div></div>`,'','win');
+}
+
+// ---------- começar a partida ----------
+function mpBegin(info){
+  MP.on=true; MP.info=info; MP.stage=0; MP.endT=null; MP.allDownT=0; MP.prog=0; MP.startT=Date.now();
+  newGame(info.diff||'normal'); G.mp={role:MP.role}; const F=G.flags; F.tutDone=true; G.tut=null; F.mpMode=true; F.armed=true; F.walkie=true;
+  UI.close(); G.mode='play'; document.getElementById('tc').hidden=!IN.touch;
+  const me=info.pl[MP.myId]||MP.me; mpSetChar(me.char);
+  const off=+MP.myId*28; P.x=START.x+off; P.y=START.y+12; snapCamera(); flowTile=-1;
+  MP.remote={}; for(const [id,p] of Object.entries(info.pl))if(id!==MP.myId)MP.remote[id]={...p,x:START.x+(+id)*28,y:START.y+12,tx:START.x,ty:START.y,ang:0,hp:100,w:1};
+  G.banner={t:'Noite Zero',life:3.5}; toast('Multiplayer beta: fiquem juntos. Ninguém sai sozinho.');
+  if(MP.role==='host')mpObjBark(0);
+}
+function mpSetChar(ch){
+  P.lookO=LOOKS[ch]||LOOKS.richard; MP.myChar=ch;
+  const kit={richard:[[1,'m9',36]],edu:[[1,'m9',36]],matheus:[[2,'cart',12]],marlon:[[4,'m357',12]],nicolas:[[7,'virote',14],[null,'rojao',2]]}[ch]||[[1,'m9',24]];
+  P.owned[0]=true;
+  for(const [w,a,q] of kit){if(w!=null){P.owned[w]=true;P.mags[w]=WEAPONS[w].mag;P.w=w;}invAdd(a,q);} invAdd('ervaV',2); mSync&&mSync();
+}
+// ---------- a Noite Zero (história curta do beta) ----------
+const MPST=[
+  {t:'Reúnam-se na Oficina do Tião, na Barra Sul',at:()=>LM.oficina,done:()=>mpAll(LM.oficina,320),bark:['edu','n','Todo mundo vivo? Ótimo. Pela primeira vez na vida, todo mundo no horário.']},
+  {t:'Peguem suprimentos no Supermercado Bom Preço',at:()=>LM.mercado,done:()=>mpAny(LM.mercado,130),bark:['marlon','n','Mercado limpo. Pega o que der e bora, que o barulho atrai.'],gift:[['m9',18],['cart',6],['ervaV',1],['pilha',1]]},
+  {t:'Religuem o quadro de força da Delegacia: fiquem perto por 8 segundos',at:()=>LM.fusebox,hold:8,r:120,bark:['nico','n','Luz voltou. Viu? Serviço público funciona quando alguém faz.']},
+  {t:'Atravessem o túnel da BR-101, no fim da Avenida do Estado',at:()=>LM.tunel,done:()=>mpAny(LM.tunel,110),tp:()=>LM.zoneIn,bark:['matheus','s','A Univali tá do outro lado. A biblioteca do 6A aguenta qualquer coisa.']},
+  {t:'Defendam a biblioteca da Univali (Bloco 6A) até o amanhecer: 90 segundos',at:()=>LM.uniBib,hold:90,r:600,wave:true,bark:['marlon','a','Amanheceu. A gente conseguiu. A turma inteira. Até o Edu chegou no horário.']},
+];
+function mpPlayersPos(){const out=[{id:MP.myId,x:P.x,y:P.y,hp:P.hp}];for(const [id,p] of Object.entries(MP.players||{}))out.push({id,x:p.x,y:p.y,hp:p.hp});return out;}
+function mpAll(L,r){if(!L)return true;return mpPlayersPos().every(p=>p.hp<=0||hyp(p.x-L.x,p.y-L.y)<r);}
+function mpAny(L,r){if(!L)return true;return mpPlayersPos().some(p=>p.hp>0&&hyp(p.x-L.x,p.y-L.y)<r);}
+function mpObjBark(i){const b=MPST[i]&&MPST[i].bark;}
+function mpHostStage(dt){
+  if(MP.endT!=null){MP.endT-=dt;if(MP.endT<=0){MP.endT=null;mpEnd(true);}return;}
+  const s=MPST[MP.stage]; if(!s)return;
+  let done=false;
+  if(s.hold){if(mpAny(s.at(),s.r)){MP.prog+=dt;if(s.wave){MP.wv=(MP.wv||0)-dt;if(MP.wv<=0){MP.wv=rr(2,3.2);mpWave(s.at());}}}done=MP.prog>=s.hold;}
+  else done=s.done();
+  if(done){
+    if(s.bark){bark(s.bark[0],s.bark[1],s.bark[2]);mpSend({t:'bark',w:s.bark[0],m:s.bark[1],s:s.bark[2]});}
+    if(s.gift){for(const [id,q] of s.gift){const l=invAdd(id,q);if(l)boxAdd(id,l);}mpSend({t:'gift',g:s.gift,msg:'Suprimentos do mercado divididos entre todos.'});}
+    if(s.tp){const L=s.tp();mpSend({t:'tp',x:L.x,y:L.y});const [x,y]=freeTileNear((L.x/TILE)|0,(L.y/TILE)|0,true);P.x=tc(x);P.y=tc(y);snapCamera();flowTile=-1;}
+    if(MP.stage===2)spawnRing(4,'zumbi',300,480,true);
+    MP.stage++; MP.prog=0;
+    if(MP.stage>=MPST.length)MP.endT=2.5;
+  }
+  if(mpPlayersPos().every(p=>p.hp<=0)){MP.allDownT=(MP.allDownT||0)+dt;if(MP.allDownT>4)mpEnd(false);}else MP.allDownT=0;
+}
+function mpWave(L){for(let i=0;i<3;i++){const a=Math.random()*6.283,d=rr(300,460),x=L.x+Math.cos(a)*d,y=L.y+Math.sin(a)*d,tx=(x/TILE)|0,ty=(y/TILE)|0;if(!inb(tx,ty)||SOLID[map[idx(tx,ty)]])continue;const e=makeEnemy(Math.random()<.3?'corr':'zumbi',tc(tx),tc(ty),null);e.col=UNI_COL;e.state='chase';e.hunt=true;e.huntT=40;e.lx=L.x;e.ly=L.y;enemies.push(e);}}
+function mpObjective(){
+  if(MP.role==='host'){const s=MPST[MP.stage];if(!s)return {t:'Amanheceu.',at:null};return {t:s.t+(s.hold?` (${Math.floor(MP.prog)}/${s.hold}s)`:''),at:s.at()};}
+  return {t:MP.objT||'Siga o grupo',at:MP.objAt};
+}
+
+// ---------- host: zumbis caçam o jogador mais perto, de qualquer aparelho ----------
+function mpNearest(e){let best=null,bd=hyp(P.x-e.x,P.y-e.y)*(P.hp>0?1:99);for(const [id,p] of Object.entries(MP.players||{})){if(p.hp<=0)continue;const d=hyp(p.x-e.x,p.y-e.y);if(d<bd){bd=d;best=id;}}return best;}
+function mpHostShot(m,from){
+  for(const b of (m.b||[])){const [x,y,a,sp,dmg,life,pierce,knock]=b;projs.push({k:'b',x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,dmg,life,pierce:pierce||0,knock:knock||60,crit:.08,hit:null,mp:from});}
+}
+function mpFxShot(m){for(const b of (m.b||[])){const [x,y,a,sp,,life]=b;projs.push({k:'b',x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,dmg:0,life,pierce:0,knock:0,crit:0,hit:null,fx:true});}}
+function mpHostMelee(m){for(const e of enemies){if(!e.alive)continue;const d=hyp(e.x-m.x,e.y-m.y);if(d>(m.r||46)+e.r)continue;if(Math.abs(angDiff(m.a,Math.atan2(e.y-m.y,e.x-m.x)))>.85)continue;hurtEnemy(e,m.d||20,Math.cos(m.a)*200,Math.sin(m.a)*200,{});e.stun=Math.max(e.stun,.4);}}
+function mpHurtLocal(d,x,y){const g=G.mpTgt;G.mpTgt=null;hurtPlayer(d,x,y);G.mpTgt=g;}
+function mpSnap(){
+  const e=[];for(const en of enemies){if(!en.alive)continue;if(!en.mpid)en.mpid=MP.nid++*1000+((Math.random()*999)|0);e.push([en.mpid,en.type,en.x|0,en.y|0,+en.face.toFixed(2),en.state==='dorm'?1:0,en.col||0,en.flash>0?1:0]);}
+  const p={'0':{x:P.x|0,y:P.y|0,ang:+P.ang.toFixed(2),la:+(P.legAng||P.ang).toFixed(2),hp:P.hp|0,w:P.w,cr:P.crouch?1:0,mv:P.moving?1:0,wk:+(P.walk||0).toFixed(1),ch:MP.myChar}};
+  for(const [id,q] of Object.entries(MP.players))p[id]={x:q.x|0,y:q.y|0,ang:q.ang,la:q.la,hp:q.hp,w:q.w,cr:q.cr,mv:q.mv,wk:q.wk,ch:q.c.char};
+  const o=mpObjective(); return {t:'snap',e,p,o:o.t,a:o.at?[o.at.x|0,o.at.y|0]:null,c:G.clock|0};
+}
+function mpApplySnap(m){
+  MP.objT=m.o; MP.objAt=m.a?{x:m.a[0],y:m.a[1]}:null; if(m.c)G.clock=m.c;
+  for(const [id,q] of Object.entries(m.p)){if(id===MP.myId)continue;const r=MP.remote[id]||(MP.remote[id]={});Object.assign(r,{tx:q.x,ty:q.y,ang:q.ang,la:q.la,hp:q.hp,w:q.w,cr:q.cr,mv:q.mv,wk:q.wk,char:q.ch});if(r.x==null){r.x=q.x;r.y=q.y;}const L=(MP.lobby.find(l=>l.id===id)||MP.info&&MP.info.pl[id]||{});r.apelido=L.apelido;r.cor=L.cor;}
+  const seen=new Set();
+  for(const [uid,type,x,y,face,dorm,col,fl] of m.e){seen.add(uid);let g=MP.ghosts.get(uid);
+    if(!g){if(!ETYPES[type])continue;g=makeEnemy(type,x,y,null,!!dorm);g.ghost=true;g.mpid=uid;if(col)g.col=col;MP.ghosts.set(uid,g);enemies.push(g);}
+    g.tx=x;g.ty=y;g.face=face;g.state=dorm?'dorm':'chase';if(fl)g.flash=.08;}
+  for(const [uid,g] of MP.ghosts)if(!seen.has(uid)){MP.ghosts.delete(uid);g.alive=false;bloodBurst(g.x,g.y,8,0);GORE.push({k:'corpse',x:g.x,y:g.y,rot:Math.random()*6.28,type:g.type,col:g.col||g.t.col,skin:g.t.skin,r:g.r});}
+}
+
+// ---------- desenho dos outros jogadores ----------
+function mpDrawRemotes(){
+  if(!MP.on||!MP.remote)return;
+  for(const [id,r] of Object.entries(MP.remote)){if(r.x==null||!inV(r.x,r.y,60))continue;
+    const L=LOOKS[r.char]||LOOKS.edu, wid=WEAPONS[r.w]?WEAPONS[r.w].id:null;
+    if(r.hp<=0){ctx.globalAlpha=.6;drawDecal({k:'corpse',x:r.x,y:r.y,rot:r.ang||0,type:'zumbi',col:L.coat,skin:L.skin,r:11});ctx.globalAlpha=1;}
+    else drawHuman(r.x,r.y,r.ang||0,{...L,crouch:!!r.cr,legAng:r.la??r.ang,walk:r.wk||0,moving:!!r.mv,wid:wid==='maos'?null:wid,loaded:true});
+    ctx.font=`700 11px ${FONT_UI}`;ctx.textAlign='center';ctx.fillStyle='rgba(0,0,0,.6)';const nm=(r.apelido||((MP_CHARS.find(c=>c[0]===r.char)||[0,'?'])[1]));const tw=ctx.measureText(nm).width;ctx.fillRect(r.x-tw/2-4,r.y-34,tw+8,14);
+    ctx.fillStyle=r.cor||'#ddd6c6';ctx.fillText(nm,r.x,r.y-23);
+    ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(r.x-14,r.y-18,28,3);ctx.fillStyle=r.hp>50?'#62c06c':r.hp>25?'#d9a33c':'#d24a3a';ctx.fillRect(r.x-14,r.y-18,28*clamp((r.hp||0)/100,0,1),3);}
+}
+function mpDrawHud(){
+  if(!MP.on||G.mode!=='play')return; ctx.setTransform(dpr,0,0,dpr,0,0);
+  const rows=[{n:(MP.me&&MP.me.apelido)||'Você',c:(MP.me&&MP.me.cor)||'#ddd',hp:P.hp,ch:MP.myChar}];
+  for(const [id,r] of Object.entries(MP.remote||{}))rows.push({n:r.apelido||id,c:r.cor||'#ddd',hp:r.hp||0,ch:r.char});
+  let y=view.h*.3; const x=view.w-170;
+  for(const r of rows){ctx.fillStyle='rgba(9,11,10,.7)';ctx.fillRect(x,y,160,26);ctx.fillStyle=r.c;ctx.fillRect(x,y,4,26);ctx.fillStyle='#ddd6c6';ctx.font=`700 12px ${FONT_UI}`;ctx.textAlign='left';ctx.fillText(r.n,x+10,y+12);
+    ctx.fillStyle='rgba(221,214,198,.5)';ctx.font=`600 10px ${FONT_UI}`;ctx.fillText((MP_CHARS.find(c=>c[0]===r.ch)||[0,''])[1],x+10,y+23);
+    ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(x+80,y+10,72,5);ctx.fillStyle=r.hp>50?'#62c06c':r.hp>25?'#d9a33c':'#d24a3a';ctx.fillRect(x+80,y+10,72*clamp(r.hp/100,0,1),5);y+=30;}
+  if(P.mpDown>0){ctx.fillStyle='rgba(60,0,0,.35)';ctx.fillRect(0,0,view.w,view.h);ctx.fillStyle='#ddd6c6';ctx.font=`700 22px ${FONT_UI}`;ctx.textAlign='center';ctx.fillText(`Você caiu. Levanta em ${Math.ceil(P.mpDown)}…`,view.w/2,view.h/2);}
+}
+
+// ---------- ganchos (só agem quando MP.on) ----------
+(function(){
+  const ue=updEnemy;
+  updEnemy=function(e,dt){
+    if(!MP.on)return ue(e,dt);
+    if(MP.role==='guest'){if(!e.ghost){e.alive=false;return;}const k=Math.min(1,dt*10);if(e.tx!=null){const dx=e.tx-e.x,dy=e.ty-e.y;e.x+=dx*k;e.y+=dy*k;}e.anim=(e.anim||0)+dt*(e.state==='dorm'?0:1);e.flash=Math.max(0,e.flash-dt);return;}
+    const id=mpNearest(e); if(!id)return ue(e,dt);
+    const r=MP.players[id], sv={x:P.x,y:P.y,hidden:P.hidden,crouch:P.crouch,running:P.running,moving:P.moving,lamp:P.lamp,inCar:P.inCar,inv:P.inv,grab:P.grab,hp:P.hp};
+    Object.assign(P,{x:r.x,y:r.y,hidden:null,crouch:!!r.cr,running:false,moving:!!r.mv,lamp:true,inCar:false,inv:0,grab:null,hp:r.hp}); G.mpTgt=id;
+    try{ue(e,dt);}finally{const gr=P.grab;Object.assign(P,sv);G.mpTgt=null;if(gr&&gr!==sv.grab){e.grabbing=false;mpSend({t:'hurt',d:e.t.dmg,x:e.x,y:e.y},r.peer);}}
+  };
+  const hp=hurtPlayer;
+  hurtPlayer=function(d,fx,fy){if(MP.on&&G.mpTgt){const r=MP.players[G.mpTgt];if(r&&r.peer)mpSend({t:'hurt',d,x:fx,y:fy},r.peer);return;}return hp(d,fx,fy);};
+  const di=die; die=function(){if(MP.on){P.hp=0;P.mpDown=8;P.firing=false;return;}return di();};
+  const fr=fire; fire=function(){const n=projs.length;const r=fr.apply(this,arguments);if(MP.on){const nw=projs.slice(n).filter(p=>p.k==='b');if(nw.length)mpSend({t:'shot',b:nw.map(p=>[p.x|0,p.y|0,+Math.atan2(p.vy,p.vx).toFixed(3),hyp(p.vx,p.vy)|0,p.dmg,p.life,p.pierce||0,p.knock||0])});}return r;};
+  const ml=melee; melee=function(){const r=ml();if(MP.on&&MP.role==='guest'){const w=WEAPONS[P.w];mpSend({t:'mel',x:P.x,y:P.y,a:P.ang,d:w.dmg,r:w.id==='faca'?46:40});}return r;};
+  const bk=bark; bark=function(who){if(MP.on&&who==='rafa')return;return bk.apply(this,arguments);};
+  const ob=objective; objective=function(){if(MP.on)return mpObjective();return ob();};
+  {const a=updTriggers;updTriggers=function(){if(MP.on)return;return a.apply(this,arguments);};}
+  {const a=plotTriggers;plotTriggers=function(){if(MP.on)return;return a.apply(this,arguments);};}
+  {const a=updPers;updPers=function(){if(MP.on)return;return a.apply(this,arguments);};}
+  {const a=soniaTick;soniaTick=function(){if(MP.on)return;return a.apply(this,arguments);};}
+  const vt=v16Tick; v16Tick=function(dt){vt(dt);if(!MP.on||G.mode!=='play')return;
+    // levantar depois de cair
+    if(P.mpDown>0){P.mpDown-=dt;P.x=P.x;IN.mx=0;IN.my=0;if(P.mpDown<=0){P.hp=60;P.inv=2;const t=mpPlayersPos().find(p=>p.id!==MP.myId&&p.hp>0);if(t){const [x,y]=freeTileNear((t.x/TILE)|0,(t.y/TILE)|0,true);P.x=tc(x);P.y=tc(y);snapCamera();}toast('Você levantou.');}}
+    for(const r of Object.values(MP.remote||{})){if(r.tx==null)continue;const k=Math.min(1,dt*12);r.x+=(r.tx-r.x)*k;r.y+=(r.ty-r.y)*k;}
+    if(MP.role==='host'){for(const [id,p] of Object.entries(MP.players)){const r=MP.remote[id]||(MP.remote[id]={});Object.assign(r,{tx:p.x,ty:p.y,ang:p.ang,la:p.la,hp:p.hp,w:p.w,cr:p.cr,mv:p.mv,wk:p.wk,char:p.c.char,apelido:p.c.apelido,cor:p.c.cor});}
+      mpHostStage(dt); MP.snapT-=dt; if(MP.snapT<=0){MP.snapT=1/12;mpSend(mpSnap());}}
+    else {MP.sendT-=dt;if(MP.sendT<=0){MP.sendT=1/15;mpSend({t:'st',s:{x:P.x|0,y:P.y|0,ang:+P.ang.toFixed(2),la:+(P.legAng||P.ang).toFixed(2),hp:P.hp|0,w:P.w,cr:P.crouch?1:0,mv:P.moving?1:0,wk:+(P.walk||0).toFixed(1)}});}
+      enemies=enemies.filter(e=>e.ghost||!e.alive);}
+  };
+  const up=updPlayer; updPlayer=function(dt){if(MP.on&&P.mpDown>0){IN.mx=0;IN.my=0;IN.fire=false;}return up(dt);};
+  const dc=drawComps; drawComps=function(){dc();mpDrawRemotes();};
+  const ds=drawPsy; drawPsy=function(){ds();mpDrawHud();};
+  const sv=UI.save.bind(UI); UI.save=function(){if(MP.on){toast('No multiplayer beta não tem registro. Fiquem vivos.');return;}return sv();};
+  const pz=UI.pause.bind(UI); UI.pause=function(){if(MP.on){if(G.mode!=='play')return;UI.open(`<div class="sheet narrow"><p class="kick">Multiplayer beta</p><h2>Pausa</h2><p class="hint">O jogo continua pros outros enquanto este menu está aberto.</p><div class="menu"><button class="btn primary" data-a="close">Continuar</button><button class="btn" data-a="inv" data-t="itens">Maleta</button><button class="btn" data-a="opts" data-from="pause">Opções</button><button class="btn ghost" data-a="mp-leave">Sair da partida</button></div></div>`,'','pause');return;}return pz();};
+  // tela de título: botão de multiplayer e de conta; primeira vez: pede pra criar a conta
+  const tt=UI.title.bind(UI);
+  UI.title=function(){tt();try{const m=OV.querySelector('.menu');if(m){const c=contaGet();
+    const b=document.createElement('button');b.className='btn';b.dataset.a='mp';b.textContent='Multiplayer (beta)';const nw=m.querySelector('[data-a=new]');m.insertBefore(b,nw?nw.nextSibling:null);
+    const b2=document.createElement('button');b2.className='btn ghost';b2.dataset.a='conta';b2.dataset.from='title';b2.textContent=c?`Conta: ${c.apelido}`:'Criar conta';m.appendChild(b2);}
+    if(!contaGet()&&!UI.contaAsked){UI.contaAsked=true;let skip=false;try{skip=localStorage.getItem('ps-conta-depois')==='1';}catch(e){}if(!skip)setTimeout(()=>{if(UI.cur==='title')UI.conta('title');},400);}}catch(e){}};
+  const act=UI.act.bind(UI);
+  UI.act=function(a,ds){
+    switch(a){
+      case 'conta':return this.conta(ds.from);
+      case 'ct-cor':this.ctTmp=Object.assign(contaRead(),{cor:ds.k});this.ctTmpKeep=true;{const c=this.ctTmp;this.conta(this.contaFrom);this.ctTmp=c;const o=OV.querySelectorAll('[data-a=ct-cor]');o.forEach(b=>{b.classList.toggle('on',b.dataset.k===ds.k);b.textContent=b.dataset.k===ds.k?'✓':' ';});}return;
+      case 'ct-fav':{const c=Object.assign(contaRead(),{fav:ds.k});this.ctTmp=c;OV.querySelectorAll('[data-a=ct-fav]').forEach(b=>b.classList.toggle('on',b.dataset.k===ds.k));return;}
+      case 'ct-ok':{const c=contaRead();contaSave(c);if(MP.me)Object.assign(MP.me,{nome:c.nome,apelido:c.apelido,cor:c.cor,frase:c.frase});toast('Conta salva.');if(this.contaFrom==='mp')return this.mp();return this.title();}
+      case 'ct-back':try{if(!contaGet())localStorage.setItem('ps-conta-depois','1');}catch(e){}if(this.contaFrom==='mp')return contaGet()?this.mp():this.title();return this.title();
+      case 'mp':return this.mp();
+      case 'mp-host':MP.role='host';MP.myId='0';MP.players={};MP.peers=[];MP.nid=1;mpHostInvite();return this.mp();
+      case 'mp-joinui':MP.role='guest';MP.answer=null;return this.mp();
+      case 'mp-invite':mpHostInvite();return;
+      case 'mp-ans':{const t=document.getElementById('mp-ans-'+ds.k);mpHostAnswer(ds.k,t?t.value:'');return;}
+      case 'mp-join':{const t=document.getElementById('mp-inv');mpJoin(t?t.value:'');return;}
+      case 'mp-copy':{const code=ds.k==='ans'?MP.answer:(MP.peers.find(p=>p.id===ds.k)||{}).code;try{navigator.clipboard.writeText(code);toast('Código copiado.');}catch(e){toast('Selecione o texto e copie.');}return;}
+      case 'mp-char':{MP.me.char=ds.k;if(MP.role==='guest')mpSend({t:'pick',char:ds.k});else mpLobbyCast();return this.mp();}
+      case 'mp-start':{if(MP.role!=='host')return;const info=mpStartInfo();mpSend({t:'start',...info});mpBegin(info);return;}
+      case 'mp-leave':{for(const p of MP.peers)try{p.pc.close();}catch(e){}MP.peers=[];MP.players={};MP.role=null;MP.on=false;MP.answer=null;MP.lobby=[];MP.remote={};MP.ghosts.clear();G.mp=null;P.lookO=null;return this.title();}
+    }
+    return act(a,ds);
+  };
+  try{const st=document.createElement('style');st.textContent=`.inp{width:100%;background:#0e100f;color:var(--ink);border:1px solid var(--line);padding:8px 10px;font:inherit;font-size:16px}.inp.code{font-family:monospace;font-size:11px;word-break:break-all}
+    .mplist{display:flex;flex-direction:column;gap:6px}.mpp{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;padding:6px 8px;background:rgba(255,255,255,.03);border:1px solid var(--line)}.mpp small{width:100%;color:var(--dim)}
+    .dot{display:inline-block;width:12px;height:12px;border-radius:50%}.mpme{display:flex;align-items:center;gap:8px;margin:4px 0 8px}`;document.head.appendChild(st);}catch(e){}
+})();
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;
