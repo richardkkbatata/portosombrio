@@ -493,3 +493,11 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
   .monitor .marca-monitor{display:none}
   .monitor .led{bottom:-9px;right:8px;width:5px;height:5px}
 }
+/* fichas lacradas (spoiler) */
+.lacrado{min-height:220px}
+.lacrado>*:not(.capa-lacre){visibility:hidden}
+.capa-lacre{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  border:2px dashed var(--tinta-2);background:#e9e1c8;background-image:var(--ruido);color:var(--tinta);font:inherit;cursor:pointer;padding:16px;text-align:center}
+.capa-lacre:hover{background-color:#e2d8bb}
+.capa-lacre:focus-visible{outline:2px dashed var(--carimbo);outline-offset:3px}
+.capa-lacre .carimbo{visibility:visible}

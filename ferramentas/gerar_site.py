@@ -119,7 +119,7 @@ BASE = """<!doctype html>
   </div>
   <p class="ficcao">Obra de ficção. A Vértice, o surto e o "Arquivo PS-0417" existem só dentro do jogo; lugares reais de SC aparecem como cenário. © {ano} Richard Klettke e Eduardo Ramos. Versão do jogo: <span data-versao>{versao}</span>.</p>
 </footer>
-<div class="rec-fixo" aria-hidden="true"><span class="rec-dot"></span>REC · CAM 03<br><span id="relogio">QUA 23:40:00</span></div>
+<div class="rec-fixo" aria-hidden="true"><span class="rec-dot"></span>REC · CAM 03<br><span id="relogio">--- --:--:--</span></div>
 </body>
 </html>
 """

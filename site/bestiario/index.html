@@ -26,12 +26,12 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/fonts/special-elite.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/league-gothic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/css/site.css?v=1cfcfc7c93">
-<script src="/js/js.js?v=1cfcfc7c93"></script>
-<script src="/js/config.js?v=1cfcfc7c93" defer></script>
-<script src="/js/site.js?v=1cfcfc7c93" defer></script>
-<script src="/js/anuncios.js?v=1cfcfc7c93" defer></script>
-<script src="/js/bestiario.js?v=1cfcfc7c93" defer></script>
+<link rel="stylesheet" href="/css/site.css?v=1136f2e959">
+<script src="/js/js.js?v=1136f2e959"></script>
+<script src="/js/config.js?v=1136f2e959" defer></script>
+<script src="/js/site.js?v=1136f2e959" defer></script>
+<script src="/js/anuncios.js?v=1136f2e959" defer></script>
+<script src="/js/bestiario.js?v=1136f2e959" defer></script>
 </head>
 <body class="pagina-bestiario">
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -62,7 +62,7 @@
 
 <h1 style="font-size:clamp(44px,8vw,86px)">Bestiário</h1>
 <div class="grade duas" style="align-items:end">
-  <p class="olho">Fichas de campo de tudo que anda pela rua depois das 22h16. Os chefes e as coisas que perseguem você ficam no fim, carimbados. Leia por sua conta.</p>
+  <p class="olho">Fichas de campo de tudo que anda pela rua depois das 22h16. Cada ficha vem lacrada: abra só o que você já encontrou no jogo.</p>
   <div class="filtros" role="group" aria-label="Filtrar fichas">
     <button type="button" data-f="todos" aria-pressed="true">Todos</button>
     <button type="button" data-f="comum" aria-pressed="false">Da rua</button>
@@ -71,6 +71,7 @@
   </div>
 </div>
 
+<p style="margin:18px 0 0"><button class="botao claro" type="button" data-abrir-lacres=".especimes">Abrir todas as fichas</button></p>
 <p class="mao" style="margin:18px 0 0">resistência = quanto aguenta. velocidade = se dá pra fugir.</p>
 
 <div class="especimes">
@@ -85,7 +86,7 @@
   <dt>Dica</dt><dd>Nem tudo que cai, fica. Se um te agarrar, toque na tela ou aperte qualquer tecla várias vezes.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/corr.webp" alt="Desenho do Corredor visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 02 · Porto, Itajaí, BC</span><h3>Corredor</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
@@ -95,7 +96,7 @@
   <dt>Dica</dt><dd>Não tente fugir correndo. Esquive (Espaço) e atire.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/incha.webp" alt="Desenho do Inchado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 03 · hospedeiro obeso</span><h3>Inchado</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
@@ -105,7 +106,7 @@
   <dt>Dica</dt><dd>Nunca na faca. Se ele estourar perto de outros, melhor ainda.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/cusp.webp" alt="Desenho do Cuspidor visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 04 · Porto, Itajaí, BC</span><h3>Cuspidor</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
@@ -115,7 +116,7 @@
   <dt>Dica</dt><dd>Chegue por trás de carro, parede ou esquina. Em campo aberto ele leva vantagem.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/cao.webp" alt="Desenho do Cão infectado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 05 · obras, postos, praias</span><h3>Cão infectado</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
@@ -125,7 +126,7 @@
   <dt>Dica</dt><dd>Escopeta resolve. Lanterna apagada não resolve.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/brut.webp" alt="Desenho do Brutamontes visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 06 · Porto, Itajaí</span><h3>Brutamontes</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></dd>
@@ -135,7 +136,7 @@
   <dt>Dica</dt><dd>Fique de costas pra uma parede, espere a investida e saia de lado no último segundo.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/rast.webp" alt="Desenho do Rastejante visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 07 · cemitério, praias</span><h3>Rastejante</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
@@ -145,7 +146,7 @@
   <dt>Dica</dt><dd>Corpo no chão em lugar estranho? Dê a volta.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/grita.webp" alt="Desenho da Gritadeira vista de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 08 · BC em caos</span><h3>Gritadeira</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i></i><i></i><i></i><i></i></span></dd>
@@ -155,7 +156,7 @@
   <dt>Dica</dt><dd>"Mata ela antes do grito!" A besta é silenciosa.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/soldado.webp" alt="Desenho do Soldado infectado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 09 · acampamento, Porto</span><h3>Soldado infectado</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
@@ -165,7 +166,7 @@
   <dt>Dica</dt><dd>Vale a bala gasta.</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/manequim.webp" alt="Desenho do Manequim visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 10 · Shopping Atlântico</span><h3>Manequim</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
@@ -175,7 +176,7 @@
   <dt>Dica</dt><dd>Não tira a lanterna deles. Quebre cinco e ganhe "Não pisque".</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/afog.webp" alt="Desenho do Afogado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 11 · Laranjeiras, Cabeçudas</span><h3>Afogado</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
@@ -185,7 +186,7 @@
   <dt>Dica</dt><dd>Não espere o barco. Derrube dez e ganhe "Maré cheia".</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/esfol.webp" alt="Desenho do Esfolado visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 12 · Porto, Itajaí, Brava</span><h3>Esfolado</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
@@ -195,7 +196,7 @@
   <dt>Dica</dt><dd>Se correr, elas vêm. Se atirar, elas vêm. Use a besta. "O Beto não acreditou."</dd></dl>
 </article>
 
-<article class="especime revela" data-tipo="comum">
+<article class="especime revela" data-spoiler data-tipo="comum">
   <div class="lamina"><img src="/img/especimes/cego.webp" alt="Desenho do Cego da galeria visto de cima, do jogo" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Ficha 13 · galeria pluvial</span><h3>Cego da galeria</h3>
   <dl><dt>Resistência</dt><dd><span class="medidor"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></dd>
@@ -206,7 +207,7 @@
 </article>
 
 <!-- perseguidores -->
-<article class="especime chefe revela" data-tipo="perseguidor">
+<article class="especime chefe revela" data-spoiler data-tipo="perseguidor">
   <span class="carimbo pequeno solto">Não destruir</span>
   <div class="lamina"><img src="/img/especimes/pers.webp" alt="Desenho do Perseguidor, homem de sobretudo, visto de cima" loading="lazy"><span class="escala">≈ 2,30 m</span></div>
   <span class="cod">Protótipo T-Sobretudo</span><h3>O Perseguidor</h3>
@@ -217,7 +218,7 @@
   <dt>Dica</dt><dd>Não lute, suma. Ele não entra nas arenas dos chefes. Derrube três vezes: "Ele sempre levanta".</dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="perseguidor">
+<article class="especime chefe revela" data-spoiler data-tipo="perseguidor">
   <span class="carimbo pequeno solto">Não destruir</span>
   <div class="lamina"><img src="/img/especimes/bombeiro.webp" alt="Desenho do Bombeiro com machado, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Balneário em silêncio</span><h3>O Bombeiro</h3>
@@ -228,7 +229,7 @@
   <dt>Dica</dt><dd>Orelhão tocando e caixinha de música chamam ele. Derrube uma vez: "Fogo amigo".</dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="perseguidor">
+<article class="especime chefe revela" data-spoiler data-tipo="perseguidor">
   <span class="carimbo pequeno solto">Imune a bala</span>
   <div class="lamina"><img src="/img/especimes/ouvinte.webp" alt="Desenho da Ouvinte, mulher alta e cega, vista de cima" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Paciente 31 · Hospital Santa Clara</span><h3>A Ouvinte</h3>
@@ -239,7 +240,7 @@
   <dt>Dica</dt><dd>Agachado, devagar. Garrafa jogada longe. Nunca corra. Bala não faz efeito.</dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="perseguidor">
+<article class="especime chefe revela" data-spoiler data-tipo="perseguidor">
   <span class="carimbo pequeno solto">Fuja</span>
   <div class="lamina"><img src="/img/especimes/coletor.webp" alt="Desenho do T-11, o Coletor, visto de cima" loading="lazy"><span class="escala">"do tamanho de um carro"</span></div>
   <span class="cod">T-11 · ninho da galeria</span><h3>O Coletor</h3>
@@ -251,7 +252,7 @@
 </article>
 
 <!-- chefes -->
-<article class="especime chefe revela" data-tipo="chefe">
+<article class="especime chefe revela" data-spoiler data-tipo="chefe">
   <span class="carimbo pequeno solto">Vértice</span>
   <div class="lamina"><img src="/img/especimes/brandt.webp" alt="Desenho do Sargento Brandt, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Shopping Atlântico · capítulo 1</span><h3>Sargento Brandt</h3>
@@ -263,7 +264,7 @@
   <dt>Dica</dt><dd>Saia da linha do laser. A lanterna acesa te entrega, mas a dele também.</dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="chefe">
+<article class="especime chefe revela" data-spoiler data-tipo="chefe">
   <span class="carimbo pequeno solto">Chefe</span>
   <div class="lamina"><img src="/img/especimes/gordo.webp" alt="Desenho do Frentista, chefe inchado, visto de cima" loading="lazy"><span class="escala">ocupa a porta inteira</span></div>
   <span class="cod">Posto da Av. do Estado</span><h3>O Frentista</h3>
@@ -274,7 +275,7 @@
   <dt>Dica</dt><dd>Quando cai, estoura numa poça ácida grande: afaste-se. Ou nem lute: lanterna apagada, passo leve.</dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="chefe">
+<article class="especime chefe revela" data-spoiler data-tipo="chefe">
   <span class="carimbo pequeno solto">Chefe</span>
   <div class="lamina"><img src="/img/especimes/pescador.webp" alt="Desenho do Pescador, chefe enrolado em rede, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Margem do rio, Itajaí</span><h3>O Pescador</h3>
@@ -285,7 +286,7 @@
   <dt>Dica</dt><dd>Mate os Afogados primeiro. O que ele traz na rede vale a pena.</dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="chefe">
+<article class="especime chefe revela" data-spoiler data-tipo="chefe">
   <span class="carimbo pequeno solto">Chefe</span>
   <div class="lamina"><img src="/img/especimes/especime.webp" alt="Desenho do Espécime T-07, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">Espécime T-07 · Shopping Atlântico</span><h3>O Espécime</h3>
@@ -296,7 +297,7 @@
   <dt>Dica</dt><dd>Não desperdice munição tentando segurar ele. Faça ele bater na parede. <span class="tarja">Ou fuja: a chave da casa de máquinas, na sala da segurança, destrava as portas.</span></dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="chefe">
+<article class="especime chefe revela" data-spoiler data-tipo="chefe">
   <span class="carimbo pequeno solto">Chefe final</span>
   <div class="lamina"><img src="/img/especimes/boss.webp" alt="Desenho da Abominação, chefe final, visto de cima" loading="lazy"><span class="escala">vista de cima</span></div>
   <span class="cod">T-00 · Porto de Itajaí</span><h3>A Abominação</h3>
@@ -307,7 +308,7 @@
   <dt>Dica</dt><dd>Não fique atrás de nada: ela derruba. Quando ela parar, saia de perto.</dd></dl>
 </article>
 
-<article class="especime chefe revela" data-tipo="chefe">
+<article class="especime chefe revela" data-spoiler data-tipo="chefe">
   <span class="carimbo pequeno solto preto">Arquivo antigo</span>
   <div class="lamina"><img src="/img/especimes/enferm.webp" alt="Desenho da Enfermeira, visto de cima" loading="lazy"><span class="escala">"do tamanho da ambulância"</span></div>
   <span class="cod">Hospital Ruth Cardoso · plantão</span><h3>A Enfermeira</h3>
@@ -364,6 +365,6 @@
   </div>
   <p class="ficcao">Obra de ficção. A Vértice, o surto e o "Arquivo PS-0417" existem só dentro do jogo; lugares reais de SC aparecem como cenário. © 2026 Richard Klettke e Eduardo Ramos. Versão do jogo: <span data-versao>1.6.2</span>.</p>
 </footer>
-<div class="rec-fixo" aria-hidden="true"><span class="rec-dot"></span>REC · CAM 03<br><span id="relogio">QUA 23:40:00</span></div>
+<div class="rec-fixo" aria-hidden="true"><span class="rec-dot"></span>REC · CAM 03<br><span id="relogio">--- --:--:--</span></div>
 </body>
 </html>

@@ -3,8 +3,8 @@
 
 <h1 style="font-size:clamp(44px,8vw,86px)">Personagens</h1>
 <div class="grade duas" style="align-items:end">
-  <p class="olho">Todo mundo que cruzou o caminho do Richard naquela noite. A tarja preta esconde o que aconteceu com cada um. Toque em cima para ler, se já jogou.</p>
-  <p style="text-align:right"><button class="botao claro" type="button" data-revelar-tudo=".dossies">Tirar todas as tarjas</button></p>
+  <p class="olho">Todo mundo que cruzou o caminho do Richard naquela noite. As fichas lacradas contam quem aparece mais pra frente no jogo, e a tarja preta esconde o que aconteceu com cada um. Só abra o que você já viu.</p>
+  <p style="text-align:right"><button class="botao" type="button" data-abrir-lacres=".dossies">Abrir todas as fichas</button> <button class="botao claro" type="button" data-revelar-tudo=".dossies">Tirar todas as tarjas</button></p>
 </div>
 
 <div class="dossies">
@@ -34,7 +34,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Viva. De Navegantes, vê o helicóptero subir no meio da fumaça. E sabe.</span></p>
 </article>
 
-<article class="dossie revela" id="edu">
+<article class="dossie revela" id="edu" data-spoiler>
   <span class="carimbo pequeno solto preto">Ferido</span>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/edu.webp" width="280" height="320" alt="Retrato do Edu" loading="lazy"></figure>
@@ -47,7 +47,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Torce o tornozelo na barricada e fica com a Dra. Helena na Brava. Chega ao heliponto na última hora gritando que ninguém morre hoje e, se você deixou, traz a doutora.</span></p>
 </article>
 
-<article class="dossie revela" id="matheus">
+<article class="dossie revela" id="matheus" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/matheus.webp" width="280" height="320" alt="Retrato do Matheus" loading="lazy"></figure>
     <div><h2>Matheus</h2>
@@ -59,7 +59,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Resgatado da biblioteca da Univali. Vai com o Richard até o fim: entra no Santa Clara atrás da pasta do Paciente Zero, abre o caminho do heliponto com o guindaste e embarca.</span></p>
 </article>
 
-<article class="dossie revela" id="marlon">
+<article class="dossie revela" id="marlon" data-spoiler>
   <span class="carimbo pequeno solto">Armado</span>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/marlon.webp" width="280" height="320" alt="Retrato do Marlon" loading="lazy"></figure>
@@ -72,7 +72,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Faz o que o Richard pede: guarda o prédio da Dona Cida (e leva ela num barco de pescador) ou vai de bote até Itajaí e acha a lista de embarque do navio. Nos dois casos aparece no porto, em cima de um contêiner, e embarca com a carabina no colo.</span></p>
 </article>
 
-<article class="dossie revela" id="nicolas">
+<article class="dossie revela" id="nicolas" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/nicolas.webp" width="280" height="320" alt="Retrato do Nicolas" loading="lazy"></figure>
     <div><h2>Nicolas</h2>
@@ -84,7 +84,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Entra no canal da Vértice e troca a frequência: o helicóptero que pousa é o da Defesa Civil. Embarca e dorme em dois minutos, abraçado ao controle do drone.</span></p>
 </article>
 
-<article class="dossie revela" id="alex-rese">
+<article class="dossie revela" id="alex-rese" data-spoiler>
   <span class="carimbo pequeno solto preto">Ex-Vértice</span>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/alex-rese.webp" width="280" height="320" alt="Retrato do professor Alex Rese" loading="lazy"></figure>
@@ -97,7 +97,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Morre no porto para que a bala entre no T-00: atravessando com o caminhão de cloro ou derrubando um contêiner do guindaste. "Foi uma honra. Aprovado. Com louvor."</span></p>
 </article>
 
-<article class="dossie revela" id="dona-cida">
+<article class="dossie revela" id="dona-cida" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/dona-cida.webp" width="280" height="320" alt="Retrato da Dona Cida" loading="lazy"></figure>
     <div><h2>Dona Cida</h2>
@@ -109,7 +109,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Se ninguém fica de guarda, a luz verde do prédio apaga quando Balneário cai em silêncio, e ela vira. Se o Marlon cuida dela, sai de barco pelo mar com o Mingau.</span></p>
 </article>
 
-<article class="dossie revela" id="tiao">
+<article class="dossie revela" id="tiao" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/tiao.webp" width="280" height="320" alt="Retrato do Tião" loading="lazy"></figure>
     <div><h2>Tião</h2>
@@ -121,7 +121,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Mordido enquanto o Richard estava no bondinho. Segura o depósito da oficina para eles fugirem. "Diz pra Cida que a luz verde ficou acesa."</span></p>
 </article>
 
-<article class="dossie revela" id="helena">
+<article class="dossie revela" id="helena" data-spoiler>
   <span class="carimbo pequeno solto">Infectada</span>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/helena.webp" width="280" height="320" alt="Retrato da Dra. Helena" loading="lazy"></figure>
@@ -134,7 +134,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Mordida às 2h. Recebe a ampola de V-7 e divide com o Richard. Se ele levar ela, embarca, e catorze minutos depois abre os olhos cinzentos. Se não, fica na Brava apagada.</span></p>
 </article>
 
-<article class="dossie revela" id="seu-ivo">
+<article class="dossie revela" id="seu-ivo" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/seu-ivo.webp" width="280" height="320" alt="Retrato do Seu Ivo" loading="lazy"></figure>
     <div><h2>Seu Ivo</h2>
@@ -146,7 +146,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">A Rosa, mordida na mão, acorda virada no quarto dos fundos. O Seu Ivo morre ali. As Laranjeiras pegam fogo.</span></p>
 </article>
 
-<article class="dossie revela" id="arantes">
+<article class="dossie revela" id="arantes" data-spoiler>
   <span class="carimbo pequeno solto">Procurado</span>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/arantes.webp" width="280" height="320" alt="Retrato do Dr. Rodrigo Arantes" loading="lazy"></figure>
@@ -159,7 +159,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Escapa. Enquanto o litoral queima, uma van branca da Vértice segue pela BR-101 sem nenhum bloqueio. "O projeto continua."</span></p>
 </article>
 
-<article class="dossie revela" id="ademir">
+<article class="dossie revela" id="ademir" data-spoiler>
   <span class="carimbo pequeno solto">Mordido</span>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/ademir.webp" width="280" height="320" alt="Retrato de Seu Ademir" loading="lazy"></figure>
@@ -172,7 +172,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Fica na guarita. Quando o Richard se afasta do campus, alguém de uniforme azul começa a andar por ali.</span></p>
 </article>
 
-<article class="dossie revela" id="neusa">
+<article class="dossie revela" id="neusa" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/neusa.webp" width="280" height="320" alt="Retrato de Dona Neusa" loading="lazy"></figure>
     <div><h2>Dona Neusa</h2>
@@ -183,7 +183,7 @@
   <p class="nota mao" style="margin-top:4px">"Diz pro Matheus que ele ainda me deve o pão de queijo de terça."</p>
 </article>
 
-<article class="dossie revela" id="juliana">
+<article class="dossie revela" id="juliana" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/juliana.webp" width="280" height="320" alt="Retrato de Cabo Juliana" loading="lazy"></figure>
     <div><h2>Cabo Juliana</h2>
@@ -194,7 +194,7 @@
   <p class="nota mao" style="margin-top:4px">"Maré Limpa não é resgate."</p>
 </article>
 
-<article class="dossie revela" id="kadu-bia">
+<article class="dossie revela" id="kadu-bia" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto" style="display:flex;align-items:center;justify-content:center;aspect-ratio:7/8.6;background:#f6f2e8"><span class="fita"></span><span class="mao" style="color:#7a5a2a;text-align:center">foto<br>não<br>revelada</span></figure>
     <div><h2>Kadu e Bia</h2>
@@ -206,7 +206,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Na volta do Richard à Brava, o acampamento não está mais lá.</span></p>
 </article>
 
-<article class="dossie revela" id="lauro">
+<article class="dossie revela" id="lauro" data-spoiler>
   <div class="topo-ficha">
     <figure class="foto" style="display:flex;align-items:center;justify-content:center;aspect-ratio:7/8.6;background:#f6f2e8"><span class="fita"></span><span class="mao" style="color:#7a5a2a;text-align:center">foto<br>não<br>revelada</span></figure>
     <div><h2>Seu Lauro</h2>
@@ -217,7 +217,7 @@
   <p class="nota mao" style="margin-top:4px">"E corre. O barulho da roda chamou a avenida inteira."</p>
 </article>
 
-<article class="dossie revela" id="brandt">
+<article class="dossie revela" id="brandt" data-spoiler>
   <span class="carimbo pequeno solto">Armado</span>
   <div class="topo-ficha">
     <figure class="foto"><span class="fita"></span><img src="/img/retratos/brandt.webp" width="280" height="320" alt="Retrato do Sargento Brandt" loading="lazy"></figure>
@@ -230,7 +230,7 @@
   <p class="situacao"><b>Situação</b><span class="tarja">Perde a luta para o Richard e foge sangrando. "Você ganhou o direito de morrer lá embaixo. Manda um oi pro T-11 por mim."</span></p>
 </article>
 
-<article class="dossie revela" id="mingau" style="background-color:#f6eccd">
+<article class="dossie revela" id="mingau" data-spoiler style="background-color:#f6eccd">
   <div class="topo-ficha">
     <figure class="foto" style="display:flex;align-items:center;justify-content:center;aspect-ratio:7/8.6;background:#f6f2e8"><span class="fita"></span><span class="mao" style="color:#7a5a2a;text-align:center">foto<br>não<br>revelada</span></figure>
     <div><h2>Mingau</h2>

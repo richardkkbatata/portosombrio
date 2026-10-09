@@ -89,16 +89,17 @@
   });
 
   /* ------------------------------------------------------------------
-     RELÓGIO DA CÂMERA (QUA, 48 h depois da segunda-feira)
+     RELÓGIO DA CÂMERA (hora de Brasília)
      ------------------------------------------------------------------ */
-  var rel = doc.getElementById('relogio'), t0 = Date.now(), base = 23 * 3600 + 40 * 60;
+  var rel = doc.getElementById('relogio');
+  var DIAS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
   function dd(n) { return (n < 10 ? '0' : '') + n; }
-  function tique() {
-    if (!rel) return;
-    var s = (base + Math.floor((Date.now() - t0) / 1000)) % 86400;
-    var dia = base + Math.floor((Date.now() - t0) / 1000) >= 86400 ? 'QUI' : 'QUA';
-    rel.textContent = dia + ' ' + dd(Math.floor(s / 3600)) + ':' + dd(Math.floor(s / 60) % 60) + ':' + dd(s % 60);
+  function horaBR() {
+    // hora oficial de Brasília (UTC-3, sem horário de verão)
+    var d = new Date(Date.now() - 3 * 3600 * 1000);
+    return DIAS[d.getUTCDay()] + ' ' + dd(d.getUTCHours()) + ':' + dd(d.getUTCMinutes()) + ':' + dd(d.getUTCSeconds());
   }
+  function tique() { if (rel) rel.textContent = horaBR(); }
   tique(); setInterval(tique, 1000);
 
   /* ------------------------------------------------------------------
@@ -115,6 +116,29 @@
     b.addEventListener('click', function () {
       var alvo = doc.querySelector(b.getAttribute('data-revelar-tudo')) || doc;
       alvo.querySelectorAll('.tarja').forEach(abreTarja); Som.carimbo();
+    });
+  });
+
+  // fichas lacradas (personagens e bestiário): cada uma abre separada
+  function abreLacre(card, sem) {
+    if (!card.classList.contains('lacrado')) return;
+    card.classList.remove('lacrado');
+    var c = card.querySelector('.capa-lacre'); if (c) c.remove();
+    if (!sem) Som.carimbo();
+  }
+  doc.querySelectorAll('[data-spoiler]').forEach(function (card) {
+    card.classList.add('lacrado');
+    var b = doc.createElement('button');
+    b.type = 'button'; b.className = 'capa-lacre';
+    b.innerHTML = '<span class="carimbo pequeno">Lacrado</span><span>contém spoiler</span><span class="mao">toque para abrir</span>';
+    b.setAttribute('aria-label', 'Ficha lacrada com spoiler. Ative para abrir.');
+    b.addEventListener('click', function () { abreLacre(card); });
+    card.appendChild(b);
+  });
+  doc.querySelectorAll('[data-abrir-lacres]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var alvo = doc.querySelector(b.getAttribute('data-abrir-lacres')) || doc;
+      alvo.querySelectorAll('.lacrado').forEach(function (c) { abreLacre(c, true); }); Som.carimbo();
     });
   });
 
