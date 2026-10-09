@@ -1,7 +1,20 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.5",
+  "versao_atual": "1.5.1",
   "versoes": [
+    {
+      "versao": "1.5.1",
+      "data": "2026-10-09",
+      "titulo": "Maleta de verdade",
+      "resumo": "Maleta estilo RE4 de verdade: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.",
+      "mudancas": [
+        "Maleta estilo RE4 de verdade: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.",
+        "Se uma coisa não couber do jeito que está, o jogo avisa que dá pra arrumar a maleta pra caber.",
+        "Ícones novos desenhados pra cada item, no tamanho que ele ocupa.",
+        "Quick time do Brandt mais difícil: mais rápido, o anel aparece em lugares diferentes da tela e o botão muda a cada golpe (E, Q, F, Espaço ou R). No celular aparecem três botões e só um é o certo.",
+        "Galeria: pra sair, é só subir a escada no fim do sifão. Não precisa mais empurrar a tampa."
+      ]
+    },
     {
       "versao": "1.5",
       "data": "2026-10-09",
