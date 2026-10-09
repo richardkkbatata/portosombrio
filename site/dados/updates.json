@@ -1,7 +1,18 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.6.1",
+  "versao_atual": "1.6.2",
   "versoes": [
+    {
+      "versao": "1.6.2",
+      "data": "2026-10-09",
+      "titulo": "Rede teimosa",
+      "resumo": "Multiplayer: pra achar a equipe pelo código de 4 letras, o jogo agora tenta 3 serviços diferentes ao mesmo tempo. Se a rede bloquear um, usa outro.",
+      "mudancas": [
+        "Multiplayer: pra achar a equipe pelo código de 4 letras, o jogo agora tenta 3 serviços diferentes ao mesmo tempo. Se a rede bloquear um, usa outro.",
+        "Multiplayer: modo sem internet. Se nenhum serviço responder, dá pra conectar na mesma Wi-Fi trocando um código longo (Criar equipe sem internet / Entrar sem internet).",
+        "A mensagem de erro agora diz o que fazer."
+      ]
+    },
     {
       "versao": "1.6.1",
       "data": "2026-10-09",
