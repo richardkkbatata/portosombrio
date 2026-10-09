@@ -9,5 +9,5 @@ O usuário colocou uma versão nova do jogo na pasta `novo-jogo/` (um `.html`, e
 3. Rode: `python3 ferramentas/atualizar_jogo.py --titulo "..." --nota "..." --nota "..."`
 4. Se a história mudou (personagens, chefes, finais), avise que o Documentário/Personagens/Bestiário podem precisar de ajuste e ofereça fazer (as páginas ficam em `ferramentas/paginas/`; depois rode `python3 ferramentas/gerar_site.py`).
 5. Teste: suba o Apache local ou `python3 -m http.server` dentro de `site/` e abra `/jogar/` e `/jogo/` no Playwright; confira que não há erro no console.
-6. Faça commit e push na branch de trabalho.
+6. Faça commit e push na branch de trabalho e também na `main` (`git push origin HEAD:main`): o dono autorizou publicar na `main`.
 7. Mande o `entregas/porto-sombrio-site.zip` para o usuário (SendUserFile) e explique, clique por clique: Cloudflare → Workers e Pages → projeto porto-sombrio → Criar nova implantação → arrastar o zip → Salvar e implantar. Se der problema: Implantações → implantação anterior → Reverter.
