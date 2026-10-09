@@ -74,7 +74,7 @@ def integrar():
            "font-src 'self' https://fonts.gstatic.com; "
            "img-src 'self' data: blob: https:; "
            "media-src 'self' data: blob:; "
-           f"connect-src 'self' {GOOGLE_CONNECT}; "
+           f"connect-src 'self' wss://0.peerjs.com {GOOGLE_CONNECT}; "
            f"frame-src {GOOGLE_FRAME}; "
            "worker-src 'self' blob:; "
            "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; "

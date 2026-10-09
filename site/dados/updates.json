@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.6",
+  "versao_atual": "1.6.1",
   "versoes": [
+    {
+      "versao": "1.6.1",
+      "data": "2026-10-09",
+      "titulo": "Código da equipe",
+      "resumo": "Multiplayer: acabou o código gigante. Quem cria a equipe recebe um código de 4 letras (tipo EA4K); os amigos digitam e entram. Precisa de internet só pra se acharem.",
+      "mudancas": [
+        "Multiplayer: acabou o código gigante. Quem cria a equipe recebe um código de 4 letras (tipo EA4K); os amigos digitam e entram. Precisa de internet só pra se acharem.",
+        "Multiplayer: zumbi morto morre pra todo mundo. Antes, quem não era o anfitrião matava só na tela dele e continuava apanhando do zumbi fantasma.",
+        "Multiplayer: item pego some pra todo mundo, e o que cai dos zumbis aparece pra todos.",
+        "Maleta: segure o item e arraste até o lugar. Verde cabe, vermelho não. Enquanto arrasta, R, a rodinha do mouse ou um segundo dedo gira o item. Toque rápido continua selecionando."
+      ]
+    },
     {
       "versao": "1.6",
       "data": "2026-10-09",
