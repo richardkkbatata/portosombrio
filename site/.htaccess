@@ -16,6 +16,7 @@ AddCharset utf-8 .html .css .js .json .txt .xml .webmanifest
   AddType application/manifest+json .webmanifest
   AddType image/webp .webp
   AddType font/woff2 .woff2
+  AddType application/vnd.android.package-archive .apk
   AddType image/svg+xml .svg
 </IfModule>
 

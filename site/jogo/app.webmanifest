@@ -1,0 +1,16 @@
+{
+  "name": "Porto Sombrio",
+  "short_name": "Porto Sombrio",
+  "description": "O jogo Porto Sombrio em tela cheia.",
+  "start_url": "/jogo/",
+  "scope": "/jogo/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "/img/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/img/icone-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

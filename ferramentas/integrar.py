@@ -60,6 +60,15 @@ def integrar():
              f'<script>{inline}</script>\n'
              f'<script src="/js/config.js?v={vh}"></script>\n'
              f'<script src="/jogo/integracao.js?v={vh}"></script>\n')
+    # instalar na tela de início do iPhone (abre o jogo em tela cheia, sem a barra do Safari)
+    app = ('<link rel="manifest" href="/jogo/app.webmanifest">'
+           '<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">'
+           '<meta name="apple-mobile-web-app-capable" content="yes">'
+           '<meta name="mobile-web-app-capable" content="yes">'
+           '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">'
+           '<meta name="apple-mobile-web-app-title" content="Porto Sombrio">\n')
+    i = jogo.find('\n', jogo.find('<meta charset')) + 1
+    jogo = jogo[:i] + app + jogo[i:]
     final = jogo.rstrip() + '\n' + bloco
     DESTINO.write_text(final, encoding='utf-8')
 

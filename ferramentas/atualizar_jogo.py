@@ -105,6 +105,16 @@ def main():
             if f.exists():
                 f.unlink()
 
+    # versão Android (APK) — toda versão nova gera o APK junto
+    try:
+        import gerar_apk
+        gerar_apk.main()
+        pag = PAG_JOGAR.read_text(encoding='utf-8')
+        pag = re.sub(r'/downloads/porto-sombrio-[\d.]+-android\.apk', f'/downloads/porto-sombrio-{versao}-android.apk', pag)
+        PAG_JOGAR.write_text(pag, encoding='utf-8')
+    except SystemExit as e:
+        print(f'ATENÇÃO: o APK não foi gerado ({e}). Rode: python3 ferramentas/gerar_apk.py')
+
     # páginas + integração do jogo
     import gerar_site
     gerar_site.main()
