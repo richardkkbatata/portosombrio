@@ -1,7 +1,25 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.4",
+  "versao_atual": "1.5",
   "versoes": [
+    {
+      "versao": "1.5",
+      "data": "2026-10-09",
+      "titulo": "A Turma da Univali",
+      "resumo": "Do outro lado da BR, a Univali. O Marlon e o Matheus estão presos na biblioteca, e o Brandt agora luta de verdade.",
+      "mudancas": [
+        "Região nova: a BR-101 destruída e o campus da Univali em Balneário Camboriú, com os blocos de verdade (1 a 10, o Bloco 3 redondo, a quadra, a praça, as torres e os estacionamentos). Fica do outro lado do túnel no fim da Avenida do Estado.",
+        "Missão obrigatória no capítulo 2: o Marlon e o Matheus estão presos na biblioteca do Bloco 6A. O Matheus agora começa na Univali e vai com você até o fim.",
+        "Gente nova: Seu Ademir (segurança da Univali), Dona Neusa (cantina), Cabo Juliana (Exército, na BR), Kadu e Bia (surfistas da Brava) e Seu Lauro (roda-gigante).",
+        "No Santa Clara, no lugar do Matheus, tem a pasta do Paciente Zero pra pegar.",
+        "Brandt: o quick time ficou mais longo e virou luta de verdade, com quatro sequências (faca, desarme, parede e judô), finalização em câmera lenta e um visual novo pra ele, no retrato e visto de cima.",
+        "Caçulinha do Marlon, perto da BR. O Richard pega no pé do Matheus, o Edu ficou mais quieto e sarcástico, e o Nicolas fala de política pelo rádio.",
+        "Mais terror: gente presa embaixo de carro (dá pra tentar salvar), gente arrastada pro escuro e a primeira queda de prédio garantida no caos de Balneário.",
+        "Lugares famosos com missão: tirar o Seu Lauro da roda-gigante e acender o Cristo Luz.",
+        "Brava: acampamento dos surfistas com fogueira e violão, onde o medo baixa. Na volta, ele não está mais lá.",
+        "Menu de teste reorganizado em abas: Novidades, Jogador, Itens, História, Chefes, Personagens, Lugares, Inimigos, Medo, Mundo e Final."
+      ]
+    },
     {
       "versao": "1.4",
       "data": "2026-10-09",
