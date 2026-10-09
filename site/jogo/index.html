@@ -9725,8 +9725,43 @@ if(typeof ACH!=='undefined')ACH.push({id:'brandt',n:'Não é pessoal',d:'Sobrevi
     return dj(k);
   };
   const dbg=UI.debug.bind(UI);
-  UI.debug=function(){dbg();try{if(!DBG_OK)return;const sec=OV.querySelector('.dbg-list');if(!sec)return;const d=document.createElement('div');d.className='dbg-list';
-    d.innerHTML=['brandt','galeria','galeria2'].map(k=>`<button class="dbgt" data-a="dbg" data-k="j:${k}">1.4: ${k==='brandt'?'Brandt no shopping':k==='galeria'?'Galeria (início)':'Galeria (comportas)'}</button>`).join('');sec.parentElement.appendChild(d);}catch(e){}};
+  UI.debug=function(){dbg();try{if(!DBG_OK)return;const grid=OV.querySelector('.dbg-grid');if(!grid)return;
+    const bt=(k,l)=>`<button class="dbgb" data-a="dbg" data-k="${k}">${l}</button>`;
+    const sec=document.createElement('section');
+    sec.innerHTML=`<h3>Novidades 1.4</h3><div class="dbg-list">
+      ${bt('j:brandt','Pular · Shopping, antes do Brandt')}${bt('v14:brandtNow','Começar a luta com o Brandt agora')}${bt('v14:brandtLow','Brandt com pouca vida')}${bt('v14:brandtQte','Brandt parte pra faca (quick time)')}${bt('v14:brandtWin','Vencer o Brandt')}
+      ${bt('j:galeria','Pular · Galeria, entrada')}${bt('v14:fuses','Ganhar os três fusíveis')}${bt('v14:pump','Ligar a bomba (resolver fusíveis)')}${bt('j:galeria2','Pular · Galeria, sala das comportas')}${bt('v14:drain','Resolver as comportas (começa a fuga)')}
+      ${bt('v14:chase','Soltar o T-11 aqui (fuga)')}${bt('v14:chaseStop','Parar a fuga e sumir com o T-11')}${bt('v14:exit','Sair da galeria (Laranjeiras)')}${bt('v14:smoke','Granada de fumaça aqui')}${bt('v14:qte','Testar quick time')}
+      ${bt('v14:maleta','Maleta no tamanho máximo')}${bt('v14:maletaMin','Maleta no tamanho inicial')}${bt('v14:notas','Mostrar as novidades de novo no título')}${bt('v14:pesc','Pescador · litoral de Itajaí')}</div>`;
+    grid.insertBefore(sec,grid.firstChild);
+    for(const b of OV.querySelectorAll('[data-k=slots]'))b.textContent='Aumentar a maleta';}catch(e){}};
+  const da=UI.dbgAct.bind(UI);
+  UI.dbgAct=function(k,ds){
+    const F=G.flags, near=()=>{const a=P.ang;return {x:P.x+Math.cos(a)*170,y:P.y+Math.sin(a)*170};};
+    const br=()=>enemies.find(e=>e.alive&&e.type==='brandt');
+    if(k==='spawn:brandt'){this.close();if(!br()){const p=near();F.brFight=true;spawnBrandt(p.x,p.y);}return;}
+    if(k==='spawn:coletor'){this.close();G.ev.chase={t:0};coletorRelease();const c=enemies.find(e=>e.alive&&e.type==='coletor');if(c){const p=near();const [x,y]=freeTileNear((p.x/TILE)|0,(p.y/TILE)|0,false);c.x=tc(x);c.y=tc(y);}toast('T-11 solto. "Parar a fuga" no menu de teste some com ele.');return;}
+    if(!k.startsWith('v14:'))return da(k,ds);
+    const c=k.slice(4); this.close();
+    switch(c){
+      case 'brandtNow':{if(!shopCh1()){dbgJump('brandt');}if(invCount('manobra')<=0)invAdd('manobra',1);const m=pickups.find(p=>p.id==='manobra');if(m){G.taken.add(m.uid);pickups=pickups.filter(p=>p!==m);}F.shKill=true;shopMassacre();F.shCh1=true;if(F.eduFollow){F.eduFollow=false;F.eduSh=true;dropComp('edu');}const s=LM.seguranca;P.x=s.x-40;P.y=s.y;snapCamera();flowTile=-1;STORY.brandtStart();return;}
+      case 'brandtLow':{const e=br();if(!e)return toast('O Brandt não está no mapa. Use "Começar a luta" antes.');e.hp=e.max*.2;e.p2=e.p3=true;e.light=false;return toast('Brandt com 20% da vida.');}
+      case 'brandtQte':{const e=br();if(!e)return toast('O Brandt não está no mapa.');e.x=P.x+30;e.y=P.y;e.mode='stalk';brandtGrapple(e);return;}
+      case 'brandtWin':{const e=br();if(!e)return toast('O Brandt não está no mapa.');e.hp=1;brandtEnd(e);return;}
+      case 'fuses':for(const id of ['fus10','fus20','fus30'])if(invCount(id)<=0)invAdd(id,1);return toast('Fusíveis 10A, 20A e 30A na maleta. Ordem certa: A=20, B=30, C=10.');
+      case 'pump':{for(const id of ['fus10','fus20','fus30'])invRemove(id,9);F.fuseSlots=['fus20','fus30','fus10'];if(!F.sewPump)sewPumpOn();return;}
+      case 'drain':{if(!LM.sewIn)return;if(!inSew()){dbgJump('galeria2');}if(!F.sewPump){F.sewPump=true;sewFlood(false,null);for(const l of lights)if(l.sewPump)l.off=false;}F.sewC=1|8;sewApplyGates();sewDrained();return;}
+      case 'chase':{G.ev.chase={t:0};coletorRelease();const co=enemies.find(e=>e.alive&&e.type==='coletor');if(co){const a=P.ang+Math.PI;const [x,y]=freeTileNear(((P.x+Math.cos(a)*260)/TILE)|0,((P.y+Math.sin(a)*260)/TILE)|0,false);co.x=tc(x);co.y=tc(y);}return;}
+      case 'chaseStop':G.ev.chase=null;G.qte=null;for(const e of enemies)if(e.type==='coletor')e.alive=false;return toast('Fuga parada.');
+      case 'exit':{if(!F.sewIn){F.sewIn=true;F.shKill=true;F.shCh1=true;F.brandtDone=true;}F.sewPump=true;F.sewDrain=true;F.sewC=1|8;sewFlood(false,false);sewApplyGates();F.needDina=true;sewExit();return;}
+      case 'smoke':addSmoke(P.x+Math.cos(P.ang)*120,P.y+Math.sin(P.ang)*120,120,6.5);return;
+      case 'qte':qteStart({label:'TESTE DE QUICK TIME',n:3,onOk:()=>toast('Acertou os três.'),onFail:()=>toast('Errou o tempo.')});return;
+      case 'maleta':G.mw=11;G.mh=8;return toast('Maleta 11×8.');
+      case 'maletaMin':G.mw=8;G.mh=6;{const inv=G.inv.filter(Boolean);G.inv=new Array(64).fill(null);for(const it of inv){const l=invAdd(it.id,it.q);if(l>0)boxAdd(it.id,l);}}return toast('Maleta 8×6. O que não coube foi pro baú.');
+      case 'notas':try{localStorage.removeItem('ps-notas');}catch(e){}return toast('Na tela de título vai aparecer "Novidades" de novo.');
+      case 'pesc':{F.vertice=true;F.pescOn=false;delete F.boss_pescador;const p=LM.cabecudas;const [x,y]=freeTileNear(((p.x/TILE)|0)-12,(p.y/TILE)|0,true);P.x=tc(x);P.y=tc(y);snapCamera();flowTile=-1;return;}
+    }
+  };
 })();
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
@@ -9740,7 +9775,8 @@ const NOTAS=[
     'Acessibilidade: tamanho das legendas, tremor da câmera, clarões e modo daltônico (em Opções).',
     'A chegada na Brava ficou mais calma. O Pescador agora aparece no litoral de Itajaí.',
     'Mais gente caindo dos prédios no caos de Balneário.',
-    'Notas da versão dentro do jogo (esta tela).']},
+    'Notas da versão dentro do jogo (esta tela).',
+    'Menu de teste com uma seção nova para tudo da 1.4: Brandt, galeria, fusíveis, comportas, T-11, maleta e Pescador.']},
   {v:'1.3.2',d:'08/10/2026',t:'O Perseguidor',itens:[
     'Nova apresentação do Perseguidor, depois da conversa com a Helena na Brava.',
     'Correções pequenas e de estabilidade.']},
