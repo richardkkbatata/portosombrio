@@ -1,74 +1,79 @@
 {
-  "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista.",
-  "versao_atual": "1.3.2",
+  "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
+  "versao_atual": "1.4",
   "versoes": [
     {
-      "versao": "1.3.2",
-      "data": "",
-      "titulo": "Navegador e Windows",
-      "resumo": "Jogue no navegador, aqui no site, ou baixe para Windows.",
+      "versao": "1.4",
+      "data": "2026-10-09",
+      "titulo": "O Caçador e a Galeria",
+      "resumo": "O bondinho morreu: o caminho até as Laranjeiras agora é por baixo do rio. E a Vértice mandou um caçador.",
       "mudancas": [
-        "Versão para jogar direto no navegador, aqui no site oficial.",
-        "Versão para Windows 10/11 (Porto Sombrio.exe), que abre em tela cheia. Esc pausa.",
-        "Ajustes e correções em cima da 1.3."
+        "Missão nova no capítulo 1: o bondinho morreu, e o caminho até as Laranjeiras é a galeria pluvial que sai do Shopping Atlântico.",
+        "Luta contra o Sargento Brandt, da Vértice: laser antes da rajada, granada de fumaça, voz nos alto-falantes e corpo a corpo no tempo certo. Quando ele recarregar, é a sua vez.",
+        "Fase nova: Galeria Pluvial do Rio Camboriú, com os Cegos da galeria, o quebra-cabeça dos fusíveis e o das comportas.",
+        "T-11, o Coletor: uma perseguição em que não dá pra lutar, só fugir.",
+        "Inventário em maleta (estilo RE4): tudo ocupa espaço, inclusive as armas. Acabou o limite de 3 armas. Armas podem ficar no baú.",
+        "Acessibilidade: tamanho das legendas, tremor da câmera, clarões e modo daltônico (em Opções).",
+        "A chegada na Brava ficou mais calma. O Pescador agora aparece no litoral de Itajaí.",
+        "Mais gente caindo dos prédios no caos de Balneário.",
+        "Notas da versão dentro do jogo."
+      ]
+    },
+    {
+      "versao": "1.3.2",
+      "data": "2026-10-08",
+      "titulo": "O Perseguidor",
+      "resumo": "Uma apresentação nova para o homem de sobretudo.",
+      "mudancas": [
+        "Nova apresentação do Perseguidor, depois da conversa com a Helena na Brava.",
+        "Correções pequenas e de estabilidade."
       ]
     },
     {
       "versao": "1.3",
-      "data": "",
-      "titulo": "Tutorial, bancada, música e a Sonia",
-      "resumo": "A Sonia liga do outro lado do rio, e o apartamento da Dona Cida vira tutorial.",
+      "data": "2026-10-08",
+      "titulo": "Sonia e a bancada",
+      "resumo": "A Sonia entra na história, e o apartamento da Dona Cida vira tutorial.",
       "mudancas": [
-        "A Sonia, namorada do Richard, liga de Navegantes e dá dicas pelo telefone quando você fica perdido.",
-        "Tutorial dentro do apartamento da Dona Cida: andar, lanterna, agachar, mochila, garrafa e salvar.",
-        "Bancada de armas nos abrigos: peças de arma viram pente estendido, recarga rápida e mira ajustada.",
-        "Música nova: piano triste no menu e um tema pesado para os chefes.",
-        "Tudo que dá pra usar agora fica marcado no mapa da cidade.",
-        "Cena nova do Perseguidor depois da clínica da Brava."
+        "Sonia, a namorada do Richard, dá dicas pelo rádio.",
+        "Tutorial curto no apartamento da Dona Cida.",
+        "Bancada de armas: melhore dano, recarga e munição com peças.",
+        "Música de verdade no menu, nos chefes e no final.",
+        "Marcação em tudo que dá pra interagir. Sprite novo para quando o Richard está agachado.",
+        "O Marlon e o Nicolas fogem no helicóptero no final."
       ]
     },
     {
       "versao": "1.2",
-      "data": "",
-      "titulo": "Marlon, Nicolas e o professor Rese",
-      "resumo": "Três personagens novos, cada um com a sua parte da história, e todos aparecem no porto no final.",
+      "data": "2026-10-07",
+      "titulo": "Marlon, Nicolas e o professor",
+      "resumo": "Três personagens novos e escolhas que mudam o fim.",
       "mudancas": [
-        "Marlon no terraço do Edifício Yacht, na Barra Sul, com a carabina do avô.",
-        "Nicolas e o drone na surf shop da Brava, com o scanner do Exército.",
-        "Professor Alex Rese no Mercado Público de Itajaí, com um plano para o T-00.",
-        "Batalha final no porto com os três.",
-        "Câmera que se aproxima nos lugares apertados e se afasta nos abertos.",
-        "Mochilas largadas, caixas térmicas e 12 fotos escondidas pelo litoral.",
-        "Sinalizador e rojão para arremessar. Fuzil no fim do jogo e limite de 3 armas de fogo.",
-        "Dutos no Hospital Santa Clara.",
-        "Mapa com missões secundárias e personagens.",
-        "Menos zumbis na rua, mas cada mordida dói mais.",
-        "Apresentações novas do Bombeiro e do Perseguidor."
+        "Marlon, Nicolas e o professor Alex Rese entram na história e ajudam a derrubar o chefe final, com escolhas que mudam o fim.",
+        "Câmera automática. Manequins só na missão do shopping, e eles congelam quando você olha.",
+        "Fuzil FAL pro final, dutos no Santa Clara, missões secundárias no mapa e mais eventos aleatórios.",
+        "Mais difícil: menos zumbis, mas 20% mais fortes. A esquiva cansa.",
+        "O menu de teste pede código."
       ]
     },
     {
       "versao": "1.1",
-      "data": "",
-      "titulo": "Esforço, vozes e a cabeça do Richard",
-      "resumo": "Portas que não abrem na hora, gente pedindo socorro no escuro e o medo pesando.",
+      "data": "2026-10-07",
+      "titulo": "Mais medo",
+      "resumo": "Gente gritando por socorro, sustos e portas que não abrem na hora.",
       "mudancas": [
-        "Cortar corrente, empurrar porta emperrada, acender pavio: tudo com esforço e barulho.",
-        "Vozes no escuro: gente presa pedindo socorro.",
-        "Medo: passos que param um segundo depois dos seus, alguém dizendo o seu nome, rádio de quem já morreu.",
-        "Sons da noite ao longe: cachorro, sirene, alarme de carro."
+        "Correção do Richard sumindo da tela.",
+        "Gente gritando por socorro, sustos psicológicos e som mais assustador.",
+        "Portas que pedem esforço, uma ouvinte mais esperta no Santa Clara e cutscenes novas."
       ]
     },
     {
       "versao": "1.0",
-      "data": "",
-      "titulo": "A primeira noite",
-      "resumo": "Balneário Camboriú, Laranjeiras, Praia Brava, Cabeçudas e Itajaí. Um jipe, um bondinho e um helicóptero.",
+      "data": "2026-10-07",
+      "titulo": "Lançamento",
+      "resumo": "A primeira noite.",
       "mudancas": [
-        "Litoral inteiro de Balneário Camboriú até o Porto de Itajaí, de norte a sul como no mapa real.",
-        "Dia e noite: de dia eles se escondem nos prédios, de noite a rua é deles.",
-        "Abrigos de luz verde com máquina de escrever para salvar.",
-        "Chefes, o Perseguidor e três finais diferentes.",
-        "Teclado e mouse ou tela de toque."
+        "Primeira versão completa de Porto Sombrio: de Balneário Camboriú ao Porto de Itajaí."
       ]
     }
   ]
