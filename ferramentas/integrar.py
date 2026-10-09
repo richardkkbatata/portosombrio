@@ -22,8 +22,8 @@ MARCA = '<!-- PS-INTEGRACAO'
 
 GOOGLE_SCRIPT = ('https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com '
                  'https://*.gstatic.com https://*.doubleclick.net https://*.googletagservices.com '
-                 'https://*.adtrafficquality.google https://fundingchoicesmessages.google.com')
-GOOGLE_CONNECT = ('https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net '
+                 'https://*.adtrafficquality.google https://fundingchoicesmessages.google.com https://static.cloudflareinsights.com')
+GOOGLE_CONNECT = ('https://cloudflareinsights.com https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net '
                   'https://*.adtrafficquality.google https://*.gstatic.com')
 GOOGLE_FRAME = ('https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com '
                 'https://*.adtrafficquality.google')
