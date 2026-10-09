@@ -13,3 +13,7 @@
 - Fontes self-hosted em `site/fonts/` (Special Elite, Caveat, League Gothic, licença SIL OFL).
 - História: só o que está no código do jogo. Não invente fatos que contradigam o jogo.
 - Teste antes de entregar: Apache local (`apt-get install apache2`, AllowOverride All, mod_rewrite/headers/expires/ssl) ou `python3 -m http.server` em `site/`, e Playwright (Chromium em /opt/pw-browsers) sem erros no console em PC e celular.
+- Multiplayer do jogo (1.6+): usa WebSocket em `wss://0.peerjs.com`, `wss://broker.emqx.io:8084` e `wss://broker.hivemq.com:8884` (liberados no `connect-src` da CSP do jogo em `ferramentas/integrar.py`). Se uma versão nova do jogo usar outro serviço online, procure as URLs `wss://`/`https://` no HTML e libere na CSP (com a porta, se não for 443).
+- Spoilers: em Personagens e Bestiário, fichas com `data-spoiler` aparecem lacradas (`.lacrado` + `.capa-lacre`, em `site/js/site.js`) e abrem uma a uma; botão `data-abrir-lacres` abre todas. Personagem/inimigo novo que não aparece no começo do jogo deve levar `data-spoiler`. Destinos ficam em `<span class="tarja">`.
+- Relógio "REC · CAM 03" do site mostra a hora real de Brasília (UTC-3).
+- Versão nova do jogo (zip Windows): extrair o `resources/index.html` do `resources.neu` (asar) para `novo-jogo/porto-sombrio.html`, rodar `ferramentas/atualizar_jogo.py --versao X` com as notas da `NOTAS` do próprio jogo e restaurar `novo-jogo/LEIA-ME.txt` (o script apaga).
