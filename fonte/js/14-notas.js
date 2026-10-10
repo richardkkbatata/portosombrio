@@ -1,6 +1,12 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.8.3',d:'10/10/2026',t:'Caído é caído',itens:[
+    'Multiplayer: quem cai não atira mais, não anda, não recarrega, não se cura e não joga granada. Antes dava pra continuar atirando caído, e a cura fazia os amigos verem você de pé enquanto a sua tela dizia "Caído".',
+    'Multiplayer com menos atraso: o jogo agora prevê pra onde os zumbis e os amigos estão indo, em vez de mostrar onde eles estavam um instante atrás. As atualizações também chegam mais vezes por segundo (20 em vez de 12).',
+    'O anfitrião calcula os ataques dos zumbis na posição prevista de cada amigo, então quem está fugindo leva menos mordida "fantasma".',
+    'O ping aparece no canto da tela durante a partida (verde é bom, amarelo é médio, vermelho é alto).',
+    'Menu de teste: "Cair agora", pra testar o caído.']},
   {v:'1.8.2',d:'10/10/2026',t:'Servidor no Brasil',itens:[
     'Multiplayer: servidor novo na Cloudflare, dentro do próprio site, rodando na América do Sul. Ping bem menor e ele não dorme mais: acabou a espera de "acordando o servidor".',
     'O servidor antigo (Render) ficou de reserva: se o novo não responder, o jogo usa ele sozinho. Quem entra pelo código procura a equipe nos dois.',
