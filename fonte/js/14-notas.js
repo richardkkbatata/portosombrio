@@ -1,6 +1,13 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.8.1',d:'10/10/2026',t:'Mais justo',itens:[
+    'Horda e Noite Zero mais justas: o começo é leve (poucos zumbis, quase só os lentos, enquanto vocês só têm pistola) e aperta aos poucos. Nas primeiras ondas não vem mais aquela multidão.',
+    'Horda: ondas 1 a 3 são de aquecimento; a vida dos zumbis só começa a subir a partir da onda 4, e os chefões das primeiras rodadas ficaram mais fracos.',
+    'A partida começa sem os zumbis da cidade em cima da turma.',
+    'Mais dinheiro: os zumbis deixam cair dinheiro mais vezes e em quantidade maior, e cada etapa vencida dá um bônus pra cada um (na Horda, cresce a cada onda). Começa com mais dinheiro também.',
+    'Volume: barras separadas de Efeitos e Música, nas Opções e na Pausa.',
+    'Multiplayer: quem não é o anfitrião agora vê o sangue dos tiros, o espirro quando o zumbi leva bala e as poças de sangue quando ele morre.']},
   {v:'1.8',d:'10/10/2026',t:'O Mascate',itens:[
     'O Mascate: um vendedor com carrinho na praça, na Barra Sul, na Universidade de BC e em Itajaí. Compra e vende munição, cura, granada, pilha, faca nova, armas e maleta maior.',
     'Dinheiro: os zumbis deixam cair notas (os grandes e os chefões, bem mais). De vez em quando cai uma joia, que o Mascate paga R$ 500. O dinheiro não ocupa espaço na maleta.',

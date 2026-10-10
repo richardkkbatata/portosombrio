@@ -286,14 +286,15 @@ function mpSetChar(ch){
 // ---------- Noite Zero (1.7.1): matar zumbi com os amigos e derrubar chefão. Sem enrolação. ----------
 // Tudo acontece em volta da turma (o centro é a média de quem está de pé). Mais gente na equipe = mais zumbi e chefão mais forte.
 const MPST=[
-  {t:'Primeira onda: matem {n} zumbis',kills:24,rate:1.2,mix:'leve',bark:['edu','n','Vinte e quatro. Eu contei. Alguém mais contou ou só eu trabalho aqui?']},
-  {t:'Chefão: derrubem O Frentista',boss:'gordo',hpk:1,rate:3.5,mix:'leve',bark:['marlon','n','O gordão caiu. Pega munição e respira, que vem mais.']},
-  {t:'Segurem a praça: {s} segundos de horda',hold:60,rate:.8,mix:'media',bark:['nico','n','Sessenta segundos. Parecia uma aula do Rese.']},
-  {t:'Chefão: derrubem O Espécime',boss:'especime',hpk:1,rate:3,mix:'media',bark:['matheus','s','Isso aí saiu do porto. Eu reconheço. Bora acabar com isso.']},
-  {t:'Horda pesada: matem {n} zumbis',kills:40,rate:.7,mix:'pesada',bark:['marlon','a','Quarenta. Tô sem dedo de tanto atirar.']},
-  {t:'Chefão final: derrubem A Abominação',boss:'boss',hpk:.8,rate:2.2,mix:'pesada',bark:['marlon','a','Amanheceu. A gente conseguiu. A turma inteira. Até o Edu chegou no horário.']},
+  // começa leve (só pistola na mão) e aperta conforme a turma ganha arma e munição
+  {t:'Primeira onda: matem {n} zumbis',kills:12,rate:2.4,grp:1,burst:3,cap:10,mix:'inicio',bark:['edu','n','Doze. Eu contei. Alguém mais contou ou só eu trabalho aqui?']},
+  {t:'Chefão: derrubem O Frentista',boss:'gordo',hpk:.7,rate:4.5,grp:1,cap:6,mix:'inicio',bark:['marlon','n','O gordão caiu. Passa no Mascate e respira, que vem mais.']},
+  {t:'Segurem a praça: {s} segundos de horda',hold:45,rate:1.6,grp:2,burst:4,cap:16,mix:'leve',bark:['nico','n','Quarenta e cinco segundos. Parecia uma aula do Rese.']},
+  {t:'Chefão: derrubem O Espécime',boss:'especime',hpk:.9,rate:3.5,grp:1,cap:10,mix:'leve',bark:['matheus','s','Isso aí saiu do porto. Eu reconheço. Bora acabar com isso.']},
+  {t:'Horda pesada: matem {n} zumbis',kills:30,rate:1,grp:2,burst:6,cap:22,mix:'media',bark:['marlon','a','Trinta. Tô sem dedo de tanto atirar.']},
+  {t:'Chefão final: derrubem A Abominação',boss:'boss',hpk:.85,rate:2.5,grp:2,cap:16,mix:'pesada',bark:['marlon','a','Amanheceu. A gente conseguiu. A turma inteira. Até o Edu chegou no horário.']},
 ];
-const MP_MIX={leve:[['zumbi',70],['corr',20],['cao',10]],media:[['zumbi',50],['corr',22],['incha',10],['cusp',10],['cao',8]],pesada:[['zumbi',40],['corr',20],['incha',10],['cusp',10],['brut',6],['soldado',14]]};
+const MP_MIX={inicio:[['zumbi',88],['corr',8],['cao',4]],leve:[['zumbi',70],['corr',20],['cao',10]],media:[['zumbi',50],['corr',22],['incha',10],['cusp',10],['cao',8]],pesada:[['zumbi',40],['corr',20],['incha',10],['cusp',10],['brut',6],['soldado',14]]};
 const mpAllPos=()=>[{x:P.x,y:P.y,hp:P.hp},...Object.values(MP.players)];
 const mpN=()=>1+Object.keys(MP.players).length;
 function mpNear(L,r,all){if(!L)return true;const f=p=>p.hp>0&&hyp(p.x-L.x,p.y-L.y)<r;return all?mpAllPos().every(p=>p.hp<=0||f(p)):mpAllPos().some(f);}
@@ -307,7 +308,7 @@ function mpSpawnAt(type,minD,maxD,uid){
     const e=makeEnemy(type,tc(tx),tc(ty),uid||null);Object.assign(e,{state:'chase',hunt:true,huntT:999,lx:c.x,ly:c.y,mpw:true});enemies.push(e);return e;}
   return null;
 }
-function mpWave(mix,n){const alive=enemies.filter(e=>e.alive&&e.mpw).length,cap=30+mpN()*8;for(let i=0;i<n&&alive+i<cap;i++)mpSpawnAt(mpPick(mix),360,560);}
+function mpWave(mix,n){const alive=enemies.filter(e=>e.alive&&e.mpw).length,cap=MP.cap||(30+mpN()*8);for(let i=0;i<n&&alive+i<cap;i++)mpSpawnAt(mpPick(mix),360,560);}
 function mpKit(){for(let i=0;i<WEAPONS.length;i++){const w=WEAPONS[i];if(!P.owned[i]||w.melee||!w.ammo)continue;const l=invAdd(w.ammo,Math.max(6,w.mag*2));if(l)boxAdd(w.ammo,l);}
   const l=invAdd('ervaV',1);if(l)boxAdd('ervaV',l);toast('Munição e erva pra todo mundo.');AU.pickup();}
 function mpStageStart(){
@@ -431,7 +432,7 @@ function mpDrawHud(){
   const ds=drawPsy; drawPsy=function(){ds();mpDrawHud();};
   const sv=UI.save.bind(UI); UI.save=function(){if(MP.on)return toast('No multiplayer beta não tem registro. Fiquem vivos.');return sv();};
   const pz=UI.pause.bind(UI); UI.pause=function(){if(!MP.on)return pz();if(G.mode!=='play')return;
-    UI.open(`<div class="sheet narrow"><p class="kick">Multiplayer beta</p><h2>Pausa</h2><p class="hint">O jogo continua pros outros enquanto este menu está aberto.</p><div class="menu"><button class="btn primary" data-a="close">Continuar</button><button class="btn" data-a="inv" data-t="itens">Maleta</button><button class="btn" data-a="opts" data-from="pause">Opções</button><button class="btn ghost" data-a="mp-leave">Sair da partida</button></div></div>`,'','pause');};
+    UI.open(`<div class="sheet narrow"><p class="kick">Multiplayer beta</p><h2>Pausa</h2>${mpN()>1?'<p class="hint">O jogo continua pros outros enquanto este menu está aberto.</p>':''}<div class="menu"><button class="btn primary" data-a="close">Continuar</button><button class="btn" data-a="inv" data-t="itens">Maleta</button><button class="btn" data-a="opts" data-from="pause">Opções</button><button class="btn ghost" data-a="mp-leave">Sair da partida</button></div></div>`,'','pause');};
   // título: multiplayer e conta; na primeira vez pede pra criar a conta
   const tt=UI.title.bind(UI); UI.title=function(){tt();try{const m=OV.querySelector('.menu');if(!m)return;const c=contaGet();
     const b=document.createElement('button');b.className='btn';b.dataset.a='mp';b.textContent='Multiplayer (beta)';const nw=m.querySelector('[data-a=new]');m.insertBefore(b,nw?nw.nextSibling:null);

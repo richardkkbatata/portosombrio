@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.8",
+  "versao_atual": "1.8.1",
   "versoes": [
+    {
+      "versao": "1.8.1",
+      "data": "2026-10-10",
+      "titulo": "Mais justo",
+      "resumo": "Horda e Noite Zero com começo leve e dificuldade subindo aos poucos",
+      "mudancas": [
+        "Horda e Noite Zero com começo leve e dificuldade subindo aos poucos",
+        "Mais dinheiro dos zumbis e bônus a cada etapa vencida",
+        "Barras de volume separadas para efeitos e música",
+        "Multiplayer: sangue e corpos aparecem também na tela dos amigos"
+      ]
+    },
     {
       "versao": "1.8",
       "data": "2026-10-10",

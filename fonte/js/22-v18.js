@@ -65,9 +65,9 @@ function lojaVender(id,q){q=Math.min(q|0,invCount(id));if(q<=0||!VENDA[id])retur
   if(was&&!e.alive&&!(MP.on&&MP.role==='guest')){
     if(MP.on&&MP.role==='host'&&MP.stats){const id=MP.creditId||'0';const s=MP.stats[id];if(s)s.k++;}
     const boss=e.t.boss||e.type==='boss'||e.type==='pers'||e.type==='bombeiro', big=e.max>=200;
-    const ch=MP.on&&MP.modo==='horda'?.5:MP.on?.35:.25;
+    const ch=MP.on&&MP.modo==='horda'?.6:MP.on?.5:.3;
     if(boss)dropAt(e.x,e.y,'grana',ri(300,600));
-    else if(big||Math.random()<ch)dropAt(e.x+rr(-6,6),e.y+rr(-6,6),'grana',big?ri(40,90):ri(5,22));
+    else if(big||Math.random()<ch)dropAt(e.x+rr(-6,6),e.y+rr(-6,6),'grana',big?ri(50,110):ri(8,26));
     if(!boss&&Math.random()<.03)dropAt(e.x,e.y,'joia',1);
   }
   return r;};}
@@ -118,30 +118,33 @@ function mpStage(i){
   if(MP.modo!=='horda')return MPST[i];
   if(i%2===1)return {pausa:14,t:'Intervalo: o Mascate está aqui. Compre rápido'};
   const n=(i>>1)+1;
-  if(n%5===0){const b=HORDA_CHEFES[((n/5)-1)%HORDA_CHEFES.length];return {wave:n,boss:b,hpk:.55+.18*(n/5),rate:Math.max(1.4,3-.1*n),mix:n<10?'media':'pesada',t:`Onda ${n} · Chefão: derrubem ${ETYPES[b].n}`};}
-  return {wave:n,kills:10+4*n,rate:Math.max(.32,1.25-.06*n),mix:n<4?'leve':n<9?'media':'pesada',t:`Onda ${n}: matem {n} zumbis`};
+  const mix=n<=3?'inicio':n<=7?'leve':n<=12?'media':'pesada';
+  if(n%5===0){const b=HORDA_CHEFES[((n/5)-1)%HORDA_CHEFES.length];return {wave:n,boss:b,hpk:.45+.15*(n/5),rate:Math.max(1.8,4-.1*n),grp:1,cap:6+n,mix,t:`Onda ${n} · Chefão: derrubem ${ETYPES[b].n}`};}
+  // ondas 1 a 3 são de aquecimento; a partir da 4 cresce devagar (dá tempo de comprar arma melhor)
+  return {wave:n,kills:6+3*n,rate:Math.max(.5,2.6-.13*n),grp:1+Math.floor(n/4),burst:2+Math.floor(n/2),cap:Math.min(8+3*n,42),mix,t:`Onda ${n}: matem {n} zumbis`};
 }
 const mpNeed=s=>Math.round(s.kills*(.7+.3*mpN()));
 mpStageStart=function(){
   const s=mpStage(MP.stage); if(!s)return; MP.prog=0; MP.kills=0; MP.wv=2; MP.boss=null; G.mascTmp=null;
-  if(s.wave)MP.onda=s.wave;
+  if(s.wave)MP.onda=s.wave; MP.cap=(s.cap||30)+4*(mpN()-1);
   if(s.pausa){const c=mpCenter(),[x,y]=freeTileNear(((c.x/TILE)|0)+3,((c.y/TILE)|0)+1,true);G.mascTmp={x:tc(x),y:tc(y),onde:'aqui',tmp:true};mpSend({t:'masc',x:G.mascTmp.x,y:G.mascTmp.y});
     const msg='Intervalo';G.banner={t:msg,life:2.5};mpSend({t:'banner',s:msg});return;}
   if(s.boss){const e=mpSpawnAt(s.boss,420,560,'mpboss'+MP.stage)||mpSpawnAt(s.boss,250,700,'mpboss'+MP.stage);
     if(e){e.hp=e.max=e.max*s.hpk*(.75+.35*mpN());e.home=null;MP.boss=e;}}
-  else mpWave(s.mix,6+mpN()*3);
+  else mpWave(s.mix,(s.burst||3)+2*(mpN()-1));
   const msg=s.boss?ETYPES[s.boss].n:s.wave?'Onda '+s.wave:'Onda '+(MP.stage+1); G.banner={t:msg,life:3};mpSend({t:'banner',s:msg});
 };
 mpHostStage=function(dt){
   if(MP.endT!=null){if((MP.endT-=dt)<=0){MP.endT=null;mpEnd(true);}return;}
   const s=mpStage(MP.stage); if(!s)return;
   if(!MP.started){MP.started=true;mpStageStart();}
-  if(!s.pausa&&(MP.wv-=dt)<=0){MP.wv=s.rate*rr(.8,1.2);mpWave(s.mix,2+Math.floor(mpN()*.8)+(s.hold?1:0));}
+  if(!s.pausa&&(MP.wv-=dt)<=0){MP.wv=s.rate*rr(.8,1.2);mpWave(s.mix,(s.grp||1)+Math.floor((mpN()-1)*.6));}
   if(s.hold||s.pausa)MP.prog+=dt;
   const done=s.pausa?MP.prog>=s.pausa:s.kills?MP.kills>=mpNeed(s):s.hold?MP.prog>=s.hold:s.boss?!(MP.boss&&MP.boss.alive):false;
   if(done){
     if(s.bark){bark(...s.bark);mpSend({t:'bark',w:s.bark[0],m:s.bark[1],s:s.bark[2]});}
     if(MP.modo!=='horda'||s.boss){mpKit();mpSend({t:'kit'});}
+    if(!s.pausa){const v=MP.modo==='horda'?40+20*(s.wave||1):120;mpBonus(v);mpSend({t:'bonus',v});}
     if(s.pausa){G.mascTmp=null;mpSend({t:'masc'});}
     MP.started=false;
     if(++MP.stage>=MPST.length&&MP.modo!=='horda'){MP.endT=3;MP.creditId='-';for(const e of enemies)if(e.alive&&e.mpw)killEnemy(e);MP.creditId=null;}
@@ -159,11 +162,12 @@ mpObjective=function(){
   return {t,at};
 };
 // zumbi fica mais forte a cada onda na Horda
-{const sa=mpSpawnAt; mpSpawnAt=function(type,a,b,uid){const e=sa(type,a,b,uid);if(e&&MP.modo==='horda'&&MP.onda>1&&!e.t.boss&&e.type!=='boss'){const k=1+.07*(MP.onda-1);e.hp*=k;e.max*=k;}return e;};}
+{const sa=mpSpawnAt; mpSpawnAt=function(type,a,b,uid){const e=sa(type,a,b,uid);if(e&&MP.modo==='horda'&&MP.onda>3&&!e.t.boss&&e.type!=='boss'){const k=1+.05*(MP.onda-3);e.hp*=k;e.max*=k;}return e;};}
 {const b=mpBegin; mpBegin=function(info){
   MP.modo=info.modo||'zero'; MP.stats={}; MP.onda=0; MP.rev=null; MP.says={}; MP.pings=[]; MP.downPrev={}; G.mascTmp=null; MP.sent=false;
   b(info); P.mpDown=0;
-  G.flags.grana=MP.modo==='horda'?150:300;
+  G.flags.grana=MP.modo==='horda'?300:400;
+  if(MP.role==='host')enemies=enemies.filter(e=>e.mpw||hyp(e.x-P.x,e.y-P.y)>950); // começa sem os zumbis da cidade em cima da turma
   MP.known=new Set(pickups.map(p=>p.uid)); for(const id of Object.keys(info.pl||{}))mpStat(id);
   if(MP.modo==='horda'){G.banner={t:mpN()>1?'Horda':'Horda · solo',life:3.5};toast('Ondas sem fim. Chefão a cada 5. Até onde vocês aguentam?');}
 };}
@@ -276,7 +280,8 @@ function drawMini(){
   if((MP.dropT=(MP.dropT||0)-dt)<=0){MP.dropT=.4;const k=MP.known||(MP.known=new Set()),nw=[];for(const p of pickups)if(!k.has(p.uid)){k.add(p.uid);nw.push(p);}if(nw.length)mpSend({t:'drop',p:nw});}
 };}
 // mercador temporário da Horda chega pra todo mundo
-{const rv=mpRecv; mpRecv=function(m,p){if(m&&m.t==='masc'){G.mascTmp=m.x!=null?{x:m.x,y:m.y,onde:'aqui',tmp:true}:null;return;}return rv(m,p);};}
+function mpBonus(v){granaAdd(v);toast(`Etapa vencida: +${brl(v)} pra cada um.`);}
+{const rv=mpRecv; mpRecv=function(m,p){if(m&&m.t==='bonus'){mpBonus(m.v);return;}if(m&&m.t==='masc'){G.mascTmp=m.x!=null?{x:m.x,y:m.y,onde:'aqui',tmp:true}:null;return;}return rv(m,p);};}
 // caído: 30 segundos pra alguém levantar (senão levanta sozinho perto de um amigo)
 {const di=die; die=function(){const prev=P.mpDown||0,r=di.apply(this,arguments);if(MP.on){if(prev>0)P.mpDown=prev;else{P.mpDown=30;toast('Você caiu! Um amigo pode te levantar.');}}return r;};}
 // explosões do anfitrião também pegam os amigos

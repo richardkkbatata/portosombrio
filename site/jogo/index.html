@@ -10400,6 +10400,13 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.8.1',d:'10/10/2026',t:'Mais justo',itens:[
+    'Horda e Noite Zero mais justas: o começo é leve (poucos zumbis, quase só os lentos, enquanto vocês só têm pistola) e aperta aos poucos. Nas primeiras ondas não vem mais aquela multidão.',
+    'Horda: ondas 1 a 3 são de aquecimento; a vida dos zumbis só começa a subir a partir da onda 4, e os chefões das primeiras rodadas ficaram mais fracos.',
+    'A partida começa sem os zumbis da cidade em cima da turma.',
+    'Mais dinheiro: os zumbis deixam cair dinheiro mais vezes e em quantidade maior, e cada etapa vencida dá um bônus pra cada um (na Horda, cresce a cada onda). Começa com mais dinheiro também.',
+    'Volume: barras separadas de Efeitos e Música, nas Opções e na Pausa.',
+    'Multiplayer: quem não é o anfitrião agora vê o sangue dos tiros, o espirro quando o zumbi leva bala e as poças de sangue quando ele morre.']},
   {v:'1.8',d:'10/10/2026',t:'O Mascate',itens:[
     'O Mascate: um vendedor com carrinho na praça, na Barra Sul, na Universidade de BC e em Itajaí. Compra e vende munição, cura, granada, pilha, faca nova, armas e maleta maior.',
     'Dinheiro: os zumbis deixam cair notas (os grandes e os chefões, bem mais). De vez em quando cai uma joia, que o Mascate paga R$ 500. O dinheiro não ocupa espaço na maleta.',
@@ -11384,14 +11391,15 @@ function mpSetChar(ch){
 // ---------- Noite Zero (1.7.1): matar zumbi com os amigos e derrubar chefão. Sem enrolação. ----------
 // Tudo acontece em volta da turma (o centro é a média de quem está de pé). Mais gente na equipe = mais zumbi e chefão mais forte.
 const MPST=[
-  {t:'Primeira onda: matem {n} zumbis',kills:24,rate:1.2,mix:'leve',bark:['edu','n','Vinte e quatro. Eu contei. Alguém mais contou ou só eu trabalho aqui?']},
-  {t:'Chefão: derrubem O Frentista',boss:'gordo',hpk:1,rate:3.5,mix:'leve',bark:['marlon','n','O gordão caiu. Pega munição e respira, que vem mais.']},
-  {t:'Segurem a praça: {s} segundos de horda',hold:60,rate:.8,mix:'media',bark:['nico','n','Sessenta segundos. Parecia uma aula do Rese.']},
-  {t:'Chefão: derrubem O Espécime',boss:'especime',hpk:1,rate:3,mix:'media',bark:['matheus','s','Isso aí saiu do porto. Eu reconheço. Bora acabar com isso.']},
-  {t:'Horda pesada: matem {n} zumbis',kills:40,rate:.7,mix:'pesada',bark:['marlon','a','Quarenta. Tô sem dedo de tanto atirar.']},
-  {t:'Chefão final: derrubem A Abominação',boss:'boss',hpk:.8,rate:2.2,mix:'pesada',bark:['marlon','a','Amanheceu. A gente conseguiu. A turma inteira. Até o Edu chegou no horário.']},
+  // começa leve (só pistola na mão) e aperta conforme a turma ganha arma e munição
+  {t:'Primeira onda: matem {n} zumbis',kills:12,rate:2.4,grp:1,burst:3,cap:10,mix:'inicio',bark:['edu','n','Doze. Eu contei. Alguém mais contou ou só eu trabalho aqui?']},
+  {t:'Chefão: derrubem O Frentista',boss:'gordo',hpk:.7,rate:4.5,grp:1,cap:6,mix:'inicio',bark:['marlon','n','O gordão caiu. Passa no Mascate e respira, que vem mais.']},
+  {t:'Segurem a praça: {s} segundos de horda',hold:45,rate:1.6,grp:2,burst:4,cap:16,mix:'leve',bark:['nico','n','Quarenta e cinco segundos. Parecia uma aula do Rese.']},
+  {t:'Chefão: derrubem O Espécime',boss:'especime',hpk:.9,rate:3.5,grp:1,cap:10,mix:'leve',bark:['matheus','s','Isso aí saiu do porto. Eu reconheço. Bora acabar com isso.']},
+  {t:'Horda pesada: matem {n} zumbis',kills:30,rate:1,grp:2,burst:6,cap:22,mix:'media',bark:['marlon','a','Trinta. Tô sem dedo de tanto atirar.']},
+  {t:'Chefão final: derrubem A Abominação',boss:'boss',hpk:.85,rate:2.5,grp:2,cap:16,mix:'pesada',bark:['marlon','a','Amanheceu. A gente conseguiu. A turma inteira. Até o Edu chegou no horário.']},
 ];
-const MP_MIX={leve:[['zumbi',70],['corr',20],['cao',10]],media:[['zumbi',50],['corr',22],['incha',10],['cusp',10],['cao',8]],pesada:[['zumbi',40],['corr',20],['incha',10],['cusp',10],['brut',6],['soldado',14]]};
+const MP_MIX={inicio:[['zumbi',88],['corr',8],['cao',4]],leve:[['zumbi',70],['corr',20],['cao',10]],media:[['zumbi',50],['corr',22],['incha',10],['cusp',10],['cao',8]],pesada:[['zumbi',40],['corr',20],['incha',10],['cusp',10],['brut',6],['soldado',14]]};
 const mpAllPos=()=>[{x:P.x,y:P.y,hp:P.hp},...Object.values(MP.players)];
 const mpN=()=>1+Object.keys(MP.players).length;
 function mpNear(L,r,all){if(!L)return true;const f=p=>p.hp>0&&hyp(p.x-L.x,p.y-L.y)<r;return all?mpAllPos().every(p=>p.hp<=0||f(p)):mpAllPos().some(f);}
@@ -11405,7 +11413,7 @@ function mpSpawnAt(type,minD,maxD,uid){
     const e=makeEnemy(type,tc(tx),tc(ty),uid||null);Object.assign(e,{state:'chase',hunt:true,huntT:999,lx:c.x,ly:c.y,mpw:true});enemies.push(e);return e;}
   return null;
 }
-function mpWave(mix,n){const alive=enemies.filter(e=>e.alive&&e.mpw).length,cap=30+mpN()*8;for(let i=0;i<n&&alive+i<cap;i++)mpSpawnAt(mpPick(mix),360,560);}
+function mpWave(mix,n){const alive=enemies.filter(e=>e.alive&&e.mpw).length,cap=MP.cap||(30+mpN()*8);for(let i=0;i<n&&alive+i<cap;i++)mpSpawnAt(mpPick(mix),360,560);}
 function mpKit(){for(let i=0;i<WEAPONS.length;i++){const w=WEAPONS[i];if(!P.owned[i]||w.melee||!w.ammo)continue;const l=invAdd(w.ammo,Math.max(6,w.mag*2));if(l)boxAdd(w.ammo,l);}
   const l=invAdd('ervaV',1);if(l)boxAdd('ervaV',l);toast('Munição e erva pra todo mundo.');AU.pickup();}
 function mpStageStart(){
@@ -11529,7 +11537,7 @@ function mpDrawHud(){
   const ds=drawPsy; drawPsy=function(){ds();mpDrawHud();};
   const sv=UI.save.bind(UI); UI.save=function(){if(MP.on)return toast('No multiplayer beta não tem registro. Fiquem vivos.');return sv();};
   const pz=UI.pause.bind(UI); UI.pause=function(){if(!MP.on)return pz();if(G.mode!=='play')return;
-    UI.open(`<div class="sheet narrow"><p class="kick">Multiplayer beta</p><h2>Pausa</h2><p class="hint">O jogo continua pros outros enquanto este menu está aberto.</p><div class="menu"><button class="btn primary" data-a="close">Continuar</button><button class="btn" data-a="inv" data-t="itens">Maleta</button><button class="btn" data-a="opts" data-from="pause">Opções</button><button class="btn ghost" data-a="mp-leave">Sair da partida</button></div></div>`,'','pause');};
+    UI.open(`<div class="sheet narrow"><p class="kick">Multiplayer beta</p><h2>Pausa</h2>${mpN()>1?'<p class="hint">O jogo continua pros outros enquanto este menu está aberto.</p>':''}<div class="menu"><button class="btn primary" data-a="close">Continuar</button><button class="btn" data-a="inv" data-t="itens">Maleta</button><button class="btn" data-a="opts" data-from="pause">Opções</button><button class="btn ghost" data-a="mp-leave">Sair da partida</button></div></div>`,'','pause');};
   // título: multiplayer e conta; na primeira vez pede pra criar a conta
   const tt=UI.title.bind(UI); UI.title=function(){tt();try{const m=OV.querySelector('.menu');if(!m)return;const c=contaGet();
     const b=document.createElement('button');b.className='btn';b.dataset.a='mp';b.textContent='Multiplayer (beta)';const nw=m.querySelector('[data-a=new]');m.insertBefore(b,nw?nw.nextSibling:null);
@@ -11799,9 +11807,9 @@ function lojaVender(id,q){q=Math.min(q|0,invCount(id));if(q<=0||!VENDA[id])retur
   if(was&&!e.alive&&!(MP.on&&MP.role==='guest')){
     if(MP.on&&MP.role==='host'&&MP.stats){const id=MP.creditId||'0';const s=MP.stats[id];if(s)s.k++;}
     const boss=e.t.boss||e.type==='boss'||e.type==='pers'||e.type==='bombeiro', big=e.max>=200;
-    const ch=MP.on&&MP.modo==='horda'?.5:MP.on?.35:.25;
+    const ch=MP.on&&MP.modo==='horda'?.6:MP.on?.5:.3;
     if(boss)dropAt(e.x,e.y,'grana',ri(300,600));
-    else if(big||Math.random()<ch)dropAt(e.x+rr(-6,6),e.y+rr(-6,6),'grana',big?ri(40,90):ri(5,22));
+    else if(big||Math.random()<ch)dropAt(e.x+rr(-6,6),e.y+rr(-6,6),'grana',big?ri(50,110):ri(8,26));
     if(!boss&&Math.random()<.03)dropAt(e.x,e.y,'joia',1);
   }
   return r;};}
@@ -11852,30 +11860,33 @@ function mpStage(i){
   if(MP.modo!=='horda')return MPST[i];
   if(i%2===1)return {pausa:14,t:'Intervalo: o Mascate está aqui. Compre rápido'};
   const n=(i>>1)+1;
-  if(n%5===0){const b=HORDA_CHEFES[((n/5)-1)%HORDA_CHEFES.length];return {wave:n,boss:b,hpk:.55+.18*(n/5),rate:Math.max(1.4,3-.1*n),mix:n<10?'media':'pesada',t:`Onda ${n} · Chefão: derrubem ${ETYPES[b].n}`};}
-  return {wave:n,kills:10+4*n,rate:Math.max(.32,1.25-.06*n),mix:n<4?'leve':n<9?'media':'pesada',t:`Onda ${n}: matem {n} zumbis`};
+  const mix=n<=3?'inicio':n<=7?'leve':n<=12?'media':'pesada';
+  if(n%5===0){const b=HORDA_CHEFES[((n/5)-1)%HORDA_CHEFES.length];return {wave:n,boss:b,hpk:.45+.15*(n/5),rate:Math.max(1.8,4-.1*n),grp:1,cap:6+n,mix,t:`Onda ${n} · Chefão: derrubem ${ETYPES[b].n}`};}
+  // ondas 1 a 3 são de aquecimento; a partir da 4 cresce devagar (dá tempo de comprar arma melhor)
+  return {wave:n,kills:6+3*n,rate:Math.max(.5,2.6-.13*n),grp:1+Math.floor(n/4),burst:2+Math.floor(n/2),cap:Math.min(8+3*n,42),mix,t:`Onda ${n}: matem {n} zumbis`};
 }
 const mpNeed=s=>Math.round(s.kills*(.7+.3*mpN()));
 mpStageStart=function(){
   const s=mpStage(MP.stage); if(!s)return; MP.prog=0; MP.kills=0; MP.wv=2; MP.boss=null; G.mascTmp=null;
-  if(s.wave)MP.onda=s.wave;
+  if(s.wave)MP.onda=s.wave; MP.cap=(s.cap||30)+4*(mpN()-1);
   if(s.pausa){const c=mpCenter(),[x,y]=freeTileNear(((c.x/TILE)|0)+3,((c.y/TILE)|0)+1,true);G.mascTmp={x:tc(x),y:tc(y),onde:'aqui',tmp:true};mpSend({t:'masc',x:G.mascTmp.x,y:G.mascTmp.y});
     const msg='Intervalo';G.banner={t:msg,life:2.5};mpSend({t:'banner',s:msg});return;}
   if(s.boss){const e=mpSpawnAt(s.boss,420,560,'mpboss'+MP.stage)||mpSpawnAt(s.boss,250,700,'mpboss'+MP.stage);
     if(e){e.hp=e.max=e.max*s.hpk*(.75+.35*mpN());e.home=null;MP.boss=e;}}
-  else mpWave(s.mix,6+mpN()*3);
+  else mpWave(s.mix,(s.burst||3)+2*(mpN()-1));
   const msg=s.boss?ETYPES[s.boss].n:s.wave?'Onda '+s.wave:'Onda '+(MP.stage+1); G.banner={t:msg,life:3};mpSend({t:'banner',s:msg});
 };
 mpHostStage=function(dt){
   if(MP.endT!=null){if((MP.endT-=dt)<=0){MP.endT=null;mpEnd(true);}return;}
   const s=mpStage(MP.stage); if(!s)return;
   if(!MP.started){MP.started=true;mpStageStart();}
-  if(!s.pausa&&(MP.wv-=dt)<=0){MP.wv=s.rate*rr(.8,1.2);mpWave(s.mix,2+Math.floor(mpN()*.8)+(s.hold?1:0));}
+  if(!s.pausa&&(MP.wv-=dt)<=0){MP.wv=s.rate*rr(.8,1.2);mpWave(s.mix,(s.grp||1)+Math.floor((mpN()-1)*.6));}
   if(s.hold||s.pausa)MP.prog+=dt;
   const done=s.pausa?MP.prog>=s.pausa:s.kills?MP.kills>=mpNeed(s):s.hold?MP.prog>=s.hold:s.boss?!(MP.boss&&MP.boss.alive):false;
   if(done){
     if(s.bark){bark(...s.bark);mpSend({t:'bark',w:s.bark[0],m:s.bark[1],s:s.bark[2]});}
     if(MP.modo!=='horda'||s.boss){mpKit();mpSend({t:'kit'});}
+    if(!s.pausa){const v=MP.modo==='horda'?40+20*(s.wave||1):120;mpBonus(v);mpSend({t:'bonus',v});}
     if(s.pausa){G.mascTmp=null;mpSend({t:'masc'});}
     MP.started=false;
     if(++MP.stage>=MPST.length&&MP.modo!=='horda'){MP.endT=3;MP.creditId='-';for(const e of enemies)if(e.alive&&e.mpw)killEnemy(e);MP.creditId=null;}
@@ -11893,11 +11904,12 @@ mpObjective=function(){
   return {t,at};
 };
 // zumbi fica mais forte a cada onda na Horda
-{const sa=mpSpawnAt; mpSpawnAt=function(type,a,b,uid){const e=sa(type,a,b,uid);if(e&&MP.modo==='horda'&&MP.onda>1&&!e.t.boss&&e.type!=='boss'){const k=1+.07*(MP.onda-1);e.hp*=k;e.max*=k;}return e;};}
+{const sa=mpSpawnAt; mpSpawnAt=function(type,a,b,uid){const e=sa(type,a,b,uid);if(e&&MP.modo==='horda'&&MP.onda>3&&!e.t.boss&&e.type!=='boss'){const k=1+.05*(MP.onda-3);e.hp*=k;e.max*=k;}return e;};}
 {const b=mpBegin; mpBegin=function(info){
   MP.modo=info.modo||'zero'; MP.stats={}; MP.onda=0; MP.rev=null; MP.says={}; MP.pings=[]; MP.downPrev={}; G.mascTmp=null; MP.sent=false;
   b(info); P.mpDown=0;
-  G.flags.grana=MP.modo==='horda'?150:300;
+  G.flags.grana=MP.modo==='horda'?300:400;
+  if(MP.role==='host')enemies=enemies.filter(e=>e.mpw||hyp(e.x-P.x,e.y-P.y)>950); // começa sem os zumbis da cidade em cima da turma
   MP.known=new Set(pickups.map(p=>p.uid)); for(const id of Object.keys(info.pl||{}))mpStat(id);
   if(MP.modo==='horda'){G.banner={t:mpN()>1?'Horda':'Horda · solo',life:3.5};toast('Ondas sem fim. Chefão a cada 5. Até onde vocês aguentam?');}
 };}
@@ -12010,7 +12022,8 @@ function drawMini(){
   if((MP.dropT=(MP.dropT||0)-dt)<=0){MP.dropT=.4;const k=MP.known||(MP.known=new Set()),nw=[];for(const p of pickups)if(!k.has(p.uid)){k.add(p.uid);nw.push(p);}if(nw.length)mpSend({t:'drop',p:nw});}
 };}
 // mercador temporário da Horda chega pra todo mundo
-{const rv=mpRecv; mpRecv=function(m,p){if(m&&m.t==='masc'){G.mascTmp=m.x!=null?{x:m.x,y:m.y,onde:'aqui',tmp:true}:null;return;}return rv(m,p);};}
+function mpBonus(v){granaAdd(v);toast(`Etapa vencida: +${brl(v)} pra cada um.`);}
+{const rv=mpRecv; mpRecv=function(m,p){if(m&&m.t==='bonus'){mpBonus(m.v);return;}if(m&&m.t==='masc'){G.mascTmp=m.x!=null?{x:m.x,y:m.y,onde:'aqui',tmp:true}:null;return;}return rv(m,p);};}
 // caído: 30 segundos pra alguém levantar (senão levanta sozinho perto de um amigo)
 {const di=die; die=function(){const prev=P.mpDown||0,r=di.apply(this,arguments);if(MP.on){if(prev>0)P.mpDown=prev;else{P.mpDown=30;toast('Você caiu! Um amigo pode te levantar.');}}return r;};}
 // explosões do anfitrião também pegam os amigos
@@ -12102,6 +12115,54 @@ try{const st=document.createElement('style');st.textContent=`
 // dano do anfitrião também conta no placar; sair limpa o "caído"
 {const he=hurtEnemy; hurtEnemy=function(e,d){if(MP.on&&MP.role==='host'&&!MP.creditId&&d>0&&e&&e.alive&&!e.ghost&&MP.stats)mpStat('0').dmg+=Math.min(d,400);return he.apply(this,arguments);};}
 {const ml=mpLeave; mpLeave=function(){ml();P.mpDown=0;G.mascTmp=null;};}
+// ===================== 1.8.1 · VOLUME DO SOM E DA MÚSICA · SANGUE NA TELA DOS AMIGOS =====================
+
+// ---------- volume: efeitos e música separados, com barra ----------
+const VOL={sfx:1,mus:1};
+try{const v=JSON.parse(localStorage.getItem('ps-vol')||'{}');if(v&&typeof v==='object'){if(v.sfx!=null)VOL.sfx=clamp(+v.sfx,0,1);if(v.mus!=null)VOL.mus=clamp(+v.mus,0,1);}}catch(e){}
+function volSave(){try{localStorage.setItem('ps-vol',JSON.stringify(VOL));}catch(e){}}
+function volApply(){
+  const c=AU.ctx; if(!c)return;
+  // a música sai por um canal próprio (antes passava pelo volume dos efeitos)
+  if(MUS.g&&!MUS.out){MUS.out=c.createGain();try{MUS.g.disconnect();}catch(e){}MUS.g.connect(MUS.out);MUS.out.connect(c.destination);}
+  if(AU.master)AU.master.gain.setTargetAtTime(AU.on?.7*VOL.sfx:0,c.currentTime,.05);
+  if(MUS.out)MUS.out.gain.setTargetAtTime(AU.on?.7*VOL.mus:0,c.currentTime,.05);
+}
+{const so=AU.setOn.bind(AU); AU.setOn=function(v){so(v);volApply();};}
+{const mt=AU.musicTick; AU.musicTick=function(m){const had=!!MUS.g;const r=mt.call(this,m);if(!had&&MUS.g||(MUS.g&&!MUS.out))volApply();return r;};}
+{const ini=AU.init.bind(AU); AU.init=function(){const had=!!this.ctx;const r=ini();if(!had&&this.ctx)volApply();return r;};}
+function volHTML(){
+  const bar=(k,n)=>`<label class="vol"><span>${n}</span><input type="range" min="0" max="100" step="5" value="${Math.round(VOL[k]*100)}" data-vol="${k}" aria-label="${n}"><b data-voln="${k}">${Math.round(VOL[k]*100)}%</b></label>`;
+  return `<div class="opt volbox"><h3>Volume</h3>${bar('sfx','Efeitos')}${bar('mus','Música')}</div>`;
+}
+(function(){
+  if(typeof OV==='undefined'||!OV.addEventListener)return;
+  OV.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.vol)return;const k=t.dataset.vol;VOL[k]=clamp((+t.value||0)/100,0,1);volSave();
+    if(!AU.on&&VOL[k]>0)AU.setOn(true); AU.init(); volApply();
+    const n=OV.querySelector(`[data-voln="${k}"]`);if(n)n.textContent=Math.round(VOL[k]*100)+'%';
+    if(k==='sfx'){clearTimeout(volHTML.t);volHTML.t=setTimeout(()=>{try{AU.click();}catch(x){}},120);}});
+  // nas opções e na pausa
+  const op=UI.opts.bind(UI); UI.opts=function(from){const r=op(from);try{const box=OV.querySelector('.opts');if(box&&!box.querySelector('.volbox')){const d=document.createElement('div');d.innerHTML=volHTML();box.insertBefore(d.firstChild,box.firstChild);}}catch(e){}return r;};
+  const pz=UI.pause.bind(UI); UI.pause=function(){const r=pz();try{if(UI.cur==='pause'){const m=OV.querySelector('.menu');if(m&&!OV.querySelector('.volbox')){const d=document.createElement('div');d.innerHTML=volHTML();m.parentNode.insertBefore(d.firstChild,m.nextSibling);}}}catch(e){}return r;};
+  try{const st=document.createElement('style');st.textContent=`.vol{display:grid;grid-template-columns:76px 1fr 46px;align-items:center;gap:10px;margin:6px 0}.vol span{font-weight:700}.vol b{text-align:right;color:var(--dim);font-size:13px}
+    .vol input[type=range]{width:100%;accent-color:var(--amber);height:28px}.volbox{margin-top:10px}`;document.head.appendChild(st);}catch(e){}
+})();
+
+// ---------- sangue e corpos também na tela de quem não é o anfitrião ----------
+{const he=hurtEnemy; hurtEnemy=function(e,d,kx,ky){
+  // tiro "de mentira" (de outro jogador) acertando um zumbi: só o efeito
+  if(MP.on&&MP.role==='guest'&&e&&e.ghost&&e.alive&&!(d>0)){e.flash=.1;bloodBurst(e.x,e.y,4,Math.atan2(ky||0,kx||1));return;}
+  return he.apply(this,arguments);};}
+{const ap=mpApplySnap; mpApplySnap=function(m){
+  // o zumbi piscou no anfitrião = levou tiro: espirra sangue aqui também
+  const before=new Map();for(const r of m.e||[]){const g=MP.ghosts.get(r[0]);if(g)before.set(r[0],g.flash>0);}
+  const out=ap(m);
+  for(const r of m.e||[]){if(!r[7])continue;const g=MP.ghosts.get(r[0]);if(g&&!before.get(r[0])&&(g._bt||0)<G.time-.12){g._bt=G.time;bloodBurst(g.x,g.y,3,Math.random()*6.283);}}
+  return out;};}
+{const gg=mpGhostGone; mpGhostGone=function(g,dead){const r=gg(g,dead);
+  if(dead){bloodBurst(g.x,g.y,10,Math.random()*6.283);addDecal({k:'blood',x:g.x+rr(-6,6),y:g.y+rr(-6,6),r:g.r*rr(1.1,1.7),rot:Math.random()*6.28,seed:Math.random()});
+    for(let i=0;i<2;i++)addDecal({k:'blood',x:g.x+rr(-26,26),y:g.y+rr(-26,26),r:rr(8,16),rot:Math.random()*6,seed:Math.random()});try{AU.hit&&AU.hit();}catch(e){}}
+  return r;};}
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;
