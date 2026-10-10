@@ -1,7 +1,26 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.8.2",
+  "versao_atual": "1.8.3",
   "versoes": [
+    {
+      "versao": "1.8.3",
+      "data": "2026-10-10",
+      "titulo": "Caído é caído",
+      "resumo": "Multiplayer: quem cai não atira, não anda, não recarrega, não se cura e não joga granada. Antes dava pra continuar atirando caído, e a cura fazia os amigos verem você de pé enquanto a sua tela dizia \"Caído\".",
+      "mudancas": [
+        "Multiplayer: quem cai não atira, não anda, não recarrega, não se cura e não joga granada. Antes dava pra continuar atirando caído, e a cura fazia os amigos verem você de pé enquanto a sua tela dizia \"Caído\".",
+        "Menos atraso: o jogo prevê pra onde os zumbis e os amigos estão indo (usando o ping de cada um) e as atualizações chegam 20 vezes por segundo. O ping aparece no canto da tela (pro convidado, o dele e o do anfitrião).",
+        "Caiu a internet? O convidado volta sozinho pra mesma vaga, com arma, maleta e vida, em menos de 1 segundo depois que a conexão volta. Se o anfitrião cair, a equipe espera ele por até 1 minuto em vez de acabar a partida.",
+        "Internet que some sem avisar agora é percebida em uns 12 segundos (antes a tela ficava parada pra sempre).",
+        "Pausa, maleta, Mascate ou trocar de janela não congelam mais a partida dos amigos. Com o menu aberto o mundo continua (e o dano também). Na Horda sozinho a pausa ainda pausa.",
+        "Item ou dinheiro disputado: se dois pegam ao mesmo tempo, só um leva (antes os dois ganhavam).",
+        "Todo mundo vê as explosões, as chamas, o cuspe e as pedras dos zumbis; o lança-chamas do convidado acende o zumbi; quem sai some da tela de todos; placar não conta em dobro.",
+        "Quem entra com a partida rolando cai no modo certo (Noite Zero ou Horda), perto da turma, sem os itens que já foram pegos.",
+        "Menos mensagens pela rede: lança-chamas e submetralhadora não derrubam mais ninguém do servidor.",
+        "Celular: o jogo no navegador do celular agora usa o tamanho certo da tela (antes ficava tudo miúdo); aviso de \"Caído\", lista da equipe e ping cabem com o celular em pé.",
+        "Menu de teste: \"Cair agora\" e \"Testar servidores\"."
+      ]
+    },
     {
       "versao": "1.8.2",
       "data": "2026-10-10",
