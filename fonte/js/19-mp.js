@@ -390,11 +390,11 @@ function mpDrawHud(){
   if(!MP.on||G.mode!=='play')return; ctx.setTransform(dpr,0,0,dpr,0,0);
   const rows=[{n:MP.me.apelido,c:MP.me.cor,hp:P.hp,ch:MP.myChar},...Object.values(MP.remote).map(r=>({n:r.apelido||'?',c:r.cor||'#ddd',hp:r.hp||0,ch:r.char}))];
   // lista compacta: nome + barrinha de vida (sem o nome do personagem, que já aparece no boneco)
-  const W2=IN.touch?104:140; let y=IN.touch?62+SAFE.t:view.h*.3; const x=view.w-W2-8-SAFE.r;
+  const W2=IN.touch?104:140; let y=IN.touch?(view.h>view.w?96:62)+SAFE.t:view.h*.3; const x=view.w-W2-8-SAFE.r;
   if(rows.length>1)for(const r of rows){ctx.globalAlpha=.85;ctx.fillStyle='rgba(9,11,10,.6)';ctx.fillRect(x,y,W2,18);ctx.fillStyle=r.c;ctx.fillRect(x,y,3,18);ctx.textAlign='left';
     ctx.fillStyle='#ddd6c6';ctx.font=`700 10px ${FONT_UI}`;ctx.fillText(fitText(r.n,W2*.5),x+7,y+12.5);
     ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(x+W2*.55,y+7,W2*.4,4);ctx.fillStyle=hpCol(r.hp);ctx.fillRect(x+W2*.55,y+7,W2*.4*clamp(r.hp/100,0,1),4);ctx.globalAlpha=1;y+=21;}
-  if(P.mpDown>0){ctx.fillStyle='rgba(60,0,0,.35)';ctx.fillRect(0,0,view.w,view.h);ctx.fillStyle='#ddd6c6';ctx.font=`700 22px ${FONT_UI}`;ctx.textAlign='center';ctx.fillText(`Caído! Peça ajuda pra um amigo (${Math.ceil(P.mpDown)}s)`,view.w/2,view.h/2);}
+  if(P.mpDown>0){ctx.fillStyle='rgba(60,0,0,.35)';ctx.fillRect(0,0,view.w,view.h);ctx.fillStyle='#ddd6c6';ctx.font=`700 22px ${FONT_UI}`;ctx.textAlign='center';ctx.fillText(`Caído! Peça ajuda pra um amigo (${Math.ceil(P.mpDown)}s)`,view.w/2,view.h/2,view.w-24-SAFE.l-SAFE.r);}
 }
 
 // ---------- ganchos no jogo (só agem com MP.on) ----------
