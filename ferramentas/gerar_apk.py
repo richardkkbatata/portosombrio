@@ -19,12 +19,25 @@ AND = RAIZ / 'android'
 JAR = next(Path('/usr/lib/android-sdk/platforms').glob('*/android.jar'))
 CHAVE, SENHA = AND / 'porto-sombrio.keystore', 'portosombrio'
 DOWN = RAIZ / 'site' / 'downloads'
+APP_REV = 1  # suba quando mudar só o app (android/), sem versão nova do jogo
 
 
 def rodar(*cmd):
     r = subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
     if r.returncode:
         sys.exit(f'falhou: {" ".join(map(str, cmd))}\n{r.stdout}\n{r.stderr}')
+
+
+def preparar(origem):
+    """O jogo intacto + o que faz ele parecer app: fontes locais (sem internet),
+    tela do tamanho do aparelho e a ponte com o Android (app.js). Não mexe na jogabilidade."""
+    html = Path(origem).read_text(encoding='utf-8')
+    html = re.sub(r'<link[^>]*fonts\.(?:googleapis|gstatic)\.com[^>]*>\s*', '', html)
+    cab = ('<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">'
+           '<meta name="theme-color" content="#000000">'
+           '<link rel="stylesheet" href="app.css"><script src="app.js"></script>\n')
+    i = html.find('\n', html.find('<meta charset')) + 1
+    return html[:i] + cab + html[i:]
 
 
 def codigo(v):
@@ -36,13 +49,16 @@ def main():
     versao = json.loads((RAIZ / 'site/dados/updates.json').read_text(encoding='utf-8'))['versao_atual']
     with tempfile.TemporaryDirectory() as t:
         t = Path(t)
-        (t / 'assets').mkdir(); (t / 'classes').mkdir()
-        shutil.copy(RAIZ / 'jogo-original/porto-sombrio.html', t / 'assets/index.html')
+        (t / 'assets').mkdir(); (t / 'classes').mkdir(); (t / 'gen').mkdir()
+        (t / 'assets/index.html').write_text(preparar(RAIZ / 'jogo-original/porto-sombrio.html'), encoding='utf-8')
+        for f in ('app.css', 'app.js'):
+            shutil.copy(AND / 'extra' / f, t / 'assets' / f)
+        shutil.copytree(AND / 'extra/fonts', t / 'assets/fonts')
         base = t / 'base.apk'
         rodar('aapt', 'package', '-f', '-M', AND / 'AndroidManifest.xml', '-S', AND / 'res', '-A', t / 'assets',
-              '-I', JAR, '-F', base, '--version-code', codigo(versao), '--version-name', versao,
+              '-I', JAR, '-F', base, '-J', t / 'gen', '--version-code', codigo(versao) * 10 + APP_REV, '--version-name', versao,
               '--min-sdk-version', 21, '--target-sdk-version', 34)
-        fontes = list((AND / 'src').rglob('*.java'))
+        fontes = list((AND / 'src').rglob('*.java')) + list((t / 'gen').rglob('*.java'))
         rodar('javac', '-nowarn', '-source', '8', '-target', '8', '-bootclasspath', JAR, '-d', t / 'classes', *fontes)
         rodar('dalvik-exchange', '--dex', f'--output={t / "classes.dex"}', t / 'classes')
         subprocess.run(['aapt', 'add', str(base), 'classes.dex'], cwd=t, capture_output=True, check=True)
