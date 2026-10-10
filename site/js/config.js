@@ -14,10 +14,10 @@
   (ele também atualiza o ads.txt, o sitemap.xml e os links do site).
 */
 window.PS_CONFIG = {
-  DOMINIO: 'SEUDOMINIO.com.br',
+  DOMINIO: 'nightgetaway.net.br',
   ADSENSE_CLIENT: 'ca-pub-2897231611604599',
   ADSENSE_SLOT: 'XXXXXXXXXX',
-  EMAIL: 'contato@SEUDOMINIO.com.br',
+  EMAIL: 'contato@nightgetaway.net.br',
   INSTAGRAM: 'https://www.instagram.com/richardklettke',
   GITHUB: 'https://github.com/richardkkbatata',
 
