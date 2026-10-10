@@ -67,6 +67,10 @@ def integrar():
            '<meta name="mobile-web-app-capable" content="yes">'
            '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">'
            '<meta name="apple-mobile-web-app-title" content="Porto Sombrio">\n')
+    # celular: sem esta linha o navegador do celular desenha o jogo como se a tela tivesse 980 px
+    # (tudo minúsculo, controles de toque pequenos). O APK põe a dele (gerar_apk.preparar).
+    if 'name="viewport"' not in jogo:
+        app = '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' + app
     i = jogo.find('\n', jogo.find('<meta charset')) + 1
     jogo = jogo[:i] + app + jogo[i:]
     final = jogo.rstrip() + '\n' + bloco
