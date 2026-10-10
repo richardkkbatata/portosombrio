@@ -83,7 +83,7 @@ def integrar():
            "font-src 'self' https://fonts.gstatic.com; "
            "img-src 'self' data: blob: https:; "
            "media-src 'self' data: blob:; "
-           f"connect-src 'self' wss://0.peerjs.com wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884 {GOOGLE_CONNECT}; "
+           f"connect-src 'self' https://*.onrender.com wss://*.onrender.com wss://0.peerjs.com wss://broker.emqx.io:8084 wss://broker.hivemq.com:8884 {GOOGLE_CONNECT}; "
            f"frame-src {GOOGLE_FRAME}; "
            "worker-src 'self' blob:; "
            "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; "

@@ -5091,7 +5091,7 @@ const UI={
         <button class="btn" data-a="opts" data-from="title">Opções</button>
         <button class="btn" data-a="achs">Conquistas ${ACHS.size} de ${ACH.length}</button>
       </div>
-      <p class="foot">Versão 1.4 · Melhor com fone de ouvido. Funciona no teclado e mouse ou na tela de toque.</p>
+      <p class="foot">Versão ${(()=>{try{return GAME_VER;}catch(e){return '';}})()} · Melhor com fone de ouvido. Funciona no teclado e mouse ou na tela de toque.</p>
     </div>`,'title-ov','title');
   },
   diff(){
@@ -10393,6 +10393,12 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.7',d:'10/10/2026',t:'Servidor próprio',itens:[
+    'Multiplayer com servidor do Porto Sombrio: o código de 4 letras agora passa pelo nosso servidor, então dá pra jogar com os amigos de qualquer lugar, cada um na sua internet.',
+    'Se o servidor estiver dormindo, o jogo acorda ele sozinho (pode levar até 1 minuto na primeira partida).',
+    'Se o servidor estiver fora do ar, o jogo usa os serviços antigos, e o modo sem internet continua lá.',
+    'Campo "Servidor" no fim da tela do multiplayer, caso o endereço mude.',
+    'Menu de teste: botão "Testar servidor", que mostra se conectou e o ping.']},
   {v:'1.6.2',d:'09/10/2026',t:'Rede teimosa',itens:[
     'Multiplayer: pra achar a equipe pelo código de 4 letras, o jogo agora tenta 3 serviços diferentes ao mesmo tempo. Se a rede bloquear um, usa outro.',
     'Multiplayer: modo sem internet. Se nenhum serviço responder, dá pra conectar na mesma Wi-Fi trocando um código longo (Criar equipe sem internet / Entrar sem internet).',
@@ -10504,6 +10510,7 @@ UI.debug=function(){
   let body='';
   switch(tab){
     case 'nov':body=
+      sec('1.7 · Servidor dedicado',bt('v17:srv','Testar servidor')+bt('v16:mp','Abrir o multiplayer'))+
       sec('1.6 · Clima',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
       sec('1.6 · Flashback e missões',bt('v16:flash','Começar o flashback do Matheus')+bt('v16:flashEnd','Terminar o flashback')+bt('v16:prova','Ganhar as 3 folhas da prova')+bt('v16:fone','Ganhar o fone do Matheus')+tp('sala102','Sala 102 (entregar a prova)')+tp('foyerIn','Foyer (formatura)')+tp('binoculo','Binóculo do mirante (Brava)')+tp('barco','Barco encalhado (Brava)'))+
       sec('1.6 · Multiplayer beta',bt('v16:mp','Abrir o multiplayer')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:conta','Editar conta'))+
@@ -10555,6 +10562,7 @@ UI.debug=function(){
   UI.act=function(a,ds){if(a==='dbgtab'){this.dtab=ds.k;return this.debug();}return act(a,ds);};
   const da=UI.dbgAct.bind(UI);
   UI.dbgAct=function(k,ds){
+    if(k==='v17:srv')return mpSrvTest();
     if(k==='v151:org'){this.close();mOrganize();return toast('Maleta organizada.');}
     if(k.startsWith('v16:')){const c=k.slice(4),F=G.flags;
       if(c==='mp')return this.mp(); if(c==='conta')return this.conta('title');
@@ -11105,11 +11113,85 @@ const b64e=b=>{let s='';for(const c of new Uint8Array(b))s+=String.fromCharCode(
 async function mpEnc(o){const s=JSON.stringify(o);try{const cs=new CompressionStream('deflate-raw'),w=cs.writable.getWriter();w.write(new TextEncoder().encode(s));w.close();return 'Z'+b64e(await new Response(cs.readable).arrayBuffer());}catch(e){return 'J'+btoa(unescape(encodeURIComponent(s)));}}
 async function mpDec(c){c=String(c||'').replace(/\s+/g,'');if(c[0]==='Z'){const u=Uint8Array.from(atob(c.slice(1)),x=>x.charCodeAt(0)),ds=new DecompressionStream('deflate-raw'),w=ds.writable.getWriter();w.write(u);w.close();return JSON.parse(await new Response(ds.readable).text());}return JSON.parse(decodeURIComponent(escape(atob(c.slice(1)))));}
 
+// ---------- servidor dedicado (1.7) ----------
+// Primeiro o jogo tenta o NOSSO servidor (de qualquer lugar, sem depender da rede). Ele só repassa as mensagens:
+// quem manda no mundo continua sendo o anfitrião. Cada jogador do outro lado vira um "peer" de mentira
+// ({open, dc.send}) e o resto do multiplayer nem percebe a diferença.
+const MP_SRV_PADRAO='wss://porto-sombrio.onrender.com/ws';
+function mpSrvUrl(){let u='';try{u=localStorage.getItem('ps-servidor')||'';}catch(e){}u=String(globalThis.PS_SERVIDOR||u||MP_SRV_PADRAO).trim();
+  if(!/^[a-z]+:\/\//i.test(u))u='wss://'+u; u=u.replace(/^http/i,'ws'); if(!/\/ws\/?$/.test(u))u=u.replace(/\/+$/,'')+'/ws'; return u;}
+const mpSrvHealth=u=>u.replace(/^ws/i,'http').replace(/\/ws\/?$/,'')+'/health';
+const mpWait=ms=>new Promise(r=>setTimeout(r,ms));
+function mpFetchT(u,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(u,{cache:'no-store',signal:c.signal}).finally(()=>clearTimeout(t));}
+// o plano grátis do Render dorme sem uso: acorda com o /health (até 70 s)
+async function mpSrvWake(u,still){const end=Date.now()+70000;let falhas=0;
+  const aviso=setTimeout(()=>{if(still()){MP.status='Acordando o servidor, pode levar até 1 minuto...';mpRefresh();}},1500);
+  try{while(Date.now()<end&&still()){const t0=Date.now();
+    try{const r=await mpFetchT(mpSrvHealth(u),Math.max(1000,end-Date.now()));if(r.ok)return true;falhas=0;}
+    catch(e){if(Date.now()-t0<3000&&++falhas>=3)return false;}
+    await mpWait(2000);}
+  return false;}finally{clearTimeout(aviso);}}
+function mpSrvOpen(u){return new Promise((ok,no)=>{let ws;try{ws=new WebSocket(u);}catch(e){return no(e);}
+  const t=setTimeout(()=>{try{ws.close();}catch(e){}no('tempo');},10000);
+  ws.onopen=()=>{clearTimeout(t);ok(ws);}; ws.onerror=()=>{clearTimeout(t);no('erro');};});}
+function mpSrvTx(o){const ws=MP.srv;if(ws&&ws.readyState===1)try{ws.send(JSON.stringify(o));}catch(e){}}
+function mpSrvPeer(id){return {id,srv:true,open:true,dc:{readyState:'open',send:s=>mpSrvTx({t:'relay',to:id,m:s})},pc:{close(){}}};}
+function mpSrvAsk(types,ms){return new Promise(r=>{const w={types,r};MP.srvWait=w;setTimeout(()=>{if(MP.srvWait===w){MP.srvWait=null;r(null);}},ms);});}
+function mpSrvRecv(m){
+  const w=MP.srvWait; if(w&&w.types.includes(m.t)){MP.srvWait=null;w.r(m);return;}
+  switch(m.t){
+    case 'msg':{const p=MP.peers[m.from];if(!p||!p.srv)return;let g;try{g=JSON.parse(m.m);}catch(e){return;}if(g&&typeof g==='object')mpRecv(g,p);break;}
+    case 'peer-open':if(MP.role==='host'&&!MP.peers[m.id])MP.peers[m.id]=mpSrvPeer(m.id);break;
+    case 'peer-close':{const p=MP.peers[m.id];if(p&&p.srv)mpPeerGone(p);break;}
+    case 'room-closed':if(MP.role==='guest'){const p=MP.peers['0'];if(p&&p.srv)mpPeerGone(p);}else if(MP.role==='host'){mpSrvLost();}break;
+    case 'pong':MP.srvRtt=Date.now()-m.n;break;
+  }
+}
+function mpSrvLost(){mpSrvClose();
+  if(MP.role==='guest'){const p=MP.peers['0'];if(p&&p.srv)mpPeerGone(p);}
+  else if(MP.role==='host'){for(const p of Object.values(MP.peers))if(p.srv)mpPeerGone(p,true);MP.code='';
+    if(!MP.manual)MP.status='A conexão com o servidor caiu. Saia e crie a equipe de novo.';toast('A conexão com o servidor caiu.');mpRefresh();}}
+async function mpSrvConnect(still){const u=mpSrvUrl();MP.status='Conectando ao servidor...';mpRefresh();
+  if(!await mpSrvWake(u,still)||!still())return null;
+  let ws;try{ws=await mpSrvOpen(u);}catch(e){return null;}
+  if(!still()){try{ws.close();}catch(e){}return null;}
+  MP.srv=ws; ws.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch(x){return;}if(m&&typeof m==='object')mpSrvRecv(m);};
+  ws.onclose=()=>{if(MP.srv===ws){MP.srv=null;mpSrvLost();}};
+  clearInterval(MP.srvPing); MP.srvPing=setInterval(()=>mpSrvTx({t:'ping',n:Date.now()}),20000); mpSrvTx({t:'ping',n:Date.now()});
+  return ws;}
+function mpSrvClose(){clearInterval(MP.srvPing);const ws=MP.srv;MP.srv=null;MP.srvRoom=false;if(MP.srvWait){MP.srvWait.r(null);MP.srvWait=null;}
+  if(ws){try{if(ws.readyState===1)ws.send('{"t":"leave"}');}catch(e){}try{ws.close();}catch(e){}}}
+async function mpSrvHost(){const still=()=>MP.role==='host'&&!MP.manual;
+  if(!await mpSrvConnect(still))return false;
+  mpSrvTx({t:'host'}); const r=await mpSrvAsk(['room','err'],8000);
+  if(!r||r.t!=='room'||!still()){mpSrvClose();return false;}
+  MP.code=r.code; MP.srvRoom=true; MP.nid=Math.max(MP.nid,5); return true;}
+async function mpSrvJoin(code){const still=()=>MP.role==='guest'&&MP.code===code;
+  if(!await mpSrvConnect(still))return null;
+  mpSrvTx({t:'join',code}); const r=await mpSrvAsk(['joined','err'],8000);
+  if(r&&r.t==='joined'&&still()){MP.myId=r.id;MP.srvRoom=true;MP.peers={'0':mpSrvPeer('0')};MP.status='';mpSend({t:'hello',c:MP.me});return 'ok';}
+  mpSrvClose(); return r&&r.t==='err'?r.msg:null;}
+// botão "Testar servidor" (menu de teste)
+async function mpSrvTest(){const u=mpSrvUrl(),t0=Date.now(),show=(t,ok)=>UI.open(`<div class="sheet narrow"><p class="kick">Menu de teste · 1.7</p><h2>Servidor</h2><p class="hint">${esc(u)}</p><p class="mpst">${esc(t)}</p>
+    <div class="row">${ok!=null?'<button class="btn" data-a="dbg" data-k="v17:srv">Testar de novo</button>':''}<button class="btn ghost" data-a="dbgtab" data-k="nov">Voltar</button></div></div>`,'','dbg');
+  show('Testando... Se o servidor estiver dormindo, pode levar até 1 minuto.');
+  let ok=false;try{ok=(await mpFetchT(mpSrvHealth(u),70000)).ok;}catch(e){}
+  if(!ok)return show('Não conectou: o servidor não respondeu. Confira o endereço no fim da tela do multiplayer.',false);
+  const acordou=Date.now()-t0;
+  try{const ws=await mpSrvOpen(u);const rtt=await new Promise((r,no)=>{ws.onmessage=e=>{try{const m=JSON.parse(e.data);if(m.t==='pong')r(Date.now()-m.n);}catch(x){}};ws.send(JSON.stringify({t:'ping',n:Date.now()}));setTimeout(()=>no(),8000);});
+    try{ws.close();}catch(e){}
+    show(`Conectou. Ping: ${rtt} ms.`+(acordou>3000?` (Levou ${Math.round(acordou/1000)} s pra acordar.)`:''),true);}
+  catch(e){show('O servidor respondeu, mas a conexão do multiplayer (WebSocket) não abriu.',false);}}
+
 async function mpHost(manual){
   MP.role='host';MP.myId='0';MP.players={};MP.peers={};MP.seen=new Set();MP.nid=1;MP.code='';MP.manual=!!manual;MP.status=manual?'':'Criando a equipe...';mpLobbyCast();mpRefresh();
   if(manual)return;
+  if(await mpSrvHost()){MP.status='';return mpRefresh();}
+  if(MP.role!=='host'||MP.manual)return;
+  MP.status='O servidor não respondeu. Tentando os outros serviços...';mpRefresh();
   const c=Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[(Math.random()*32)|0]).join('');
-  if(await mpLinks(mpRoom(c))&&MP.role==='host'){MP.code=c;MP.status='';}
+  const ok=await mpLinks(mpRoom(c)); if(MP.role!=='host'||MP.code)return;
+  if(ok){MP.code=c;MP.status='';}
   else{MP.manual=true;MP.status='Não deu pra criar o código: nenhum dos serviços respondeu nesta rede. Use o modo sem internet logo abaixo (mesma Wi-Fi).';}
   mpRefresh();
 }
@@ -11118,6 +11200,9 @@ async function mpGuestPC(){const pc=new RTCPeerConnection({iceServers:MP_ICE}),p
 async function mpJoin(code){
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(code.length!==4)return toast('O código da equipe tem 4 letras.');
   MP.role='guest';MP.code=code;MP.answered=false;MP.status=`Procurando a equipe ${code}...`;mpRefresh();
+  const sv=await mpSrvJoin(code); if(sv==='ok'||MP.role!=='guest'||MP.code!==code)return mpRefresh();
+  if(sv==='cheia'){MP.role=null;MP.status='A equipe já tem 5 jogadores.';return mpRefresh();}
+  MP.status=`Procurando a equipe ${code}...`;mpRefresh();
   if(!await mpLinks('ps-'+mpRid(10))){MP.role=null;MP.status='Nenhum dos serviços pra achar a equipe respondeu nesta rede. Use o modo sem internet (mesma Wi-Fi).';return mpRefresh();}
   const sdp=await mpGuestPC(); for(const l of MP.links)l.send('OFFER',mpRoom(code),{sdp});
   clearTimeout(MP.joinT); MP.joinT=setTimeout(()=>{const p=MP.peers['0'];if(MP.role==='guest'&&!(p&&p.open)){MP.status=`Não achei a equipe ${code}. Confere o código e se o anfitrião está com a equipe aberta.`;mpRefresh();}},15000);
@@ -11135,14 +11220,17 @@ async function mpAccept(sdp,reply){
 }
 function mpWire(p){const dc=p.dc;
   dc.onopen=()=>{p.open=true;if(MP.role==='guest'){clearTimeout(MP.joinT);MP.status='';mpSend({t:'hello',c:MP.me});}};
-  dc.onclose=()=>{p.open=false;
-    if(MP.role==='host'){delete MP.peers[p.id];delete MP.players[p.id];delete MP.remote[p.id];mpLobbyCast();toast('Um jogador saiu da equipe.');}
-    else if(MP.role==='guest'){toast('A conexão com o anfitrião caiu.');if(MP.on)mpEnd(false,'A conexão com o anfitrião caiu.');else{MP.status='A conexão caiu.';}}
-    mpRefresh();};
+  dc.onclose=()=>mpPeerGone(p);
   dc.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch(x){return;}mpRecv(m,p);};
 }
-// manda pra um peer (to), ou pra todos menos "except"
-function mpSend(m,to,except){const s=JSON.stringify(m);for(const p of to?[to]:Object.values(MP.peers))if(p!==except&&p.open&&p.dc&&p.dc.readyState==='open')try{p.dc.send(s);}catch(e){}}
+function mpPeerGone(p,quiet){if(p.gone)return;p.gone=true;p.open=false;
+  if(MP.role==='host'){delete MP.peers[p.id];delete MP.players[p.id];delete MP.remote[p.id];mpLobbyCast();if(!quiet)toast('Um jogador saiu da equipe.');}
+  else if(MP.role==='guest'){toast('A conexão com o anfitrião caiu.');if(MP.on)mpEnd(false,'A conexão com o anfitrião caiu.');else{MP.status='A conexão caiu.';}}
+  mpRefresh();}
+// manda pra um peer (to), ou pra todos menos "except". Pelo servidor, "todos" vira uma mensagem só ('*').
+function mpSend(m,to,except){const s=JSON.stringify(m);let all=false;
+  if(!to&&!except&&MP.srv&&MP.role==='host'&&Object.values(MP.peers).some(p=>p.srv)){mpSrvTx({t:'relay',to:'*',m:s});all=true;}
+  for(const p of to?[to]:Object.values(MP.peers))if(p!==except&&!(all&&p.srv)&&p.open&&p.dc&&p.dc.readyState==='open')try{p.dc.send(s);}catch(e){}}
 function mpTaken(skip){const t=[];if(MP.role==='host'&&skip!=='0')t.push(MP.me.char);for(const [id,p] of Object.entries(MP.players))if(id!==skip)t.push(p.c.char);return t;}
 function mpLobbyCast(){if(MP.role!=='host')return;const r={'0':{...MP.me}};for(const [id,p] of Object.entries(MP.players))r[id]={...p.c};MP.roster=r;mpSend({t:'lobby',l:r});}
 function mpStartInfo(){mpLobbyCast();return {pl:MP.roster};}
@@ -11187,7 +11275,7 @@ UI.mp=function(){
   const chars=`<h3>Seu personagem</h3><div class="seg">${MP_CHARS.map(([k,n])=>`<button data-a="mp-char" data-k="${k}" class="${MP.me.char===k?'on':''}" ${tk.includes(k)?'disabled':''}>${n}</button>`).join('')}</div>`;
   const list=`<h3>Equipe (${Object.keys(MP.roster).length}/5)</h3><div class="mplist">${Object.entries(MP.roster).map(([id,p])=>`<div class="mpp"><span class="dot" style="background:${p.cor}"></span><b>${esc(p.apelido||p.nome)}</b> <span class="dim">· ${esc((MP_CHARS.find(c=>c[0]===p.char)||[0,p.char])[1])}${id==='0'?' · anfitrião':''}</span>${p.frase?`<small>"${esc(p.frase)}"</small>`:''}</div>`).join('')}</div>`;
   let body;
-  if(typeof RTCPeerConnection==='undefined')body='<p class="hint">Este navegador não conecta com outros aparelhos. Use o Chrome, o Edge ou o Safari atualizados.</p>';
+  if(typeof WebSocket==='undefined')body='<p class="hint">Este navegador não conecta com outros aparelhos. Use o Chrome, o Edge ou o Safari atualizados.</p>';
   else if(!MP.role)body=`<div class="row"><button class="btn primary" data-a="mp-host">Criar equipe</button></div>
     <h3>Ou entre com o código da equipe</h3><div class="row"><input id="mp-code" class="inp mpin" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ABCD"><button class="btn" data-a="mp-join">Entrar</button></div>
     <h3>Sem internet (mesma Wi-Fi)</h3><p class="hint">Mais trabalhoso: vocês trocam um código longo (pelo Bluetooth, AirDrop ou digitando). Use só se o código de 4 letras não funcionar.</p>
@@ -11202,9 +11290,12 @@ UI.mp=function(){
   this.open(`<div class="sheet wide"><div class="tabs"><p class="kick">Beta · até 5 jogadores</p><h2 style="margin-right:auto">Multiplayer</h2><button class="btn ghost" data-a="mp-leave">${MP.role?'Sair da equipe':'Voltar'}</button></div>
     <div class="mpme"><span class="dot" style="background:${MP.me.cor}"></span><b>${esc(MP.me.apelido)}</b> <button class="btn ghost mini" data-a="conta" data-from="mp">Editar conta</button></div>
     ${MP.status?`<p class="mpst">${esc(MP.status)}</p>`:''}${body}
-    <p class="hint">A internet só é usada pra achar a equipe pelo código. Na mesma Wi-Fi fica mais rápido. A Noite Zero é uma história curta só do multiplayer e não mexe no seu jogo solo.</p></div>`,'','mp');
+    <p class="hint">O código de 4 letras usa o servidor do Porto Sombrio: dá pra jogar de qualquer lugar. Se ele estiver fora do ar, o jogo tenta os serviços antigos e ainda tem o modo sem internet. A Noite Zero é uma história curta só do multiplayer e não mexe no seu jogo solo.</p>
+    <h3>Servidor</h3><p class="hint">Só troque se passarem um endereço novo. Vazio = o padrão.</p>
+    <div class="row"><input id="mp-srv" class="inp" style="flex:1;min-width:0" autocomplete="off" spellcheck="false" value="${esc((()=>{try{return localStorage.getItem('ps-servidor')||'';}catch(e){return '';}})())}" placeholder="${esc(MP_SRV_PADRAO)}"><button class="btn ghost mini" data-a="mp-srv">Salvar</button></div></div>`,'','mp');
 };
 function mpLeave(){
+  mpSrvClose();
   for(const p of Object.values(MP.peers))try{p.pc.close();}catch(e){}
   for(const l of MP.links||[])l.close(); MP.links=[]; clearTimeout(MP.joinT);
   Object.assign(MP,{on:false,role:null,manual:false,offerCode:'',ansCode:'',code:'',status:'',peers:{},players:{},roster:{},remote:{},myId:'0'}); MP.ghosts.clear(); G.mp=null; P.lookO=null;
@@ -11368,6 +11459,7 @@ function mpDrawHud(){
       case 'ct-back':if(!contaGet())try{localStorage.setItem('ps-conta-depois','1');}catch(e){}return this.contaFrom==='mp'&&contaGet()?this.mp():this.title();
       case 'mp':return this.mp();
       case 'mp-host':mpHost();return;
+      case 'mp-srv':{const t=document.getElementById('mp-srv'),v=t?String(t.value).trim():'';try{if(v)localStorage.setItem('ps-servidor',v);else localStorage.removeItem('ps-servidor');}catch(e){}toast(v?'Servidor salvo.':'Voltou pro servidor padrão.');return;}
       case 'mp-join':{const t=document.getElementById('mp-code');mpJoin(t?t.value:'');return;}
       case 'mp-copy':{const c=ds.k==='ans'?MP.ansCode:ds.k==='off'?MP.offerCode:MP.code;try{navigator.clipboard.writeText(c);toast('Código copiado.');}catch(e){toast('Selecione o texto e copie.');}return;}
       case 'mp-hostM':mpHost(true);return;

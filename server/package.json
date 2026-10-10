@@ -1,0 +1,11 @@
+{
+  "name": "porto-sombrio-servidor",
+  "version": "1.7.0",
+  "description": "Servidor dedicado do multiplayer do Porto Sombrio (salas com código de 4 letras e repasse de mensagens).",
+  "main": "server.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node server.js", "test": "node test.js" },
+  "dependencies": { "ws": "^8.18.0" }
+}

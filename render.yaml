@@ -1,0 +1,16 @@
+# Servidor dedicado do multiplayer do Porto Sombrio (Render, plano grátis).
+# No Render: New > Blueprint > escolher este repositório. Ele lê este arquivo sozinho.
+services:
+  - type: web
+    name: porto-sombrio
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: cd server && npm ci --omit=dev
+    startCommand: node server/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
