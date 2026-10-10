@@ -268,6 +268,16 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
 .anuncio.ativo{display:block}
 .anuncio .rotulo-anuncio{display:block;font:11px var(--f-maquina);letter-spacing:.24em;text-transform:uppercase;color:var(--tinta-3);margin-bottom:4px}
 .anuncio ins{display:block;min-height:90px;background:rgba(255,255,255,.25)}
+/* A-ADS: recorte de classificados colado na pasta */
+.anuncio.aads{position:relative;max-width:780px;padding:12px 14px 30px;background:var(--papel);background-image:var(--ruido);
+  border:1.5px dashed var(--tinta-3);box-shadow:1px 3px 0 rgba(0,0,0,.18);transform:rotate(-.4deg)}
+.anuncio.aads .rotulo-anuncio{border-bottom:1px solid var(--tinta);padding-bottom:6px;margin-bottom:10px;color:var(--tinta-2)}
+.aads-moldura{background:#f6f2e8;border:1px solid rgba(29,26,21,.25);line-height:0}
+.aads-moldura iframe{display:block;width:100%;max-width:728px;height:90px;margin:0 auto;border:0;padding:0;overflow:hidden}
+.aads-link{position:absolute;right:12px;bottom:6px;font:400 15px/1 var(--f-titulo);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--carimbo);text-decoration:none;border:1.5px solid currentColor;padding:3px 8px 2px;transform:rotate(-2deg);background:rgba(236,228,205,.7)}
+.aads-link:hover{background:var(--carimbo);color:var(--papel)}
+@media (max-width:600px){.aads-moldura iframe{height:100px}.anuncio.aads{transform:none}}
 
 /* aviso de cookies */
 .aviso-cookies{position:fixed;left:12px;bottom:12px;z-index:90;max-width:420px;background:#f3edda;background-image:var(--ruido);

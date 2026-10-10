@@ -1,11 +1,25 @@
-/* Porto Sombrio — Google AdSense.
-   Lê o ID em /js/config.js. Enquanto for placeholder, nada do Google é carregado
-   e os espaços de anúncio continuam invisíveis (display:none). */
+/* Porto Sombrio — anúncios (Google AdSense e A-ADS).
+   Lê os IDs em /js/config.js. Os espaços (.anuncio) usam o bloco do AdSense quando
+   ADSENSE_SLOT está preenchido; senão, o bloco do A-ADS (A_ADS). Sem nenhum dos dois,
+   os espaços continuam invisíveis (display:none). */
 (function () {
   'use strict';
   var C = window.PS_CONFIG || {};
   var PUB = String(C.ADSENSE_CLIENT || ''), SLOT = String(C.ADSENSE_SLOT || '');
   var pubOk = /^ca-pub-\d{16}$/.test(PUB), slotOk = /^\d{6,}$/.test(SLOT);
+  var AADS = String(C.A_ADS || ''), aadsOk = /^\d{4,10}$/.test(AADS);
+
+  // A-ADS: um iframe por espaço, com cara de classificado recortado do jornal
+  if (!(pubOk && slotOk) && aadsOk) {
+    document.querySelectorAll('.anuncio').forEach(function (box) {
+      box.classList.add('ativo', 'aads');
+      box.innerHTML = '<span class="rotulo-anuncio">Classificados · espaço pago</span>' +
+        '<div class="aads-moldura"><iframe data-aa="' + AADS + '" src="https://acceptable.a-ads.com/' + AADS + '/?size=Adaptive"' +
+        ' title="Anúncio" loading="lazy" referrerpolicy="no-referrer-when-downgrade" scrolling="no"></iframe></div>' +
+        '<a class="aads-link" target="_blank" rel="noopener sponsored" href="https://aads.com/campaigns/new/?source_id=' + AADS +
+        '&amp;source_type=ad_unit&amp;partner=' + AADS + '">Anuncie aqui</a>';
+    });
+  }
   if (!pubOk) return;
 
   function ler() { try { return localStorage.getItem('ps-cookies'); } catch (e) { return null; } }
