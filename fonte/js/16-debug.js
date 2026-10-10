@@ -12,6 +12,8 @@ UI.debug=function(){
   let body='';
   switch(tab){
     case 'nov':body=
+      sec('1.8 · Mascate e dinheiro',bt('v18:grana','Ganhar R$ 5.000')+bt('v18:joia','Ganhar 3 joias')+bt('v18:loja','Abrir a loja do Mascate')+bt('v18:masc','Ir até o Mascate mais perto'))+
+      sec('1.8 · Horda e multiplayer',bt('v18:horda','Começar a Horda sozinho')+bt('v18:onda','Pular onda (Horda/Noite Zero)')+bt('v18:chefe','Ir pra próxima onda de chefão (Horda)')+bt('v18:cair','Cair (multiplayer)')+bt('v18:levantar','Levantar (multiplayer)')+bt('v18:frase','Mandar frase "Socorro!"')+bt('v18:rank','Ver o ranking da Horda')+bt('v18:mira','Ligar/desligar mira assistida'))+
       sec('1.7.1 · Celular e Noite Zero',bt('v16:hudEd','Editar controles do celular')+bt('v16:hudReset','Controles no lugar padrão')+bt('v16:run','Ligar/desligar corrida (celular)')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:mpWave','Chamar horda (Noite Zero)')+bt('v16:mpBoss','Chamar chefão (Noite Zero)'))+
       sec('1.7 · Servidor dedicado',bt('v17:srv','Testar servidor')+bt('v16:mp','Abrir o multiplayer'))+
       sec('1.6 · Clima',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+

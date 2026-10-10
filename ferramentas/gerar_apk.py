@@ -16,7 +16,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 AND = RAIZ / 'android'
-JAR = next(Path('/usr/lib/android-sdk/platforms').glob('*/android.jar'))
+JAR = next(Path('/usr/lib/android-sdk/platforms').glob('*/android.jar'), None)  # sem o SDK: main() avisa e sai
 CHAVE, SENHA = AND / 'porto-sombrio.keystore', 'portosombrio'
 DOWN = RAIZ / 'site' / 'downloads'
 APP_REV = 1  # suba quando mudar só o app (android/), sem versão nova do jogo
@@ -46,6 +46,8 @@ def codigo(v):
 
 
 def main():
+    if JAR is None:
+        sys.exit('falta o Android SDK (android-sdk-platform-23); instale as ferramentas do CLAUDE.md')
     versao = json.loads((RAIZ / 'site/dados/updates.json').read_text(encoding='utf-8'))['versao_atual']
     with tempfile.TemporaryDirectory() as t:
         t = Path(t)

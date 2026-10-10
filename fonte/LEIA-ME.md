@@ -26,6 +26,7 @@ O `jogo-original/porto-sombrio.html` é gerado a partir daqui. **Mexa no jogo se
 | 19-mp | multiplayer: conta, servidor (`mpSrv*`), corretores, modo sem internet, Noite Zero |
 | 20-v161 | maleta de arrastar |
 | 21-v171 | celular: botão de correr, botões que somem, editor de controles |
+| 22-v18 | Mascate (loja) e dinheiro, Modo Horda e ranking, levantar amigo, frases rápidas, placar, minimapa, mira assistida |
 
 ## Regras do Richard para toda versão
 - Subir a versão e escrever as notas em `14-notas.js` (aparecem dentro do jogo).

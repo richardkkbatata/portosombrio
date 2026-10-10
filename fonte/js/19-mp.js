@@ -279,7 +279,7 @@ function mpBegin(info){
   G.banner={t:'Noite Zero',life:3.5}; toast('Matem tudo. Fiquem juntos.');
 }
 function mpSetChar(ch){
-  P.lookO=LOOKS[ch]||LOOKS.richard; MP.myChar=ch; P.owned[0]=true;
+  P.lookO=LOOKS[ch]||LOOKS.richard; MP.myChar=ch; P.owned[0]=true; P.dur=Math.max(P.dur||0,30);
   const kit={richard:[[1,'m9',36]],edu:[[1,'m9',36]],matheus:[[2,'cart',12]],marlon:[[4,'m357',12]],nicolas:[[7,'virote',14],[null,'rojao',2]]}[ch]||[[1,'m9',24]];
   for(const [w,a,q] of kit){if(w!=null){P.owned[w]=true;P.mags[w]=WEAPONS[w].mag;P.w=w;}invAdd(a,q);} invAdd('ervaV',2); mSync();
 }
@@ -376,10 +376,10 @@ function mpDrawHud(){
   const rows=[{n:MP.me.apelido,c:MP.me.cor,hp:P.hp,ch:MP.myChar},...Object.values(MP.remote).map(r=>({n:r.apelido||'?',c:r.cor||'#ddd',hp:r.hp||0,ch:r.char}))];
   // lista compacta: nome + barrinha de vida (sem o nome do personagem, que já aparece no boneco)
   const W2=IN.touch?104:140; let y=IN.touch?62+SAFE.t:view.h*.3; const x=view.w-W2-8-SAFE.r;
-  for(const r of rows){ctx.globalAlpha=.85;ctx.fillStyle='rgba(9,11,10,.6)';ctx.fillRect(x,y,W2,18);ctx.fillStyle=r.c;ctx.fillRect(x,y,3,18);ctx.textAlign='left';
+  if(rows.length>1)for(const r of rows){ctx.globalAlpha=.85;ctx.fillStyle='rgba(9,11,10,.6)';ctx.fillRect(x,y,W2,18);ctx.fillStyle=r.c;ctx.fillRect(x,y,3,18);ctx.textAlign='left';
     ctx.fillStyle='#ddd6c6';ctx.font=`700 10px ${FONT_UI}`;ctx.fillText(fitText(r.n,W2*.5),x+7,y+12.5);
     ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(x+W2*.55,y+7,W2*.4,4);ctx.fillStyle=hpCol(r.hp);ctx.fillRect(x+W2*.55,y+7,W2*.4*clamp(r.hp/100,0,1),4);ctx.globalAlpha=1;y+=21;}
-  if(P.mpDown>0){ctx.fillStyle='rgba(60,0,0,.35)';ctx.fillRect(0,0,view.w,view.h);ctx.fillStyle='#ddd6c6';ctx.font=`700 22px ${FONT_UI}`;ctx.textAlign='center';ctx.fillText(`Você caiu. Levanta em ${Math.ceil(P.mpDown)}…`,view.w/2,view.h/2);}
+  if(P.mpDown>0){ctx.fillStyle='rgba(60,0,0,.35)';ctx.fillRect(0,0,view.w,view.h);ctx.fillStyle='#ddd6c6';ctx.font=`700 22px ${FONT_UI}`;ctx.textAlign='center';ctx.fillText(`Caído! Peça ajuda pra um amigo (${Math.ceil(P.mpDown)}s)`,view.w/2,view.h/2);}
 }
 
 // ---------- ganchos no jogo (só agem com MP.on) ----------

@@ -1,7 +1,21 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.7.1",
+  "versao_atual": "1.8",
   "versoes": [
+    {
+      "versao": "1.8",
+      "data": "2026-10-10",
+      "titulo": "O Mascate",
+      "resumo": "O Mascate: vendedor com carrinho em quatro pontos do mapa, com compra e venda de munição, cura, armas e maleta maior",
+      "mudancas": [
+        "O Mascate: vendedor com carrinho em quatro pontos do mapa, com compra e venda de munição, cura, armas e maleta maior",
+        "Dinheiro e joias caindo dos zumbis",
+        "Modo Horda: ondas sem fim, chefão a cada 5, sozinho ou em equipe, com ranking no site",
+        "Multiplayer: levantar o amigo caído, frases rápidas, minimapa em tempo real e placar com títulos",
+        "Celular: mira assistida",
+        "Quick time do Brandt mais justo"
+      ]
+    },
     {
       "versao": "1.7.1",
       "data": "2026-10-10",

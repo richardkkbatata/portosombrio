@@ -537,6 +537,38 @@ ok(G.mode==='dead','não morreu');ctx.__timeouts.forEach(f=>f());
   // menu de teste: "Tempo limpo" tira a tempestade
   A.newGame('normal');G.mode='play';R(`wxSet('tempestade',true)`);A.UI.act('dbg',{k:'v16:wx:off'});ok(R('G.wx')==='chuva','tempo limpo no menu de teste');A.UI.close();
 }
+
+// ===== 1.8: dinheiro, Mascate, Horda, levantar, frases, placar =====
+{ const R=c=>vm.runInContext(c,ctx);
+  A.newGame('normal');G.mode='play';G.flags.tutDone=true;G.tut=null;
+  // dinheiro cai e é pego
+  R(`for(let i=0;i<40;i++){const z=makeEnemy('zumbi',P.x+60,P.y);enemies.push(z);killEnemy(z);}`);
+  const gp=R(`pickups.filter(p=>p.id==='grana')`); ok(gp.length>0,'zumbi não deixou dinheiro');
+  const g0=R('grana()'); R(`takePickup(pickups.find(p=>p.id==='grana'))`); ok(R('grana()')>g0,'pegar dinheiro');
+  // loja: comprar munição e arma, vender
+  R(`{G.flags.grana=5000;globalThis.__n0=invCount('m9');lojaComprar('0:0');}`); ok(R(`invCount('m9')`)>=R('__n0')+15,'comprar munição'); ok(R('grana()')===5000-90,'preço da munição');
+  R(`P.owned[2]=false;lojaComprar('3:0');`); ok(R('P.owned[2]')||R('grana()')===4910,'comprar escopeta (ou sem espaço)');
+  R(`{invAdd('joia',2);globalThis.__g=grana();lojaVender('joia',2);}`); ok(R('grana()')===R('__g')+1000,'vender joia');
+  R(`UI.loja('c');UI.loja('v');UI.close();`);
+  ok(R('mascates().length')>=2,'mascates no mapa '+R('mascates().length'));
+  // salvar guarda o dinheiro
+  R(`{G.flags.grana=777;const s=JSON.parse(JSON.stringify(serialize()));G.flags.grana=0;loadState(s);}`); ok(R('grana()')===777,'dinheiro salvo');
+  // Horda solo: passa onda, intervalo e chega no chefão da onda 5
+  R(`contaSave({nome:'Teste',apelido:'teste',cor:'#fff',fav:'richard'});hordaSolo();`);
+  ok(R('MP.on&&MP.modo')==='horda','horda não começou');
+  let guard=0,sawBoss=false,sawPause=false;
+  while(R('MP.onda||0')<6&&guard++<120){for(let i=0;i<4;i++){P.hp=100;step(30,{mx:0,my:0});finishTalk();}
+    if(R('!!(MP.boss&&MP.boss.alive)'))sawBoss=true; if(R('!!G.mascTmp'))sawPause=true;
+    R(`{for(const e of enemies)if(e.alive&&e.mpw)killEnemy(e);const s=mpStage(MP.stage);if(s&&s.pausa)MP.prog+=20;}`);}
+  ok(R('MP.onda')>=6,'horda parou na onda '+R('MP.onda')); ok(sawBoss,'horda sem chefão'); ok(sawPause,'horda sem intervalo/mascate');
+  ok(R('MP.stats["0"].k')>0,'placar sem abates');
+  // cair, levantar e acabar
+  R(`P.hp=0;die();`); ok(R('P.mpDown')===30,'caído 30s'); R(`mpRevived('0');`); ok(R('P.mpDown')===0&&R('P.hp')===50,'levantar');
+  R(`mpSay(0);`); ok(R('!!MP.says["0"]'),'frase');
+  R(`renderWorld();drawHUD();drawMini();`);
+  R(`mpEnd(false);`); ok(R('UI.cur')==='win'&&!R('MP.on'),'fim da horda'); ok(R('contaGet().hordaMax')>=6,'recorde salvo');
+  R(`UI.act('mp-leave',{})`);
+}
 // frame loop
 A.newGame('facil');G.mode='title';for(let i=0;i<30;i++)A.frame(i*16);
 console.log(fails?`${fails} falhas`:'TUDO OK');

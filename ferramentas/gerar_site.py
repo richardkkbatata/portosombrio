@@ -117,6 +117,7 @@ BASE = """<!doctype html>
       <h4>Mais do arquivo</h4>
       <ul>
         <li><a href="/baixar/">Baixar o jogo</a></li>
+        <li><a href="/ranking/">Ranking da Horda</a></li>
         <li><a href="/criador/">Criadores</a></li>
         <li><a href="/contato/">Contato</a></li>
         <li><a href="/privacidade/">Privacidade e cookies</a></li>

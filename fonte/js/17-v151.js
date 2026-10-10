@@ -197,7 +197,7 @@ function qtePrep(q){
       let right=false;
       if(code){right=code===q.key.k;}
       else if(x!=null&&q.hit){for(const h of q.hit){if(hyp(x-h.x,y-h.y)<h.r+6){right=h.l===q.key.l;break;}}if(!q.hit.some(h=>hyp(x-h.x,y-h.y)<h.r+6))return;}
-      else right=q.key.k==='KeyE';
+      else return; // clique do mouse ou botão Usar: não conta nem erra (só a tecla certa ou o botão certo na tela)
       if(!right){qteFail();return;}
     }
     const i0=q.i; qp(); const q2=G.qte; if(q2&&q2===q&&q.i>i0&&q.multi){q.dur=rr(.72,.92)*(q.ph>=3?.85:1);const w=rr(.45,.6);q.w0=w;q.w1=w+rr(.2,.26);qtePrep(q);}

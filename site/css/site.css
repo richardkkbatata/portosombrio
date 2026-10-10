@@ -538,3 +538,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
 .caixa .seu{position:absolute;right:12px;top:-16px;z-index:3;font-size:20px;padding:4px 10px;transform:rotate(6deg);background:var(--papel)}
 .caixa.sua{outline:3px solid var(--tinta);outline-offset:4px}
 @media (max-width:720px){.caixa{--r:0deg!important}.caixa.sua{order:-1}}
+/* ranking do Modo Horda */
+.ranking-lista{margin:8px 0 0;padding-left:34px;font:400 22px/1.35 var(--f-mao)}
+.ranking-lista li{padding:4px 0;border-bottom:1px dashed rgba(0,0,0,.18)}
+.ranking-lista li b{font-family:var(--f-maquina);font-weight:400;font-size:17px}
+.ranking-lista li span{display:block;font-size:16px;opacity:.75}
+.ranking-lista li.vazio{list-style:none;margin-left:-34px;opacity:.7}

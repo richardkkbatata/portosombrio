@@ -1,6 +1,19 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.8',d:'10/10/2026',t:'O Mascate',itens:[
+    'O Mascate: um vendedor com carrinho na praça, na Barra Sul, na Universidade de BC e em Itajaí. Compra e vende munição, cura, granada, pilha, faca nova, armas e maleta maior.',
+    'Dinheiro: os zumbis deixam cair notas (os grandes e os chefões, bem mais). De vez em quando cai uma joia, que o Mascate paga R$ 500. O dinheiro não ocupa espaço na maleta.',
+    'Modo Horda: ondas sem fim, cada vez mais fortes, com chefão a cada 5 ondas e o Mascate aparecendo no intervalo. Dá pra jogar sozinho (botão Modo Horda no título) ou com a equipe (escolha Horda no multiplayer).',
+    'Ranking: o recorde da Horda vai pro site (nightgetaway.net.br/ranking), separado entre sozinho e em equipe.',
+    'Multiplayer: quem cai fica 30 segundos no chão. Um amigo chega perto e segura Usar pra levantar. Se ninguém vier, levanta sozinho perto da turma.',
+    'Multiplayer: frases rápidas ("Socorro!", "Preciso de munição!", "Vem aqui!", "Chefão!"). No PC: Z, X, V e B. No celular: o botão de balão lá em cima. Aparece em cima do boneco e marca no minimapa.',
+    'Multiplayer: minimapa com a turma em tempo real, os zumbis por perto, o chefão, o Mascate e o objetivo.',
+    'Multiplayer: placar no fim com quem matou, caiu e levantou mais, e títulos como "Carregou o time" e "Morreu primeiro, de novo". Fica salvo na conta.',
+    'Multiplayer: explosões acertam os amigos também, e tudo que aparece no chão (caixa quebrada, item largado, dinheiro) aparece pra todo mundo.',
+    'Celular: mira assistida. A mira puxa de leve pro zumbi mais perto da direção que você aponta (dá pra desligar em Opções).',
+    'Quick time do Brandt: clique do mouse e o botão Usar não contam mais como erro; vale só a tecla certa ou o botão certo na tela.',
+    'Menu de teste: seções 1.8 com dinheiro, joias, loja, Horda, cair/levantar, frases, ranking e mira.']},
   {v:'1.7.1',d:'10/10/2026',t:'Mais zumbi, menos tela',itens:[
     'Celular: botão de correr. Toque pra ligar ou desligar. O direcional não corre mais sozinho quando vai até a borda.',
     'Celular: tela mais limpa. Os botões ficam só com o ícone (os nomes aparecem só no começo) e cada um só aparece quando serve pra algo: Curar só com item de cura, Recarga só com o pente faltando bala, Arma só com mais de uma arma, Jogar só com granada ou garrafa.',
