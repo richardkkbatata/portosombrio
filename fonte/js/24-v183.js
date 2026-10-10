@@ -42,23 +42,15 @@ setInterval(()=>{if(MP.srv&&MP.srv.readyState===1)mpSrvTx({t:'ping',n:Date.now()
   const v=MP.srvRtt,c=v<80?'#7ad38a':v<160?'#e0c060':'#e07060';ctx.font=`700 10px ${FONT_UI}`;ctx.textAlign='right';ctx.fillStyle=c;
   ctx.fillText(`ping ${v} ms`,view.w-10-SAFE.r,(IN.touch?(view.h>view.w?91:52)+SAFE.t:view.h*.3-8));};}
 
-// ---------- anfitrião com menu aberto ou janela escondida: o mundo continua pros amigos ----------
-// Antes, pausa/maleta/opções/Mascate do anfitrião (ou trocar de janela, que abre a pausa) congelava a partida
-// de todo mundo: os zumbis sumiam da tela dos convidados. Agora o mundo segue (com o anfitrião parado e sem
-// levar dano enquanto o menu está aberto, igual ao convidado). Com o jogo minimizado o navegador para de
-// desenhar; um relógio de reserva continua mandando a foto do mundo. Jogando sozinho (Horda solo) a pausa pausa.
-const mpHostVivo=()=>MP.on&&MP.role==='host'&&mpN()>1;
-function mpFundoTick(dt){const m=G.mode;MP.fundoTick=true;G.mode='play';
-  try{update(dt);}catch(e){console.error(e);}finally{MP.fundoTick=false;if(G.mode==='play')G.mode=m;}}
-{const ri=readInput; readInput=function(){ri.apply(this,arguments); if(MP.fundoTick){IN.mx=0;IN.my=0;IN.fire=false;IN.run=false;IN.aimAng=null;}};}
-{const hp=hurtPlayer; hurtPlayer=function(){if(MP.fundoTick&&!G.mpTgt)return;return hp.apply(this,arguments);};}
-{const fr=frame; frame=function(t){
-  if(G.mode==='menu'&&mpHostVivo()&&!CUT.on&&!document.hidden){const now=t/1000;mpFundoTick(clamp(lastFrame?now-lastFrame:.016,0,.034));}
-  return fr(t);};}
+// ---------- jogo minimizado (anfitrião): o mundo continua pros amigos ----------
+// Com a janela escondida o navegador para de desenhar; um relógio de reserva roda o mundo em passos
+// curtos (sem ler os controles, igual ao menu aberto; ver "menu aberto NÃO congela a partida" abaixo).
 setInterval(()=>{
-  if(!document.hidden||!mpHostVivo()||(G.mode!=='play'&&G.mode!=='menu')||CUT.on){MP.bgT=null;return;}
-  const now=performance.now()/1000; let el=MP.bgT==null?0:Math.min(1.5,now-MP.bgT); MP.bgT=now;
-  while(el>0.001&&MP.on){const d=Math.min(.034,el);el-=d;mpFundoTick(d);}
+  const vivo=MP.on&&MP.role==='host'&&Object.keys(MP.players).length>0;
+  if(!document.hidden||!vivo||(G.mode!=='play'&&G.mode!=='menu')||(typeof CUT!=='undefined'&&CUT.on)){MP.bgT=null;return;}
+  const now=Date.now()/1000; let el=MP.bgT==null?0:Math.min(1.5,now-MP.bgT); MP.bgT=now;
+  while(el>0.001&&MP.on){const d=Math.min(.034,el);el-=d;const m=G.mode;MP.bg=true;G.mode='play';
+    try{update(d);}catch(e){console.error(e);}finally{MP.bg=false;if(G.mode==='play')G.mode=m;}}
 },250);
 
 // menu de teste: cair agora (pra conferir que caído não atira nem se cura)
