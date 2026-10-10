@@ -305,7 +305,7 @@ dl.keys dd{margin:0;color:#c8c1b1}
 // ===================== CONSTANTES E UTILIDADES =====================
 const TILE = 32, W = 210, H = 470, CW = 60;
 // abaixo da superfície: a galeria pluvial (linhas H..HT-1). O mapa da superfície continua com H linhas.
-const HS = 232, HT = H + HS;   // H..H+81: galeria · H+82..: BR-101 e Univali
+const HS = 232, HT = H + HS;   // H..H+81: galeria · H+82..: BR-101 e Universidade de BC
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 let rnd = mulberry32(1);
 const R = () => rnd();
@@ -1783,6 +1783,8 @@ function loadState(s){
   // a ampola que caiu na drogaria continua lá se você salvou antes de pegar
   if((G.flags.boss_especime||G.flags.shopOpen)&&!G.flags.inibidorDone&&invCount('inibidor')<=0&&!G.box.some(b=>b.id==='inibidor')&&LM.shopFarm){const [x,y]=freeTileNear((LM.shopFarm.x/TILE)|0,(LM.shopFarm.y/TILE)|0,true);pickups.push({uid:'amp',tx:x,ty:y,x:tc(x),y:tc(y),id:'inibidor',q:1,kind:'item'});}
   applyWorldState();
+  // pilhas que você pegou só uma parte (maleta cheia) continuam com o que sobrou
+  if(G.flags.pq)for(const p of pickups)if(G.flags.pq[p.uid]!=null)p.q=G.flags.pq[p.uid];
   spawnInitial(); markExplored(); snapCamera();
 }
 
@@ -1883,7 +1885,7 @@ function takePickup(p){
     const got=p.q-left;
     toast(`Pegou ${it.n}${got>1?' ×'+got:''}${left?` (ficaram ${left})`:''}.`);
     AU.pickup();
-    if(left>0){p.q=left;return;}
+    if(left>0){p.q=left;if(p.uid!=null)(G.flags.pq||(G.flags.pq={}))[p.uid]=left;return;}
     if(p.id==='garrafa'&&invCount('gran')<=0)P.thr='garrafa'; if(p.id==='gran'&&!P.thr)P.thr='gran';
     ambush(p.id); STORY.onPickup(p.id);
   } else if(p.kind==='weapon'){
@@ -5382,7 +5384,7 @@ const UI={
       case 'gfx':{const ks=Object.keys(QUAL);setQuality(ks[(ks.indexOf(QKEY)+1)%ks.length]);try{localStorage.setItem('ps-gfx-manual','1');}catch(e){}if(G.mode==='title')return this.title();G.mode='play';return this.pause();}
       case 'dbg':return this.dbgAct(ds.k,ds);
       case 'drop':{const s=G.inv[this.sel];if(!s)return;const [x,y]=freeTileNear((P.x/TILE)|0,(P.y/TILE)|0,true);
-        pickups.push({uid:'d'+(G.dropN++),tx:x,ty:y,x:tc(x),y:tc(y),id:s.id,q:s.q,kind:'item'});pickOcc.add(idx(x,y));G.inv[this.sel]=null;this.sel=null;return this.inv('itens');}
+        const dp={uid:'dp'+(G.dropN++)+'_'+((Math.random()*1e6)|0),tx:x,ty:y,x:tc(x),y:tc(y),id:s.id,q:s.q,kind:'item'};pickups.push(dp);pickOcc.add(idx(x,y));if(typeof idropAdd==='function')idropAdd(dp);G.inv[this.sel]=null;this.sel=null;return this.inv('itens');}
       case 'craft':craft(RECIPES[+ds.r]);return this.inv('itens');
       case 'wpn':switchWeapon(+ds.w);return this.inv('itens');
       case 'readdoc':return this.doc(+ds.i,'arquivos');
@@ -8310,6 +8312,7 @@ WMODEL.fuzil={len:32,fore:18};
   };
   const sh=AU.shot.bind(AU); AU.shot=function(id){if(id==='fuzil'){this.nz(.32,1900,.6,.85);this.tn(140,45,.18,'square',.22);this.nz(.6,400,.8,.25,'lowpass',.05);return;}return sh(id);};
 })();
+function idropAdd(p){const F=G.flags;F.idrops=[...(F.idrops||[]),{uid:p.uid,tx:p.tx,ty:p.ty,id:p.id,q:p.q}];}
 function firearms(){const r=[];for(let i=1;i<WEAPONS.length;i++)if(i!==8&&P.owned[i])r.push(i);return r;}
 // pegar uma 4ª arma de fogo: larga a que está na mão (ou a mais antiga) no chão
 function wpnLimit(p){
@@ -8326,7 +8329,10 @@ function wpnLimit(p){
 }
 (function(){
   const aws=applyWorldState;
-  applyWorldState=function(){aws();for(const w of (G.flags.wdrops||[]))if(!pickups.some(p=>p.uid===w.uid))pickups.push({uid:w.uid,tx:w.tx,ty:w.ty,x:tc(w.tx),y:tc(w.ty),id:w.id,q:w.q,kind:'weapon'});};
+  applyWorldState=function(){aws();for(const w of (G.flags.wdrops||[]))if(!pickups.some(p=>p.uid===w.uid))pickups.push({uid:w.uid,tx:w.tx,ty:w.ty,x:tc(w.tx),y:tc(w.ty),id:w.id,q:w.q,kind:'weapon'});
+    for(const w of (G.flags.idrops||[]))if(!G.taken.has(w.uid)&&!pickups.some(p=>p.uid===w.uid)){pickups.push({uid:w.uid,tx:w.tx,ty:w.ty,x:tc(w.tx),y:tc(w.ty),id:w.id,q:w.q,kind:'item'});pickOcc.add(idx(w.tx,w.ty));}};
+  // itens largados no chão (pelo jogador ou pelo Brandt) continuam lá depois de carregar o registro
+  const tp=takePickup; takePickup=function(p){const r=tp(p);const F=G.flags;if(p&&F.idrops&&F.idrops.some(w=>w.uid===p.uid)){if(G.taken.has(p.uid))F.idrops=F.idrops.filter(w=>w.uid!==p.uid);else for(const w of F.idrops)if(w.uid===p.uid)w.q=p.q;}return r;};
   const g12=genV12;
   genV12=function(){g12();const lab=LM.lab||{x:tc(64),y:tc(19)};addPick((lab.x/TILE)|0,((lab.y/TILE)|0)+2,9,20,'weapon');addPick(((lab.x/TILE)|0)+3,((lab.y/TILE)|0)+2,'r762',20);addPick(88,18,'r762',20);addPick(160,26,'r762',20);};
 })();
@@ -9073,7 +9079,7 @@ function brandtEnd(e){
     {say:'brandt',m:'a',t:'Você ganhou o direito de morrer lá embaixo. Manda um oi pro T-11 por mim.'},
     {do:()=>{addSmoke(e.x,e.y,150,7);AU.click2(1);}},{wait:.8},
     {do:()=>{e.alive=false;F.brandtGone=true;bloodBurst(e.x,e.y,10,0);addDecal({k:'blood',x:e.x,y:e.y,r:22,rot:0,seed:.5});
-      for(const [id,q,dx,dy] of [['m9',20,0,0],['pecas',3,20,0],['radioBr',1,-20,10],['gran',1,0,20]]){const [tx,ty]=freeTileNear(((e.x+dx)/TILE)|0,((e.y+dy)/TILE)|0,true);pickups.push({uid:'brd_'+id,tx,ty,x:tc(tx),y:tc(ty),id,q,kind:'item'});pickOcc.add(idx(tx,ty));}}},
+      for(const [id,q,dx,dy] of [['m9',20,0,0],['pecas',3,20,0],['radioBr',1,-20,10],['gran',1,0,20]]){const [tx,ty]=freeTileNear(((e.x+dx)/TILE)|0,((e.y+dy)/TILE)|0,true);const bp={uid:'brd_'+id,tx,ty,x:tc(tx),y:tc(ty),id,q,kind:'item'};pickups.push(bp);pickOcc.add(idx(tx,ty));idropAdd(bp);}}},
     {wait:.6},{camFree:1},
     {say:'rafa',m:'s',t:'Ele... sumiu. Tem sangue no chão. Muito sangue.'},
     {say:'rafa',m:'t',think:true,t:'"T-11". Seja lá o que for, tá na galeria. E eu vou descer lá.',dur:2.2},
@@ -9286,7 +9292,7 @@ function sewPumpOn(){
   AU.thud(1);AU.creak(1);G.shake+=8;AU.alarm();alertNoise(P.x,P.y,900);
   bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'LIGOU! ...e acordou tudo que tava dormindo aqui embaixo. Ótimo.':'Ligou. A bomba tá puxando... e o barulho chegou longe.');
   later(2500,()=>{sewFlood(false,null);toast('O poço secou. Dá pra descer até o coletor-tronco.');});
-  for(const e of enemies)if(e.alive&&e.type==='cego'&&hyp(e.x-P.x,e.y-P.y)<900){e.heard=4;e.nx=P.x;e.ny=P.y;e.state='chase';if(e.state==='dorm')riseEnemy(e);}
+  for(const e of enemies)if(e.alive&&e.type==='cego'&&hyp(e.x-P.x,e.y-P.y)<900){if(e.state==='dorm')riseEnemy(e);e.heard=4;e.nx=P.x;e.ny=P.y;e.state='chase';}
 }
 function sewComp(){const F=G.flags;if(F.sewC==null)F.sewC=0;return F.sewC;}
 function sewApplyGates(){
@@ -9767,20 +9773,20 @@ if(typeof ACH!=='undefined')ACH.push({id:'brandt',n:'Não é pessoal',d:'Sobrevi
 })();
 // ===================== 1.5: A BR-101 · A UNIVALI · OS AMIGOS · LUTAS DO BRANDT =====================
 // A região da BR fica fora da cidade gerada (linhas abaixo da galeria) e se liga a Balneário por um túnel
-// no fim da Avenida do Estado, no oeste do Centro. O Matheus agora começa na Univali, junto com o Marlon.
+// no fim da Avenida do Estado, no oeste do Centro. O Matheus agora começa na Universidade de BC, junto com o Marlon.
 
 const ZY=H+82;                       // primeira linha da região oeste
 function zoneB(){return -1;}
 function inZone(){return ((P.y/TILE)|0)>=ZY;}
 function inZonePx(x,y){return ((y/TILE)|0)>=ZY;}
-const OESTE_D={name:'BR-101 · Univali',short:'Univali',mx:100,y0:ZY,y1:HT-1,cap:13,count:0,spawn:{zumbi:8,corr:2,cao:1,rast:1},loot:{m9:1,ervaV:3,pilha:3,polv:2}};
+const OESTE_D={name:'BR-101 · Universidade de BC',short:'Universidade de BC',mx:100,y0:ZY,y1:HT-1,cap:13,count:0,spawn:{zumbi:8,corr:2,cao:1,rast:1},loot:{m9:1,ervaV:3,pilha:3,polv:2}};
 (function(){const gw=genWorld;genWorld=function(){const i=DISTRICTS.indexOf(OESTE_D);if(i>=0)DISTRICTS.splice(i,1);try{gw();}finally{DISTRICTS.push(OESTE_D);}};})();
 DISTRICTS.push(OESTE_D);
 const UNI_COL='#2a5a3a';            // camiseta verde de estudante
 
 // ---------- itens e documentos ----------
 Object.assign(ITEMS,{
-  chaveUni:{n:'Chave mestra da Univali',s:'CHAVE',c:'#4a8a5a',st:1,k:'key',d:'Molho de chaves do Seu Ademir, segurança da Univali. Abre a biblioteca do Bloco 6A.'},
+  chaveUni:{n:'Chave mestra da Universidade de BC',s:'CHAVE',c:'#4a8a5a',st:1,k:'key',d:'Molho de chaves do Seu Ademir, segurança da Universidade de BC. Abre a biblioteca do Bloco 6A.'},
   pastaZero:{n:'Pasta do Paciente Zero',s:'PASTA',c:'#c8b070',st:1,k:'key',d:'Prontuário do primeiro infectado, com o carimbo da Vértice. Prova de tudo.'},
 });
 const DOC15=DOCS.length;
@@ -9819,7 +9825,7 @@ function genOeste(){
     for(let x=187;x<=195;x+=3)for(let y=Y+68;y<=Y+75;y++)prop(x,y,12); prop(196,Y+67,1); addPick(189,Y+77,DOC15+1,1,'file'); addPick(186,Y+68,'garrafa',3); addPick(193,Y+77,'ervaV',1); addPick(196,Y+76,'pilha',2);
     LM.caculinha={x:tc(185),y:tc(Y+72)}; graf(186,Y+65,'CAÇULINHA DO MARLON',{rot:0,c:'#e8d8a0'});}
   bigHouse(199,Y+68,8,11,'W');
-  // ---------- Univali, campus Balneário Camboriú ----------
+  // ---------- Universidade de BC, campus Balneário Camboriú ----------
   const CX=12, CY=Y+18;  LM.uni={x:tc(CX+60),y:tc(CY+50)};
   rect(CX,CY,128,90,T.SIDE);
   rect(CX+30,CY+0,64,40,T.GRASS); rect(CX+96,CY+0,30,22,T.GRASS); rect(CX+0,CY+86,128,3,T.GRASS);
@@ -9865,7 +9871,7 @@ function genOeste(){
     npcs.push({id:'ademir',name:'Seu Ademir',look:null,x:tc(CX+35),y:tc(CY+88),col:'#2a3a5a',hair:'#3a3a38',skin:'#c89878',ang:Math.PI/2,cond:()=>!G.flags.ademirGone});}
   for(let x=CX;x<CX+128;x++){const open=(x>=CX+2&&x<CX+8)||(x>=CX+31&&x<CX+40)||(x>=CX+110&&x<CX+116);if(!open&&getT(x,CY+90)===T.GRASS)setT(x,CY+90,T.FENCE);}
   trees(CX+30,CY+0,CX+94,CY+40,.05); trees(CX+96,CY+0,CX+126,CY+22,.06);
-  graf(CX+64,CY+57,'UNIVALI',{rot:0,c:'#d8d4c8',s:1.4}); graf(CX+100,CY+57,'SOCORRO 6A',{rot:.02});
+  graf(CX+64,CY+57,'UNIV. DE BC',{rot:0,c:'#d8d4c8',s:1.4}); graf(CX+100,CY+57,'SOCORRO 6A',{rot:.02});
   // estudantes que viraram
   for(let i=0;i<40;i++){const x=ri(CX+2,CX+124),y=ri(CY+2,CY+88),k=idx(x,y);if(SOLID[map[k]])continue;if(hyp(x-(CX+107),y-(CY+44))<14)continue;initEnemies.push({uid:'uz'+i,type:R()<.15?'corr':'zumbi',x:tc(x),y:tc(y),col:R()<.6?UNI_COL:null,dorm:bmap[k]>=0&&R()<.5});}
   for(let i=0;i<14;i++){const x=ri(150,205),y=ri(Y+14,HT-14),k=idx(x,y);if(SOLID[map[k]])continue;initEnemies.push({uid:'uzb'+i,type:R()<.2?'cao':'zumbi',x:tc(x),y:tc(y)});}
@@ -9902,33 +9908,33 @@ function goZone(toZone){
   playCut([{fx:'blackout',v:1.2},{sfx:'creak',v:.5},{do:()=>{P.x=to.x;P.y=to.y;for(const c of (G.comps||[])){c.x=P.x-20;c.y=P.y+12;}snapCamera();flowTile=-1;}},{wait:.5},
     ...(toZone&&!G.flags.zoneSeen?[{do:()=>{G.flags.zoneSeen=true;}},{say:'rafa',m:'s',t:'A BR... olha isso. Os dois sentidos parados. Tem caminhão pegando fogo até onde dá pra ver.'},
       ...(G.flags.eduFollow?[{say:'edu',m:'n',t:'Pelo menos não tem trânsito.'}]:[]),
-      {say:'rafa',m:'t',think:true,t:'A Univali fica do outro lado da pista. Três minutos a pé, num dia normal.',dur:2.2}]:[])]);
+      {say:'rafa',m:'t',think:true,t:'A Universidade de BC fica do outro lado da pista. Três minutos a pé, num dia normal.',dur:2.2}]:[])]);
 }
 
-// ---------- a missão da Univali (capítulo 2, obrigatória) ----------
+// ---------- a missão da Universidade de BC (capítulo 2, obrigatória) ----------
 STORY.uniCall=function(){
   const F=G.flags; if(F.uniDone!=null)return; F.uniDone=false;
   AU.radio();
   playCut([{sfx:'static',v:1},
     {say:'marlon',m:'s',radio:true,t:'...canal sete... alguém no canal sete? Richard? Mano, se tu tiver ouvindo, responde!'},
     {say:'rafa',m:'s',t:'MARLON?! Tô aqui! Tu tá onde?'},
-    {say:'marlon',m:'t',radio:true,t:'Na Univali. Na biblioteca do 6A. Eu vim buscar o Matheus, ele tava virando a noite no laboratório.'},
+    {say:'marlon',m:'t',radio:true,t:'Na Universidade de BC. Na biblioteca do 6A. Eu vim buscar o Matheus, ele tava virando a noite no laboratório.'},
     {say:'matheus',m:'s',radio:true,t:'Richard? Sou eu. A gente trancou a porta com mesa. Tem uns cinquenta do lado de fora. Estudante, mano. Gente da nossa turma.'},
     {say:'marlon',m:'n',radio:true,t:'O túnel no fim da Avenida do Estado passa por baixo da BR. Do outro lado é a faculdade. O Seu Ademir da guarita tem a chave da biblioteca.'},
     ...(F.eduFollow?[{say:'edu',m:'n',t:'O Matheus tá vivo. ...Ok. Vamos buscar o nerd.'}]:[]),
     {say:'rafa',m:'a',t:'Segura aí. A gente tá indo.'}],
-    ()=>{G.banner={t:'Univali',life:2.6};});
+    ()=>{G.banner={t:'Universidade de BC',life:2.6};});
 };
 STORY.ademir=function(n){
   const F=G.flags; if(F.ademirTalk){if(!F.uniDone)return bark('ademir','t',pick2(['Vai... a biblioteca é no 6A, atrás da praça.','Não deixa eles pegarem os meninos.','Tá esfriando, filho. Tá esfriando muito.']));return;}
   F.ademirTalk=true;
   playCut([{npc:n,id:'ademir'},
     {say:'ademir',m:'s',t:'Para! ...Tu é aluno? Tá vivo? Graças a Deus.'},
-    {say:'ademir',m:'t',t:'Vinte e dois anos de Univali. Nunca deixei ninguém entrar sem crachá. Hoje eles entraram sem crachá nenhum.'},
+    {say:'ademir',m:'t',t:'Vinte e dois anos de Universidade de BC. Nunca deixei ninguém entrar sem crachá. Hoje eles entraram sem crachá nenhum.'},
     {say:'rafa',m:'s',t:'O senhor tá sangrando, Seu Ademir.'},
     {say:'ademir',m:'t',t:'Uma menina do Bloco 4 me pegou no braço. Eu sei o que isso quer dizer. Eu vi a TV.'},
     {say:'ademir',m:'n',t:'Os dois guris tão na biblioteca, no 6A. Toma a chave mestra. Abre e tira eles de lá.'},
-    {do:()=>{invAdd('chaveUni',1);AU.pickup();toast('Você recebeu a chave mestra da Univali.');}},
+    {do:()=>{invAdd('chaveUni',1);AU.pickup();toast('Você recebeu a chave mestra da Universidade de BC.');}},
     {choice:[
       {t:'Vem com a gente, Seu Ademir.',then:[{say:'ademir',m:'h',t:'Não, filho. Eu fico na minha guarita. Se eu virar, viro onde eu trabalhei.'}]},
       {t:'Quer que eu fique com o senhor um pouco?',then:[{say:'ademir',m:'h',t:'Tu é um bom menino. Mas vai. Eu não quero que tu me veja daqui a pouco.'},{do:()=>{F.ademirKind=true;}}]},
@@ -10047,8 +10053,8 @@ Object.assign(PXH,{
     const F=G.flags, has=id=>invCount(id)>0;
     if(G.ev.uniWave)return {t:`Segure a biblioteca: ${Math.ceil(G.ev.uniWave.t)} s`,at:null};
     if(F.uniDone===false&&!F.inibidorDone){
-      if(!inZone())return {t:'Vá até a Univali: o túnel sob a BR-101 fica no fim da Avenida do Estado, a oeste do Centro',at:LM.tunel};
-      if(!F.ademirTalk&&!has('chaveUni'))return {t:'Ache o Seu Ademir na guarita da entrada de pedestres da Univali',at:LM.uniGuarita};
+      if(!inZone())return {t:'Vá até a Universidade de BC: o túnel sob a BR-101 fica no fim da Avenida do Estado, a oeste do Centro',at:LM.tunel};
+      if(!F.ademirTalk&&!has('chaveUni'))return {t:'Ache o Seu Ademir na guarita da entrada de pedestres da Universidade de BC',at:LM.uniGuarita};
       if(!F.uniMeet)return {t:'Abra a biblioteca do Bloco 6A com a chave mestra',at:LM.uniBib};
     }
     if(F.hospLock&&!F.hospOut&&F.uniMat&&!F.pastaGot&&!has('pastaZero'))return {t:'Trancado no Santa Clara. Pegue a pasta do Paciente Zero no isolamento. Ande devagar: ela escuta.',at:LM.pasta||LM.isol};
@@ -10059,21 +10065,21 @@ Object.assign(PXH,{
     const r=ug(g); if(g&&g.id==='bibUni'&&g.open&&!G.flags.uniMeet)later(400,()=>uniMeet()); return r;};
   const op=STORY.onPickup; STORY.onPickup=function(id){if(op)op(id);if(id==='pastaZero'){G.flags.pastaGot=true;G.files.add(DOC15+3);AU.paper();later(500,()=>bark('matheus','s','É isso. Paciente Zero. Bora sair daqui antes que ela escute a gente respirando.'));}};
   // o Edu falava que o Matheus estava no porto
-  const ea=STORY.eduArrive; STORY.eduArrive=function(){const s=ea();for(const st of s)if(st.choice)for(const c of st.choice)for(const t of (c.then||[]))if(t.say==='edu'&&/turno no porto/.test(t.t||''))t.t='Ele tava na Univali, virando a noite no laboratório. Não atende. O último áudio dele era só uma sirene.';return s;};
+  const ea=STORY.eduArrive; STORY.eduArrive=function(){const s=ea();for(const st of s)if(st.choice)for(const c of st.choice)for(const t of (c.then||[]))if(t.say==='edu'&&/turno no porto/.test(t.t||''))t.t='Ele tava na Universidade de BC, virando a noite no laboratório. Não atende. O último áudio dele era só uma sirene.';return s;};
 })();
-// a armadilha do shopping (capítulo 2) só depois da Univali
-(function(){const se=STORY.shopEvent;STORY.shopEvent=function(){if(G.flags.uniDone===false){if(!G.ev.uniWarn||G.time-G.ev.uniWarn>8){G.ev.uniWarn=G.time;bark('rafa','s','O Marlon e o Matheus primeiro. A Univali.');}return;}return se();};})();
+// a armadilha do shopping (capítulo 2) só depois da Universidade de BC
+(function(){const se=STORY.shopEvent;STORY.shopEvent=function(){if(G.flags.uniDone===false){if(!G.ev.uniWarn||G.time-G.ev.uniWarn>8){G.ev.uniWarn=G.time;bark('rafa','s','O Marlon e o Matheus primeiro. A Universidade de BC.');}return;}return se();};})();
 
 // ---------- desenho: túnel, BR, torre, cone do bloco 3 ----------
 function drawZoneDeco(){
   const T0=LM.tunel; if(T0&&inV(T0.x,T0.y,120)){ctx.fillStyle='#1a1b1d';ctx.fillRect(tc(4)-16,tc(271)-16,64,192);ctx.fillStyle='#050506';ctx.beginPath();ctx.ellipse(tc(5.5),tc(273.5),20,56,0,0,6.283);ctx.fill();
-    ctx.fillStyle='#c8a040';ctx.fillRect(tc(6)-6,tc(270)-10,92,14);ctx.fillStyle='#121110';ctx.font='700 9px sans-serif';ctx.textAlign='left';ctx.fillText('BR-101 · UNIVALI ←',tc(6)-2,tc(270)+1);}
+    ctx.fillStyle='#c8a040';ctx.fillRect(tc(6)-6,tc(270)-10,128,14);ctx.fillStyle='#121110';ctx.font='700 9px sans-serif';ctx.textAlign='left';ctx.fillText('BR-101 · UNIV. DE BC ←',tc(6)-2,tc(270)+1);}
   const Tz=LM.tunelZ; if(Tz&&inV(Tz.x,Tz.y,120)){ctx.fillStyle='#050506';ctx.beginPath();ctx.ellipse(tc(206.5),tc(ZY+61.5),20,56,0,0,6.283);ctx.fill();}
   for(const f of ZFIRES)if(inV(f.x,f.y,80)){for(let i=0;i<3;i++){const a=renderT*7+i*2;ctx.fillStyle=i%2?'rgba(255,140,40,.7)':'rgba(255,200,80,.6)';ctx.beginPath();ctx.ellipse(f.x+Math.sin(a)*4,f.y-6-i*5,12-i*3,16-i*3,0,0,6.283);ctx.fill();}}
 }
 function drawZoneTop(){
   const t=LM.torre; if(t&&inV(t.x,t.y,200)){ctx.fillStyle='#c8c4bc';ctx.beginPath();ctx.arc(t.x,t.y,46,0,6.283);ctx.fill();ctx.fillStyle='#a8a49c';ctx.beginPath();ctx.arc(t.x,t.y,40,0,6.283);ctx.fill();
-    ctx.fillStyle='#1a1a1a';ctx.font='700 12px sans-serif';ctx.textAlign='center';ctx.fillText('UNIVALI',t.x,t.y+4);ctx.fillStyle='#2a5aa0';ctx.fillRect(t.x-10,t.y-20,20,10);}
+    ctx.fillStyle='#1a1a1a';ctx.font='700 12px sans-serif';ctx.textAlign='center';ctx.fillText('UNIV. DE BC',t.x,t.y+4);ctx.fillStyle='#2a5aa0';ctx.fillRect(t.x-10,t.y-20,20,10);}
   const t2=LM.torre2; if(t2&&inV(t2.x,t2.y,200)){ctx.fillStyle='#c8c4bc';ctx.beginPath();ctx.arc(t2.x,t2.y,44,0,6.283);ctx.fill();ctx.fillStyle='#b4b0a8';ctx.beginPath();ctx.arc(t2.x,t2.y,36,0,6.283);ctx.fill();}
   const b3=LM.bloco3; if(b3&&inV(b3.x,b3.y,300)){const bi=bmap[idx((b3.x/TILE)|0,(b3.y/TILE)|0)];const b=buildings[bi];if(b&&b.roofA>.05){ctx.globalAlpha=b.roofA;const cx=(b.x+b.w/2)*TILE,cy=(b.y+b.h/2)*TILE;
     ctx.fillStyle='#bfbab0';ctx.beginPath();ctx.arc(cx,cy,b.w*TILE*.52,0,6.283);ctx.fill();ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=2;for(let i=0;i<16;i++){const a=i/16*6.283;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*b.w*TILE*.52,cy+Math.sin(a)*b.w*TILE*.52);ctx.stroke();}
@@ -10092,7 +10098,7 @@ function drawZoneMapTo(c){
   pt(LM.uniSafe,'#5ac07a');pt(LM.uniBib,'#e8d84a');pt(LM.uniGuarita,'#e8d84a');pt(LM.caculinha,'#7ab8e8');pt(LM.tunelZ,'#d9a33c');
   const o=objective(); if(o&&o.at&&inZonePx(o.at.x,o.at.y))pt(o.at,'#d9a33c',6);
   pt({x:P.x,y:P.y},'#ffffff',5);
-  cx.fillStyle='#ddd6c6';cx.font='700 13px sans-serif';cx.textAlign='left';cx.fillText('BR-101 · UNIVALI',ox+8,oy+18);cx.fillText('UNIVALI',ox+60*s,oy+50*s);cx.fillText('BR',ox+164*s,oy+40*s);
+  cx.fillStyle='#ddd6c6';cx.font='700 13px sans-serif';cx.textAlign='left';cx.fillText('BR-101 · UNIVERSIDADE DE BC',ox+8,oy+18);cx.fillText('UNIV. DE BC',ox+60*s,oy+50*s);cx.fillText('BR',ox+164*s,oy+40*s);
 }
 (function(){const pm=UI.paintMap.bind(UI);UI.paintMap=function(){if(!inZone()&&!inSew())return pm();const c=document.getElementById('mapc');if(!c)return pm();
   if(inSew())return pm();
@@ -10255,10 +10261,10 @@ function evPinned(){
   later(1200,()=>bark('rafa','s','Tem alguém preso embaixo daquele carro... gritando.'));
   return true;
 }
-Object.assign(INT_LABEL,{presoCarro:'Levantar o carro',tunelBR:'Túnel sob a BR-101 (Univali)',tunelVolta:'Túnel de volta para Balneário',fogueira:'Fogueira dos surfistas',painelRoda:'Painel da roda-gigante',luzCristo:'Quadro de luz do Cristo'});
+Object.assign(INT_LABEL,{presoCarro:'Levantar o carro',tunelBR:'Túnel sob a BR-101 (Universidade de BC)',tunelVolta:'Túnel de volta para Balneário',fogueira:'Fogueira dos surfistas',painelRoda:'Painel da roda-gigante',luzCristo:'Quadro de luz do Cristo'});
 function pinnedTick(dt){
   for(let i=PINNED.length-1;i>=0;i--){const it=PINNED[i];it.t+=dt;
-    if(it.t>it.life&&!it.saved){const k=interacts.indexOf(it);if(k>=0)interacts.splice(k,1);PINNED.splice(i,1);if(hyp(it.x-P.x,it.y-P.y)<700){AU.scream(.7);bark('rafa','t','Os gritos pararam.');}addDecal({k:'blood',x:it.x,y:it.y,r:28,rot:0,seed:.5});continue;}
+    if(it.t>it.life&&!it.saved){const k=interacts.indexOf(it);if(k>=0)interacts.splice(k,1);PINNED.splice(i,1);if(G.struggle&&G.struggle.keep==='pin'+it.tx+'_'+it.ty)G.struggle=null;if(hyp(it.x-P.x,it.y-P.y)<700){AU.scream(.7);bark('rafa','t','Os gritos pararam.');}addDecal({k:'blood',x:it.x,y:it.y,r:28,rot:0,seed:.5});continue;}
     if(Math.random()<dt*.25&&hyp(it.x-P.x,it.y-P.y)<600)psyFloat(it.x,it.y,pick2(['Por favor... eu tenho filha...','Tá vindo! TÁ VINDO!','Não me deixa aqui!','Eu ouvi teu passo, eu sei que tu tá aí!']),{life:2.4,c:'#e8c0a0',size:12});
     if(it.t>it.life*.45&&!it.horde){it.horde=true;spawnRing(3,'zumbi',300,460,true);}}
 }
@@ -10266,7 +10272,7 @@ function drawPinned(){for(const it of PINNED){if(!inV(it.x,it.y,60))continue;ctx
   ctx.fillStyle='#c8a890';ctx.beginPath();ctx.arc(-34,6+Math.sin(renderT*9)*1.5,5,0,6.283);ctx.fill();ctx.strokeStyle='#c8a890';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-34,6);ctx.lineTo(-44,0+Math.sin(renderT*7)*4);ctx.stroke();ctx.restore();}}
 function pinnedUse(it){
   if(it.saved)return;
-  startStruggle({label:'Levantando o carro',need:100,pump:9,hold:13,noise:420,sfx:'creak',x:P.x,y:P.y,keep:'pin'+it.tx+'_'+it.ty,onDone:()=>{it.saved=true;const k=interacts.indexOf(it);if(k>=0)interacts.splice(k,1);PINNED.splice(PINNED.indexOf(it),1);
+  startStruggle({label:'Levantando o carro',need:100,pump:9,hold:13,noise:420,sfx:'creak',x:P.x,y:P.y,keep:'pin'+it.tx+'_'+it.ty,onDone:()=>{if(!PINNED.includes(it))return;it.saved=true;const k=interacts.indexOf(it);if(k>=0)interacts.splice(k,1);PINNED.splice(PINNED.indexOf(it),1);
     const p=spawnSurvivor({x:it.x-30,y:it.y},0,{st:'flee'});p.saved=true;bark('rafa','h','Saiu! Corre, corre pro abrigo!');later(900,()=>psyFloat(p.x,p.y,'Obrigado... obrigado!',{life:2,c:'#c8e0c0',size:13}));
     const id=pick2(['m9','ervaV','gran','pecas','pilha']);const l=invAdd(id,id==='m9'?10:1);if(l)boxAdd(id,l);toast(`Ele te deu ${ITEMS[id].n.toLowerCase()} antes de fugir.`);ach('preso');}});
 }
@@ -10362,7 +10368,7 @@ function drawCristoGlow(){if(!G.flags.cristoLuz||!LM.cristo||!inV(LM.cristo.x,LM
     }
     return vi(o);};
 })();
-if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre o Marlon e o Matheus na Univali.'},{id:'preso',n:'Mão amiga',d:'Tire alguém de baixo de um carro.'},{id:'roda',n:'Volta completa',d:'Desça o Seu Lauro da roda-gigante.'},{id:'cristo',n:'Luz no morro',d:'Acenda o Cristo Luz.'});
+if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre o Marlon e o Matheus na Universidade de BC.'},{id:'preso',n:'Mão amiga',d:'Tire alguém de baixo de um carro.'},{id:'roda',n:'Volta completa',d:'Desça o Seu Lauro da roda-gigante.'},{id:'cristo',n:'Luz no morro',d:'Acenda o Cristo Luz.'});
 
 // ===================== GANCHOS =====================
 (function(){
@@ -10382,18 +10388,28 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
   const rs=resetState; resetState=function(d){rs(d);DRAG.length=0;PINNED.length=0;QFX.pose=QFX.fin=null;QFX.bars=0;};
   const aws=applyWorldState; applyWorldState=function(){aws();const F=G.flags;if(F.uniDone){const mu=npcs.find(x=>x.id==='marlonU');if(mu)mu.cond=()=>false;}if(G.ev)G.ev.uniWave=null;if(F.uniMeet&&!F.uniDone){F.uniDone=true;F.matheusJoin=true;F.matFollow=true;F.uniMat=true;F.marlonMet=true;}
     const g=gates.find(x=>x.id==='bibUni');if(g&&F.uniMeet&&!g.open)openGate(g);};
-  // pular na história: depois da Univali, o Matheus já está junto
+  // pular na história: depois da Universidade de BC, o Matheus já está junto
   const dj=dbgJump; dbgJump=function(k){
     if(k==='univali'){dj('bc2');const F=G.flags;F.uniDone=false;F.zoneSeen=true;P.x=LM.zoneIn.x;P.y=LM.zoneIn.y;for(const c of (G.comps||[])){c.x=P.x-20;c.y=P.y;}snapCamera();flowTile=-1;return;}
     if(k==='uniBib'){dbgJump('univali');invAdd('chaveUni',1);G.flags.ademirTalk=true;const b=LM.uniBib;P.x=b.x;P.y=b.y+40;snapCamera();flowTile=-1;return;}
     dj(k);
     const steps=['posto','caos','laranj','brava','gerador','bc2','shop','itajai','hosp','porto','navio'],n=steps.indexOf(k);
-    if(n>=6||k==='hospIn'||k==='hospSaida'||k==='final'){const F=G.flags;F.uniDone=true;F.uniMeet=true;F.uniMat=true;F.marlonMet=true;F.matheusJoin=true;if(n>=7||k==='hospIn'||k==='hospSaida'||k==='final'){F.matFollow=true;}if(n>=9||k==='hospSaida'||k==='final')F.pastaGot=true;syncComps();}
+    if(n>=6||k==='hospIn'||k==='hospSaida'||k==='final'){const F=G.flags;F.uniDone=true;F.uniMeet=true;F.uniMat=true;F.marlonMet=true;F.matheusJoin=true;if(n>=7||k==='hospIn'||k==='hospSaida'||k==='final'){F.matFollow=true;}if(n>=9||k==='hospSaida'||k==='final')F.pastaGot=true;syncComps();const g=gates.find(x=>x.id==='bibUni');if(g&&!g.open)openGate(g);}
   };
 })();
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.7.1',d:'10/10/2026',t:'Mais zumbi, menos tela',itens:[
+    'Celular: botão de correr. Toque pra ligar ou desligar. O direcional não corre mais sozinho quando vai até a borda.',
+    'Celular: tela mais limpa. Os botões ficam só com o ícone (os nomes aparecem só no começo) e cada um só aparece quando serve pra algo: Curar só com item de cura, Recarga só com o pente faltando bala, Arma só com mais de uma arma, Jogar só com granada ou garrafa.',
+    'Celular: editor de controles (Opções > Editar controles). Arraste qualquer botão ou direcional pra onde quiser e deixe maior ou menor. Fica salvo, separado com o celular em pé e deitado.',
+    'Multiplayer: a Noite Zero virou matança. Ondas de zumbi em volta da turma e três chefões: O Frentista, O Espécime e A Abominação. Quanto mais gente, mais zumbi e chefão mais forte.',
+    'Multiplayer: munição e erva pra todo mundo a cada etapa vencida, vida do chefão aparece pra todos, cuspe e pedra de inimigo agora acertam os amigos também, e a lista da equipe ficou menor.',
+    'A Univali agora se chama Universidade de BC no jogo.',
+    'Correções: itens não duplicam mais ao carregar o registro, pilha de munição pega pela metade não enche de novo ao carregar, itens largados no chão e o loot do Brandt não somem mais ao carregar, o clima é salvo, e os cegos do esgoto acordam do jeito certo.',
+    'Correções: o flashback do Matheus não começa mais no meio de um carro, agarrão ou quick time; a turma, os eventos e os sustos do Richard param durante a lembrança; resgate embaixo do carro não termina mais com a pessoa já morta; portão da biblioteca da universidade abre certo depois dos pulos do menu de teste.',
+    'Menu de teste: seção 1.7.1 com editor de controles, corrida, horda e chefão da Noite Zero.']},
   {v:'1.7',d:'10/10/2026',t:'Servidor próprio',itens:[
     'Multiplayer com servidor do Porto Sombrio: o código de 4 letras agora passa pelo nosso servidor, então dá pra jogar com os amigos de qualquer lugar, cada um na sua internet.',
     'Se o servidor estiver dormindo, o jogo acorda ele sozinho (pode levar até 1 minuto na primeira partida).',
@@ -10411,13 +10427,13 @@ const NOTAS=[
     'Maleta: segure o item e arraste até o lugar. Verde cabe, vermelho não. Enquanto arrasta, R, a rodinha do mouse ou um segundo dedo gira o item. Toque rápido continua selecionando.']},
   {v:'1.6',d:'09/10/2026',t:'Noite Zero',itens:[
     'Multiplayer local (beta): até 5 pessoas na mesma rede Wi-Fi, cada uma com um dos amigos: Richard, Edu, Matheus, Marlon ou Nicolas. Sem servidor: quem cria a sala manda um código de convite e o amigo devolve um código de resposta (dá pra mandar pelo WhatsApp).',
-    'Noite Zero: uma história curta só do multiplayer, da Oficina do Tião até a biblioteca da Univali. Quem cai levanta perto de um amigo. Não mexe no seu jogo solo nem no registro.',
+    'Noite Zero: uma história curta só do multiplayer, da Oficina do Tião até a biblioteca da Universidade de BC. Quem cai levanta perto de um amigo. Não mexe no seu jogo solo nem no registro.',
     'Conta: ao abrir o jogo você cria sua conta com nome, apelido, cor, personagem preferido e uma frase. Ela aparece no lobby e em cima do seu boneco no multiplayer. Por enquanto fica salva no aparelho.',
-    'Flashback: depois da Univali, o Matheus conta o que viu no porto às 19h do primeiro dia. Você joga como ele, com o Seu Zé, até o contêiner T-00 abrir.',
+    'Flashback: depois da Universidade de BC, o Matheus conta o que viu no porto às 19h do primeiro dia. Você joga como ele, com o Seu Zé, até o contêiner T-00 abrir.',
     'Clima que muda sozinho: chuva fina, tempestade (os zumbis enxergam menos e ouvem menos), neblina e apagão geral na cidade.',
-    'A região da BR-101 e da Univali ficou bem mais clara durante o dia.',
+    'A região da BR-101 e da Universidade de BC ficou bem mais clara durante o dia.',
     'Brava: binóculo no mirante pra ver a cidade de longe e um barco encalhado na areia pra revistar (cuidado com quem ainda está lá dentro).',
-    'Univali: missões pequenas. Junte as três folhas da prova do Rese e entregue na Sala 102, devolva o fone do Matheus que ficou no Bloco 9 e veja o que sobrou da formatura no Foyer.',
+    'Universidade de BC: missões pequenas. Junte as três folhas da prova do Rese e entregue na Sala 102, devolva o fone do Matheus que ficou no Bloco 9 e veja o que sobrou da formatura no Foyer.',
     'Conquistas novas e menu de debug atualizado com clima, flashback, missões e multiplayer.']},
   {v:'1.5.1',d:'09/10/2026',t:'Maleta de verdade',itens:[
     'Maleta estilo RE4 de verdade: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.',
@@ -10425,10 +10441,10 @@ const NOTAS=[
     'Ícones novos desenhados pra cada item, no tamanho que ele ocupa: munição, ervas, spray, granada, garrafa, pilha, pólvora e outros.',
     'Quick time do Brandt mais difícil: mais rápido, o anel aparece em lugares diferentes da tela e o botão muda a cada golpe (E, Q, F, Espaço ou R). No celular aparecem três botões e só um é o certo.',
     'Galeria: pra sair, é só subir a escada no fim do sifão. Não precisa mais empurrar a tampa.']},
-  {v:'1.5',d:'09/10/2026',t:'A Turma da Univali',itens:[
-    'Região nova: a BR-101 destruída e o campus da Univali em Balneário Camboriú, com os blocos de verdade (1 a 10, o Bloco 3 redondo, a quadra, a praça, as torres e os estacionamentos). Fica do outro lado do túnel no fim da Avenida do Estado.',
-    'Missão obrigatória no capítulo 2: o Marlon e o Matheus estão presos na biblioteca do Bloco 6A. O Matheus agora começa na Univali e vai com você até o fim.',
-    'Gente nova: Seu Ademir (segurança da Univali), Dona Neusa (cantina), Cabo Juliana (Exército, na BR), Kadu e Bia (surfistas da Brava) e Seu Lauro (roda-gigante).',
+  {v:'1.5',d:'09/10/2026',t:'A Turma da Universidade de BC',itens:[
+    'Região nova: a BR-101 destruída e o campus da Universidade de BC em Balneário Camboriú, com os blocos de verdade (1 a 10, o Bloco 3 redondo, a quadra, a praça, as torres e os estacionamentos). Fica do outro lado do túnel no fim da Avenida do Estado.',
+    'Missão obrigatória no capítulo 2: o Marlon e o Matheus estão presos na biblioteca do Bloco 6A. O Matheus agora começa na Universidade de BC e vai com você até o fim.',
+    'Gente nova: Seu Ademir (segurança da Universidade de BC), Dona Neusa (cantina), Cabo Juliana (Exército, na BR), Kadu e Bia (surfistas da Brava) e Seu Lauro (roda-gigante).',
     'No Santa Clara, no lugar do Matheus, tem a pasta do Paciente Zero pra pegar.',
     'Brandt: o quick time ficou mais longo e virou luta de verdade, com quatro sequências (faca, desarme, parede e judô), finalização em câmera lenta e um visual novo pra ele, no retrato e visto de cima.',
     'Caçulinha do Marlon, perto da BR. O Richard pega no pé do Matheus, o Edu ficou mais quieto e sarcástico, e o Nicolas fala de política pelo rádio.',
@@ -10511,28 +10527,29 @@ UI.debug=function(){
   let body='';
   switch(tab){
     case 'nov':body=
+      sec('1.7.1 · Celular e Noite Zero',bt('v16:hudEd','Editar controles do celular')+bt('v16:hudReset','Controles no lugar padrão')+bt('v16:run','Ligar/desligar corrida (celular)')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:mpWave','Chamar horda (Noite Zero)')+bt('v16:mpBoss','Chamar chefão (Noite Zero)'))+
       sec('1.7 · Servidor dedicado',bt('v17:srv','Testar servidor')+bt('v16:mp','Abrir o multiplayer'))+
       sec('1.6 · Clima',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
       sec('1.6 · Flashback e missões',bt('v16:flash','Começar o flashback do Matheus')+bt('v16:flashEnd','Terminar o flashback')+bt('v16:prova','Ganhar as 3 folhas da prova')+bt('v16:fone','Ganhar o fone do Matheus')+tp('sala102','Sala 102 (entregar a prova)')+tp('foyerIn','Foyer (formatura)')+tp('binoculo','Binóculo do mirante (Brava)')+tp('barco','Barco encalhado (Brava)'))+
       sec('1.6 · Multiplayer beta',bt('v16:mp','Abrir o multiplayer')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:conta','Editar conta'))+
       sec('1.5.1',bt('v151:org','Organizar a maleta')+bt('v15:combo:desarme','Quick time difícil do Brandt')+bt('v14:maleta','Maleta grande')+bt('j:galeria2','Galeria · comportas (testar a escada)')+bt('v14:drain','Resolver as comportas'))+
       sec('Brandt (1.5)',bt('v14:brandtNow','Começar a luta agora')+bt('v15:combo:faca','Quick time · faca')+bt('v15:combo:desarme','Quick time · desarme')+bt('v15:combo:parede','Quick time · parede')+bt('v15:combo:judo','Quick time · judô')+bt('v14:brandtLow','Deixar com pouca vida')+bt('v14:brandtWin','Vencer o Brandt'))+
-      sec('Univali e BR-101 (1.5)',bt('j:univali','Pular · chegando pelo túnel')+bt('j:uniBib','Pular · porta da biblioteca (com a chave)')+bt('v15:uniWave','Começar a defesa da biblioteca')+bt('v15:uniDone','Terminar a missão da Univali')+tp('tunel','Túnel em Balneário')+tp('caculinha','Caçulinha do Marlon')+tp('neusa','Cantina da Dona Neusa')+tp('sala102','Sala 102 (prova do Rese)'))+
+      sec('Universidade de BC e BR-101 (1.5)',bt('j:univali','Pular · chegando pelo túnel')+bt('j:uniBib','Pular · porta da biblioteca (com a chave)')+bt('v15:uniWave','Começar a defesa da biblioteca')+bt('v15:uniDone','Terminar a missão da Universidade de BC')+tp('tunel','Túnel em Balneário')+tp('caculinha','Caçulinha do Marlon')+tp('neusa','Cantina da Dona Neusa')+tp('sala102','Sala 102 (prova do Rese)'))+
       sec('Eventos novos (1.5)',bt('v15:pinned','Alguém preso embaixo de carro')+bt('v15:drag','Alguém arrastado pro escuro')+bt('v15:fall','Alguém caindo do prédio')+bt('v15:zoeira','Zoeira com o Matheus')+bt('v15:nico','Nicolas no rádio')+bt('v15:roda','Pessoa presa na roda-gigante')+bt('v15:cristo','Acender o Cristo Luz')+tp('surfCamp','Acampamento dos surfistas (Brava)'))+
       sec('Galeria (1.4)',bt('j:galeria','Pular · entrada')+bt('v14:fuses','Ganhar os três fusíveis')+bt('v14:pump','Ligar a bomba')+bt('j:galeria2','Pular · sala das comportas')+bt('v14:drain','Resolver as comportas')+bt('v14:exit','Sair nas Laranjeiras'));break;
     case 'jog':body=sec('Jogador',tg('god','Invencível')+tg('ammo','Munição infinita')+tg('noclip','Atravessar paredes')+`<button class="dbgt" data-a="dbg" data-k="speed">Velocidade<span>${DBG.speed}x</span></button>`+bt('heal','Curar tudo')+bt('bat','Carregar lanterna')+bt('v14:qte','Testar quick time')+bt('v15:combo:desarme','Testar quick time difícil (Brandt)')+bt('qte','Testar esforço (barra)'));break;
-    case 'itens':body=sec('Itens',bt('weapons','Todas as armas')+bt('keys','Todas as chaves e itens-chave')+bt('ammokit','Kit de munição')+bt('healkit','Kit de cura')+bt('throws','Rojões e sinalizadores')+bt('v15:keys15','Chaves novas (Univali, manobra, pasta)'))+
+    case 'itens':body=sec('Itens',bt('weapons','Todas as armas')+bt('keys','Todas as chaves e itens-chave')+bt('ammokit','Kit de munição')+bt('healkit','Kit de cura')+bt('throws','Rojões e sinalizadores')+bt('v15:keys15','Chaves novas (Universidade de BC, manobra, pasta)'))+
       sec('Documentos',bt('files','Todos os arquivos')+bt('photos','Todas as fotos'))+
       sec('Maleta',bt('v151:org','Organizar a maleta')+bt('slots','Aumentar a maleta')+bt('v14:maleta','Maleta no tamanho máximo')+bt('v14:maletaMin','Maleta no tamanho inicial'));break;
     case 'hist':body=
       sec('Capítulo 1 · Balneário',bt('j:posto','Posto (bateria)')+bt('j:caos','Jipe pronto, Edu, caos')+bt('j:brandt','Shopping, antes do Brandt')+bt('j:galeria','Galeria, entrada')+bt('j:galeria2','Galeria, comportas')+bt('j:laranj','Laranjeiras')+bt('j:ivo','Seu Ivo vivo (colônia)'))+
-      sec('Capítulo 2 · Brava e a volta',bt('j:brava','Chegada na Brava')+bt('j:gerador','Diesel na mão')+bt('j:bc2','Balneário em silêncio')+bt('j:univali','Univali (túnel)')+bt('j:uniBib','Univali (biblioteca)')+bt('j:shop','Armadilha do shopping')+bt('j:cida','Prédio da Dona Cida'))+
+      sec('Capítulo 2 · Brava e a volta',bt('j:brava','Chegada na Brava')+bt('j:gerador','Diesel na mão')+bt('j:bc2','Balneário em silêncio')+bt('j:univali','Universidade de BC (túnel)')+bt('j:uniBib','Universidade de BC (biblioteca)')+bt('j:shop','Armadilha do shopping')+bt('j:cida','Prédio da Dona Cida'))+
       sec('Capítulo 3 · Itajaí',bt('j:itajai','Itajaí')+bt('j:hosp','Santa Clara')+bt('j:hospIn','Santa Clara · porta tranca')+bt('j:hospSaida','Santa Clara · saída com alicate')+bt('j:porto','Porto')+bt('j:navio','Navio no cais')+bt('j:final','Batalha final com os três'));break;
     case 'lutas':body=
       sec('Sargento Brandt',bt('j:brandt','Pular · shopping')+bt('v14:brandtNow','Começar a luta')+bt('v15:combo:faca','Quick time · faca')+bt('v15:combo:desarme','Quick time · desarme')+bt('v15:combo:parede','Quick time · parede')+bt('v15:combo:judo','Quick time · judô')+bt('v14:brandtLow','Pouca vida')+bt('v14:brandtWin','Vencer')+bt('v14:smoke','Granada de fumaça aqui'))+
       sec('T-11, o Coletor',bt('v14:chase','Soltar aqui (fuga)')+bt('v14:chaseStop','Parar a fuga')+bt('v14:drain','Começar a fuga do jeito certo'))+
       sec('Outros chefes',bt('j:shop','Espécime (shopping)')+bt('v14:pesc','Pescador (litoral de Itajaí)')+bt('pers','Chamar o Perseguidor')+bt('ouvHere','Chamar a cega até você')+tg('ouv','Ver faro e escuta da cega')+bt('j:final','Abominação (final)')+bt('allyNow','Chamar os três (na batalha)'));break;
-    case 'pers':body=sec('Amigos',bt('j:uniBib','Marlon e Matheus · Univali')+bt('j:marlon','Marlon · Edifício Yacht')+bt('j:nico','Nicolas · surf shop')+bt('j:alex','Prof. Alex Rese · Mercado Público')+bt('v15:zoeira','Zoeira com o Matheus')+bt('v15:nico','Nicolas no rádio'))+
+    case 'pers':body=sec('Amigos',bt('j:uniBib','Marlon e Matheus · Universidade de BC')+bt('j:marlon','Marlon · Edifício Yacht')+bt('j:nico','Nicolas · surf shop')+bt('j:alex','Prof. Alex Rese · Mercado Público')+bt('v15:zoeira','Zoeira com o Matheus')+bt('v15:nico','Nicolas no rádio'))+
       sec('Gente pelo caminho',tp('uniGuarita','Seu Ademir · guarita')+tp('neusa','Dona Neusa · cantina')+tp('surfCamp','Kadu e Bia · fogueira')+tp('painelRoda','Seu Lauro · roda-gigante')+bt('v15:juliana','Cabo Juliana · BR-101'));break;
     case 'lug':{
       const grp={};const add=(g,k,l)=>{(grp[g]=grp[g]||[]).push(tp(k,l));};
@@ -10540,7 +10557,7 @@ UI.debug=function(){
       for(const [k,l] of [['bondMA','Estação Mata Atlântica'],['colonia','Colônia (Seu Ivo)'],['geradorL','Rancho das Laranjeiras'],['bondL','Estação Laranjeiras'],['taquarinhas','Taquarinhas']])add('Laranjeiras',k,l);
       for(const [k,l] of [['mirante','Morro do Careca'],['clinica','Clínica da Brava'],['surf','Surf shop'],['surfCamp','Fogueira dos surfistas'],['resort','Resort Brava Mar'],['maqResort','Casa de máquinas do resort'],['vertice','Bloqueio de Cabeçudas']])add('Brava e Cabeçudas',k,l);
       for(const [k,l] of [['itajai','Mercado Público'],['matriz','Igreja Matriz'],['hospIt','Santa Clara'],['isol','Isolamento (pasta)'],['alicate','Manutenção (alicate)'],['bombeiros','Bombeiros'],['lab','Laboratório Vértice'],['armazem','Armazém'],['guindaste','Guindaste'],['radio','Heliponto']])add('Itajaí e porto',k,l);
-      for(const [k,l] of [['zoneIn','Saída do túnel'],['uniGuarita','Guarita'],['uniBib','Biblioteca 6A'],['bloco3','Bloco 3'],['sala102','Sala 102'],['quadra','Quadra'],['foyer','Foyer e Auditório'],['uniSafe','Sala dos Professores (abrigo)'],['caculinha','Caçulinha do Marlon']])add('BR-101 e Univali',k,l);
+      for(const [k,l] of [['zoneIn','Saída do túnel'],['uniGuarita','Guarita'],['uniBib','Biblioteca 6A'],['bloco3','Bloco 3'],['sala102','Sala 102'],['quadra','Quadra'],['foyer','Foyer e Auditório'],['uniSafe','Sala dos Professores (abrigo)'],['caculinha','Caçulinha do Marlon']])add('BR-101 e Universidade de BC',k,l);
       for(const [k,l] of [['sewIn','Entrada'],['quadroBomba','Estação de bombeamento'],['mapaDren','Sala das comportas'],['sewOut','Poço de saída']])add('Galeria pluvial',k,l);
       body=Object.entries(grp).map(([g,a])=>sec(g,a.join(''))).join('');break;}
     case 'inim':{const boss=k=>ETYPES[k].boss||['pers','bombeiro','boss','ouvinte','coletor','manequim'].includes(k);
@@ -10568,14 +10585,19 @@ UI.debug=function(){
     if(k.startsWith('v16:')){const c=k.slice(4),F=G.flags;
       if(c==='mp')return this.mp(); if(c==='conta')return this.conta('title');
       this.close();
-      if(c.startsWith('wx:')){const w=c.slice(3);wxSet(w==='off'?null:w);return toast(w==='off'?'Tempo limpo.':'Clima: '+WX[w].n);}
+      if(c.startsWith('wx:')){const w=c.slice(3);if(w==='off')wxSet('chuva',true);else wxSet(w);return toast(w==='off'?'Tempo limpo.':'Clima: '+WX[w].n);}
       switch(c){
         case 'flash':if(FB.on)return toast('O flashback já está rolando.');F.uniDone=true;F.uniMat=true;return STORY.flashStart();
         case 'flashEnd':if(!FB.on)return toast('Nenhum flashback rolando.');return flashEnd();
         case 'prova':{const l=invAdd('folhaProva',3-invCount('folhaProva'));if(l)boxAdd('folhaProva',l);return toast('Folhas da prova na maleta.');}
         case 'fone':{const l=invAdd('foneMat',1);if(l)boxAdd('foneMat',l);return toast('Fone do Matheus na maleta.');}
         case 'mpSolo':{if(MP.on)return toast('Já está numa partida.');MP.role='host';MP.myId='0';MP.players={};MP.peers={};const c2=contaGet()||{};MP.me={nome:c2.nome||'Teste',apelido:c2.apelido||'teste',cor:c2.cor||'#d9a33c',char:c2.fav||'richard'};return mpBegin(mpStartInfo());}
-        case 'mpNext':{if(!MP.on||MP.role!=='host')return toast('Só funciona como anfitrião da Noite Zero.');const s=MPST[MP.stage];if(s){const L=s.at();if(L){P.x=L.x;P.y=L.y+20;snapCamera();flowTile=-1;}if(s.hold)MP.prog=s.hold;}return;}
+        case 'mpNext':{if(!MP.on||MP.role!=='host')return toast('Só funciona como anfitrião da Noite Zero.');const s=MPST[MP.stage];if(s){for(const e of enemies)if(e.alive&&e.mpw)killEnemy(e);if(s.hold)MP.prog=s.hold;if(s.kills)MP.kills=999;}return;}
+        case 'mpBoss':{if(!MP.on||MP.role!=='host')return toast('Só funciona como anfitrião da Noite Zero.');mpSpawnAt(rpick(['gordo','especime']),300,500);return toast('Chefão chamado.');}
+        case 'mpWave':{if(!MP.on||MP.role!=='host')return toast('Só funciona como anfitrião da Noite Zero.');mpWave('pesada',14);return toast('Horda chamada.');}
+        case 'hudEd':return UI.hudEdit('opts');
+        case 'hudReset':delete HUDL[hudOri()];hudSave();layoutTouch();return toast('Controles no lugar padrão.');
+        case 'run':TOUCH.runOn=!TOUCH.runOn;tcState='';return toast(TOUCH.runOn?'Corrida ligada.':'Corrida desligada.');
       }
       return;}
     if(!k.startsWith('v15:'))return da(k,ds);
@@ -10584,7 +10606,7 @@ UI.debug=function(){
       brandtGrapple(e,n);return;}
     switch(c){
       case 'uniWave':{if(!F.uniMeet){dbgJump('uniBib');}F.uniMeet=true;F.matheusJoin=true;F.matFollow=true;F.uniMat=true;syncComps();const b=LM.uniBibIn;P.x=b.x;P.y=b.y+60;snapCamera();flowTile=-1;G.ev.uniWave={t:48,sp:1};return;}
-      case 'uniDone':{F.uniMeet=true;F.matheusJoin=true;F.matFollow=true;F.uniMat=true;F.uniDone=true;F.marlonMet=true;G.ev.uniWave=null;syncComps();return toast('Missão da Univali concluída. O Matheus está com você.');}
+      case 'uniDone':{F.uniMeet=true;F.matheusJoin=true;F.matFollow=true;F.uniMat=true;F.uniDone=true;F.marlonMet=true;G.ev.uniWave=null;syncComps();{const g=gates.find(x=>x.id==='bibUni');if(g&&!g.open)openGate(g);}return toast('Missão da Universidade de BC concluída. O Matheus está com você.');}
       case 'pinned':if(!evPinned())toast('Não achei um lugar livre na rua perto. Tente em outra rua.');return;
       case 'drag':if(!evDragged())toast('Não achei lugar perto. Tente numa rua aberta.');return;
       case 'fall':if(!forceFall())toast('Precisa estar perto de um prédio, na rua.');return;
@@ -10656,8 +10678,10 @@ function mCouldAfterOrganize(extra){return !!packMaleta(mItems().concat(extra));
     const r=tp(p); mSync(); return r;
   };
   const ser=serialize; serialize=function(){mSync();const s=ser();s.mpos=G.mpos;s.mU=G.mU||0;return s;};
-  const ls=loadState; loadState=function(s){ls(s);
-    if(s.mpos){const box0=G.box.slice();G.inv=new Array(64).fill(null);(s.inv||[]).filter(Boolean).forEach((x,i)=>{G.inv[i]={id:x.id,q:x.q,u:x.u};});G.box=s.box||box0;}
+  const ls=loadState; loadState=function(s){
+    // cópia do baú do registro: o carregamento antigo (1.4) arruma a maleta e joga no baú o que não coube, mexendo em s.box
+    const box0=s&&s.mpos?JSON.parse(JSON.stringify(s.box||[])):null; ls(s);
+    if(s.mpos){G.inv=new Array(64).fill(null);(s.inv||[]).filter(Boolean).forEach((x,i)=>{G.inv[i]={id:x.id,q:x.q,u:x.u};});G.box=box0;}
     G.mU=Math.max(G.mU||0,s.mU||0);for(const it of G.inv)if(it&&it.u)G.mU=Math.max(G.mU,it.u);G.mpos=s.mpos||{};mSync();};
   const rs=resetState; resetState=function(d){rs(d);G.mpos={};G.mU=0;};
 })();
@@ -10894,7 +10918,7 @@ function drawWx(){
   const an=alertNoise; alertNoise=function(x,y,r){return an(x,y,r*(G.wx&&WX[G.wx]?WX[G.wx].noise:1));};
 })();
 
-// ---------- a região da BR e da Univali, mais clara de dia ----------
+// ---------- a região da BR e da Universidade de BC, mais clara de dia ----------
 function zoneLightTick(){ if(inZone()&&G.inB<0&&!inSew())G._dkZone=lerp(1,.62,daylight()); else if(inZone())G._dkZone=.85; else G._dkZone=0; }
 
 // ---------- FLASHBACK: 19h, o Matheus no porto, o contêiner T-00 ----------
@@ -10908,7 +10932,8 @@ STORY.flashStart=function(){
     ()=>{G.banner={t:'Porto de Itajaí · 19h04 · seis horas antes',life:4};});
 };
 function flashSetup(){
-  FB.on=true; FB.stage=0; G.flags.fbStage=0;
+  FB.on=true; FB.stage=0; G.flags.fbStage=0; FB.open=0; FB.arm=0; FB.exit=null; FB.door=0; FB.bt=0; FB.t=0;
+  if(P.inCar)exitCar(true); V.spd=0; G.qte=null; G.struggle=null; P.grab=null;
   enemies=[]; projs=[]; G.comps=[]; G.wx='chuva'; G.clock=19*60+4;
   for(let i=0;i<P.owned.length;i++)P.owned[i]=false; P.owned[8]=true; P.w=8; P.hp=P.max=100; P.lookO=LOOKS.matheus;
   const c=LM.cais||{x:tc(140),y:tc(11)}; const [x,y]=freeTileNear(((c.x/TILE)|0)-28,((c.y/TILE)|0)+14,true); P.x=tc(x); P.y=tc(y); snapCamera(); flowTile=-1;
@@ -10953,7 +10978,7 @@ function flashBurst(){
 }
 function flashEnd(){
   FB.stage=4;
-  playCut([{fx:'blackout',v:2},{say:'matheus',m:'t',t:'Eu corri até a Univali. Três horas andando no escuro. Não contei pra ninguém. Achei que ninguém ia acreditar.'},
+  playCut([{fx:'blackout',v:2},{say:'matheus',m:'t',t:'Eu corri até a Universidade de BC. Três horas andando no escuro. Não contei pra ninguém. Achei que ninguém ia acreditar.'},
     {say:'matheus',m:'s',t:'Aquilo é o T-00, Richard. E ele ainda tá no porto.'}],
     ()=>{FB.on=false;const s=FB.save;FB.save=null;P.lookO=null;try{loadState(s);G.mode='play';G.flags.flashDone=true;toast('De volta ao presente.');if(typeof ach==='function')ach('flash');}catch(e){console.error(e);}});
 }
@@ -11032,14 +11057,27 @@ if(typeof ACH!=='undefined')ACH.push({id:'prova',n:'Nota 7',d:'Entregue a prova 
   const vi=v12Interact; v12Interact=function(o){if(o.type==='binoculo')return binoculoUse();if(o.type==='barco')return barcoUse();return vi(o);};
   const vt=v16Tick; v16Tick=function(dt){vt(dt);if(G.mode!=='play')return;zoneLightTick();if(CUT.on)return;wxTick(dt);flashTick(dt);uniMissionsTick(dt);
     // o flashback começa logo depois que o Matheus entra no grupo (fora de perigo)
-    const F=G.flags; if(F.uniDone&&F.uniMat&&!F.flashDone&&!FB.on&&!G.ev.uniWave&&!enemies.some(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<500)){G.ev.fbT=(G.ev.fbT||0)+dt;if(G.ev.fbT>6)STORY.flashStart();}};
+    const F=G.flags; if(F.uniDone&&F.uniMat&&!F.flashDone&&!FB.on&&!G.ev.uniWave&&!P.inCar&&!G.struggle&&!G.qte&&!enemies.some(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<500)){G.ev.fbT=(G.ev.fbT||0)+dt;if(G.ev.fbT>6)STORY.flashStart();}};
   const ob=objective; objective=function(){if(FB.on)return flashObjective();return ob();};
   const dp=drawParts; drawParts=function(){dp();drawFlash();};
   const ds=drawPsy; drawPsy=function(){drawWx();ds();};
-  const rs=resetState; resetState=function(d){rs(d);G.wx=null;FB.on=false;P.lookO=null;};
+  const rs=resetState; resetState=function(d){rs(d);G.wx=null;G.wxSight=1;G._dkWx=0;FB.on=false;P.lookO=null;};
+  // o clima vai junto no registro (e volta igual depois do flashback)
+  const ser=serialize; serialize=function(){const s=ser();if(G.wx){s.wx=G.wx;s.wxT=G.wxT;}return s;};
+  const ls=loadState; loadState=function(s){ls(s);if(s&&s.wx&&WX[s.wx]){wxSet(s.wx,true);if(s.wxT>0)G.wxT=s.wxT;}};
   // durante o flashback não dá pra salvar
   const sv=UI.save.bind(UI); UI.save=function(){if(FB.on){toast('Isso é uma lembrança. Não dá pra salvar aqui.');return;}return sv();};
   const di=die; die=function(){if(FB.on){P.hp=30;toast('O Matheus tropeçou, mas levantou. Corre!');return;}return di();};
+  // no flashback o Matheus está sozinho no porto, seis horas antes: sem o grupo, sem zumbis de fora e sem os sustos do Richard
+  const sc=syncComps; syncComps=function(){if(FB.on){G.comps=[];return;}return sc();};
+  const us=updSpawner; updSpawner=function(dt){if(FB.on){G.spawnT=4;return;}return us(dt);};
+  const ue=updEvents; updEvents=function(dt){if(FB.on){updPeds(dt);return;}return ue(dt);};
+  const ct=cryTick; cryTick=function(dt){if(FB.on)return;return ct(dt);};
+  const tt=trapTick; trapTick=function(dt){if(FB.on)return;return tt(dt);};
+  const pt=psyTick; psyTick=function(dt){if(FB.on)return;return pt(dt);};
+  const st=soniaTick; soniaTick=function(dt){if(FB.on)return;return st(dt);};
+  const zt=zoeiraTick; zoeiraTick=function(dt){if(FB.on)return;return zt(dt);};
+  const tr=terrorTick; terrorTick=function(dt){if(FB.on)return;return tr(dt);};
 })();
 // no flashback só o Matheus (e quem estava no porto) fala: nada de comentários do Richard ou do grupo
 (function(){const b=bark;bark=function(who){if(FB.on&&who!=='matheus'&&who!=='zeFB'&&who!=='ze')return;return b.apply(this,arguments);};})();
@@ -11257,6 +11295,8 @@ function mpRecv(m,p){const H=MP.role==='host';
     case 'tp':mpTp(m.x,m.y);break;
     case 'bark':bark(m.w,m.m,m.s);break;
     case 'gift':mpGift(m.g,m.msg);break;
+    case 'kit':mpKit();break;
+    case 'banner':G.banner={t:m.s,life:3};break;
     case 'end':mpEnd(m.win);break;
   }
   if(['hello','you','lobby','pick'].includes(m.t))mpRefresh();
@@ -11306,53 +11346,81 @@ function mpEnd(win,msg){
   if(MP.role==='host')mpSend({t:'end',win});
   G.mode='menu';
   UI.open(`<div class="sheet narrow win"><p class="kick">Noite Zero · beta</p><h2 class="endt">${win?'Vocês sobreviveram':'A noite venceu'}</h2>
-    <p>${msg?esc(msg):win?'A turma inteira atravessou a BR e segurou a Univali até o amanhecer. Por enquanto.':'Ninguém ficou de pé dessa vez.'}</p>
+    <p>${msg?esc(msg):win?'A turma inteira atravessou a BR e segurou a Universidade de BC até o amanhecer. Por enquanto.':'Ninguém ficou de pé dessa vez.'}</p>
     <p class="hint">O multiplayer completo vem numa próxima versão. Obrigado por testar!</p>
     <div class="row"><button class="btn primary" data-a="mp-leave">Voltar ao título</button></div></div>`,'','win');
 }
 
 // ---------- partida ----------
 function mpBegin(info){
-  MP.on=true; MP.roster=info.pl; Object.assign(MP,{stage:0,prog:0,endT:null,allDownT:0,remote:{}}); MP.ghosts.clear();
+  MP.on=true; MP.roster=info.pl; Object.assign(MP,{stage:0,prog:0,kills:0,started:false,boss:null,endT:null,allDownT:0,remote:{}}); MP.ghosts.clear();
   newGame('normal'); G.mp={role:MP.role}; const F=G.flags; F.tutDone=true; G.tut=null; F.mpMode=true; F.armed=true; F.walkie=true;
   UI.close(); G.mode='play'; document.getElementById('tc').hidden=!IN.touch;
   if(MP.role==='guest'){enemies=[];G.dropN=100000*(+MP.myId);}
   mpSetChar((info.pl[MP.myId]||MP.me).char);
-  P.x=START.x+(+MP.myId)*28; P.y=START.y+12; snapCamera(); flowTile=-1;
-  G.banner={t:'Noite Zero',life:3.5}; toast('Multiplayer beta: fiquem juntos. Ninguém sai sozinho.');
+  {const A=LM.coreto||START,[x,y]=freeTileNear(((A.x)/TILE|0)+(+MP.myId)*2-4,(A.y/TILE)|0,true);P.x=tc(x);P.y=tc(y);} snapCamera(); flowTile=-1; G.clock=20*60;
+  G.banner={t:'Noite Zero',life:3.5}; toast('Matem tudo. Fiquem juntos.');
 }
 function mpSetChar(ch){
   P.lookO=LOOKS[ch]||LOOKS.richard; MP.myChar=ch; P.owned[0]=true;
   const kit={richard:[[1,'m9',36]],edu:[[1,'m9',36]],matheus:[[2,'cart',12]],marlon:[[4,'m357',12]],nicolas:[[7,'virote',14],[null,'rojao',2]]}[ch]||[[1,'m9',24]];
   for(const [w,a,q] of kit){if(w!=null){P.owned[w]=true;P.mags[w]=WEAPONS[w].mag;P.w=w;}invAdd(a,q);} invAdd('ervaV',2); mSync();
 }
+// ---------- Noite Zero (1.7.1): matar zumbi com os amigos e derrubar chefão. Sem enrolação. ----------
+// Tudo acontece em volta da turma (o centro é a média de quem está de pé). Mais gente na equipe = mais zumbi e chefão mais forte.
 const MPST=[
-  {t:'Reúnam-se na Oficina do Tião, na Barra Sul',at:()=>LM.oficina,done:()=>mpNear(LM.oficina,320,true),bark:['edu','n','Todo mundo vivo? Ótimo. Pela primeira vez na vida, todo mundo no horário.']},
-  {t:'Peguem suprimentos no Supermercado Bom Preço',at:()=>LM.mercado,done:()=>mpNear(LM.mercado,130),bark:['marlon','n','Mercado limpo. Pega o que der e bora, que o barulho atrai.'],gift:[['m9',18],['cart',6],['ervaV',1],['pilha',1]]},
-  {t:'Religuem o quadro de força da Delegacia: fiquem perto por 8 segundos',at:()=>LM.fusebox,hold:8,r:120,bark:['nico','n','Luz voltou. Viu? Serviço público funciona quando alguém faz.'],ring:4},
-  {t:'Atravessem o túnel da BR-101, no fim da Avenida do Estado',at:()=>LM.tunel,done:()=>mpNear(LM.tunel,110),tp:()=>LM.zoneIn,bark:['matheus','s','A Univali tá do outro lado. A biblioteca do 6A aguenta qualquer coisa.']},
-  {t:'Defendam a biblioteca da Univali (Bloco 6A) até o amanhecer: 90 segundos',at:()=>LM.uniBib,hold:90,r:600,wave:true,bark:['marlon','a','Amanheceu. A gente conseguiu. A turma inteira. Até o Edu chegou no horário.']},
+  {t:'Primeira onda: matem {n} zumbis',kills:24,rate:1.2,mix:'leve',bark:['edu','n','Vinte e quatro. Eu contei. Alguém mais contou ou só eu trabalho aqui?']},
+  {t:'Chefão: derrubem O Frentista',boss:'gordo',hpk:1,rate:3.5,mix:'leve',bark:['marlon','n','O gordão caiu. Pega munição e respira, que vem mais.']},
+  {t:'Segurem a praça: {s} segundos de horda',hold:60,rate:.8,mix:'media',bark:['nico','n','Sessenta segundos. Parecia uma aula do Rese.']},
+  {t:'Chefão: derrubem O Espécime',boss:'especime',hpk:1,rate:3,mix:'media',bark:['matheus','s','Isso aí saiu do porto. Eu reconheço. Bora acabar com isso.']},
+  {t:'Horda pesada: matem {n} zumbis',kills:40,rate:.7,mix:'pesada',bark:['marlon','a','Quarenta. Tô sem dedo de tanto atirar.']},
+  {t:'Chefão final: derrubem A Abominação',boss:'boss',hpk:.8,rate:2.2,mix:'pesada',bark:['marlon','a','Amanheceu. A gente conseguiu. A turma inteira. Até o Edu chegou no horário.']},
 ];
+const MP_MIX={leve:[['zumbi',70],['corr',20],['cao',10]],media:[['zumbi',50],['corr',22],['incha',10],['cusp',10],['cao',8]],pesada:[['zumbi',40],['corr',20],['incha',10],['cusp',10],['brut',6],['soldado',14]]};
 const mpAllPos=()=>[{x:P.x,y:P.y,hp:P.hp},...Object.values(MP.players)];
+const mpN=()=>1+Object.keys(MP.players).length;
 function mpNear(L,r,all){if(!L)return true;const f=p=>p.hp>0&&hyp(p.x-L.x,p.y-L.y)<r;return all?mpAllPos().every(p=>p.hp<=0||f(p)):mpAllPos().some(f);}
+function mpCenter(){const up=mpAllPos().filter(p=>p.hp>0&&p.x!=null);const L=up.length?up:mpAllPos();return {x:L.reduce((a,p)=>a+p.x,0)/L.length,y:L.reduce((a,p)=>a+p.y,0)/L.length};}
+function mpPick(mix){const t=MP_MIX[mix]||MP_MIX.leve;let r=Math.random()*t.reduce((a,x)=>a+x[1],0);for(const [k,w] of t)if((r-=w)<=0)return k;return 'zumbi';}
+function mpSpawnAt(type,minD,maxD,uid){
+  const c=mpCenter();
+  for(let k=0;k<14;k++){const a=Math.random()*6.283,d=rr(minD,maxD),tx=((c.x+Math.cos(a)*d)/TILE)|0,ty=((c.y+Math.sin(a)*d)/TILE)|0;
+    if(!inb(tx,ty)||SOLID[map[idx(tx,ty)]]||map[idx(tx,ty)]===T.SAFE||!reach[idx(tx,ty)])continue;
+    if(mpAllPos().some(p=>hyp(p.x-tc(tx),p.y-tc(ty))<minD*.8))continue;
+    const e=makeEnemy(type,tc(tx),tc(ty),uid||null);Object.assign(e,{state:'chase',hunt:true,huntT:999,lx:c.x,ly:c.y,mpw:true});enemies.push(e);return e;}
+  return null;
+}
+function mpWave(mix,n){const alive=enemies.filter(e=>e.alive&&e.mpw).length,cap=30+mpN()*8;for(let i=0;i<n&&alive+i<cap;i++)mpSpawnAt(mpPick(mix),360,560);}
+function mpKit(){for(let i=0;i<WEAPONS.length;i++){const w=WEAPONS[i];if(!P.owned[i]||w.melee||!w.ammo)continue;const l=invAdd(w.ammo,Math.max(6,w.mag*2));if(l)boxAdd(w.ammo,l);}
+  const l=invAdd('ervaV',1);if(l)boxAdd('ervaV',l);toast('Munição e erva pra todo mundo.');AU.pickup();}
+function mpStageStart(){
+  const s=MPST[MP.stage]; if(!s)return; MP.prog=0; MP.kills=0; MP.wv=2; MP.boss=null; if(!s.boss)mpWave(s.mix,6+mpN()*3);
+  if(s.boss){const e=mpSpawnAt(s.boss,420,560,'mpboss'+MP.stage)||mpSpawnAt(s.boss,250,700,'mpboss'+MP.stage);
+    if(e){e.hp=e.max=e.max*s.hpk*(.75+.35*mpN());e.home=null;MP.boss=e;}}
+  const msg=s.boss?ETYPES[s.boss].n:'Onda '+(MP.stage+1); G.banner={t:msg,life:3};mpSend({t:'banner',s:msg});
+}
 function mpHostStage(dt){
   if(MP.endT!=null){if((MP.endT-=dt)<=0){MP.endT=null;mpEnd(true);}return;}
   const s=MPST[MP.stage]; if(!s)return;
-  if(s.hold&&mpNear(s.at(),s.r)){MP.prog+=dt;if(s.wave&&(MP.wv=(MP.wv||0)-dt)<=0){MP.wv=rr(2,3.2);mpWave(s.at());}}
-  if(s.hold?MP.prog>=s.hold:s.done()){
+  if(!MP.started){MP.started=true;mpStageStart();}
+  if((MP.wv-=dt)<=0){MP.wv=s.rate*rr(.8,1.2);mpWave(s.mix,2+Math.floor(mpN()*.8)+(s.hold?1:0));}
+  if(s.hold)MP.prog+=dt;
+  const done=s.kills?MP.kills>=Math.round(s.kills*(.7+.3*mpN())):s.hold?MP.prog>=s.hold:s.boss?!(MP.boss&&MP.boss.alive):false;
+  if(done){
     if(s.bark){bark(...s.bark);mpSend({t:'bark',w:s.bark[0],m:s.bark[1],s:s.bark[2]});}
-    if(s.gift){const msg='Suprimentos do mercado divididos entre todos.';mpGift(s.gift,msg);mpSend({t:'gift',g:s.gift,msg});}
-    if(s.tp){const L=s.tp();mpTp(L.x,L.y);mpSend({t:'tp',x:L.x,y:L.y});}
-    if(s.ring)spawnRing(s.ring,'zumbi',300,480,true);
-    MP.prog=0; if(++MP.stage>=MPST.length)MP.endT=2.5;
+    mpKit();mpSend({t:'kit'});
+    MP.started=false; if(++MP.stage>=MPST.length){MP.endT=3;for(const e of enemies)if(e.alive&&e.mpw)killEnemy(e);}
   }
   if(mpAllPos().every(p=>p.hp<=0)){if((MP.allDownT=(MP.allDownT||0)+dt)>4)mpEnd(false);}else MP.allDownT=0;
 }
-function mpWave(L){for(let i=0;i<3;i++){const a=Math.random()*6.283,d=rr(300,460),tx=((L.x+Math.cos(a)*d)/TILE)|0,ty=((L.y+Math.sin(a)*d)/TILE)|0;if(!inb(tx,ty)||SOLID[map[idx(tx,ty)]])continue;
-  const e=makeEnemy(Math.random()<.3?'corr':'zumbi',tc(tx),tc(ty),null);Object.assign(e,{col:UNI_COL,state:'chase',hunt:true,huntT:40,lx:L.x,ly:L.y});enemies.push(e);}}
 function mpObjective(){
-  if(MP.role!=='host')return {t:MP.objT||'Siga o grupo',at:MP.objAt};
-  const s=MPST[MP.stage]; return s?{t:s.t+(s.hold?` (${Math.floor(MP.prog)}/${s.hold}s)`:''),at:s.at()}:{t:'Amanheceu.',at:null};
+  if(MP.role!=='host')return {t:MP.objT||'Fiquem juntos',at:MP.objAt};
+  const s=MPST[MP.stage]; if(!s)return {t:'Amanheceu.',at:null};
+  const need=s.kills?Math.round(s.kills*(.7+.3*mpN())):0;
+  let t=s.t.replace('{n}',need).replace('{s}',s.hold||'');
+  if(s.kills)t+=` (${Math.min(MP.kills,need)}/${need})`; else if(s.hold)t+=` (${Math.floor(MP.prog)}/${s.hold}s)`;
+  else if(MP.boss&&MP.boss.alive)t+=` (${Math.ceil(100*MP.boss.hp/MP.boss.max)}%)`;
+  return {t,at:MP.boss&&MP.boss.alive?{x:MP.boss.x,y:MP.boss.y}:null};
 }
 
 // ---------- foto do mundo (anfitrião → convidados, 12 vezes por segundo) ----------
@@ -11360,16 +11428,16 @@ const mpMe=()=>({x:P.x|0,y:P.y|0,ang:+P.ang.toFixed(2),la:+(P.legAng||P.ang).toF
 function mpSnap(){
   const ps=mpAllPos().filter(p=>p.x!=null), e=[];
   for(const en of enemies){if(!en.alive||!ps.some(p=>hyp(p.x-en.x,p.y-en.y)<1100))continue;if(!en.mpid)en.mpid=MP.eid++;
-    e.push([en.mpid,en.type,en.x|0,en.y|0,+en.face.toFixed(2),en.state==='dorm'?1:0,en.col||0,en.flash>0?1:0]);}
+    e.push([en.mpid,en.type,en.x|0,en.y|0,+en.face.toFixed(2),en.state==='dorm'?1:0,en.col||0,en.flash>0?1:0,en.max>200?Math.round(100*en.hp/en.max):0]);}
   const p={'0':{...mpMe(),ch:MP.myChar}}; for(const [id,q] of Object.entries(MP.players))p[id]={x:q.x|0,y:q.y|0,ang:q.ang,la:q.la,hp:q.hp,w:q.w,cr:q.cr,mv:q.mv,wk:q.wk,ch:q.c.char};
   const o=mpObjective(); return {t:'snap',e,p,o:o.t,a:o.at?[o.at.x|0,o.at.y|0]:null,c:G.clock|0};
 }
 function mpApplySnap(m){
   MP.objT=m.o; MP.objAt=m.a?{x:m.a[0],y:m.a[1]}:null; if(m.c)G.clock=m.c;
   for(const [id,q] of Object.entries(m.p))if(id!==MP.myId)mpRemote(id,q);
-  for(const [u,type,x,y,face,dorm,col,fl] of m.e){let g=MP.ghosts.get(u);
+  for(const [u,type,x,y,face,dorm,col,fl,hp] of m.e){let g=MP.ghosts.get(u);
     if(!g){if(!ETYPES[type])continue;g=makeEnemy(type,x,y,null,!!dorm);g.ghost=true;g.mpid=u;if(col)g.col=col;MP.ghosts.set(u,g);enemies.push(g);}
-    Object.assign(g,{tx:x,ty:y,face,state:dorm?'dorm':'chase',seen:G.time});if(fl)g.flash=.08;}
+    Object.assign(g,{tx:x,ty:y,face,state:dorm?'dorm':'chase',seen:G.time,seenT:G.time});if(hp)g.hp=g.max*hp/100;if(fl)g.flash=.08;}
 }
 function mpGhostGone(g,dead){MP.ghosts.delete(g.mpid);g.alive=false;if(dead){bloodBurst(g.x,g.y,8,0);GORE.push({k:'corpse',x:g.x,y:g.y,rot:Math.random()*6.28,type:g.type,col:g.col||g.t.col,skin:g.t.skin,r:g.r});}}
 function mpRemote(id,q){const r=MP.remote[id]||(MP.remote[id]={x:q.x,y:q.y});const R=MP.roster[id]||{};Object.assign(r,q,{tx:q.x,ty:q.y,x:r.x,y:r.y,char:q.ch||R.char,apelido:R.apelido,cor:R.cor});}
@@ -11389,10 +11457,11 @@ function mpDrawRemotes(){
 function mpDrawHud(){
   if(!MP.on||G.mode!=='play')return; ctx.setTransform(dpr,0,0,dpr,0,0);
   const rows=[{n:MP.me.apelido,c:MP.me.cor,hp:P.hp,ch:MP.myChar},...Object.values(MP.remote).map(r=>({n:r.apelido||'?',c:r.cor||'#ddd',hp:r.hp||0,ch:r.char}))];
-  let y=view.h*.3; const x=view.w-170;
-  for(const r of rows){ctx.fillStyle='rgba(9,11,10,.7)';ctx.fillRect(x,y,160,26);ctx.fillStyle=r.c;ctx.fillRect(x,y,4,26);ctx.textAlign='left';
-    ctx.fillStyle='#ddd6c6';ctx.font=`700 12px ${FONT_UI}`;ctx.fillText(r.n,x+10,y+12);ctx.fillStyle='rgba(221,214,198,.5)';ctx.font=`600 10px ${FONT_UI}`;ctx.fillText((MP_CHARS.find(c=>c[0]===r.ch)||[0,''])[1],x+10,y+23);
-    ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(x+80,y+10,72,5);ctx.fillStyle=hpCol(r.hp);ctx.fillRect(x+80,y+10,72*clamp(r.hp/100,0,1),5);y+=30;}
+  // lista compacta: nome + barrinha de vida (sem o nome do personagem, que já aparece no boneco)
+  const W2=IN.touch?104:140; let y=IN.touch?62+SAFE.t:view.h*.3; const x=view.w-W2-8-SAFE.r;
+  for(const r of rows){ctx.globalAlpha=.85;ctx.fillStyle='rgba(9,11,10,.6)';ctx.fillRect(x,y,W2,18);ctx.fillStyle=r.c;ctx.fillRect(x,y,3,18);ctx.textAlign='left';
+    ctx.fillStyle='#ddd6c6';ctx.font=`700 10px ${FONT_UI}`;ctx.fillText(fitText(r.n,W2*.5),x+7,y+12.5);
+    ctx.fillStyle='rgba(255,255,255,.1)';ctx.fillRect(x+W2*.55,y+7,W2*.4,4);ctx.fillStyle=hpCol(r.hp);ctx.fillRect(x+W2*.55,y+7,W2*.4*clamp(r.hp/100,0,1),4);ctx.globalAlpha=1;y+=21;}
   if(P.mpDown>0){ctx.fillStyle='rgba(60,0,0,.35)';ctx.fillRect(0,0,view.w,view.h);ctx.fillStyle='#ddd6c6';ctx.font=`700 22px ${FONT_UI}`;ctx.textAlign='center';ctx.fillText(`Você caiu. Levanta em ${Math.ceil(P.mpDown)}…`,view.w/2,view.h/2);}
 }
 
@@ -11418,7 +11487,7 @@ function mpDrawHud(){
   const ke=killEnemy; killEnemy=function(e){
     if(guest()){if(e.ghost&&e.alive)mpSend({t:'hit',u:e.mpid,d:9999,kx:0,ky:0});return;}
     const n=pickups.length, r=ke.apply(this,arguments);
-    if(host()){if(e.mpid)mpSend({t:'die',u:e.mpid});const nw=pickups.slice(n);if(nw.length)mpSend({t:'drop',p:nw});}
+    if(host()){MP.kills=(MP.kills||0)+1;if(e.mpid)mpSend({t:'die',u:e.mpid});const nw=pickups.slice(n);if(nw.length)mpSend({t:'drop',p:nw});}
     return r;};
   // item pego some pra todo mundo
   const tp=takePickup; takePickup=function(p){const r=tp.apply(this,arguments);if(MP.on&&p.uid&&!pickups.includes(p))mpSend({t:'take',u:p.uid});return r;};
@@ -11435,6 +11504,7 @@ function mpDrawHud(){
     if(P.mpDown>0&&(P.mpDown-=dt)<=0){P.hp=60;P.inv=2;const t=Object.values(MP.remote).find(r=>r.hp>0);if(t)mpTp(t.x,t.y);toast('Você levantou.');}
     for(const r of Object.values(MP.remote))if(r.tx!=null){const k=Math.min(1,dt*12);r.x+=(r.tx-r.x)*k;r.y+=(r.ty-r.y)*k;}
     if(MP.role==='host'){for(const [id,q] of Object.entries(MP.players))mpRemote(id,{x:q.x,y:q.y,ang:q.ang,la:q.la,hp:q.hp,w:q.w,cr:q.cr,mv:q.mv,wk:q.wk,ch:q.c.char});
+      for(const p of projs)if(p.k==='s'&&!p.dead)for(const q of Object.values(MP.players))if(q.hp>0&&hyp(q.x-p.x,q.y-p.y)<12+(p.rock?14:5)){mpSend({t:'hurt',d:p.dmg,x:p.x,y:p.y},q.peer);p.dead=true;break;}
       mpHostStage(dt); if((MP.snapT-=dt)<=0){MP.snapT=1/12;mpSend(mpSnap());}}
     else{if((MP.sendT-=dt)<=0){MP.sendT=1/15;mpSend({t:'st',s:mpMe()});}
       for(const g of MP.ghosts.values())if(G.time-(g.seen||0)>1.5)mpGhostGone(g,false);
@@ -11527,6 +11597,126 @@ function mpDrawHud(){
   try{const st=document.createElement('style');st.textContent=`.maleta .mcell{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}
     .mfp{position:absolute;z-index:2;pointer-events:none;border:2px solid #6ac07a;background:rgba(106,192,122,.25)}.mfp.bad{border-color:#d24a3a;background:rgba(210,74,58,.25)}`;document.head.appendChild(st);}catch(e){}
 })();
+// ===================== 1.7.1 · CELULAR: CORRIDA, TELA LIMPA, EDITOR DE CONTROLES =====================
+// - Botão de correr (liga/desliga). O direcional não corre mais sozinho quando vai até a borda.
+// - Tela mais limpa: botões só com ícone (os nomes aparecem só no começo) e cada botão só aparece quando serve pra algo.
+// - Editor de controles: arraste qualquer botão ou direcional, aumente ou diminua. Fica salvo no aparelho, separado em pé e deitado.
+
+const HUDL_KEY='ps-hud-layout';
+let HUDL={};
+try{HUDL=JSON.parse(localStorage.getItem(HUDL_KEY)||'{}')||{};}catch(e){HUDL={};}
+const hudOri=()=>view.h>view.w?'port':'land';
+const hudGet=id=>(HUDL[hudOri()]||{})[id];
+function hudSave(){try{localStorage.setItem(HUDL_KEY,JSON.stringify(HUDL));}catch(e){}}
+TOUCH.runOn=false;
+
+// botão de correr (criado aqui pra não mexer no HTML base)
+(function(){
+  try{const tc=document.getElementById('tc');if(tc&&document.createElement){
+    const b=document.createElement('button');b.className='tb tfix act';b.id='tb-run';b.setAttribute('aria-label','Correr');
+    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14.5" cy="4.5" r="2.2"/><path d="M8 21l3-6 3 2v5M11 15l1.5-6.5L9 10l-2 3M12.5 8.5l3 3h3.5"/></svg><span>Correr</span>';
+    tc.appendChild(b);
+    b.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();AU.init();lastTouchT=Date.now();buzz(8);if(G.mode!=='play')return;TOUCH.runOn=!TOUCH.runOn;if(TOUCH.runOn&&P.crouch)toggleCrouch();tcState='';},{passive:false});
+    b.addEventListener('click',()=>{if(Date.now()-lastTouchT<600||G.mode!=='play')return;TOUCH.runOn=!TOUCH.runOn;tcState='';});
+  }}catch(e){}
+})();
+
+// correr só com o botão ligado (teclado continua com Shift)
+{const ri=readInput; readInput=function(){ri();if(TOUCH.move.id!==null)IN.run=!!TOUCH.runOn&&hyp(IN.mx,IN.my)>.15;};}
+
+// posições: o padrão de antes + o que o jogador arrumou no editor
+{const sc=stickCenters; stickCenters=function(){const C=sc();
+  const s=hudGet('sticks'); if(s&&s.s)STICK.r=50*hudF()*s.s;
+  for(const k of ['move','aim']){const o=hudGet(k);if(o&&o.x!=null){C[k]={x:o.x*view.w,y:o.y*view.h};}}
+  return C;};}
+const HUD_BTNS=['tb-heal','tb-crouch','tb-run','tb-gren','tb-wpn','tb-rel','tb-dodge','tb-use'];
+{const lt=layoutTouch; layoutTouch=function(){lt();
+  const C=stickCenters(),M=C.move,f=hudF();
+  // padrão do botão de correr: logo acima do direcional de andar
+  const run=document.getElementById('tb-run');
+  if(run&&run.style){const p=C.portrait?[M.x+STICK.r+30*f,M.y-STICK.r-10*f]:[M.x+STICK.r+34*f,M.y+STICK.r*.15];run.style.left=p[0]+'px';run.style.top=p[1]+'px';}
+  for(const id of HUD_BTNS){const el=document.getElementById(id);if(!el||!el.style)continue;const o=hudGet(id);
+    if(o&&o.x!=null){el.style.left=o.x*view.w+'px';el.style.top=o.y*view.h+'px';}
+    if(el.style.setProperty)el.style.setProperty('--bs',String((o&&o.s)||1));}
+};}
+
+// só mostra o botão quando ele serve pra alguma coisa
+{const ut=updTouchUI; updTouchUI=function(){
+  if(!IN.touch)return ut();
+  const tc=document.getElementById('tc'); if(!tc||tc.hidden)return ut();
+  const w=WEAPONS[P.w], heal=['ervaV','misVV','misVR','spray'].some(id=>invCount(id)>0), owned=P.owned.filter(Boolean).length;
+  const canRel=!w.melee&&P.mags[P.w]<w.mag&&(invCount(w.ammo)>0||DBG.ammo), gn=invCount(curThrow());
+  const lbl=G.time<45&&!G.flags.mpMode, k=[heal,owned,canRel,gn>0,TOUCH.runOn,P.running,lbl,!!G.mp].join('|');
+  if(k!==UI._tcK){UI._tcK=k;tcState='';}
+  ut();
+  const set=(id,show)=>{const el=document.getElementById(id);if(el&&el.classList)el.classList.toggle('gone',!show);};
+  set('tb-heal',heal); set('tb-wpn',owned>1); set('tb-rel',canRel); set('tb-gren',gn>0);
+  const r=document.getElementById('tb-run'); if(r&&r.classList){r.classList.toggle('on',!!TOUCH.runOn);r.classList.toggle('dim',!!P.tired);}
+  if(tc.classList)tc.classList.toggle('lbl',lbl);
+};}
+
+// ---------- editor de controles ----------
+const HUD_ED=[['move','Andar',1],['aim','Mirar',1],['tb-run','Correr'],['tb-crouch','Agachar'],['tb-heal','Curar'],['tb-dodge','Esquiva'],['tb-rel','Recarga'],['tb-wpn','Arma'],['tb-gren','Jogar'],['tb-use','Usar']];
+function hudCur(id){
+  const C=stickCenters();
+  if(id==='move'||id==='aim')return {x:C[id].x,y:C[id].y,r:STICK.r,s:(hudGet('sticks')||{}).s||1};
+  const el=document.getElementById(id),o=hudGet(id)||{};
+  let x=parseFloat(el&&el.style&&el.style.left),y=parseFloat(el&&el.style&&el.style.top);
+  if(!isFinite(x)){x=view.w/2;y=view.h/2;}
+  return {x,y,r:23*hudF()*(o.s||1),s:o.s||1};
+}
+UI.hudEdit=function(from){
+  this.hudFrom=from||'opts'; this.hudSel=this.hudSel||'move'; layoutTouch();
+  const items=HUD_ED.map(([id,n,st])=>{const c=hudCur(id);const d=c.r*2;
+    return `<div class="hed${this.hudSel===id?' sel':''}${st?' stick':''}" data-hid="${id}" style="left:${c.x}px;top:${c.y}px;width:${d}px;height:${d}px"><b>${n}</b></div>`;}).join('');
+  const sel=HUD_ED.find(x=>x[0]===this.hudSel), cs=hudCur(this.hudSel);
+  this.open(`<div class="hedwrap">${items}
+    <div class="hedbar"><span class="hint">Arraste os controles. <b>${sel?sel[1]:''}</b>: ${Math.round(cs.s*100)}%</span>
+      <button class="btn ghost mini" data-a="hed-s" data-k="-1">Menor</button><button class="btn ghost mini" data-a="hed-s" data-k="1">Maior</button>
+      <button class="btn ghost mini" data-a="hed-reset">Restaurar</button><button class="btn primary mini" data-a="hed-ok">Pronto</button></div></div>`,'','hudedit');
+};
+(function(){
+  let D=null;
+  const ov=typeof OV!=='undefined'?OV:null; if(!ov||!ov.addEventListener)return;
+  const pos=e=>{const t=e.touches?e.touches[0]||e.changedTouches[0]:e;return {x:t.clientX,y:t.clientY};};
+  const down=e=>{if(UI.cur!=='hudedit')return;const h=e.target.closest&&e.target.closest('.hed');if(!h)return;e.preventDefault();
+    const id=h.dataset.hid,p=pos(e),c=hudCur(id);D={id,h,dx:p.x-c.x,dy:p.y-c.y};UI.hudSel=id;
+    ov.querySelectorAll('.hed').forEach(x=>x.classList.toggle('sel',x===h));};
+  const move=e=>{if(!D)return;e.preventDefault();const p=pos(e),x=clamp(p.x-D.dx,20,view.w-20),y=clamp(p.y-D.dy,20,view.h-20);D.h.style.left=x+'px';D.h.style.top=y+'px';D.x=x;D.y=y;};
+  const up=()=>{if(!D)return;const d=D;D=null;if(d.x==null)return UI.hudEdit(UI.hudFrom);
+    const o=HUDL[hudOri()]||(HUDL[hudOri()]={});o[d.id]=Object.assign(o[d.id]||{},{x:d.x/view.w,y:d.y/view.h});hudSave();layoutTouch();UI.hudEdit(UI.hudFrom);};
+  ov.addEventListener('touchstart',down,{passive:false});ov.addEventListener('mousedown',down);
+  document.addEventListener('touchmove',move,{passive:false});document.addEventListener('mousemove',move);
+  document.addEventListener('touchend',up);document.addEventListener('mouseup',up);
+  const act=UI.act.bind(UI);
+  UI.act=function(a,ds){
+    switch(a){
+      case 'hudedit':return this.hudEdit(ds.from||'opts');
+      case 'hed-s':{const id=this.hudSel,st=id==='move'||id==='aim',key=st?'sticks':id,o=HUDL[hudOri()]||(HUDL[hudOri()]={});
+        const cur=(o[key]&&o[key].s)||1;o[key]=Object.assign(o[key]||{},{s:clamp(Math.round((cur+(+ds.k)*.1)*10)/10,.6,1.8)});hudSave();layoutTouch();return this.hudEdit(this.hudFrom);}
+      case 'hed-reset':delete HUDL[hudOri()];hudSave();layoutTouch();toast('Controles no lugar padrão.');return this.hudEdit(this.hudFrom);
+      case 'hed-ok':layoutTouch();tcState='';return this.opts(this.hudFrom==='pause'?'pause':'title');
+    }
+    return act(a,ds);
+  };
+  // botão nas opções (só no celular)
+  const op=UI.opts.bind(UI);
+  UI.opts=function(from){op(from);try{if(!IN.touch)return;const box=OV.querySelector('.opts');if(!box||!document.createElement)return;
+    const d=document.createElement('div');d.className='opt';d.innerHTML=`<h3>Controles na tela</h3><button class="btn" data-a="hudedit" data-from="${from==='pause'?'pause':'opts'}">Editar controles (mover e mudar tamanho)</button>`;box.appendChild(d);}catch(e){}};
+  try{const st=document.createElement('style');st.textContent=`
+    .tfix{transform:translate(-50%,-50%) scale(var(--bs,1))}.tfix:active,.tfix.down{transform:translate(-50%,-50%) scale(calc(var(--bs,1)*.92))}
+    .tuse{transform:translate(-50%,-50%) scale(var(--bs,1))}.tuse:active{transform:translate(-50%,-50%) scale(calc(var(--bs,1)*.95))}
+    .tfix.gone{display:none}#tc:not(.lbl) .tfix span{display:none}#tc:not(.lbl) .tfix{width:calc(42px*var(--hs));height:calc(42px*var(--hs))}
+    #tb-run.on{background:rgba(212,154,60,.4);border-color:rgba(212,154,60,.75);color:#f2e6c8;opacity:.95}
+    .ov.hudedit-on{background:rgba(0,0,0,.25)}.hedwrap{position:fixed;inset:0;z-index:20}
+    .hed{position:absolute;transform:translate(-50%,-50%);border-radius:50%;border:2px dashed rgba(221,214,198,.55);background:rgba(10,12,11,.55);display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+    .hed b{font:700 9px var(--f-ui);letter-spacing:.04em;text-transform:uppercase;color:#ddd6c6;pointer-events:none}
+    .hed.sel{border-color:var(--amber);border-style:solid;background:rgba(212,154,60,.25)}
+    .hedbar{position:absolute;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;background:rgba(9,11,10,.88);border:1px solid var(--line);padding:8px 10px;max-width:calc(100vw - 24px)}
+    .hedbar .hint{margin:0 6px 0 0}`;document.head.appendChild(st);}catch(e){}
+})();
+// o editor precisa da tela inteira, sem o painel do menu por cima
+{const op=UI.open.bind(UI);UI.open=function(html,cls,cur){const r=op(html,cls,cur);try{if(OV.classList)OV.classList.toggle('hudedit-on',cur==='hudedit');}catch(e){}return r;};}
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;
