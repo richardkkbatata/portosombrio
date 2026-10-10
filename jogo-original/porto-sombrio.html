@@ -10399,6 +10399,12 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.8.3',d:'10/10/2026',t:'Caído é caído',itens:[
+    'Multiplayer: quem cai não atira mais, não anda, não recarrega, não se cura e não joga granada. Antes dava pra continuar atirando caído, e a cura fazia os amigos verem você de pé enquanto a sua tela dizia "Caído".',
+    'Multiplayer com menos atraso: o jogo agora prevê pra onde os zumbis e os amigos estão indo, em vez de mostrar onde eles estavam um instante atrás. As atualizações também chegam mais vezes por segundo (20 em vez de 12).',
+    'O anfitrião calcula os ataques dos zumbis na posição prevista de cada amigo, então quem está fugindo leva menos mordida "fantasma".',
+    'O ping aparece no canto da tela durante a partida (verde é bom, amarelo é médio, vermelho é alto).',
+    'Menu de teste: "Cair agora", pra testar o caído.']},
   {v:'1.8.2',d:'10/10/2026',t:'Servidor no Brasil',itens:[
     'Multiplayer: servidor novo na Cloudflare, dentro do próprio site, rodando na América do Sul. Ping bem menor e ele não dorme mais: acabou a espera de "acordando o servidor".',
     'O servidor antigo (Render) ficou de reserva: se o novo não responder, o jogo usa ele sozinho. Quem entra pelo código procura a equipe nos dois.',
@@ -10553,6 +10559,7 @@ UI.debug=function(){
       sec('1.8 · Mascate e dinheiro',bt('v18:grana','Ganhar R$ 5.000')+bt('v18:joia','Ganhar 3 joias')+bt('v18:loja','Abrir a loja do Mascate')+bt('v18:masc','Ir até o Mascate mais perto'))+
       sec('1.8 · Horda e multiplayer',bt('v18:horda','Começar a Horda sozinho')+bt('v18:onda','Pular onda (Horda/Noite Zero)')+bt('v18:chefe','Ir pra próxima onda de chefão (Horda)')+bt('v18:cair','Cair (multiplayer)')+bt('v18:levantar','Levantar (multiplayer)')+bt('v18:frase','Mandar frase "Socorro!"')+bt('v18:rank','Ver o ranking da Horda')+bt('v18:mira','Ligar/desligar mira assistida'))+
       sec('1.7.1 · Celular e Noite Zero',bt('v16:hudEd','Editar controles do celular')+bt('v16:hudReset','Controles no lugar padrão')+bt('v16:run','Ligar/desligar corrida (celular)')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:mpWave','Chamar horda (Noite Zero)')+bt('v16:mpBoss','Chamar chefão (Noite Zero)'))+
+      sec('1.8.3 · Multiplayer',bt('v183:down','Cair agora (testar o caído)')+bt('v17:srv','Testar servidores (ping)')+bt('v16:mpSolo','Testar a Noite Zero sozinho'))+
       sec('1.8.2 · Servidor no Brasil',bt('v17:srv','Testar servidores (Cloudflare e Render)')+bt('v16:mp','Abrir o multiplayer'))+
       sec('1.6 · Clima',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
       sec('1.6 · Flashback e missões',bt('v16:flash','Começar o flashback do Matheus')+bt('v16:flashEnd','Terminar o flashback')+bt('v16:prova','Ganhar as 3 folhas da prova')+bt('v16:fone','Ganhar o fone do Matheus')+tp('sala102','Sala 102 (entregar a prova)')+tp('foyerIn','Foyer (formatura)')+tp('binoculo','Binóculo do mirante (Brava)')+tp('barco','Barco encalhado (Brava)'))+
@@ -11510,12 +11517,13 @@ function mpDrawHud(){
   const guest=()=>MP.on&&MP.role==='guest', host=()=>MP.on&&MP.role==='host';
   // anfitrião: cada zumbi caça o jogador mais perto, seja de que aparelho for
   const ue=updEnemy; updEnemy=function(e,dt){
-    if(guest()){if(e.tx!=null){const k=Math.min(1,dt*10);e.x+=(e.tx-e.x)*k;e.y+=(e.ty-e.y)*k;}e.flash=Math.max(0,e.flash-dt);return;}
+    if(guest()){if(e.tx!=null){const k=Math.min(1,dt*16);e.x+=(e.tx-e.x)*k;e.y+=(e.ty-e.y)*k;}e.flash=Math.max(0,e.flash-dt);return;}
     if(!host())return ue(e,dt);
-    let id=null,bd=P.hp>0?hyp(P.x-e.x,P.y-e.y):1e9; for(const [i,q] of Object.entries(MP.players))if(q.hp>0&&hyp(q.x-e.x,q.y-e.y)<bd){bd=hyp(q.x-e.x,q.y-e.y);id=i;}
+    const qx=q=>q.px??q.x,qy=q=>q.py??q.y;
+    let id=null,bd=P.hp>0?hyp(P.x-e.x,P.y-e.y):1e9; for(const [i,q] of Object.entries(MP.players))if(q.hp>0&&hyp(qx(q)-e.x,qy(q)-e.y)<bd){bd=hyp(qx(q)-e.x,qy(q)-e.y);id=i;}
     if(!id)return ue(e,dt);
     const q=MP.players[id], sv={x:P.x,y:P.y,hidden:P.hidden,crouch:P.crouch,running:P.running,moving:P.moving,lamp:P.lamp,inCar:P.inCar,inv:P.inv,grab:P.grab,hp:P.hp};
-    Object.assign(P,{x:q.x,y:q.y,hidden:null,crouch:!!q.cr,running:false,moving:!!q.mv,lamp:true,inCar:false,inv:0,grab:null,hp:q.hp}); G.mpTgt=q;
+    Object.assign(P,{x:qx(q),y:qy(q),hidden:null,crouch:!!q.cr,running:false,moving:!!q.mv,lamp:true,inCar:false,inv:0,grab:null,hp:q.hp}); G.mpTgt=q;
     try{ue(e,dt);}finally{const gr=P.grab;Object.assign(P,sv);G.mpTgt=null;if(gr&&gr!==sv.grab){e.grabbing=false;mpSend({t:'hurt',d:e.t.dmg,x:e.x,y:e.y},q.peer);}}
   };
   const hp=hurtPlayer; hurtPlayer=function(d,fx,fy){if(G.mpTgt){mpSend({t:'hurt',d,x:fx,y:fy},G.mpTgt.peer);return;}return hp(d,fx,fy);};
@@ -11542,11 +11550,11 @@ function mpDrawHud(){
   const up=updPlayer; updPlayer=function(dt){if(MP.on&&P.mpDown>0){IN.mx=0;IN.my=0;IN.fire=false;}return up(dt);};
   const vt=v16Tick; v16Tick=function(dt){vt(dt);if(!MP.on||G.mode!=='play')return;
     if(P.mpDown>0&&(P.mpDown-=dt)<=0){P.hp=60;P.inv=2;const t=Object.values(MP.remote).find(r=>r.hp>0);if(t)mpTp(t.x,t.y);toast('Você levantou.');}
-    for(const r of Object.values(MP.remote))if(r.tx!=null){const k=Math.min(1,dt*12);r.x+=(r.tx-r.x)*k;r.y+=(r.ty-r.y)*k;}
+    for(const r of Object.values(MP.remote))if(r.tx!=null){const k=Math.min(1,dt*16);r.x+=(r.tx-r.x)*k;r.y+=(r.ty-r.y)*k;}
     if(MP.role==='host'){for(const [id,q] of Object.entries(MP.players))mpRemote(id,{x:q.x,y:q.y,ang:q.ang,la:q.la,hp:q.hp,w:q.w,cr:q.cr,mv:q.mv,wk:q.wk,ch:q.c.char});
       for(const p of projs)if(p.k==='s'&&!p.dead)for(const q of Object.values(MP.players))if(q.hp>0&&hyp(q.x-p.x,q.y-p.y)<12+(p.rock?14:5)){mpSend({t:'hurt',d:p.dmg,x:p.x,y:p.y},q.peer);p.dead=true;break;}
-      mpHostStage(dt); if((MP.snapT-=dt)<=0){MP.snapT=1/12;mpSend(mpSnap());}}
-    else{if((MP.sendT-=dt)<=0){MP.sendT=1/15;mpSend({t:'st',s:mpMe()});}
+      mpHostStage(dt); if((MP.snapT-=dt)<=0){MP.snapT=1/20;mpSend(mpSnap());}}
+    else{if((MP.sendT-=dt)<=0){MP.sendT=1/20;mpSend({t:'st',s:mpMe()});}
       for(const g of MP.ghosts.values())if(G.time-(g.seen||0)>1.5)mpGhostGone(g,false);
       enemies=enemies.filter(e=>e.ghost&&e.alive);}
   };
@@ -12180,6 +12188,54 @@ function volHTML(){
   if(dead){bloodBurst(g.x,g.y,10,Math.random()*6.283);addDecal({k:'blood',x:g.x+rr(-6,6),y:g.y+rr(-6,6),r:g.r*rr(1.1,1.7),rot:Math.random()*6.28,seed:Math.random()});
     for(let i=0;i<2;i++)addDecal({k:'blood',x:g.x+rr(-26,26),y:g.y+rr(-26,26),r:rr(8,16),rot:Math.random()*6,seed:Math.random()});try{AU.hit&&AU.hit();}catch(e){}}
   return r;};}
+// ===================== 1.8.3 · multiplayer: caído de verdade e menos atraso =====================
+// (só mexe no multiplayer; o jogo solo não muda)
+
+// ---------- caído não atira, não anda, não cura, não joga granada ----------
+// O updPlayer lê os controles de novo (readInput) depois da trava antiga, então a trava fica aqui.
+const mpCaido=()=>MP.on&&P.mpDown>0;
+{const ri=readInput; readInput=function(){ri.apply(this,arguments); if(mpCaido()){IN.mx=0;IN.my=0;IN.fire=false;IN.run=false;}};}
+{const f=reload;reload=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+{const f=quickHeal;quickHeal=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+{const f=healWith;healWith=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+{const f=throwGrenade;throwGrenade=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+{const f=melee;melee=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+{const f=toggleCrouch;toggleCrouch=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+{const f=cycleWeapon;cycleWeapon=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+{const f=doInteract;doInteract=function(){if(mpCaido())return;return f.apply(this,arguments);};}
+// enquanto caído a vida fica em 0 (os amigos veem que você caiu e podem te levantar)
+{const vt=v16Tick; v16Tick=function(dt){vt(dt); if(mpCaido()){P.hp=0;P.firing=false;}};}
+
+// ---------- menos atraso: prever onde cada um está ----------
+// Cada posição que chega já é "do passado" (metade do ping + o intervalo entre atualizações).
+// Com a velocidade das últimas atualizações, o alvo é empurrado pra onde a coisa deve estar AGORA.
+const mpRttS=()=>clamp((MP.srvRtt||100)/1000,0.02,0.6);
+function mpPrevVel(o,x,y,maxV){const t=Date.now()/1000;
+  if(o._pt!=null){const dt=t-o._pt;if(dt>0.01){let vx=(x-o._px)/dt,vy=(y-o._py)/dt;if(hyp(vx,vy)>maxV){vx=0;vy=0;}
+    o._vx=(o._vx||0)*.4+vx*.6;o._vy=(o._vy||0)*.4+vy*.6;}}
+  else{o._vx=0;o._vy=0;}
+  o._pt=t;o._px=x;o._py=y;}
+{const as=mpApplySnap; mpApplySnap=function(m){as.apply(this,arguments);
+  const lz=Math.min(.25,mpRttS()/2+.03), lp=Math.min(.3,mpRttS()+.03);
+  for(const g of MP.ghosts.values())if(g.tx!=null&&g.seen===G.time){mpPrevVel(g,g.tx,g.ty,320);g.tx+=g._vx*lz;g.ty+=g._vy*lz;}
+  for(const [id,q] of Object.entries(m.p||{})){const r=MP.remote[id];if(!r||id===MP.myId)continue;mpPrevVel(r,q.x,q.y,420);r.tx=q.x+r._vx*lp;r.ty=q.y+r._vy*lp;}};}
+// anfitrião: posição prevista de cada convidado (usada pelos zumbis pra perseguir e acertar)
+{const rv=mpRecv; mpRecv=function(m,p){const r=rv.apply(this,arguments);
+  if(m&&m.t==='st'&&MP.role==='host'&&p&&MP.players[p.id]){const q=MP.players[p.id],l=Math.min(.15,mpRttS()/2+.03);mpPrevVel(q,q.x,q.y,420);q.px=q.x+q._vx*l;q.py=q.y+q._vy*l;}
+  return r;};}
+// ping medido mais vezes (a cada 5 s) e suavizado
+setInterval(()=>{if(MP.srv&&MP.srv.readyState===1)mpSrvTx({t:'ping',n:Date.now()});},5000);
+{const sr=mpSrvRecv; mpSrvRecv=function(m){const old=MP.srvRtt;sr.apply(this,arguments);if(m&&m.t==='pong'&&old)MP.srvRtt=Math.round(old*.6+MP.srvRtt*.4);};}
+// mostra o ping no canto durante a partida
+{const dh=mpDrawHud; mpDrawHud=function(){dh.apply(this,arguments);
+  if(!MP.on||G.mode!=='play'||!MP.srv||!MP.srvRtt)return;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const v=MP.srvRtt,c=v<80?'#7ad38a':v<160?'#e0c060':'#e07060';ctx.font=`700 10px ${FONT_UI}`;ctx.textAlign='right';ctx.fillStyle=c;
+  ctx.fillText(`ping ${v} ms`,view.w-10-SAFE.r,(IN.touch?52+SAFE.t:view.h*.3-8));};}
+
+// menu de teste: cair agora (pra conferir que caído não atira nem se cura)
+{const da=UI.dbgAct.bind(UI); UI.dbgAct=function(k,ds){
+  if(k==='v183:down'){this.close();if(!MP.on)return toast('Só funciona numa partida do multiplayer.');P.inv=0;die();return;}
+  return da(k,ds);};}
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;

@@ -402,12 +402,13 @@ function mpDrawHud(){
   const guest=()=>MP.on&&MP.role==='guest', host=()=>MP.on&&MP.role==='host';
   // anfitrião: cada zumbi caça o jogador mais perto, seja de que aparelho for
   const ue=updEnemy; updEnemy=function(e,dt){
-    if(guest()){if(e.tx!=null){const k=Math.min(1,dt*10);e.x+=(e.tx-e.x)*k;e.y+=(e.ty-e.y)*k;}e.flash=Math.max(0,e.flash-dt);return;}
+    if(guest()){if(e.tx!=null){const k=Math.min(1,dt*16);e.x+=(e.tx-e.x)*k;e.y+=(e.ty-e.y)*k;}e.flash=Math.max(0,e.flash-dt);return;}
     if(!host())return ue(e,dt);
-    let id=null,bd=P.hp>0?hyp(P.x-e.x,P.y-e.y):1e9; for(const [i,q] of Object.entries(MP.players))if(q.hp>0&&hyp(q.x-e.x,q.y-e.y)<bd){bd=hyp(q.x-e.x,q.y-e.y);id=i;}
+    const qx=q=>q.px??q.x,qy=q=>q.py??q.y;
+    let id=null,bd=P.hp>0?hyp(P.x-e.x,P.y-e.y):1e9; for(const [i,q] of Object.entries(MP.players))if(q.hp>0&&hyp(qx(q)-e.x,qy(q)-e.y)<bd){bd=hyp(qx(q)-e.x,qy(q)-e.y);id=i;}
     if(!id)return ue(e,dt);
     const q=MP.players[id], sv={x:P.x,y:P.y,hidden:P.hidden,crouch:P.crouch,running:P.running,moving:P.moving,lamp:P.lamp,inCar:P.inCar,inv:P.inv,grab:P.grab,hp:P.hp};
-    Object.assign(P,{x:q.x,y:q.y,hidden:null,crouch:!!q.cr,running:false,moving:!!q.mv,lamp:true,inCar:false,inv:0,grab:null,hp:q.hp}); G.mpTgt=q;
+    Object.assign(P,{x:qx(q),y:qy(q),hidden:null,crouch:!!q.cr,running:false,moving:!!q.mv,lamp:true,inCar:false,inv:0,grab:null,hp:q.hp}); G.mpTgt=q;
     try{ue(e,dt);}finally{const gr=P.grab;Object.assign(P,sv);G.mpTgt=null;if(gr&&gr!==sv.grab){e.grabbing=false;mpSend({t:'hurt',d:e.t.dmg,x:e.x,y:e.y},q.peer);}}
   };
   const hp=hurtPlayer; hurtPlayer=function(d,fx,fy){if(G.mpTgt){mpSend({t:'hurt',d,x:fx,y:fy},G.mpTgt.peer);return;}return hp(d,fx,fy);};
@@ -434,11 +435,11 @@ function mpDrawHud(){
   const up=updPlayer; updPlayer=function(dt){if(MP.on&&P.mpDown>0){IN.mx=0;IN.my=0;IN.fire=false;}return up(dt);};
   const vt=v16Tick; v16Tick=function(dt){vt(dt);if(!MP.on||G.mode!=='play')return;
     if(P.mpDown>0&&(P.mpDown-=dt)<=0){P.hp=60;P.inv=2;const t=Object.values(MP.remote).find(r=>r.hp>0);if(t)mpTp(t.x,t.y);toast('Você levantou.');}
-    for(const r of Object.values(MP.remote))if(r.tx!=null){const k=Math.min(1,dt*12);r.x+=(r.tx-r.x)*k;r.y+=(r.ty-r.y)*k;}
+    for(const r of Object.values(MP.remote))if(r.tx!=null){const k=Math.min(1,dt*16);r.x+=(r.tx-r.x)*k;r.y+=(r.ty-r.y)*k;}
     if(MP.role==='host'){for(const [id,q] of Object.entries(MP.players))mpRemote(id,{x:q.x,y:q.y,ang:q.ang,la:q.la,hp:q.hp,w:q.w,cr:q.cr,mv:q.mv,wk:q.wk,ch:q.c.char});
       for(const p of projs)if(p.k==='s'&&!p.dead)for(const q of Object.values(MP.players))if(q.hp>0&&hyp(q.x-p.x,q.y-p.y)<12+(p.rock?14:5)){mpSend({t:'hurt',d:p.dmg,x:p.x,y:p.y},q.peer);p.dead=true;break;}
-      mpHostStage(dt); if((MP.snapT-=dt)<=0){MP.snapT=1/12;mpSend(mpSnap());}}
-    else{if((MP.sendT-=dt)<=0){MP.sendT=1/15;mpSend({t:'st',s:mpMe()});}
+      mpHostStage(dt); if((MP.snapT-=dt)<=0){MP.snapT=1/20;mpSend(mpSnap());}}
+    else{if((MP.sendT-=dt)<=0){MP.sendT=1/20;mpSend({t:'st',s:mpMe()});}
       for(const g of MP.ghosts.values())if(G.time-(g.seen||0)>1.5)mpGhostGone(g,false);
       enemies=enemies.filter(e=>e.ghost&&e.alive);}
   };
