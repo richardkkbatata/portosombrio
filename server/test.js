@@ -1,9 +1,11 @@
 'use strict';
 // Teste do protocolo do servidor. Uso: node test.js  (termina com "TUDO OK")
+// Pra testar outro servidor já ligado (ex.: o da Cloudflare no wrangler dev):  PS_URL=http://127.0.0.1:8787 node test.js
 const assert = require('assert');
 const WebSocket = require('ws');
+const EXTERNO = process.env.PS_URL || '';
 process.env.PORT = '0';
-const { server, salas } = require('./server.js');
+const { server, salas } = EXTERNO ? { server: null, salas: null } : require('./server.js');
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let URL_WS, URL_HTTP;
@@ -29,9 +31,12 @@ function cliente() {
 const T = t => m => m.t === t;
 
 (async () => {
-  await new Promise(r => server.listen(0, r));
-  const port = server.address().port;
-  URL_WS = `ws://127.0.0.1:${port}/ws`; URL_HTTP = `http://127.0.0.1:${port}`;
+  if (EXTERNO) { URL_HTTP = EXTERNO.replace(/\/+$/, ''); URL_WS = URL_HTTP.replace(/^http/, 'ws') + '/ws'; }
+  else {
+    await new Promise(r => server.listen(0, r));
+    const port = server.address().port;
+    URL_WS = `ws://127.0.0.1:${port}/ws`; URL_HTTP = `http://127.0.0.1:${port}`;
+  }
 
   // HTTP
   let r = await fetch(URL_HTTP + '/health'); assert.strictEqual(await r.text(), 'ok'); assert.strictEqual(r.headers.get('access-control-allow-origin'), '*');
@@ -98,11 +103,11 @@ const T = t => m => m.t === t;
   // anfitrião sai
   await H.fecha();
   for (const c of [g[0], g[1], g[2], novo]) await c.espera(T('room-closed'));
-  await sleep(50); assert(!salas.has(room.code));
+  await sleep(50); if (salas) assert(!salas.has(room.code));
   console.log('ok  anfitrião saiu: room-closed e sala apagada');
 
   for (const c of [g[0], g[1], g[2], novo, extra, perdido]) try { c.ws.close(); } catch (e) { }
-  server.close();
+  if (server) server.close();
   console.log('TUDO OK');
   process.exit(0);
 })().catch(e => { console.error('FALHOU:', e); process.exit(1); });

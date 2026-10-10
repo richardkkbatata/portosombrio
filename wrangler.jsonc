@@ -8,8 +8,11 @@
     "directory": "./site",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*"]
-  }
+    "run_worker_first": ["/api/*", "/ws", "/health"]
+  },
+  // multiplayer: as salas ficam num Durable Object (grátis no plano Free, tipo SQLite)
+  "durable_objects": { "bindings": [{ "name": "SALAS", "class_name": "Salas" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Salas"] }]
   // ranking: depois de criar o KV "ranking" na Cloudflare, cole o ID aqui:
   // ,"kv_namespaces": [{ "binding": "RANKING", "id": "COLE_O_ID_AQUI" }]
 }

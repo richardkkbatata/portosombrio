@@ -73,9 +73,14 @@ async function mpDec(c){c=String(c||'').replace(/\s+/g,'');if(c[0]==='Z'){const 
 // Primeiro o jogo tenta o NOSSO servidor (de qualquer lugar, sem depender da rede). Ele só repassa as mensagens:
 // quem manda no mundo continua sendo o anfitrião. Cada jogador do outro lado vira um "peer" de mentira
 // ({open, dc.send}) e o resto do multiplayer nem percebe a diferença.
-const MP_SRV_PADRAO='wss://porto-sombrio.onrender.com/ws';
-function mpSrvUrl(){let u='';try{u=localStorage.getItem('ps-servidor')||'';}catch(e){}u=String(globalThis.PS_SERVIDOR||u||MP_SRV_PADRAO).trim();
-  if(!/^[a-z]+:\/\//i.test(u))u='wss://'+u; u=u.replace(/^http/i,'ws'); if(!/\/ws\/?$/.test(u))u=u.replace(/\/+$/,'')+'/ws'; return u;}
+// 1.8.2: primeiro o servidor da Cloudflare (no próprio site, perto do Brasil, não dorme);
+// se ele não responder, o do Render (reserva). O campo "Servidor" troca a lista por um endereço só.
+const MP_SRV_LISTA=['wss://nightgetaway.net.br/ws','wss://porto-sombrio.onrender.com/ws'];
+const MP_SRV_PADRAO=MP_SRV_LISTA[0];
+const mpSrvNorm=u=>{u=String(u||'').trim();if(!/^[a-z]+:\/\//i.test(u))u='wss://'+u; u=u.replace(/^http/i,'ws'); if(!/\/ws\/?$/.test(u))u=u.replace(/\/+$/,'')+'/ws'; return u;};
+function mpSrvUrls(){let u='';try{u=localStorage.getItem('ps-servidor')||'';}catch(e){}u=String(globalThis.PS_SERVIDOR||u||'').trim();
+  return u?[mpSrvNorm(u)]:MP_SRV_LISTA.map(mpSrvNorm);}
+function mpSrvUrl(){return mpSrvUrls()[0];}
 const mpSrvHealth=u=>u.replace(/^ws/i,'http').replace(/\/ws\/?$/,'')+'/health';
 const mpWait=ms=>new Promise(r=>setTimeout(r,ms));
 function mpFetchT(u,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(u,{cache:'no-store',signal:c.signal}).finally(()=>clearTimeout(t));}
@@ -83,7 +88,7 @@ function mpFetchT(u,ms){const c=new AbortController(),t=setTimeout(()=>c.abort()
 async function mpSrvWake(u,still){const end=Date.now()+70000;let falhas=0;
   const aviso=setTimeout(()=>{if(still()){MP.status='Acordando o servidor, pode levar até 1 minuto...';mpRefresh();}},1500);
   try{while(Date.now()<end&&still()){const t0=Date.now();
-    try{const r=await mpFetchT(mpSrvHealth(u),Math.max(1000,end-Date.now()));if(r.ok)return true;falhas=0;}
+    try{const r=await mpFetchT(mpSrvHealth(u),Math.max(1000,end-Date.now()));if(r.ok)return true;if(r.status>=400&&r.status<500)return false;falhas=0;}
     catch(e){if(Date.now()-t0<3000&&++falhas>=3)return false;}
     await mpWait(2000);}
   return false;}finally{clearTimeout(aviso);}}
@@ -107,7 +112,7 @@ function mpSrvLost(){mpSrvClose();
   if(MP.role==='guest'){const p=MP.peers['0'];if(p&&p.srv)mpPeerGone(p);}
   else if(MP.role==='host'){for(const p of Object.values(MP.peers))if(p.srv)mpPeerGone(p,true);MP.code='';
     if(!MP.manual)MP.status='A conexão com o servidor caiu. Saia e crie a equipe de novo.';toast('A conexão com o servidor caiu.');mpRefresh();}}
-async function mpSrvConnect(still){const u=mpSrvUrl();MP.status='Conectando ao servidor...';mpRefresh();
+async function mpSrvConnect(still,u){u=u||mpSrvUrl();MP.status='Conectando ao servidor...';mpRefresh();
   if(!await mpSrvWake(u,still)||!still())return null;
   let ws;try{ws=await mpSrvOpen(u);}catch(e){return null;}
   if(!still()){try{ws.close();}catch(e){}return null;}
@@ -118,26 +123,35 @@ async function mpSrvConnect(still){const u=mpSrvUrl();MP.status='Conectando ao s
 function mpSrvClose(){clearInterval(MP.srvPing);const ws=MP.srv;MP.srv=null;MP.srvRoom=false;if(MP.srvWait){MP.srvWait.r(null);MP.srvWait=null;}
   if(ws){try{if(ws.readyState===1)ws.send('{"t":"leave"}');}catch(e){}try{ws.close();}catch(e){}}}
 async function mpSrvHost(){const still=()=>MP.role==='host'&&!MP.manual;
-  if(!await mpSrvConnect(still))return false;
-  mpSrvTx({t:'host'}); const r=await mpSrvAsk(['room','err'],8000);
-  if(!r||r.t!=='room'||!still()){mpSrvClose();return false;}
-  MP.code=r.code; MP.srvRoom=true; MP.nid=Math.max(MP.nid,5); return true;}
-async function mpSrvJoin(code){const still=()=>MP.role==='guest'&&MP.code===code;
-  if(!await mpSrvConnect(still))return null;
-  mpSrvTx({t:'join',code}); const r=await mpSrvAsk(['joined','err'],8000);
-  if(r&&r.t==='joined'&&still()){MP.myId=r.id;MP.srvRoom=true;MP.peers={'0':mpSrvPeer('0')};MP.status='';mpSend({t:'hello',c:MP.me});return 'ok';}
-  mpSrvClose(); return r&&r.t==='err'?r.msg:null;}
-// botão "Testar servidor" (menu de teste)
-async function mpSrvTest(){const u=mpSrvUrl(),t0=Date.now(),show=(t,ok)=>UI.open(`<div class="sheet narrow"><p class="kick">Menu de teste · 1.7</p><h2>Servidor</h2><p class="hint">${esc(u)}</p><p class="mpst">${esc(t)}</p>
-    <div class="row">${ok!=null?'<button class="btn" data-a="dbg" data-k="v17:srv">Testar de novo</button>':''}<button class="btn ghost" data-a="dbgtab" data-k="nov">Voltar</button></div></div>`,'','dbg');
-  show('Testando... Se o servidor estiver dormindo, pode levar até 1 minuto.');
-  let ok=false;try{ok=(await mpFetchT(mpSrvHealth(u),70000)).ok;}catch(e){}
-  if(!ok)return show('Não conectou: o servidor não respondeu. Confira o endereço no fim da tela do multiplayer.',false);
-  const acordou=Date.now()-t0;
+  for(const u of mpSrvUrls()){if(!still())return false;
+    if(!await mpSrvConnect(still,u))continue;
+    mpSrvTx({t:'host'}); const r=await mpSrvAsk(['room','err'],8000);
+    if(!r||r.t!=='room'||!still()){mpSrvClose();continue;}
+    MP.code=r.code; MP.srvRoom=true; MP.srvUrl=u; MP.nid=Math.max(MP.nid,5); return true;}
+  return false;}
+// o convidado procura o código em cada servidor da lista (o anfitrião pode ter caído no de reserva)
+async function mpSrvJoin(code){const still=()=>MP.role==='guest'&&MP.code===code;let res=null;
+  for(const u of mpSrvUrls()){if(!still())return null;
+    if(!await mpSrvConnect(still,u))continue;
+    mpSrvTx({t:'join',code}); const r=await mpSrvAsk(['joined','err'],8000);
+    if(r&&r.t==='joined'&&still()){MP.myId=r.id;MP.srvRoom=true;MP.srvUrl=u;MP.peers={'0':mpSrvPeer('0')};MP.status='';mpSend({t:'hello',c:MP.me});return 'ok';}
+    mpSrvClose(); if(r&&r.t==='err'){res=r.msg;if(r.msg==='cheia')return 'cheia';}}
+  return res;}
+// botão "Testar servidor" (menu de teste): testa cada servidor da lista e mostra o ping
+async function mpSrvPing1(u){const t0=Date.now();let ok=false;try{ok=(await mpFetchT(mpSrvHealth(u),70000)).ok;}catch(e){}
+  if(!ok)return 'não respondeu';const acordou=Date.now()-t0;
   try{const ws=await mpSrvOpen(u);const rtt=await new Promise((r,no)=>{ws.onmessage=e=>{try{const m=JSON.parse(e.data);if(m.t==='pong')r(Date.now()-m.n);}catch(x){}};ws.send(JSON.stringify({t:'ping',n:Date.now()}));setTimeout(()=>no(),8000);});
     try{ws.close();}catch(e){}
-    show(`Conectou. Ping: ${rtt} ms.`+(acordou>3000?` (Levou ${Math.round(acordou/1000)} s pra acordar.)`:''),true);}
-  catch(e){show('O servidor respondeu, mas a conexão do multiplayer (WebSocket) não abriu.',false);}}
+    return `conectou · ping ${rtt} ms`+(acordou>3000?` (levou ${Math.round(acordou/1000)} s pra acordar)`:'');}
+  catch(e){return 'respondeu, mas o WebSocket não abriu';}}
+async function mpSrvTest(){const us=mpSrvUrls(),res=us.map(()=>'testando...');
+  const show=fim=>UI.open(`<div class="sheet narrow"><p class="kick">Menu de teste · 1.8.2</p><h2>Servidores</h2>
+    ${us.map((u,i)=>`<p class="hint">${i===0?'Principal':'Reserva'}: ${esc(u)}</p><p class="mpst">${esc(res[i])}</p>`).join('')}
+    ${fim?'':'<p class="hint">Se o de reserva estiver dormindo, pode levar até 1 minuto.</p>'}
+    <div class="row">${fim?'<button class="btn" data-a="dbg" data-k="v17:srv">Testar de novo</button>':''}<button class="btn ghost" data-a="dbgtab" data-k="nov">Voltar</button></div></div>`,'','dbg');
+  show(false);
+  await Promise.all(us.map(async(u,i)=>{res[i]=await mpSrvPing1(u);if(UI.cur==='dbg')show(false);}));
+  if(UI.cur==='dbg')show(true);}
 
 async function mpHost(manual){
   MP.role='host';MP.myId='0';MP.players={};MP.peers={};MP.seen=new Set();MP.nid=1;MP.code='';MP.manual=!!manual;MP.status=manual?'':'Criando a equipe...';mpLobbyCast();mpRefresh();

@@ -1,6 +1,10 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.8.2',d:'10/10/2026',t:'Servidor no Brasil',itens:[
+    'Multiplayer: servidor novo na Cloudflare, dentro do próprio site, rodando na América do Sul. Ping bem menor e ele não dorme mais: acabou a espera de "acordando o servidor".',
+    'O servidor antigo (Render) ficou de reserva: se o novo não responder, o jogo usa ele sozinho. Quem entra pelo código procura a equipe nos dois.',
+    'Menu de teste: "Testar servidores" mostra o ping do novo e do de reserva.']},
   {v:'1.8.1',d:'10/10/2026',t:'Mais justo',itens:[
     'Horda e Noite Zero mais justas: o começo é leve (poucos zumbis, quase só os lentos, enquanto vocês só têm pistola) e aperta aos poucos. Nas primeiras ondas não vem mais aquela multidão.',
     'Horda: ondas 1 a 3 são de aquecimento; a vida dos zumbis só começa a subir a partir da onda 4, e os chefões das primeiras rodadas ficaram mais fracos.',

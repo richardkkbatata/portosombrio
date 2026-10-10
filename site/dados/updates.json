@@ -1,7 +1,18 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.8.1",
+  "versao_atual": "1.8.2",
   "versoes": [
+    {
+      "versao": "1.8.2",
+      "data": "2026-10-10",
+      "titulo": "Servidor no Brasil",
+      "resumo": "Multiplayer: servidor novo na Cloudflare, dentro do próprio site, rodando na América do Sul. Ping bem menor e ele não dorme mais: acabou a espera de \"acordando o servidor\".",
+      "mudancas": [
+        "Multiplayer: servidor novo na Cloudflare, dentro do próprio site, rodando na América do Sul. Ping bem menor e ele não dorme mais: acabou a espera de \"acordando o servidor\".",
+        "O servidor antigo (Render) ficou de reserva: se o novo não responder, o jogo usa ele sozinho. Quem entra pelo código procura a equipe nos dois.",
+        "Menu de teste: \"Testar servidores\" mostra o ping do novo e do de reserva."
+      ]
+    },
     {
       "versao": "1.8.1",
       "data": "2026-10-10",

@@ -1,4 +1,7 @@
-// Worker do site: entrega os arquivos de site/ (ativos estáticos) e responde /api/ranking.
+// Worker do site: entrega os arquivos de site/ (ativos estáticos), responde /api/ranking
+// e é o servidor do multiplayer (/ws, salas num Durable Object perto do Brasil; /health).
+import { Salas } from './salas.js';
+export { Salas };
 // O ranking guarda no KV ligado como RANKING (ver wrangler.jsonc). Sem KV, responde lista vazia.
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS', 'access-control-allow-headers': 'content-type' };
 const json = (o, st = 200) => new Response(JSON.stringify(o), { status: st, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...CORS } });
@@ -37,6 +40,14 @@ async function gravar({ request, env }) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/ws') {
+      if (!env.SALAS) return new Response('multiplayer desligado', { status: 503 });
+      // uma "central" só, criada na América do Sul (sam): é ela que guarda todas as salas
+      const id = env.SALAS.idFromName('central');
+      return env.SALAS.get(id, { locationHint: 'sam' }).fetch(request);
+    }
+    if (url.pathname === '/health')
+      return new Response('ok', { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', ...CORS } });
     if (url.pathname === '/api/ranking' || url.pathname === '/api/ranking/') {
       const c = { request, env, ctx };
       if (request.method === 'OPTIONS') return opcoes(c);
