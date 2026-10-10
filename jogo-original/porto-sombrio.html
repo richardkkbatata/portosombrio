@@ -12286,6 +12286,8 @@ function mpDevolver(u){const b=mpPegos.get(u);if(!b)return;mpPegos.delete(u);
   if(MP.hitBurn&&e&&!e.ghost)o=Object.assign({},o,{burn:true});
   return he.call(this,e,d,kx,ky,o);};}
 {const rv=mpRecv; mpRecv=function(m,p){
+  // tiro num zumbi que já morreu (dois mataram ao mesmo tempo): não soma dano no placar
+  if(m&&m.t==='hit'&&MP.role==='host'&&!enemies.some(e=>e.alive&&e.mpid===m.u))return;
   if(m&&m.t==='hit'&&m.b&&MP.role==='host'){MP.hitBurn=true;try{return rv.apply(this,arguments);}finally{MP.hitBurn=false;}}
   return rv.apply(this,arguments);};}
 
