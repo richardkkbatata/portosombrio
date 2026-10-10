@@ -45,16 +45,16 @@ const T = t => m => m.t === t;
   console.log('ok  HTTP / e /health');
 
   // criar sala
-  const H = await cliente(); H.send({ t: 'host' });
-  const room = await H.espera(T('room'));
+  let H = await cliente(); H.send({ t: 'host' });
+  const room = await H.espera(T('room')); assert(typeof room.tk === 'string' && room.tk.length >= 16);
   assert(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{4}$/.test(room.code)); assert.strictEqual(room.id, '0');
   console.log('ok  sala criada', room.code);
 
   // entrar
-  const g = [];
+  const g = [], tks = [];
   for (let i = 1; i <= 4; i++) {
     const c = await cliente(); c.send({ t: 'join', code: room.code.toLowerCase() });
-    assert.strictEqual((await c.espera(T('joined'))).id, String(i));
+    const j = await c.espera(T('joined')); assert.strictEqual(j.id, String(i)); assert(typeof j.tk === 'string' && j.tk.length >= 16); tks.push(j.tk);
     assert.strictEqual((await H.espera(T('peer-open'))).id, String(i));
     g.push(c);
   }
@@ -91,7 +91,7 @@ const T = t => m => m.t === t;
 
   // flood derruba
   const fl = await cliente(); const caiu = new Promise(r => fl.ws.once('close', r));
-  for (let i = 0; i < 1500; i++) fl.send({ t: 'ping', n: i });
+  for (let i = 0; i < 3000; i++) fl.send({ t: 'ping', n: i });
   await Promise.race([caiu, sleep(2000).then(() => { throw new Error('flood não derrubou'); })]);
   console.log('ok  excesso de mensagens derruba');
 
@@ -100,13 +100,40 @@ const T = t => m => m.t === t;
   const novo = await cliente(); novo.send({ t: 'join', code: room.code }); assert.strictEqual((await novo.espera(T('joined'))).id, '4');
   console.log('ok  convidado saiu, vaga reaproveitada');
 
-  // anfitrião sai
+  // convidado caiu sem aviso e volta com a chave: mesma vaga, a conexão velha fecha, o anfitrião não recebe peer-close
+  const velhoFechou = new Promise(r => g[1].ws.once('close', r));
+  const volta = await cliente(); volta.send({ t: 'join', code: room.code, id: '2', tk: tks[1] });
+  const jv = await volta.espera(T('joined')); assert.strictEqual(jv.id, '2'); assert.notStrictEqual(jv.tk, tks[1]);
+  await velhoFechou; await H.nada(m => m.t === 'peer-close');
+  volta.send({ t: 'relay', to: '0', m: 'voltei' }); assert.strictEqual((await H.espera(T('msg'))).from, '2');
+  H.send({ t: 'relay', to: '2', m: 'oi' }); assert.strictEqual((await volta.espera(T('msg'))).m, 'oi');
+  // chave errada ou já usada: não toma a vaga de ninguém (sala cheia)
+  const intruso = await cliente(); intruso.send({ t: 'join', code: room.code, id: '1', tk: tks[1] });
+  assert.strictEqual((await intruso.espera(T('err'))).msg, 'cheia');
+  g[1] = volta;
+  console.log('ok  convidado voltou pra mesma vaga com a chave; chave errada não entra');
+
+  // anfitrião cai sem querer: a sala espera; ele volta com a chave e continua com os mesmos convidados
   await H.fecha();
+  for (const c of [g[0], g[1], g[2], novo]) await c.espera(T('host-away'));
+  const errado = await cliente(); errado.send({ t: 'host', code: room.code, tk: 'chave-errada' });
+  assert.strictEqual((await errado.espera(T('err'))).msg, 'nao-encontrada');
+  H = await cliente(); H.send({ t: 'host', code: room.code, tk: room.tk });
+  const rv = await H.espera(T('room')); assert.strictEqual(rv.code, room.code); assert.strictEqual(rv.id, '0');
+  assert.deepStrictEqual([...rv.ids].sort(), ['1', '2', '3', '4']); assert.notStrictEqual(rv.tk, room.tk);
+  for (const c of [g[0], g[1], g[2], novo]) await c.espera(T('host-back'));
+  g[0].send({ t: 'relay', to: '0', m: 'de volta' }); assert.strictEqual((await H.espera(T('msg'))).m, 'de volta');
+  const velhaChave = await cliente(); velhaChave.send({ t: 'host', code: room.code, tk: room.tk });
+  assert.strictEqual((await velhaChave.espera(T('err'))).msg, 'nao-encontrada');
+  console.log('ok  anfitrião caiu: convidados avisados (host-away); voltou com a chave pra mesma sala (host-back)');
+
+  // anfitrião sai de propósito
+  H.send({ t: 'leave' }); await H.fecha();
   for (const c of [g[0], g[1], g[2], novo]) await c.espera(T('room-closed'));
   await sleep(50); if (salas) assert(!salas.has(room.code));
   console.log('ok  anfitrião saiu: room-closed e sala apagada');
 
-  for (const c of [g[0], g[1], g[2], novo, extra, perdido]) try { c.ws.close(); } catch (e) { }
+  for (const c of [g[0], g[1], g[2], novo, extra, perdido, intruso, errado, velhaChave]) try { c.ws.close(); } catch (e) { }
   if (server) server.close();
   console.log('TUDO OK');
   process.exit(0);
