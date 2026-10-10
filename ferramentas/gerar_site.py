@@ -31,10 +31,23 @@ def ler_versao():
     return d.get('versao_atual') or d['versoes'][0]['versao']
 
 
+def downloads():
+    """Links e tamanhos dos arquivos de site/downloads (a página Baixar usa {{win_url}}, {{apk_tam}} etc.)."""
+    def achar(padrao):
+        fs = sorted((SITE / 'downloads').glob(padrao))
+        if not fs:
+            return '#', '—'
+        f = fs[-1]
+        mb = f.stat().st_size / 1024 / 1024
+        return '/downloads/' + f.name, (f'{mb:.1f} MB' if mb >= 1 else f'{max(1, round(mb * 1024))} KB').replace('.', ',')
+    w, a = achar('porto-sombrio-*-windows.zip'), achar('porto-sombrio-*-android.apk')
+    return {'win_url': w[0], 'win_tam': w[1], 'apk_url': a[0], 'apk_tam': a[1]}
+
+
 ABAS = [
-    ('/', 'Início', '01'), ('/jogar/', 'Jogar', '02'), ('/documentario/', 'Documentário', '03'),
-    ('/personagens/', 'Personagens', '04'), ('/mapa/', 'Mapa', '05'), ('/bestiario/', 'Bestiário', '06'),
-    ('/como-jogar/', 'Como jogar', '07'), ('/atualizacoes/', 'Atualizações', '08'),
+    ('/', 'Início', '01'), ('/jogar/', 'Jogar', '02'), ('/baixar/', 'Baixar', '03'), ('/documentario/', 'Documentário', '04'),
+    ('/personagens/', 'Personagens', '05'), ('/mapa/', 'Mapa', '06'), ('/bestiario/', 'Bestiário', '07'),
+    ('/como-jogar/', 'Como jogar', '08'), ('/atualizacoes/', 'Atualizações', '09'),
 ]
 
 BASE = """<!doctype html>
@@ -103,7 +116,7 @@ BASE = """<!doctype html>
     <div>
       <h4>Mais do arquivo</h4>
       <ul>
-        <li><a href="/jogar/#baixar">Baixar o jogo (Windows)</a></li>
+        <li><a href="/baixar/">Baixar o jogo</a></li>
         <li><a href="/criador/">Criadores</a></li>
         <li><a href="/contato/">Contato</a></li>
         <li><a href="/privacidade/">Privacidade e cookies</a></li>
@@ -153,6 +166,8 @@ def main():
             for h, t, n in ABAS)
         scripts = '\n'.join(f'<script src="{s}?v={v}" defer></script>' for s in meta.get('scripts', []))
         corpo = corpo.replace('{{versao}}', versao).replace('{{email}}', html.escape(cfg['email']))
+        for k, val in downloads().items():
+            corpo = corpo.replace('{{' + k + '}}', val)
         out = BASE.format(
             titulo=html.escape(meta['titulo']), descricao=html.escape(meta['descricao']),
             url=f'https://{dominio}{caminho}', robots=meta.get('robots', 'index, follow'),

@@ -26,12 +26,12 @@
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/fonts/special-elite.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/league-gothic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/css/site.css?v=1136f2e959">
-<script src="/js/js.js?v=1136f2e959"></script>
-<script src="/js/config.js?v=1136f2e959" defer></script>
-<script src="/js/site.js?v=1136f2e959" defer></script>
-<script src="/js/anuncios.js?v=1136f2e959" defer></script>
-<script src="/js/jogar.js?v=1136f2e959" defer></script>
+<link rel="stylesheet" href="/css/site.css?v=dc2f44aa38">
+<script src="/js/js.js?v=dc2f44aa38"></script>
+<script src="/js/config.js?v=dc2f44aa38" defer></script>
+<script src="/js/site.js?v=dc2f44aa38" defer></script>
+<script src="/js/anuncios.js?v=dc2f44aa38" defer></script>
+<script src="/js/jogar.js?v=dc2f44aa38" defer></script>
 </head>
 <body class="pagina-jogar">
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -48,12 +48,13 @@
   <nav class="abas" aria-label="Seções do arquivo">
     <a class="aba" href="/"><i>01</i>Início</a>
     <a class="aba" href="/jogar/" aria-current="page"><i>02</i>Jogar</a>
-    <a class="aba" href="/documentario/"><i>03</i>Documentário</a>
-    <a class="aba" href="/personagens/"><i>04</i>Personagens</a>
-    <a class="aba" href="/mapa/"><i>05</i>Mapa</a>
-    <a class="aba" href="/bestiario/"><i>06</i>Bestiário</a>
-    <a class="aba" href="/como-jogar/"><i>07</i>Como jogar</a>
-    <a class="aba" href="/atualizacoes/"><i>08</i>Atualizações</a>
+    <a class="aba" href="/baixar/"><i>03</i>Baixar</a>
+    <a class="aba" href="/documentario/"><i>04</i>Documentário</a>
+    <a class="aba" href="/personagens/"><i>05</i>Personagens</a>
+    <a class="aba" href="/mapa/"><i>06</i>Mapa</a>
+    <a class="aba" href="/bestiario/"><i>07</i>Bestiário</a>
+    <a class="aba" href="/como-jogar/"><i>08</i>Como jogar</a>
+    <a class="aba" href="/atualizacoes/"><i>09</i>Atualizações</a>
   </nav>
 </header>
 <main class="folha" id="conteudo">
@@ -129,36 +130,11 @@
 
 <div class="anuncio" data-formato="horizontal"></div>
 
-<section class="secao grade duas" id="celular">
-  <div>
-    <h2>Baixar no celular</h2>
-    <p style="margin-top:16px"><b>Android:</b> baixe o aplicativo, abra o arquivo e toque em <b>Instalar</b>. O jogo vai junto, então dá pra jogar até sem internet (o multiplayer precisa de internet).</p>
-    <p class="botoes"><a class="botao" href="/downloads/porto-sombrio-1.7.1-android.apk" download>Baixar para Android</a></p>
-    <p style="margin-top:22px"><b>iPhone:</b> a Apple não deixa instalar arquivo de fora da App Store, então o jogo entra na tela de início pelo Safari:</p>
-    <ol style="margin:10px 0 0;padding-left:22px">
-      <li>No iPhone, abra <a href="/jogo/">a página do jogo</a> no <b>Safari</b>.</li>
-      <li>Toque no botão <b>Compartilhar</b> (o quadrado com a seta pra cima).</li>
-      <li>Toque em <b>Adicionar à Tela de Início</b> e depois em <b>Adicionar</b>.</li>
-    </ol>
-    <p style="margin-top:10px">Pronto: aparece o ícone do Porto Sombrio, abre em tela cheia e sempre na versão mais nova.</p>
-  </div>
-  <div class="doc amarelo" style="--r:-1deg">
-    <div class="rotulo"><span>Leia-me</span><span>Android</span></div>
-    <p>Se o celular disser que o app é de <b>fonte desconhecida</b>: toque em <b>Configurações</b>, ligue <b>Permitir desta fonte</b> e volte. Se aparecer o Play Protect, toque em <b>Mais detalhes</b> e <b>Instalar assim mesmo</b>. Isso acontece com todo jogo que não está na Play Store.</p>
-    <p style="margin:0">Versão nova: baixe de novo e instale por cima. O progresso fica salvo.</p>
-  </div>
-</section>
-
-<section class="secao grade duas" id="baixar">
-  <div>
-    <h2>Baixar o jogo (Windows)</h2>
-    <p style="margin-top:16px">Prefere jogar fora do navegador? A versão para Windows 10 e 11 abre em tela cheia. Baixe, descompacte a pasta inteira e abra <b>Porto Sombrio.exe</b> (o arquivo <b>resources.neu</b> precisa ficar junto).</p>
-    <p class="botoes"><a class="botao" href="/downloads/porto-sombrio-1.7.1-windows.zip" download>Baixar para Windows (1,2 MB)</a></p>
-  </div>
-  <div class="doc amarelo" style="--r:1.2deg">
-    <div class="rotulo"><span>Leia-me</span><span>colado na caixa</span></div>
-    <p>Se aparecer "O Windows protegeu o computador": clique em <b>Mais informações</b> e depois em <b>Executar assim mesmo</b>. Isso acontece com jogos independentes que não pagam certificado.</p>
-    <p style="margin:0">Se não abrir nada, instale o <b>Microsoft Edge WebView2 Runtime</b> (grátis, no site da Microsoft).</p>
+<section class="secao" id="baixar">
+  <div class="doc" style="--r:-.6deg;max-width:760px">
+    <div class="rotulo"><span>Fora do navegador</span><span>Windows · Android · iPhone</span></div>
+    <p>Prefere um programa no PC ou um app no celular? Está tudo na página <a href="/baixar/">Baixar</a>: Windows (1,2 MB), Android (546 KB) e o jeito de pôr o jogo na tela de início do iPhone.</p>
+    <p class="botoes" style="margin:0"><a class="botao" href="/baixar/">Ver downloads</a></p>
   </div>
 </section>
 
@@ -175,7 +151,7 @@
     <div>
       <h4>Mais do arquivo</h4>
       <ul>
-        <li><a href="/jogar/#baixar">Baixar o jogo (Windows)</a></li>
+        <li><a href="/baixar/">Baixar o jogo</a></li>
         <li><a href="/criador/">Criadores</a></li>
         <li><a href="/contato/">Contato</a></li>
         <li><a href="/privacidade/">Privacidade e cookies</a></li>

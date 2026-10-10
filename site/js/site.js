@@ -119,6 +119,17 @@
     });
   });
 
+  // página Baixar: marca a caixa do aparelho de quem está vendo
+  (function () {
+    var ua = navigator.userAgent || '', so = /android/i.test(ua) ? 'android'
+      : (/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) ? 'ios'
+      : /windows/i.test(ua) ? 'windows' : '';
+    var c = so && doc.querySelector('.caixa[data-so="' + so + '"]');
+    if (!c) return;
+    c.classList.add('sua');
+    var s = doc.createElement('span'); s.className = 'carimbo seu'; s.textContent = 'Seu aparelho'; c.appendChild(s);
+  })();
+
   // fichas lacradas (personagens e bestiário): cada uma abre separada
   function abreLacre(card, sem) {
     if (!card.classList.contains('lacrado')) return;
