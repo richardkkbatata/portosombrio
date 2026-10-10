@@ -1,0 +1,15 @@
+// Configuração do site na Cloudflare (Worker com arquivos estáticos).
+// site/ = as páginas; worker/index.js = só a rota /api/ranking (o resto vai direto pros arquivos).
+{
+  "name": "porto-sombrio",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./site",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  }
+  // ranking: depois de criar o KV "ranking" na Cloudflare, cole o ID aqui:
+  // ,"kv_namespaces": [{ "binding": "RANKING", "id": "COLE_O_ID_AQUI" }]
+}
