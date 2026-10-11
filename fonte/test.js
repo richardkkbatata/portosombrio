@@ -569,6 +569,9 @@ ok(G.mode==='dead','não morreu');ctx.__timeouts.forEach(f=>f());
   R(`mpEnd(false);`); ok(R('UI.cur')==='win'&&!R('MP.on'),'fim da horda'); ok(R('contaGet().hordaMax')>=6,'recorde salvo');
   R(`UI.act('mp-leave',{})`);
 }
+// testes dos módulos novos: cada arquivo em fonte/testes/*.js recebe (A,R,ok,step,finishTalk,vm,ctx,G,P)
+{const dir=require('path').join(__dirname,'testes');if(fs.existsSync(dir))for(const f of fs.readdirSync(dir).filter(f=>f.endsWith('.js')).sort()){
+  try{new Function('A','R','ok','step','finishTalk','vm','ctx','G','P',fs.readFileSync(require('path').join(dir,f),'utf8'))(A,c=>vm.runInContext(c,ctx),ok,step,finishTalk,vm,ctx,G,P);}catch(e){fails++;console.log('FALHOU: teste '+f+': '+(e&&e.stack||e));}}}
 // frame loop
 A.newGame('facil');G.mode='title';for(let i=0;i<30;i++)A.frame(i*16);
 console.log(fails?`${fails} falhas`:'TUDO OK');
