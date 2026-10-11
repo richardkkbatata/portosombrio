@@ -69,7 +69,6 @@
         "Celular: editor de controles (Opções > Editar controles). Arraste qualquer botão ou direcional pra onde quiser e deixe maior ou menor. Fica salvo, separado com o celular em pé e deitado.",
         "Multiplayer: a Noite Zero virou matança. Ondas de zumbi em volta da turma e três chefões: O Frentista, O Espécime e A Abominação. Quanto mais gente, mais zumbi e chefão mais forte.",
         "Multiplayer: munição e erva pra todo mundo a cada etapa vencida, vida do chefão aparece pra todos, cuspe e pedra de inimigo agora acertam os amigos também, e a lista da equipe ficou menor.",
-        "A Univali agora se chama Universidade de BC no jogo.",
         "Correções: itens não duplicam mais ao carregar o registro, pilha de munição pega pela metade não enche de novo ao carregar, itens largados no chão e o loot do Brandt não somem mais ao carregar, o clima é salvo, e os cegos do esgoto acordam do jeito certo.",
         "Correções: o flashback do Matheus não começa mais no meio de um carro, agarrão ou quick time; a turma, os eventos e os sustos do Richard param durante a lembrança; resgate embaixo do carro não termina mais com a pessoa já morta; portão da biblioteca da universidade abre certo depois dos pulos do menu de teste.",
         "Menu de teste: seção 1.7.1 com editor de controles, corrida, horda e chefão da Noite Zero."
@@ -129,9 +128,9 @@
       "versao": "1.5.1",
       "data": "2026-10-09",
       "titulo": "Maleta de verdade",
-      "resumo": "Maleta estilo RE4 de verdade: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.",
+      "resumo": "Maleta de verdade, no estilo clássico de survival horror: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.",
       "mudancas": [
-        "Maleta estilo RE4 de verdade: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.",
+        "Maleta de verdade, no estilo clássico de survival horror: cada coisa fica onde você colocou. Escolha o item, toque em Mover e depois no lugar da grade. Girar deita ou levanta. Organizar arruma tudo sozinho.",
         "Se uma coisa não couber do jeito que está, o jogo avisa que dá pra arrumar a maleta pra caber.",
         "Ícones novos desenhados pra cada item, no tamanho que ele ocupa.",
         "Quick time do Brandt mais difícil: mais rápido, o anel aparece em lugares diferentes da tela e o botão muda a cada golpe (E, Q, F, Espaço ou R). No celular aparecem três botões e só um é o certo.",
@@ -151,7 +150,7 @@
         "Brandt: o quick time ficou mais longo e virou luta de verdade, com quatro sequências (faca, desarme, parede e judô), finalização em câmera lenta e um visual novo pra ele, no retrato e visto de cima.",
         "Caçulinha do Marlon, perto da BR. O Richard pega no pé do Matheus, o Edu ficou mais quieto e sarcástico, e o Nicolas fala de política pelo rádio.",
         "Mais terror: gente presa embaixo de carro (dá pra tentar salvar), gente arrastada pro escuro e a primeira queda de prédio garantida no caos de Balneário.",
-        "Lugares famosos com missão: tirar o Seu Lauro da roda-gigante e acender o Cristo Luz.",
+        "Lugares famosos com missão: tirar o Seu Lauro da roda-gigante e acender o Cristo do Morro.",
         "Brava: acampamento dos surfistas com fogueira e violão, onde o medo baixa. Na volta, ele não está mais lá.",
         "Menu de teste reorganizado em abas: Novidades, Jogador, Itens, História, Chefes, Personagens, Lugares, Inimigos, Medo, Mundo e Final."
       ]
@@ -162,11 +161,11 @@
       "titulo": "O Caçador e a Galeria",
       "resumo": "O bondinho morreu: o caminho até as Laranjeiras agora é por baixo do rio. E a Vértice mandou um caçador.",
       "mudancas": [
-        "Missão nova no capítulo 1: o bondinho morreu, e o caminho até as Laranjeiras é a galeria pluvial que sai do Shopping Atlântico.",
+        "Missão nova no capítulo 1: o bondinho morreu, e o caminho até as Laranjeiras é a galeria pluvial que sai do Shopping Maré Alta.",
         "Luta contra o Sargento Brandt, da Vértice: laser antes da rajada, granada de fumaça, voz nos alto-falantes e corpo a corpo no tempo certo. Quando ele recarregar, é a sua vez.",
         "Fase nova: Galeria Pluvial do Rio Camboriú, com os Cegos da galeria, o quebra-cabeça dos fusíveis e o das comportas.",
         "T-11, o Coletor: uma perseguição em que não dá pra lutar, só fugir.",
-        "Inventário em maleta (estilo RE4): tudo ocupa espaço, inclusive as armas. Acabou o limite de 3 armas. Armas podem ficar no baú.",
+        "Inventário em maleta (estilo clássico de survival horror): tudo ocupa espaço, inclusive as armas. Acabou o limite de 3 armas. Armas podem ficar no baú.",
         "Acessibilidade: tamanho das legendas, tremor da câmera, clarões e modo daltônico (em Opções).",
         "A chegada na Brava ficou mais calma. O Pescador agora aparece no litoral de Itajaí.",
         "Mais gente caindo dos prédios no caos de Balneário.",
@@ -205,7 +204,7 @@
       "mudancas": [
         "Marlon, Nicolas e o professor Alex Rese entram na história e ajudam a derrubar o chefe final, com escolhas que mudam o fim.",
         "Câmera automática. Manequins só na missão do shopping, e eles congelam quando você olha.",
-        "Fuzil FAL pro final, dutos no Santa Clara, missões secundárias no mapa e mais eventos aleatórios.",
+        "Fuzil de batalha pro final, dutos no Santa Clara, missões secundárias no mapa e mais eventos aleatórios.",
         "Mais difícil: menos zumbis, mas 20% mais fortes. A esquiva cansa.",
         "O menu de teste pede código."
       ]

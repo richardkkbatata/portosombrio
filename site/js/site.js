@@ -244,12 +244,12 @@
   window.PS_BILHETE = bilhete;
 
   // digitar 4072 em qualquer lugar: o cofre do Banco Popular
-  var buf = '', konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65], kpos = 0;
+  var buf = '', seqSecreta = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65], kpos = 0;
   doc.addEventListener('keydown', function (e) {
     var t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
     if (/^[0-9]$/.test(e.key)) { buf = (buf + e.key).slice(-4); Som.tecla(); if (buf === '4072') { buf = ''; bilhete('<p class="datilo-titulo">Banco Popular · Terceira Avenida</p><p>O cofre abriu com um estalo. Dentro: um revólver Magnum, munição .357 e um bilhete do Valdir.</p><p class="mao">"Eu sei, eu sei. Não era pra anotar."</p>'); } }
-    kpos = (e.keyCode === konami[kpos]) ? kpos + 1 : (e.keyCode === konami[0] ? 1 : 0);
-    if (kpos === konami.length) { kpos = 0; mingau(); }
+    kpos = (e.keyCode === seqSecreta[kpos]) ? kpos + 1 : (e.keyCode === seqSecreta[0] ? 1 : 0);
+    if (kpos === seqSecreta.length) { kpos = 0; mingau(); }
   });
   function mingau() {
     var g = doc.createElement('img'); g.className = 'mingau'; g.alt = '';
