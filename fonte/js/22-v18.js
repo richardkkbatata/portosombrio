@@ -32,7 +32,7 @@ UI.loja=function(tab){
   if(this.lojaTab==='c'){
     body=LOJA.map((gr,gi)=>`<h3>${gr.g}</h3>`+gr.it.map((e,ei)=>{const k=gi+':'+ei;let n,sub='',dis=g<e.p,ico='',why='';
       if(e.id){n=ITEMS[e.id].n+(e.q>1?' ×'+e.q:'');ico=iconHTML(e.id);sub=`você tem ${invCount(e.id)}`;}
-      else if(e.w!=null){const w=WEAPONS[e.w];n=w.n;ico='<span class="lw">'+w.n.split(' ')[0].slice(0,4).toUpperCase()+'</span>';sub=w.ammo?'usa '+ITEMS[w.ammo].n.toLowerCase():'';if(P.owned[e.w]){dis=true;why='já tem';}}
+      else if(e.w!=null){const w=WEAPONS[e.w];n=w.n;ico='<span class="lw">'+w.n.split(' ')[0].slice(0,4).toUpperCase()+'</span>';sub=w.ammo?'usa '+ITEMS[w.ammo].n.toLowerCase():'';if(P.owned[e.w]||noBau(e.w)){dis=true;why=P.owned[e.w]?'já tem':'está no baú';}}
       else if(e.faca){n='Faca nova';ico='<span class="lw">FACA</span>';sub=P.owned[0]&&P.dur>0?`a sua aguenta ${P.dur} golpes`:'você está sem faca';if(P.owned[0]&&P.dur>=30){dis=true;why='já está boa';}}
       else if(e.maleta){n='Maleta maior (+1 coluna)';ico='<span class="lw">+1</span>';sub=`hoje: ${G.mw||8}×${G.mh||6}`;if((G.mw||8)>=11){dis=true;why='no máximo';}}
       return row(ico,n,sub,`<button class="btn mini${dis?'':' primary'}" data-a="loja-c" data-k="${k}" ${dis?'disabled':''}>${why||brl(e.p)}</button>`);}).join('')).join('');
@@ -45,13 +45,15 @@ UI.loja=function(tab){
     <div class="seg"><button data-a="loja-tab" data-k="c" class="${this.lojaTab==='c'?'on':''}">Comprar</button><button data-a="loja-tab" data-k="v" class="${this.lojaTab==='v'?'on':''}">Vender</button></div>
     <div class="lista">${body}</div></div>`,'','loja');
 };
+// arma guardada no baú conta como sua (antes dava pra comprar outra e ficava uma cópia presa no baú)
+const noBau=w=>(G.box||[]).some(b=>b&&b.id==='_w'&&b.w===w);
 function lojaComprar(k){
   const [gi,ei]=String(k).split(':').map(Number),e=LOJA[gi]&&LOJA[gi].it[ei]; if(!e)return;
   if(grana()<e.p){AU.locked();return toast('Dinheiro não dá.');}
   if(e.id){const l=invAdd(e.id,e.q);
     if(l){if(MP.on||l===e.q){if(e.q-l>0)invRemove(e.id,e.q-l);AU.locked();return toast('Não cabe na maleta. Organize ou venda algo.');}
       boxAdd(e.id,l);toast('Não coube tudo na maleta: o resto foi pro baú.');}}
-  else if(e.w!=null){if(P.owned[e.w])return;const s=WSZ[e.w];if(s&&!mCanAdd(s[0],s[1])){AU.locked();return toast('Não cabe na maleta. Organize, venda algo ou compre a maleta maior.');}
+  else if(e.w!=null){if(P.owned[e.w]||noBau(e.w))return;const s=WSZ[e.w];if(s&&!mCanAdd(s[0],s[1])){AU.locked();return toast('Não cabe na maleta. Organize, venda algo ou compre a maleta maior.');}
     P.owned[e.w]=true;P.mags[e.w]=WEAPONS[e.w].mag;mSync();}
   else if(e.faca){P.owned[0]=true;P.dur=Math.max(P.dur||0,30);mSync();}
   else if(e.maleta){if((G.mw||8)>=11)return;G.mw=(G.mw||8)+1;}
