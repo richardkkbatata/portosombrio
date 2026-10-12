@@ -2,7 +2,7 @@
 // ===================== CONSTANTES E UTILIDADES =====================
 const TILE = 32, W = 210, H = 470, CW = 60;
 // abaixo da superfície: a galeria pluvial (linhas H..HT-1). O mapa da superfície continua com H linhas.
-const HS = 232, HT = H + HS;   // H..H+81: galeria · H+82..: BR-101 e Universidade de BC
+const HS = 232+82, HT = H + HS, HZO = H + 232;   // H..H+81: galeria · H+82..HZO-1: BR-101 e Universidade de BC · HZO..HT-1: Navegantes (capítulo da Sonia, 1.9)
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 let rnd = mulberry32(1);
 const R = () => rnd();
