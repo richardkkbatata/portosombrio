@@ -563,6 +563,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
 .modo-historia{background:#f3edda;background-image:var(--ruido);color:var(--tinta);transform:rotate(-.8deg);
   box-shadow:0 1px 0 rgba(0,0,0,.08),6px 8px 0 var(--papel-3),6px 8px 0 1.5px var(--tinta-3);z-index:1}
 .modo-historia .modo-nome{color:var(--tinta)}
+.modo-historia .modo-lista b{font-weight:400;color:var(--carimbo)}
 .modo-historia .modo-lista li::before{background:var(--carimbo);border-color:var(--carimbo)}
 /* fita 02: tela de monitor ligada */
 .modo-online{background:var(--tela);color:var(--monitor);transform:rotate(.8deg);border:8px solid #1d1f1c;border-radius:10px;
