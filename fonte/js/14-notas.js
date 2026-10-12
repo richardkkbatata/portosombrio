@@ -1,6 +1,11 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.2',d:'12/10/2026',t:'Menu de teste arrumado',itens:[
+    'Menu de teste organizado: tudo que a 1.9 trouxe (capítulos da Sonia e do Rese com os pulos de cada etapa, missões, eventos, Novo Jogo+, nota, Pesadelo, roupas e prêmios) agora aparece também na aba certa, e não só em "Novidades".',
+    'A aba "Novidades" ficou com as duas últimas versões; o resto foi pras abas por assunto, sem perder nenhum botão.',
+    'Lugares, inimigos e chefes novos entram sozinhos nas listas do menu de teste.',
+    'Celular: o jogo agora abre no tamanho certo da tela também no arquivo solto e na versão instalada (antes só no site), e nenhum menu passa da borda.']},
   {v:'1.9.1',d:'12/10/2026',t:'Cabe no celular',itens:[
     'Celular deitado: o menu do título não corta mais em cima. Antes o "Novo jogo" e os primeiros botões sumiam e não dava pra chegar neles.',
     'Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela sem rolar.',

@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Porto Sombrio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,6 +7,7 @@
 <style>
 /* Layout: a cidade ocupa a tela toda; menus são fichas escuras sobre o jogo e os arquivos são papel datilografado.
    Visual de tema único (noite chuvosa), escolhido de propósito: cores definidas explicitamente. */
+*,*::before,*::after{box-sizing:border-box}
 :root{
   --bg:#0a0c0b; --ink:#ddd6c6; --dim:#948f83; --panel:#111413; --panel2:#171b19; --line:#2e3430;
   --amber:#d49a3c; --amber-hi:#e6b052; --blood:#b0372e; --ok:#62c06c; --warn:#d9a33c;
@@ -271,7 +273,7 @@ dl.keys dd{margin:0;color:#c8c1b1}
 .lico .ilab{display:none}
 .dbg{width:min(1100px,100%)}
 .dbg h2{font-size:26px}
-.dbg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.dbg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:16px}
 .dbg-list{display:flex;flex-direction:column;gap:5px;margin-top:6px}
 .dbgb,.dbgt{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;background:var(--panel2);border:1px solid var(--line);padding:7px 10px;min-height:40px;cursor:pointer;font-size:15px;font-weight:600}
 .dbgb:hover,.dbgt:hover{border-color:#5fb8d8}
@@ -10399,6 +10401,11 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.2',d:'12/10/2026',t:'Menu de teste arrumado',itens:[
+    'Menu de teste organizado: tudo que a 1.9 trouxe (capítulos da Sonia e do Rese com os pulos de cada etapa, missões, eventos, Novo Jogo+, nota, Pesadelo, roupas e prêmios) agora aparece também na aba certa, e não só em "Novidades".',
+    'A aba "Novidades" ficou com as duas últimas versões; o resto foi pras abas por assunto, sem perder nenhum botão.',
+    'Lugares, inimigos e chefes novos entram sozinhos nas listas do menu de teste.',
+    'Celular: o jogo agora abre no tamanho certo da tela também no arquivo solto e na versão instalada (antes só no site), e nenhum menu passa da borda.']},
   {v:'1.9.1',d:'12/10/2026',t:'Cabe no celular',itens:[
     'Celular deitado: o menu do título não corta mais em cima. Antes o "Novo jogo" e os primeiros botões sumiam e não dava pra chegar neles.',
     'Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela sem rolar.',
@@ -10574,35 +10581,28 @@ UI.debug=function(){
   const bt=(k,l)=>`<button class="dbgb" data-a="dbg" data-k="${k}">${l}</button>`;
   const sec=(t,html)=>`<section><h3>${t}</h3><div class="dbg-list">${html}</div></section>`;
   const tp=(k,l)=>LM[k]||k==='start'?bt('tp:'+k,l):'';
+  // seções que os módulos novos registram (dbgExtra/dbgTab), por aba
+  const secs=t=>(typeof DBG_EXTRA==='undefined'?[]:DBG_EXTRA.filter(x=>(x.tab||'nov')===t)).map(x=>sec(x.t,x.b.map(([k,l])=>k[0]==='@'?tp(k.slice(1),l):k[0]==='#'?tg(k.slice(1),l):bt(k,l)).join(''))).join('');
   let body='';
   switch(tab){
-    case 'nov':body=(typeof DBG_EXTRA!=='undefined'?DBG_EXTRA.map(s=>sec(s.t,s.b.map(([k,l])=>bt(k,l)).join(''))).join(''):'')+
+    // Novidades: só as duas últimas versões. O resto mora nas abas por assunto (tudo registrado por dbgTab/dbgExtra).
+    case 'nov':body=secs('nov')+
       sec('1.8 · Mascate e dinheiro',bt('v18:grana','Ganhar R$ 5.000')+bt('v18:joia','Ganhar 3 joias')+bt('v18:loja','Abrir a loja do Mascate')+bt('v18:masc','Ir até o Mascate mais perto'))+
       sec('1.8 · Horda e multiplayer',bt('v18:horda','Começar a Horda sozinho')+bt('v18:onda','Pular onda (Horda/Noite Zero)')+bt('v18:chefe','Ir pra próxima onda de chefão (Horda)')+bt('v18:cair','Cair (multiplayer)')+bt('v18:levantar','Levantar (multiplayer)')+bt('v18:frase','Mandar frase "Socorro!"')+bt('v18:rank','Ver o ranking da Horda')+bt('v18:mira','Ligar/desligar mira assistida'))+
-      sec('1.7.1 · Celular e Noite Zero',bt('v16:hudEd','Editar controles do celular')+bt('v16:hudReset','Controles no lugar padrão')+bt('v16:run','Ligar/desligar corrida (celular)')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:mpWave','Chamar horda (Noite Zero)')+bt('v16:mpBoss','Chamar chefão (Noite Zero)'))+
-      sec('1.8.3 · Multiplayer',bt('v183:down','Cair agora (testar o caído)')+bt('v17:srv','Testar servidores (ping)')+bt('v16:mpSolo','Testar a Noite Zero sozinho'))+
-      sec('1.8.2 · Servidor no Brasil',bt('v17:srv','Testar servidores (Cloudflare e Render)')+bt('v16:mp','Abrir o multiplayer'))+
-      sec('1.6 · Clima',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
-      sec('1.6 · Flashback e missões',bt('v16:flash','Começar o flashback do Matheus')+bt('v16:flashEnd','Terminar o flashback')+bt('v16:prova','Ganhar as 3 folhas da prova')+bt('v16:fone','Ganhar o fone do Matheus')+tp('sala102','Sala 102 (entregar a prova)')+tp('foyerIn','Foyer (formatura)')+tp('binoculo','Binóculo do mirante (Brava)')+tp('barco','Barco encalhado (Brava)'))+
-      sec('1.6 · Multiplayer beta',bt('v16:mp','Abrir o multiplayer')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:conta','Editar conta'))+
-      sec('1.5.1',bt('v151:org','Organizar a maleta')+bt('v15:combo:desarme','Quick time difícil do Brandt')+bt('v14:maleta','Maleta grande')+bt('j:galeria2','Galeria · comportas (testar a escada)')+bt('v14:drain','Resolver as comportas'))+
-      sec('Brandt (1.5)',bt('v14:brandtNow','Começar a luta agora')+bt('v15:combo:faca','Quick time · faca')+bt('v15:combo:desarme','Quick time · desarme')+bt('v15:combo:parede','Quick time · parede')+bt('v15:combo:judo','Quick time · judô')+bt('v14:brandtLow','Deixar com pouca vida')+bt('v14:brandtWin','Vencer o Brandt'))+
-      sec('Universidade de BC e BR-101 (1.5)',bt('j:univali','Pular · chegando pelo túnel')+bt('j:uniBib','Pular · porta da biblioteca (com a chave)')+bt('v15:uniWave','Começar a defesa da biblioteca')+bt('v15:uniDone','Terminar a missão da Universidade de BC')+tp('tunel','Túnel em Balneário')+tp('caculinha','Caçulinha do Marlon')+tp('neusa','Cantina da Dona Neusa')+tp('sala102','Sala 102 (prova do Rese)'))+
-      sec('Eventos novos (1.5)',bt('v15:pinned','Alguém preso embaixo de carro')+bt('v15:drag','Alguém arrastado pro escuro')+bt('v15:fall','Alguém caindo do prédio')+bt('v15:zoeira','Zoeira com o Matheus')+bt('v15:nico','Nicolas no rádio')+bt('v15:roda','Pessoa presa na roda-gigante')+bt('v15:cristo','Acender o Cristo Luz')+tp('surfCamp','Acampamento dos surfistas (Brava)'))+
-      sec('Galeria (1.4)',bt('j:galeria','Pular · entrada')+bt('v14:fuses','Ganhar os três fusíveis')+bt('v14:pump','Ligar a bomba')+bt('j:galeria2','Pular · sala das comportas')+bt('v14:drain','Resolver as comportas')+bt('v14:exit','Sair nas Laranjeiras'));break;
-    case 'jog':body=sec('Jogador',tg('god','Invencível')+tg('ammo','Munição infinita')+tg('noclip','Atravessar paredes')+`<button class="dbgt" data-a="dbg" data-k="speed">Velocidade<span>${DBG.speed}x</span></button>`+bt('heal','Curar tudo')+bt('bat','Carregar lanterna')+bt('v14:qte','Testar quick time')+bt('v15:combo:desarme','Testar quick time difícil (Brandt)')+bt('qte','Testar esforço (barra)'));break;
-    case 'itens':body=sec('Itens',bt('weapons','Todas as armas')+bt('keys','Todas as chaves e itens-chave')+bt('ammokit','Kit de munição')+bt('healkit','Kit de cura')+bt('throws','Rojões e sinalizadores')+bt('v15:keys15','Chaves novas (Universidade de BC, manobra, pasta)'))+
+      sec('1.8.3 · Multiplayer e servidor',bt('v183:down','Cair agora (testar o caído)')+bt('v17:srv','Testar servidores (Cloudflare e Render)')+bt('v16:mp','Abrir o multiplayer')+bt('v16:mpSolo','Testar a Noite Zero sozinho'));break;
+    case 'jog':body=secs('jog')+sec('Jogador',tg('god','Invencível')+tg('ammo','Munição infinita')+tg('noclip','Atravessar paredes')+`<button class="dbgt" data-a="dbg" data-k="speed">Velocidade<span>${DBG.speed}x</span></button>`+bt('heal','Curar tudo')+bt('bat','Carregar lanterna')+bt('v14:qte','Testar quick time')+bt('v15:combo:desarme','Testar quick time difícil (Brandt)')+bt('qte','Testar esforço (barra)'));break;
+    case 'itens':body=secs('itens')+sec('Itens',bt('weapons','Todas as armas')+bt('keys','Todas as chaves e itens-chave')+bt('ammokit','Kit de munição')+bt('healkit','Kit de cura')+bt('throws','Rojões e sinalizadores')+bt('v15:keys15','Chaves novas (Universidade de BC, manobra, pasta)'))+
       sec('Documentos',bt('files','Todos os arquivos')+bt('photos','Todas as fotos'))+
       sec('Maleta',bt('v151:org','Organizar a maleta')+bt('slots','Aumentar a maleta')+bt('v14:maleta','Maleta no tamanho máximo')+bt('v14:maletaMin','Maleta no tamanho inicial'));break;
-    case 'hist':body=
+    case 'hist':body=secs('hist')+
       sec('Capítulo 1 · Balneário',bt('j:posto','Posto (bateria)')+bt('j:caos','Jipe pronto, Edu, caos')+bt('j:brandt','Shopping, antes do Brandt')+bt('j:galeria','Galeria, entrada')+bt('j:galeria2','Galeria, comportas')+bt('j:laranj','Laranjeiras')+bt('j:ivo','Seu Ivo vivo (colônia)'))+
       sec('Capítulo 2 · Brava e a volta',bt('j:brava','Chegada na Brava')+bt('j:gerador','Diesel na mão')+bt('j:bc2','Balneário em silêncio')+bt('j:univali','Universidade de BC (túnel)')+bt('j:uniBib','Universidade de BC (biblioteca)')+bt('j:shop','Armadilha do shopping')+bt('j:cida','Prédio da Dona Cida'))+
       sec('Capítulo 3 · Itajaí',bt('j:itajai','Itajaí')+bt('j:hosp','Santa Clara')+bt('j:hospIn','Santa Clara · porta tranca')+bt('j:hospSaida','Santa Clara · saída com alicate')+bt('j:porto','Porto')+bt('j:navio','Navio no cais')+bt('j:final','Batalha final com os três'));break;
-    case 'lutas':body=
+    case 'lutas':body=secs('lutas')+
       sec('Sargento Brandt',bt('j:brandt','Pular · shopping')+bt('v14:brandtNow','Começar a luta')+bt('v15:combo:faca','Quick time · faca')+bt('v15:combo:desarme','Quick time · desarme')+bt('v15:combo:parede','Quick time · parede')+bt('v15:combo:judo','Quick time · judô')+bt('v14:brandtLow','Pouca vida')+bt('v14:brandtWin','Vencer')+bt('v14:smoke','Granada de fumaça aqui'))+
       sec('T-11, o Coletor',bt('v14:chase','Soltar aqui (fuga)')+bt('v14:chaseStop','Parar a fuga')+bt('v14:drain','Começar a fuga do jeito certo'))+
       sec('Outros chefes',bt('j:shop','Espécime (shopping)')+bt('v14:pesc','Pescador (litoral de Itajaí)')+bt('pers','Chamar o Perseguidor')+bt('ouvHere','Chamar a cega até você')+tg('ouv','Ver faro e escuta da cega')+bt('j:final','Abominação (final)')+bt('allyNow','Chamar os três (na batalha)'));break;
-    case 'pers':body=sec('Amigos',bt('j:uniBib','Marlon e Matheus · Universidade de BC')+bt('j:marlon','Marlon · Edifício Yacht')+bt('j:nico','Nicolas · surf shop')+bt('j:alex','Prof. Alex Rese · Mercado Público')+bt('v15:zoeira','Zoeira com o Matheus')+bt('v15:nico','Nicolas no rádio'))+
+    case 'pers':body=secs('pers')+sec('Amigos',bt('j:uniBib','Marlon e Matheus · Universidade de BC')+bt('j:marlon','Marlon · Edifício Yacht')+bt('j:nico','Nicolas · surf shop')+bt('j:alex','Prof. Alex Rese · Mercado Público')+bt('v15:zoeira','Zoeira com o Matheus')+bt('v15:nico','Nicolas no rádio'))+
       sec('Gente pelo caminho',tp('uniGuarita','Seu Ademir · guarita')+tp('neusa','Dona Neusa · cantina')+tp('surfCamp','Kadu e Bia · fogueira')+tp('painelRoda','Seu Lauro · roda-gigante')+bt('v15:juliana','Cabo Juliana · BR-101'));break;
     case 'lug':{
       const grp={};const add=(g,k,l)=>{(grp[g]=grp[g]||[]).push(tp(k,l));};
@@ -10612,15 +10612,15 @@ UI.debug=function(){
       for(const [k,l] of [['itajai','Mercado Público'],['matriz','Igreja Matriz'],['hospIt','Santa Clara'],['isol','Isolamento (pasta)'],['alicate','Manutenção (alicate)'],['bombeiros','Bombeiros'],['lab','Laboratório Vértice'],['armazem','Armazém'],['guindaste','Guindaste'],['radio','Heliponto']])add('Itajaí e porto',k,l);
       for(const [k,l] of [['zoneIn','Saída do túnel'],['uniGuarita','Guarita'],['uniBib','Biblioteca 6A'],['bloco3','Bloco 3'],['sala102','Sala 102'],['quadra','Quadra'],['foyer','Foyer e Auditório'],['uniSafe','Sala dos Professores (abrigo)'],['caculinha','Caçulinha do Marlon']])add('BR-101 e Universidade de BC',k,l);
       for(const [k,l] of [['sewIn','Entrada'],['quadroBomba','Estação de bombeamento'],['mapaDren','Sala das comportas'],['sewOut','Poço de saída']])add('Galeria pluvial',k,l);
-      body=Object.entries(grp).map(([g,a])=>sec(g,a.join(''))).join('');break;}
+      body=secs('lug')+Object.entries(grp).map(([g,a])=>sec(g,a.join(''))).join('');break;}
     case 'inim':{const boss=k=>ETYPES[k].boss||['pers','bombeiro','boss','ouvinte','coletor','manequim'].includes(k);
-      body=sec('Comuns',Object.keys(ETYPES).filter(k=>!boss(k)).map(k=>bt('spawn:'+k,ETYPES[k].n)).join(''))+sec('Chefes e especiais',Object.keys(ETYPES).filter(boss).map(k=>bt('spawn:'+k,ETYPES[k].n)).join(''))+
+      body=secs('inim')+sec('Comuns',Object.keys(ETYPES).filter(k=>!boss(k)).map(k=>bt('spawn:'+k,ETYPES[k].n)).join(''))+sec('Chefes e especiais',Object.keys(ETYPES).filter(boss).map(k=>bt('spawn:'+k,ETYPES[k].n)).join(''))+
         sec('Controle',bt('kill','Matar todos por perto')+tg('freeze','Congelar inimigos')+tg('ai','Mostrar estado da IA'));break;}
-    case 'medo':body=sec('Medo',tg('fearMax','Medo no máximo')+bt('name','Sussurrar o nome')+bt('echo','Passos que param depois')+bt('glitch','Objetivo falhando')+bt('ghost','Rádio do Tião (morto)')+bt('amb','Som da noite'))+
+    case 'medo':body=secs('medo')+sec('Medo',tg('fearMax','Medo no máximo')+bt('name','Sussurrar o nome')+bt('echo','Passos que param depois')+bt('glitch','Objetivo falhando')+bt('ghost','Rádio do Tião (morto)')+bt('amb','Som da noite'))+
       sec('Gente pedindo ajuda',bt('cry','Grito de socorro')+bt('trap','Alguém preso num prédio')+bt('v15:pinned','Preso embaixo de carro')+bt('v15:drag','Arrastado pro escuro')+bt('v15:fall','Caindo do prédio')+bt('v15:roda','Preso na roda-gigante'));break;
-    case 'mundo':body=sec('Mundo',`<button class="dbgt" data-a="dbg" data-k="clock">Hora<span>${clockStr()}</span></button>`+tg('bright','Luz total')+bt('light','Raio agora')+bt('blackout','Apagão')+bt('v14:smoke','Fumaça aqui')+bt('gates','Abrir todos os portões')+bt('map','Revelar o mapa')+bt('car','Jipe consertado aqui')+tg('fps','Mostrar FPS'))+sec('Clima (1.6)',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
+    case 'mundo':body=secs('mundo')+sec('Mundo',`<button class="dbgt" data-a="dbg" data-k="clock">Hora<span>${clockStr()}</span></button>`+tg('bright','Luz total')+bt('light','Raio agora')+bt('blackout','Apagão')+bt('v14:smoke','Fumaça aqui')+bt('gates','Abrir todos os portões')+bt('map','Revelar o mapa')+bt('car','Jipe consertado aqui')+tg('fps','Mostrar FPS'))+sec('Clima (1.6)',bt('v16:wx:chuva','Chuva')+bt('v16:wx:tempestade','Tempestade')+bt('v16:wx:neblina','Neblina')+bt('v16:wx:apagao','Apagão geral')+bt('v16:wx:off','Tempo limpo'))+
       sec('Interface',bt('v14:notas','Mostrar "Novidades" de novo no título'));break;
-    case 'fim':body=sec('Final',bt('end','Pular para o heliponto')+bt('wave','Chamar o resgate (15 s)')+bt('j:final','Batalha final com os três')+bt('win','Vencer agora')+bt('die','Morrer agora'));break;
+    case 'fim':body=secs('fim')+sec('Final',bt('end','Pular para o heliponto')+bt('wave','Chamar o resgate (15 s)')+bt('j:final','Batalha final com os três')+bt('win','Vencer agora')+bt('die','Morrer agora'));break;
   }
   this.open(`<div class="sheet wide dbg"><div class="tabs"><p class="kick">Ferramentas · ${GAME_VER}</p><h2 style="margin-right:auto">Menu de teste</h2><button class="btn ghost" data-a="close">Fechar</button></div>
     <div class="row dbgtabs">${DBG_TABS.map(([k,l])=>`<button class="btn${k===tab?' primary':''}" data-a="dbgtab" data-k="${k}">${l}</button>`).join('')}</div>
@@ -12506,8 +12506,14 @@ function mpBoomFx(x,y,r){
 // Menu de teste: cada módulo registra a sua seção sem mexer no 16-debug.js:
 //   dbgExtra('1.9 · Título', [['chave:acao','Rótulo do botão'], ...], (acao)=>{ ... })
 // A seção aparece no topo da aba "Novidades" e o clique chama a função com a chave.
+// Menu de teste: cada módulo registra as suas seções sem mexer no 16-debug.js.
+//   dbgExtra(titulo,botoes,fn)        -> aba "Novidades" (no topo)
+//   dbgTab('hist',titulo,botoes[,fn]) -> aba por assunto (no fim)
+// Na lista de botões, '@chave' vira teleporte (tp) e '#chave' vira liga/desliga (tg).
 const DBG_EXTRA=[], DBG_EXTRA_FN={};
-function dbgExtra(titulo,botoes,fn){DBG_EXTRA.unshift({t:titulo,b:botoes});for(const [k] of botoes)DBG_EXTRA_FN[k]=fn;}
+function dbgReg(k,fn){if(fn&&k[0]!=='@'&&k[0]!=='#')DBG_EXTRA_FN[k]=fn;}
+function dbgExtra(titulo,botoes,fn,tab){DBG_EXTRA.unshift({t:titulo,b:botoes,tab:tab||'nov'});for(const [k] of botoes)dbgReg(k,fn);}
+function dbgTab(tab,titulo,botoes,fn){DBG_EXTRA.push({t:titulo,b:botoes,tab});for(const [k] of botoes)dbgReg(k,fn);}
 {const da=UI.dbgAct.bind(UI); UI.dbgAct=function(k,ds){const fn=DBG_EXTRA_FN[k];if(fn){try{return fn.call(this,k,ds);}catch(e){console.error(e);toast('Erro: '+e.message);return;}}return da(k,ds);};}
 
 // corrida do celular não fica ligada de uma partida pra outra
@@ -14187,6 +14193,69 @@ dbgExtra('1.9.1 · Menus no celular',[['v191:titulo','Abrir a tela de título'],
     toast(fora?`${fora} botão(ões) acima da tela`:`Tudo alcançável (${innerWidth}x${innerHeight})`);
   }
 });
+// ===================== 1.9 · MENU DE TESTE ORGANIZADO POR ASSUNTO =====================
+// Tudo que é novo (1.9) e o que antes só existia na aba "Novidades" (1.4 a 1.7.1) agora
+// aparece também na aba certa. '@x' = teleporte, '#x' = liga/desliga.
+(function(){
+  if(typeof dbgTab!=='function')return;
+  const T=dbgTab;
+
+  // ---------- Jogador ----------
+  T('jog','Novo Jogo+ e nota (1.9)',[['jm:nota','Tela final com nota (dados falsos)'],['jm:ngp','Começar Novo Jogo+ agora'],['jm:tudo','Liberar tudo (Jogo+, Pesadelo, prêmios, roupas)'],
+    ['jm:pes','Mudar esta partida para Pesadelo'],['jm:pf','Prêmio: faca infinita'],['jm:pl','Prêmio: lanterna infinita'],['jm:pm','Prêmio: munição infinita'],['jm:zera','Apagar Jogo+ e roupas']]);
+  T('jog','Celular (1.7.1)',[['v16:hudEd','Editar controles do celular'],['v16:hudReset','Controles no lugar padrão'],['v16:run','Ligar/desligar corrida'],['v18:mira','Ligar/desligar mira assistida']]);
+
+  // ---------- Itens e maleta ----------
+  T('itens','Dinheiro, roupas e fita (1.8 e 1.9)',[['v18:grana','Ganhar R$ 5.000'],['v18:joia','Ganhar 3 joias'],['v18:loja','Abrir a loja do Mascate'],['v18:masc','Ir até o Mascate mais perto'],
+    ['jm:roupa','Trocar as roupas de todos'],['v19d:fita','Ganhar 3 fitas de tinta (Pesadelo)']]);
+  T('itens','Itens de missão (1.6)',[['v16:prova','Ganhar as 3 folhas da prova'],['v16:fone','Ganhar o fone do Matheus']]);
+
+  // ---------- História ----------
+  T('hist','Capítulos extras (1.9)',[['v19d:caps','Abrir a tela de Capítulos extras'],['v19s:start','Capítulo da Sonia · começar'],['v19r:start','Capítulo do Rese · começar']]);
+  T('hist','Capítulo da Sonia · etapas (1.9)',[['v19s:sinal','Sinal na praça'],['v19s:esconder','O Balseiro aparece'],['v19s:garrafas','Garrafas no bar'],['v19s:avenida','Barricada da avenida'],
+    ['v19s:predio','Correr pro prédio'],['v19s:cristo','A janela (Cristo Luz)'],['v19s:ferry','Ir pro terminal'],['v19s:fuga','No terminal'],['v19s:fim','Final']]);
+  T('hist','Capítulo do Rese · etapas (1.9)',[['v19r:igreja','Sino da Matriz'],['v19r:rua','Rua até o mercado'],['v19r:feira','Feirantes'],['v19r:barricar','Barricar as portas'],
+    ['v19r:radio','Rádio e extintor'],['v19r:defesa','Defesa do mercado'],['v19r:chefe','O Fiscal'],['v19r:fim','Final (chega o Richard)']]);
+  T('hist','Universidade de BC · missão (1.5)',[['v15:uniWave','Começar a defesa da biblioteca'],['v15:uniDone','Terminar a missão da Universidade de BC']]);
+  T('hist','Galeria pluvial · puzzles (1.4)',[['v14:fuses','Ganhar os três fusíveis'],['v14:pump','Ligar a bomba'],['v14:exit','Sair nas Laranjeiras']]);
+  T('hist','Flashback do Matheus (1.6)',[['v16:flash','Começar o flashback'],['v16:flashEnd','Terminar o flashback']]);
+
+  // ---------- Missões ----------
+  T('hist','Missões secundárias (1.9)',[['v19m:list','Ver a lista de missões'],['v19m:all','Começar todas'],['v19m:done','Completar todas'],['v19m:reset','Zerar missões']]);
+
+  // ---------- Chefes e lutas ----------
+  T('lutas','Chefes dos capítulos (1.9)',[['v19s:bal','O Balseiro (Sonia) aqui perto'],['v19r:chefe','O Fiscal do Mercado (Rese)']]);
+
+  // ---------- Personagens ----------
+  T('pers','Sonia e Prof. Rese (1.9)',[['v19s:start','Jogar como a Sonia'],['v19r:start','Jogar como o Prof. Rese'],['jm:roupa','Trocar as roupas de todos'],['v19d:roupas','Abrir a tela de Roupas']]);
+  T('pers','Mascate e conta (1.8)',[['v18:masc','Ir até o Mascate'],['v18:loja','Abrir a loja'],['v16:conta','Editar conta']]);
+
+  // ---------- Lugares ----------
+  T('lug','Capítulos extras (1.9)',[['v19s:start','Navegantes (Capítulo da Sonia)'],['v19r:start','Mercado Público, 22h31 (Capítulo do Rese)']]);
+  T('lug','Lugares da 1.6',[['@foyerIn','Foyer (formatura)'],['@binoculo','Binóculo do mirante (Brava)'],['@barco','Barco encalhado (Brava)']]);
+
+  // ---------- Medo ----------
+  T('medo','Sustos e eventos novos (1.9)',[['v19e:pisca','Luzes piscando'],['v19e:telefone','Telefone tocando'],['v19e:amarrado','Zumbi amarrado'],['v19e:fita','Fita da câmera'],['v19e:cinza','Chuva de cinza']]);
+
+  // ---------- Mundo ----------
+  T('mundo','Eventos aleatórios (1.9)',[['v19e:caixa','Caixa de suprimentos'],['v19e:radio','Transmissão da Rádio Maré'],['v19e:musica','Caixa de som ligada'],['v19e:saqueador','Saqueador']]);
+  T('mundo','Cristo Luz e rádio (1.5)',[['v15:cristo','Acender o Cristo Luz']]);
+
+  // ---------- Final ----------
+  T('fim','Nota e Novo Jogo+ (1.9)',[['jm:nota','Tela final com nota (dados falsos)'],['jm:ngp','Começar Novo Jogo+'],['v19d:epi','Ver o epílogo do Novo Jogo+']]);
+
+  // ---------- Multiplayer (fica na aba Novidades, junto da 1.8) ----------
+  // ações próprias desta organização
+  const fn=function(k){
+    switch(k){
+      case 'v19d:fita':{const l=invAdd('fita',3);if(l&&typeof boxAdd==='function')boxAdd('fita',l);this.close();return toast('3 fitas de tinta na maleta.');}
+      case 'v19d:caps':return UI.caps?UI.caps():toast('Capítulos extras indisponíveis.');
+      case 'v19d:roupas':return UI.roupas?UI.roupas('debug'):toast('Tela de Roupas indisponível.');
+      case 'v19d:epi':{this.close();if(typeof UI.jmEpi==='function')return UI.jmEpi();return toast('Epílogo indisponível.');}
+    }
+  };
+  for(const k of ['v19d:fita','v19d:caps','v19d:roupas','v19d:epi'])DBG_EXTRA_FN[k]=fn;
+})();
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;

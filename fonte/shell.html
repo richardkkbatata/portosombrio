@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Porto Sombrio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,6 +7,7 @@
 <style>
 /* Layout: a cidade ocupa a tela toda; menus são fichas escuras sobre o jogo e os arquivos são papel datilografado.
    Visual de tema único (noite chuvosa), escolhido de propósito: cores definidas explicitamente. */
+*,*::before,*::after{box-sizing:border-box}
 :root{
   --bg:#0a0c0b; --ink:#ddd6c6; --dim:#948f83; --panel:#111413; --panel2:#171b19; --line:#2e3430;
   --amber:#d49a3c; --amber-hi:#e6b052; --blood:#b0372e; --ok:#62c06c; --warn:#d9a33c;
@@ -271,7 +273,7 @@ dl.keys dd{margin:0;color:#c8c1b1}
 .lico .ilab{display:none}
 .dbg{width:min(1100px,100%)}
 .dbg h2{font-size:26px}
-.dbg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.dbg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:16px}
 .dbg-list{display:flex;flex-direction:column;gap:5px;margin-top:6px}
 .dbgb,.dbgt{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;background:var(--panel2);border:1px solid var(--line);padding:7px 10px;min-height:40px;cursor:pointer;font-size:15px;font-weight:600}
 .dbgb:hover,.dbgt:hover{border-color:#5fb8d8}
