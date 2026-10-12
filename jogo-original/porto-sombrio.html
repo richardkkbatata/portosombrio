@@ -304,7 +304,7 @@ dl.keys dd{margin:0;color:#c8c1b1}
 // ===================== CONSTANTES E UTILIDADES =====================
 const TILE = 32, W = 210, H = 470, CW = 60;
 // abaixo da superfície: a galeria pluvial (linhas H..HT-1). O mapa da superfície continua com H linhas.
-const HS = 232, HT = H + HS;   // H..H+81: galeria · H+82..: BR-101 e Universidade de BC
+const HS = 232+82, HT = H + HS, HZO = H + 232;   // H..H+81: galeria · H+82..HZO-1: BR-101 e Universidade de BC · HZO..HT-1: Navegantes (capítulo da Sonia, 1.9)
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 let rnd = mulberry32(1);
 const R = () => rnd();
@@ -9778,7 +9778,7 @@ const ZY=H+82;                       // primeira linha da região oeste
 function zoneB(){return -1;}
 function inZone(){return ((P.y/TILE)|0)>=ZY;}
 function inZonePx(x,y){return ((y/TILE)|0)>=ZY;}
-const OESTE_D={name:'BR-101 · Universidade de BC',short:'Universidade de BC',mx:100,y0:ZY,y1:HT-1,cap:13,count:0,spawn:{zumbi:8,corr:2,cao:1,rast:1},loot:{m9:1,ervaV:3,pilha:3,polv:2}};
+const OESTE_D={name:'BR-101 · Universidade de BC',short:'Universidade de BC',mx:100,y0:ZY,y1:HZO-1,cap:13,count:0,spawn:{zumbi:8,corr:2,cao:1,rast:1},loot:{m9:1,ervaV:3,pilha:3,polv:2}};
 (function(){const gw=genWorld;genWorld=function(){const i=DISTRICTS.indexOf(OESTE_D);if(i>=0)DISTRICTS.splice(i,1);try{gw();}finally{DISTRICTS.push(OESTE_D);}};})();
 DISTRICTS.push(OESTE_D);
 const UNI_COL='#2a5a3a';            // camiseta verde de estudante
@@ -9800,19 +9800,19 @@ DOCS.push(
 function genOeste(){
   const old=rnd; rnd=mulberry32(15151);
   const Y=ZY;
-  for(let y=Y;y<HT-1;y++)for(let x=1;x<W-1;x++){const k=idx(x,y);map[k]=T.GRASS;bmap[k]=-1;}
-  for(let x=0;x<W;x++){setT(x,Y,T.BORDER);setT(x,HT-1,T.BORDER);} for(let y=Y;y<HT;y++){setT(0,y,T.BORDER);setT(W-1,y,T.BORDER);}
-  rect(1,Y+1,W-2,8,T.FOREST); rect(1,HT-8,W-2,6,T.FOREST);
+  for(let y=Y;y<HZO-1;y++)for(let x=1;x<W-1;x++){const k=idx(x,y);map[k]=T.GRASS;bmap[k]=-1;}
+  for(let x=0;x<W;x++){setT(x,Y,T.BORDER);setT(x,HZO-1,T.BORDER);} for(let y=Y;y<HZO;y++){setT(0,y,T.BORDER);setT(W-1,y,T.BORDER);}
+  rect(1,Y+1,W-2,8,T.FOREST); rect(1,HZO-8,W-2,6,T.FOREST);
   // ruas
   hroad(4,156,Y+10,4); hroad(4,156,Y+112,4); vroad(4,Y+10,Y+138,4); vroad(152,Y+10,Y+115,4);
   hroad(140,205,Y+60,4);
   // a BR-101: duas pistas e o canteiro
-  vroad(160,Y+9,HT-9,6); vroad(170,Y+9,HT-9,6);
-  for(let y=Y+9;y<HT-9;y++)for(let x=166;x<170;x++)if(getT(x,y)===T.GRASS)setT(x,y,T.GRASS);
-  rect(158,Y+8,20,2,T.RUBBLE); rect(158,HT-10,20,2,T.RUBBLE);
-  for(let i=0;i<26;i++){const x=ri(160,175),y=ri(Y+12,HT-14);if(getT(x,y)===T.ROAD&&getT(x+1,y)===T.ROAD&&y!==Y+60&&y!==Y+61&&y!==Y+62&&y!==Y+63)addCar(x,y,true,R()<.4);}
-  for(let i=0;i<10;i++){const x=ri(160,175),y=ri(Y+14,HT-14);if(Math.abs(y-(Y+61))<4)continue;for(let j=0;j<2;j++)for(let k=0;k<2;k++)if(getT(x+k,y+j)===T.ROAD)setT(x+k,y+j,T.RUBBLE);GORE.push({k:'scorch',x:tc(x),y:tc(y),r:46,rot:0,seed:R()});}
-  graf(167,Y+11,'BR-101 INTERDITADA',{rot:0,c:'#d8d4c8'}); graf(167,HT-12,'VIADUTO CAIU',{rot:0});
+  vroad(160,Y+9,HZO-9,6); vroad(170,Y+9,HZO-9,6);
+  for(let y=Y+9;y<HZO-9;y++)for(let x=166;x<170;x++)if(getT(x,y)===T.GRASS)setT(x,y,T.GRASS);
+  rect(158,Y+8,20,2,T.RUBBLE); rect(158,HZO-10,20,2,T.RUBBLE);
+  for(let i=0;i<26;i++){const x=ri(160,175),y=ri(Y+12,HZO-14);if(getT(x,y)===T.ROAD&&getT(x+1,y)===T.ROAD&&y!==Y+60&&y!==Y+61&&y!==Y+62&&y!==Y+63)addCar(x,y,true,R()<.4);}
+  for(let i=0;i<10;i++){const x=ri(160,175),y=ri(Y+14,HZO-14);if(Math.abs(y-(Y+61))<4)continue;for(let j=0;j<2;j++)for(let k=0;k<2;k++)if(getT(x+k,y+j)===T.ROAD)setT(x+k,y+j,T.RUBBLE);GORE.push({k:'scorch',x:tc(x),y:tc(y),r:46,rot:0,seed:R()});}
+  graf(167,Y+11,'BR-101 INTERDITADA',{rot:0,c:'#d8d4c8'}); graf(167,HZO-12,'VIADUTO CAIU',{rot:0});
   // posto do Exército abandonado (norte da BR)
   {const b=building(178,Y+12,10,7,{floor:T.CONC,roof:'#4a5232',name:'Posto do Exército · km 132',kind:'tenda',doors:[['W',3,2]],loot:true});addPick(183,Y+15,DOC15+2,1,'file');addPick(185,Y+16,'m9',12);addPick(181,Y+17,'gran',1);
     npcs.push({id:'juliana',name:'Cabo Juliana',look:null,x:tc(181),y:tc(Y+14),col:'#3d4a2f',hair:'#1a120c',skin:'#b07a5a',ang:Math.PI,cond:()=>!G.flags.julianaGone});}
@@ -9873,10 +9873,10 @@ function genOeste(){
   graf(CX+64,CY+57,'UNIV. DE BC',{rot:0,c:'#d8d4c8',s:1.4}); graf(CX+100,CY+57,'SOCORRO 6A',{rot:.02});
   // estudantes que viraram
   for(let i=0;i<40;i++){const x=ri(CX+2,CX+124),y=ri(CY+2,CY+88),k=idx(x,y);if(SOLID[map[k]])continue;if(hyp(x-(CX+107),y-(CY+44))<14)continue;initEnemies.push({uid:'uz'+i,type:R()<.15?'corr':'zumbi',x:tc(x),y:tc(y),col:R()<.6?UNI_COL:null,dorm:bmap[k]>=0&&R()<.5});}
-  for(let i=0;i<14;i++){const x=ri(150,205),y=ri(Y+14,HT-14),k=idx(x,y);if(SOLID[map[k]])continue;initEnemies.push({uid:'uzb'+i,type:R()<.2?'cao':'zumbi',x:tc(x),y:tc(y)});}
+  for(let i=0;i<14;i++){const x=ri(150,205),y=ri(Y+14,HZO-14),k=idx(x,y);if(SOLID[map[k]])continue;initEnemies.push({uid:'uzb'+i,type:R()<.2?'cao':'zumbi',x:tc(x),y:tc(y)});}
   // casas do bairro a sudoeste
   bigHouse(12,Y+120,12,10,'N'); bigHouse(26,Y+120,12,10,'N'); bigHouse(40,Y+120,14,10,'N'); bigHouse(58,Y+120,12,10,'N'); bigHouse(74,Y+120,12,10,'N'); bigHouse(92,Y+120,14,10,'N');
-  trees(8,Y+118,150,HT-10,.04);
+  trees(8,Y+118,150,HZO-10,.04);
   for(const [x,y,c] of [[60,Y+12,'lamp'],[100,Y+12,'lamp'],[168,Y+40,'fire'],[164,Y+90,'fire'],[172,Y+120,'fire'],[190,Y+62,'lamp'],[CX+70,CY+28,'lamp']])lights.push({x:tc(x),y:tc(y),r:c==='fire'?160:130,c,f:1});
   for(const [x,y] of [[168,Y+40],[164,Y+90],[172,Y+120]])ZFIRES.push({x:tc(x),y:tc(y)});
   rnd=old;
@@ -10087,7 +10087,7 @@ function drawZoneTop(){
 
 // ---------- mapa (tecla M) da região oeste ----------
 function drawZoneMapTo(c){
-  const cx=c.getContext('2d'), w=W, h=HT-ZY, img=cx.createImageData(w,h);
+  const cx=c.getContext('2d'), w=W, h=HZO-ZY, img=cx.createImageData(w,h);
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){const k=idx(x,ZY+y),t=map[k],o=(y*w+x)*4;let col=[34,44,30];
     if(t===T.ROAD)col=[70,70,74];else if(t===T.SIDE||t===T.CONC)col=[110,110,106];else if(t===T.WALL)col=[28,28,30];else if(t===T.FOREST||t===T.TREE)col=[16,40,18];else if(t===T.CAR)col=[120,50,40];else if(t===T.RUBBLE)col=[80,64,54];else if(bmap[k]>=0)col=[150,146,136];else if(t===T.SAFE)col=[60,160,90];
     if(!explored[k])col=col.map(v=>v*.35);img.data[o]=col[0];img.data[o+1]=col[1];img.data[o+2]=col[2];img.data[o+3]=255;}
@@ -10101,7 +10101,7 @@ function drawZoneMapTo(c){
 }
 (function(){const pm=UI.paintMap.bind(UI);UI.paintMap=function(){if(!inZone()&&!inSew())return pm();const c=document.getElementById('mapc');if(!c)return pm();
   if(inSew())return pm();
-  const wrap=(c.parentElement||c).getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1),cssW=Math.max(200,Math.min(wrap.width-14,560)),cssH=cssW*(HT-ZY)/W;
+  const wrap=(c.parentElement||c).getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1),cssW=Math.max(200,Math.min(wrap.width-14,560)),cssH=cssW*(HZO-ZY)/W;
   c.style.width=cssW+'px';c.style.height=cssH+'px';c.width=Math.round(cssW*d);c.height=Math.round(cssH*d);drawZoneMapTo(c);};})();
 
 // ===================== BRANDT: LUTAS NO QUICK TIME =====================
@@ -10399,6 +10399,16 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9',d:'11/10/2026',t:'Capítulos extras',itens:[
+    'Nota no final, de S a D: tempo, mortes, registros, sobreviventes salvos e dificuldade, com os pontos de cada um na tela.',
+    'Novo Jogo+: depois de zerar, recomeça com armas, melhorias, dinheiro e maleta. Infectados mais fortes e rápidos, os piores aparecem cedo, chefões aguentam mais, e tem um epílogo novo no fim.',
+    'Dificuldade Pesadelo (libera na primeira vitória): quase nada no chão, mordida que dói, Perseguidor cedo, e salvar gasta Fita de tinta.',
+    'Roupas: 11 roupas novas pro Richard e a turma (título e pausa), liberadas por conquista, nota S ou compradas no Mascate. Prêmios da nota S: faca, lanterna e munição infinitas no Jogo+.',
+    'Capítulos extras no título. Capítulo da Sonia: Navegantes, mesma noite, sem arma nenhuma; fuja, esconda-se, jogue garrafa e escape do Balseiro até a balsa ou o amanhecer.',
+    'Capítulo do Prof. Rese: Itajaí, 22h31, antes do Richard chegar. Recolha as provas, descubra quem tocou o sino da Matriz, segure o Mercado Público com os feirantes e enfrente o Fiscal do Mercado.',
+    '12 missões secundárias novas (o cachorro Pipoca, a insulina da Dona Zuleica, a antena do Seu Osni, a drogaria do Seu Haroldo, os discos do DJ Tavinho e mais) com botão Missões na pausa.',
+    '9 eventos aleatórios novos: caixa de paraquedas, rádio com mochila escondida, luzes piscando, telefone tocando, chuva de cinza, zumbi amarrado, saqueador, caixa de som chamando a horda, fita de câmera.',
+    'Correções: o Mascate não vende mais arma que está no baú, a corrida do celular desliga numa partida nova, o dinheiro aparece separado na maleta.']},
   {v:'1.8.3',d:'10/10/2026',t:'Caído é caído',itens:[
     'Multiplayer: quem cai não atira, não anda, não recarrega, não se cura e não joga granada. Antes dava pra continuar atirando caído, e a cura fazia os amigos verem você de pé enquanto a sua tela dizia "Caído".',
     'Menos atraso: o jogo prevê pra onde os zumbis e os amigos estão indo (usando o ping de cada um) e as atualizações chegam 20 vezes por segundo. O ping aparece no canto da tela (pro convidado, o dele e o do anfitrião).',
@@ -10561,7 +10571,7 @@ UI.debug=function(){
   const tp=(k,l)=>LM[k]||k==='start'?bt('tp:'+k,l):'';
   let body='';
   switch(tab){
-    case 'nov':body=
+    case 'nov':body=(typeof DBG_EXTRA!=='undefined'?DBG_EXTRA.map(s=>sec(s.t,s.b.map(([k,l])=>bt(k,l)).join(''))).join(''):'')+
       sec('1.8 · Mascate e dinheiro',bt('v18:grana','Ganhar R$ 5.000')+bt('v18:joia','Ganhar 3 joias')+bt('v18:loja','Abrir a loja do Mascate')+bt('v18:masc','Ir até o Mascate mais perto'))+
       sec('1.8 · Horda e multiplayer',bt('v18:horda','Começar a Horda sozinho')+bt('v18:onda','Pular onda (Horda/Noite Zero)')+bt('v18:chefe','Ir pra próxima onda de chefão (Horda)')+bt('v18:cair','Cair (multiplayer)')+bt('v18:levantar','Levantar (multiplayer)')+bt('v18:frase','Mandar frase "Socorro!"')+bt('v18:rank','Ver o ranking da Horda')+bt('v18:mira','Ligar/desligar mira assistida'))+
       sec('1.7.1 · Celular e Noite Zero',bt('v16:hudEd','Editar controles do celular')+bt('v16:hudReset','Controles no lugar padrão')+bt('v16:run','Ligar/desligar corrida (celular)')+bt('v16:mpSolo','Testar a Noite Zero sozinho')+bt('v16:mpNext','Pular etapa da Noite Zero')+bt('v16:mpWave','Chamar horda (Noite Zero)')+bt('v16:mpBoss','Chamar chefão (Noite Zero)'))+
@@ -11805,7 +11815,7 @@ UI.loja=function(tab){
   if(this.lojaTab==='c'){
     body=LOJA.map((gr,gi)=>`<h3>${gr.g}</h3>`+gr.it.map((e,ei)=>{const k=gi+':'+ei;let n,sub='',dis=g<e.p,ico='',why='';
       if(e.id){n=ITEMS[e.id].n+(e.q>1?' ×'+e.q:'');ico=iconHTML(e.id);sub=`você tem ${invCount(e.id)}`;}
-      else if(e.w!=null){const w=WEAPONS[e.w];n=w.n;ico='<span class="lw">'+w.n.split(' ')[0].slice(0,4).toUpperCase()+'</span>';sub=w.ammo?'usa '+ITEMS[w.ammo].n.toLowerCase():'';if(P.owned[e.w]){dis=true;why='já tem';}}
+      else if(e.w!=null){const w=WEAPONS[e.w];n=w.n;ico='<span class="lw">'+w.n.split(' ')[0].slice(0,4).toUpperCase()+'</span>';sub=w.ammo?'usa '+ITEMS[w.ammo].n.toLowerCase():'';if(P.owned[e.w]||noBau(e.w)){dis=true;why=P.owned[e.w]?'já tem':'está no baú';}}
       else if(e.faca){n='Faca nova';ico='<span class="lw">FACA</span>';sub=P.owned[0]&&P.dur>0?`a sua aguenta ${P.dur} golpes`:'você está sem faca';if(P.owned[0]&&P.dur>=30){dis=true;why='já está boa';}}
       else if(e.maleta){n='Maleta maior (+1 coluna)';ico='<span class="lw">+1</span>';sub=`hoje: ${G.mw||8}×${G.mh||6}`;if((G.mw||8)>=11){dis=true;why='no máximo';}}
       return row(ico,n,sub,`<button class="btn mini${dis?'':' primary'}" data-a="loja-c" data-k="${k}" ${dis?'disabled':''}>${why||brl(e.p)}</button>`);}).join('')).join('');
@@ -11818,13 +11828,15 @@ UI.loja=function(tab){
     <div class="seg"><button data-a="loja-tab" data-k="c" class="${this.lojaTab==='c'?'on':''}">Comprar</button><button data-a="loja-tab" data-k="v" class="${this.lojaTab==='v'?'on':''}">Vender</button></div>
     <div class="lista">${body}</div></div>`,'','loja');
 };
+// arma guardada no baú conta como sua (antes dava pra comprar outra e ficava uma cópia presa no baú)
+const noBau=w=>(G.box||[]).some(b=>b&&b.id==='_w'&&b.w===w);
 function lojaComprar(k){
   const [gi,ei]=String(k).split(':').map(Number),e=LOJA[gi]&&LOJA[gi].it[ei]; if(!e)return;
   if(grana()<e.p){AU.locked();return toast('Dinheiro não dá.');}
   if(e.id){const l=invAdd(e.id,e.q);
     if(l){if(MP.on||l===e.q){if(e.q-l>0)invRemove(e.id,e.q-l);AU.locked();return toast('Não cabe na maleta. Organize ou venda algo.');}
       boxAdd(e.id,l);toast('Não coube tudo na maleta: o resto foi pro baú.');}}
-  else if(e.w!=null){if(P.owned[e.w])return;const s=WSZ[e.w];if(s&&!mCanAdd(s[0],s[1])){AU.locked();return toast('Não cabe na maleta. Organize, venda algo ou compre a maleta maior.');}
+  else if(e.w!=null){if(P.owned[e.w]||noBau(e.w))return;const s=WSZ[e.w];if(s&&!mCanAdd(s[0],s[1])){AU.locked();return toast('Não cabe na maleta. Organize, venda algo ou compre a maleta maior.');}
     P.owned[e.w]=true;P.mags[e.w]=WEAPONS[e.w].mag;mSync();}
   else if(e.faca){P.owned[0]=true;P.dur=Math.max(P.dur||0,30);mSync();}
   else if(e.maleta){if((G.mw||8)>=11)return;G.mw=(G.mw||8)+1;}
@@ -12096,7 +12108,7 @@ let MIRA=true; try{MIRA=localStorage.getItem('ps-mira')!=='0';}catch(e){}
   st.parentNode.parentNode.insertBefore(d,st.parentNode);}catch(e){}};}
 {const op=UI.opts.bind(UI); UI.opts=function(from){op(from);try{if(!IN.touch)return;const box=OV.querySelector('.opts');if(!box)return;
   const d=document.createElement('div');d.className='opt';d.innerHTML=`<h3>Mira assistida</h3><div class="seg"><button data-a="mira" data-k="1" class="${MIRA?'on':''}">Ligada</button><button data-a="mira" data-k="0" class="${MIRA?'':'on'}">Desligada</button></div>`;box.appendChild(d);}catch(e){}};}
-{const ib=UI.itensBody; UI.itensBody=function(){return ib.call(this).replace('<span>Condição</span>',`<span>Condição · <b style="color:#8ac06a">${brl(grana())}</b></span>`);};}
+{const ib=UI.itensBody; UI.itensBody=function(){return ib.call(this).replace(/(<div class="status[^"]*">[\s\S]*?<\/div>)/,`$1<p class="hint" style="margin:4px 0 0">Dinheiro: <b style="color:#8ac06a">${brl(grana())}</b></p>`);};}
 function hordaSolo(){
   const c=contaGet()||{nome:'Sobrevivente',apelido:'eu',cor:'#d9a33c',fav:'richard'};
   mpLeave(); MP.role='host'; MP.myId='0'; MP.players={}; MP.peers={}; MP.me={nome:c.nome,apelido:c.apelido,cor:c.cor,frase:c.frase||'',char:c.fav||'richard'}; MP.modo='horda';
@@ -12485,6 +12497,1659 @@ function mpBoomFx(x,y,r){
 {const as=mpApplySnap; mpApplySnap=function(m){const r=as.apply(this,arguments);
   if(m&&m.p)for(const id of Object.keys(MP.remote))if(!(id in m.p)&&id!==MP.myId){delete MP.remote[id];if(MP.says)delete MP.says[id];}
   return r;};}
+// ===================== 1.9 · base compartilhada pelos módulos novos =====================
+// Menu de teste: cada módulo registra a sua seção sem mexer no 16-debug.js:
+//   dbgExtra('1.9 · Título', [['chave:acao','Rótulo do botão'], ...], (acao)=>{ ... })
+// A seção aparece no topo da aba "Novidades" e o clique chama a função com a chave.
+const DBG_EXTRA=[], DBG_EXTRA_FN={};
+function dbgExtra(titulo,botoes,fn){DBG_EXTRA.unshift({t:titulo,b:botoes});for(const [k] of botoes)DBG_EXTRA_FN[k]=fn;}
+{const da=UI.dbgAct.bind(UI); UI.dbgAct=function(k,ds){const fn=DBG_EXTRA_FN[k];if(fn){try{return fn.call(this,k,ds);}catch(e){console.error(e);toast('Erro: '+e.message);return;}}return da(k,ds);};}
+
+// corrida do celular não fica ligada de uma partida pra outra
+{const ng=newGame; newGame=function(){if(typeof TOUCH!=='undefined')TOUCH.runOn=false;return ng.apply(this,arguments);};}
+// ===================== 1.9 · NOTA FINAL · NOVO JOGO+ · PESADELO · ROUPAS · PRÊMIOS =====================
+// Tudo que passa de uma partida para outra fica no localStorage:
+//   'ps-jogomais' {clears, best:{diff:nota}, unl:{pesadelo,faca,muni,lant}, prem:{faca,muni,lant}, carry:{...}}
+//   'ps-roupas'   {sel:{personagem:id}, comp:['personagem:id']}   (roupas compradas no Mascate)
+//   'ps-jm-mortes' {runId:n}   (mortes da partida; o registro carregado não apaga a conta)
+
+// ---------- dificuldade Pesadelo e a fita de tinta ----------
+DIFFS.pesadelo={n:'Pesadelo',ehp:1.55,dmg:1.9,loot:.5,phd:1.6,d:'Quase nada no chão, mordida que arranca pedaço, e salvar gasta fita de tinta. O homem de sobretudo chega cedo.'};
+ITEMS.fita={n:'Fita de tinta',s:'FITA',c:'#2c2a30',st:9,k:'key',d:'Fita para a máquina de escrever. No Pesadelo, cada registro gasta uma.'};
+const jmPes=()=>G.diff==='pesadelo';
+
+// ---------- armazenamento ----------
+function jmGet(){try{const d=JSON.parse(localStorage.getItem('ps-jogomais')||'null');return d&&typeof d==='object'?d:{};}catch(e){return {};}}
+function jmSet(d){try{localStorage.setItem('ps-jogomais',JSON.stringify(d));}catch(e){}}
+function jmHash(s){s=String(s);let h=7;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h);}
+
+// ---------- mortes da partida (só no jogo solo) ----------
+function jmMortes(){let n=G.flags.mortes|0;try{const m=JSON.parse(localStorage.getItem('ps-jm-mortes')||'{}');if(G.flags.runId&&m[G.flags.runId]!=null)n=Math.max(n,m[G.flags.runId]|0);}catch(e){}return n;}
+{const di=die; die=function(){const was=G.mode;const r=di.apply(this,arguments);
+  if(was!=='dead'&&G.mode==='dead'&&!MP.on&&!G.flags.mpMode&&!(typeof FB!=='undefined'&&FB.on)){
+    G.flags.mortes=jmMortes()+1;
+    try{const m=JSON.parse(localStorage.getItem('ps-jm-mortes')||'{}');if(G.flags.runId){m[G.flags.runId]=G.flags.mortes;const ks=Object.keys(m);if(ks.length>8)delete m[ks[0]];localStorage.setItem('ps-jm-mortes',JSON.stringify(m));}}catch(e){}}
+  return r;};}
+
+// ---------- a nota ----------
+const NOTAS_ORD=['D','C','B','A','S'];
+// s: {t: segundos, mortes, saves, salvos, diff}
+function jmNota(s){
+  const m=(s.t||0)/60, rows=[];
+  rows.push(['Ponto de partida','',40]);
+  rows.push(['Tempo',fmtTime(s.t||0),m<=45?25:m<=60?20:m<=80?12:m<=110?5:0]);
+  rows.push(['Mortes',String(s.mortes|0),Math.max(0,15-5*(s.mortes|0))]);
+  rows.push(['Registros salvos',String(s.saves|0),(s.saves|0)<=4?10:(s.saves|0)<=8?6:(s.saves|0)<=14?3:0]);
+  rows.push(['Sobreviventes salvos',String(s.salvos|0),Math.min(10,(s.salvos|0)*2)]);
+  rows.push(['Dificuldade',DIFFS[s.diff]?DIFFS[s.diff].n:'Normal',{facil:-10,normal:0,dificil:8,pesadelo:15}[s.diff]||0]);
+  const pts=rows.reduce((n,r)=>n+r[2],0);
+  let nota=pts>=95?'S':pts>=80?'A':pts>=65?'B':pts>=50?'C':'D';
+  if(s.diff==='facil'&&nota==='S')nota='A';
+  return {nota,pts,rows};
+}
+function jmStats(){return {t:G.time,mortes:jmMortes(),saves:G.saves,salvos:(G.st&&G.st.saved)|0,diff:G.diff};}
+const notaMelhor=(a,b)=>NOTAS_ORD.indexOf(a)>=NOTAS_ORD.indexOf(b)?a:b;
+function jmTemS(d,difs){d=d||jmGet();return Object.keys(d.best||{}).some(k=>d.best[k]==='S'&&(!difs||difs.includes(k)));}
+
+// prêmios da nota S (só valem no Novo Jogo+)
+const PREMIOS=[
+  {k:'faca',n:'Faca infinita',d:'A faca nunca quebra.',req:'Nota S em qualquer dificuldade.',ok:d=>jmTemS(d)},
+  {k:'lant',n:'Lanterna infinita',d:'A pilha nunca acaba.',req:'Nota S no Normal ou acima.',ok:d=>jmTemS(d,['normal','dificil','pesadelo'])},
+  {k:'muni',n:'Munição infinita',d:'O pente nunca esvazia.',req:'Nota S no Difícil ou no Pesadelo.',ok:d=>jmTemS(d,['dificil','pesadelo'])},
+];
+function premOn(k){if(!G.flags||!G.flags.jogomais||MP.on)return false;const d=jmGet();const p=PREMIOS.find(p=>p.k===k);return !!(p&&p.ok(d)&&d.prem&&d.prem[k]);}
+
+// fim de partida: grava a nota, o que passa pro Jogo+ e o que foi liberado; devolve a lista de novidades
+function jmFinish(res){
+  const d=jmGet(), antes={pes:!!(d.unl&&d.unl.pesadelo),prem:PREMIOS.filter(p=>p.ok(d)).map(p=>p.k),roupas:roupasLivres(d)};
+  d.clears=(d.clears|0)+1; d.best=d.best||{}; d.best[G.diff]=d.best[G.diff]?notaMelhor(res.nota,d.best[G.diff]):res.nota;
+  d.unl=d.unl||{}; d.unl.pesadelo=true;
+  d.carry={owned:P.owned.slice(),mags:P.mags.slice(),up:JSON.parse(JSON.stringify(G.flags.up||{})),grana:grana(),mw:G.mw||8,mh:G.mh||6,dur:P.dur|0,ng:(G.flags.jogomais|0)};
+  jmSet(d);
+  const nov=[];
+  if(!antes.pes)nov.push('Novo Jogo+','Dificuldade Pesadelo');
+  for(const p of PREMIOS)if(p.ok(d)&&!antes.prem.includes(p.k))nov.push('Prêmio: '+p.n);
+  for(const r of roupasLivres(d))if(!antes.roupas.includes(r))nov.push('Roupa: '+roupaNome(r));
+  return [...new Set(nov)];
+}
+
+// ---------- tela final ----------
+{const uw=UI.win.bind(UI); UI.win=function(){
+  uw();
+  if(MP.on||G.flags.mpMode)return;
+  try{
+    const res=jmNota(jmStats());
+    if(res.nota==='S'&&G.diff!=='facil')ach('rankS');
+    if(G.diff==='pesadelo')ach('pesadelo');
+    if(G.flags.jogomais)ach('jogomais');
+    if(!G.flags.jmDone){G.flags.jmDone=true;this.jmNov=jmFinish(res);}
+    const box=OV.querySelector('.win'); if(!box)return;
+    const rk=box.querySelector('.rank'); if(rk){rk.textContent=res.nota;rk.classList.add('jm-n'+res.nota);}
+    const ht=box.querySelector('.hint');
+    const tab=`<div class="jmnota"><h3>Como saiu a nota <b>${res.pts} pontos</b></h3><dl>${res.rows.map(r=>`<dt>${esc(r[0])}${r[1]?` <small>${esc(r[1])}</small>`:''}</dt><dd class="${r[2]<0?'neg':''}">${r[2]>=0?'+':''}${r[2]}</dd>`).join('')}</dl>
+      <p class="hint">S a partir de 95 · A 80 · B 65 · C 50. No Fácil a nota máxima é A.</p>
+      ${(this.jmNov||[]).length?`<p class="jmnov">Liberado: ${this.jmNov.map(esc).join(' · ')}</p>`:''}</div>`;
+    if(ht)ht.outerHTML=tab; else box.querySelector('.stats').insertAdjacentHTML('afterend',tab);
+    const st=box.querySelector('.stats'); if(st&&!st.querySelector('.jm-m'))st.insertAdjacentHTML('beforeend',`<dt class="jm-m">Mortes</dt><dd>${jmMortes()}</dd><dt>Sobreviventes salvos</dt><dd>${(G.st&&G.st.saved)|0}</dd>`);
+    const row=box.querySelector('.row');
+    if(row&&G.flags.jogomais){const b=document.createElement('button');b.className='btn';b.dataset.a='jm-epi';b.textContent='Epílogo do Jogo+';row.insertBefore(b,row.firstChild);
+      const pr=row.querySelector('[data-a=restart]');if(pr)pr.removeAttribute('data-focus');b.dataset.focus='';try{b.focus();}catch(e){}}
+  }catch(e){console.error(e);}
+};}
+UI.jmEpi=function(){
+  const F=G.flags,n=F.jogomais|0;
+  this.open(`<div class="paper intro jmepi"><p class="stamp">Defesa Civil · arquivo complementar · ${n>1?'reabertura nº '+n:'reaberto'}</p>
+    <p>Quarenta e oito horas depois. A equipe que desceu no Porto de Itajaí achou o laboratório da Vértice lacrado por dentro e os computadores apagados à mão, um por um.</p>
+    <p>No canal, o navio continua parado. O contêiner 00 está aberto e vazio, com a porta amassada de dentro para fora. Ninguém sabe dizer quando ele saiu.</p>
+    <p>Na última página do relatório alguém grampeou uma foto tirada em Navegantes, do outro lado do rio: um rapaz de mochila sentado no meio-fio, ${F.soniaMet?'a Sonia do lado dele, as duas mãos no braço dele':'sozinho, olhando a fumaça que ainda sobe do porto'}.</p>
+    <p>Embaixo, a caneta: "Ele já fez esse caminho antes. Não é a primeira vez que essa noite acontece."</p>
+    <div class="row"><button class="btn dark" data-a="jm-epiback" data-focus>Voltar</button></div></div>`,'','jmepi');
+};
+
+// ---------- Novo Jogo+ ----------
+function jmAplicar(){
+  const d=jmGet(),c=d.carry; if(!c)return false;
+  G.flags.jogomais=(c.ng|0)+1;
+  if(Array.isArray(c.owned))c.owned.forEach((v,i)=>{if(v&&i<P.owned.length)P.owned[i]=true;});
+  if(Array.isArray(c.mags))c.mags.forEach((v,i)=>{if(i<P.mags.length&&P.owned[i])P.mags[i]=Math.max(P.mags[i]|0,v|0);});
+  P.owned[8]=true; if(P.owned[0])P.dur=Math.max(P.dur|0,c.dur|0,20);
+  G.flags.up=JSON.parse(JSON.stringify(c.up||{}));
+  G.flags.grana=c.grana|0; G.mw=Math.max(G.mw||8,c.mw|0||8); G.mh=Math.max(G.mh||6,c.mh|0||6);
+  if(typeof mSync==='function')try{mSync();}catch(e){}
+  return true;
+}
+const jmPode=()=>!!jmGet().carry;
+
+// inimigos mais fortes e mais rápidos; alguns tipos do fim aparecem cedo
+{const me=makeEnemy; makeEnemy=function(type,x,y,uid,dorm){
+  const on=G.flags&&G.flags.jogomais&&!MP.on;
+  if(on&&!uid&&type==='zumbi'&&Math.random()<.14)type=rpick(['corr','cusp','soldado','cusp','brut']);
+  const e=me.call(this,type,x,y,uid,dorm);
+  if(on){const n=Math.min(3,G.flags.jogomais|0),big=!!(e.t.boss||type==='boss'||e.stalker);
+    const k=big?1.3+.15*n:1.15+.1*n; e.hp*=k; e.max=e.hp; e.spdMul*=big?1.04+.02*n:1.08+.03*n; e.t=Object.assign({},e.t,{dmg:e.t.dmg*(1.08+.04*n)}); e.jm=1;}
+  return e;};}
+
+// ---------- Pesadelo: menos coisa no chão, fitas raras, salvar gasta fita, Perseguidor cedo ----------
+{const sl=scaleLoot; scaleLoot=function(){sl();
+  if(!jmPes())return;
+  pickups=pickups.filter(p=>!(p.kind==='item'&&ITEMS[p.id]&&ITEMS[p.id].k==='heal'&&jmHash(p.uid)%4===0));
+  for(const p of pickups)if(p.kind==='item'&&ITEMS[p.id]&&(ITEMS[p.id].k==='ammo'||ITEMS[p.id].k==='heal'||ITEMS[p.id].k==='craft')&&jmHash('f'+p.uid)%17===0){p.id='fita';p.q=1;}
+};}
+{const ng=newGame; newGame=function(diff){const r=ng.apply(this,arguments);
+  G.flags.runId=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  if(diff==='pesadelo')invAdd('fita',2);
+  return r;};}
+{const us=UI.save.bind(UI); UI.save=function(){us();try{if(!jmPes())return;const p=OV.querySelector('.sheet>p:not(.kick)');const n=invCount('fita');
+  if(p)p.insertAdjacentHTML('afterend',`<p class="hint jmfita">Pesadelo: cada registro gasta uma fita de tinta. Você tem <b>${n}</b>.</p>`);
+  if(!n){const b=OV.querySelector('[data-a=dosave]');if(b){b.disabled=true;b.textContent='Sem fita de tinta';}}}catch(e){}};}
+// o Perseguidor: no Pesadelo ele liga quando o jipe pega (ou aos 25 min) e caça também em Balneário
+{const da=dAt; let persCedo=false; dAt=function(){const r=da.apply(this,arguments);return persCedo&&r>=4?3:r;};
+ const up=updPers; updPers=function(dt){
+  if(jmPes()&&!MP.on){const F=G.flags; if(!F.persOn&&(F.jipe||G.time>25*60)){F.persOn=true;G.persT=Math.min(G.persT,20);}
+    persCedo=true; try{return up.call(this,dt);}finally{persCedo=false;}}
+  return up.call(this,dt);};}
+
+// ---------- Mascate: fita no Pesadelo, roupas sempre ----------
+function lojaSync(){
+  for(let i=LOJA.length-1;i>=0;i--)if(LOJA[i].jm)LOJA.splice(i,1);
+  if(jmPes())LOJA.push({g:'Pesadelo',jm:1,it:[{id:'fita',q:1,p:350}]});
+  const rs=[]; const own=roupasComp();
+  for(const ch in ROUPAS)for(const r of ROUPAS[ch].l)if(r.p&&!own.includes(ch+':'+r.id))rs.push({roupa:ch+':'+r.id,p:r.p});
+  if(rs.length)LOJA.push({g:'Roupas',jm:1,it:rs});
+}
+{const ul=UI.loja; UI.loja=function(tab){lojaSync();ul.call(this,tab);
+  try{LOJA.forEach((g,gi)=>g.it.forEach((e,ei)=>{if(!e.roupa)return;const b=OV.querySelector(`[data-a=loja-c][data-k="${gi}:${ei}"]`);const row=b&&b.closest('.lrow');if(!row)return;
+    const [ch]=e.roupa.split(':');row.querySelector('.lico').innerHTML='<span class="lw">ROUPA</span>';row.querySelector('.ln').innerHTML=`<b>${esc(roupaNome(e.roupa))}</b><small>para ${esc(ROUPAS[ch].n)} · troque na tela Roupas</small>`;}));}catch(e){}};}
+{const lc=lojaComprar; lojaComprar=function(k){
+  const [gi,ei]=String(k).split(':').map(Number),e=LOJA[gi]&&LOJA[gi].it[ei];
+  if(e&&e.roupa){if(grana()<e.p){AU.locked();return toast('Dinheiro não dá.');}
+    const R=roupasGet();R.comp=[...new Set([...(R.comp||[]),e.roupa])];roupasSet(R);granaAdd(-e.p);AU.pickup();UI.lojaFala='Fica bem em você. Troca lá na tela de Roupas.';toast('Roupa comprada: '+roupaNome(e.roupa)+'.');return;}
+  return lc.apply(this,arguments);};}
+
+// ---------- roupas alternativas ----------
+const ROUPAS={
+  richard:{n:'Richard',base:{coat:'#1f2b4e',skin:'#d29d7c',hair:'#3a2415',pants:'#24262c'},l:[
+    {id:'base',n:'Jaqueta azul'},
+    {id:'capa',n:'Capa de chuva amarela',coat:'#c9a23a',pants:'#2a2c30',ach:'fuga'},
+    {id:'couro',n:'Jaqueta de couro',coat:'#3b2a1e',pants:'#18181a',nota:true},
+    {id:'dc',n:'Colete da Defesa Civil',coat:'#d0662a',pants:'#2c3038',p:2500}]},
+  edu:{n:'Edu',base:{coat:'#18191c',pants:'#2a2c34'},l:[
+    {id:'base',n:'Moletom preto'},
+    {id:'xadrez',n:'Camisa xadrez',coat:'#7a2c28',ach:'heroi'},
+    {id:'cinza',n:'Moletom cinza',coat:'#77756f',pants:'#23252a',p:1500}]},
+  matheus:{n:'Matheus',base:{coat:'#e8e6e0',pants:'#1c2230'},l:[
+    {id:'base',n:'Camiseta branca'},
+    {id:'vento',n:'Corta-vento azul',coat:'#2c4c7c',ach:'flash'},
+    {id:'verde',n:'Camisa verde do time',coat:'#2d6a3c',pants:'#1a1c20',nota:true}]},
+  marlon:{n:'Marlon',base:{coat:'#1c1e21'},l:[
+    {id:'base',n:'Camiseta preta'},
+    {id:'regata',n:'Regata branca',coat:'#d8d4ca',ach:'trio'},
+    {id:'oleado',n:'Capa de pescador',coat:'#c8b028',p:1500}]},
+  nicolas:{n:'Nicolas',base:{coat:'#d6c93a'},l:[
+    {id:'base',n:'Camiseta amarela'},
+    {id:'lycra',n:'Lycra de surf preta',coat:'#16181c',ach:'univali'},
+    {id:'jeans',n:'Jaqueta jeans',coat:'#3c5a80',p:1500}]},
+};
+function roupasGet(){try{const r=JSON.parse(localStorage.getItem('ps-roupas')||'null');return r&&typeof r==='object'?r:{};}catch(e){return {};}}
+function roupasSet(r){try{localStorage.setItem('ps-roupas',JSON.stringify(r));}catch(e){}}
+function roupasComp(){return roupasGet().comp||[];}
+function roupaNome(k){const [ch,id]=k.split(':');const r=ROUPAS[ch]&&ROUPAS[ch].l.find(x=>x.id===id);return r?r.n:k;}
+function roupaLivre(ch,r,d){if(r.id==='base')return true;if(r.ach)return ACHS.has(r.ach);if(r.nota)return jmTemS(d);if(r.p)return roupasComp().includes(ch+':'+r.id);return false;}
+function roupasLivres(d){d=d||jmGet();const out=[];for(const ch in ROUPAS)for(const r of ROUPAS[ch].l)if(r.id!=='base'&&roupaLivre(ch,r,d))out.push(ch+':'+r.id);return out;}
+function roupaReq(ch,r){if(r.ach){const a=ACH.find(a=>a.id===r.ach);return 'Conquista: '+(a?a.n:r.ach);}if(r.nota)return 'Escape com nota S';if(r.p)return 'À venda no Mascate · '+brl(r.p);return '';}
+// a roupa escolhida (null = a de sempre)
+function roupaDe(ch){const R=roupasGet(),id=R.sel&&R.sel[ch];if(!id||id==='base'||!ROUPAS[ch])return null;const r=ROUPAS[ch].l.find(x=>x.id===id);return r&&roupaLivre(ch,r)?r:null;}
+function roupaSel(ch,id){const R=roupasGet();R.sel=R.sel||{};R.sel[ch]=id;roupasSet(R);}
+
+// desenho: Richard, o Matheus do flashback, a turma que te segue e os dois do porto
+{const dp=drawPlayer; drawPlayer=function(){
+  if(MP.on)return dp.apply(this,arguments);
+  const fb=typeof FB!=='undefined'&&FB.on, r=fb?roupaDe('matheus'):(!P.lookO?roupaDe('richard'):null);
+  if(!r)return dp.apply(this,arguments);
+  const o=P.lookO; P.lookO=Object.assign({},o||Object.assign({richard:true},ROUPAS.richard.base),r.coat?{coat:r.coat}:{},r.pants?{pants:r.pants}:{});
+  try{return dp.apply(this,arguments);}finally{P.lookO=o;}};}
+{const dc=drawComps; drawComps=function(){
+  if(MP.on)return dc.apply(this,arguments);
+  const back=[];
+  const vest=(o,ch)=>{const r=roupaDe(ch);if(!r)return;back.push([o,o.col,o.pants]);if(r.coat)o.col=r.coat;if(r.pants&&'pants' in o)o.pants=r.pants;};
+  for(const c of (G.comps||[]))vest(c,c.id);
+  if(typeof ALLY!=='undefined')for(const a of ALLY.list)vest(a,a.id==='nico'?'nicolas':a.id);
+  try{return dc.apply(this,arguments);}finally{for(const [o,c,p] of back){o.col=c;if(p!==undefined)o.pants=p;}}};}
+
+function roupaPrev(cv,ch,r){try{
+  const c2=cv.getContext('2d'),sv=ctx; c2.clearRect(0,0,cv.width,cv.height);
+  const B=ROUPAS[ch].base,L=ch==='richard'?{richard:true}:(typeof LOOKS!=='undefined'&&LOOKS[ch])||{};
+  const o=Object.assign({},L,B,{coat:r.coat||B.coat,pants:r.pants||B.pants||'#22242a'});
+  if(ch==='marlon'||ch==='nicolas'){const l=LOOK12[ch==='nicolas'?'nico':'marlon'];o.skin=l.skin;o.hair=l.hair;o.look=l.look;}
+  ctx=c2; ctx.save(); ctx.translate(cv.width/2,cv.height/2+2); ctx.scale(2.8,2.8);
+  try{drawHuman(0,0,-Math.PI/2,Object.assign(o,{walk:0,moving:false,legAng:-Math.PI/2,wid:null}));}finally{ctx.restore();ctx=sv;}
+}catch(e){}}
+UI.roupas=function(from){
+  if(from)this.roupasFrom=from;
+  const d=jmGet(),R=roupasGet();
+  const sec=Object.keys(ROUPAS).map(ch=>{const C=ROUPAS[ch],cur=(R.sel&&R.sel[ch])||'base';
+    return `<section class="rpch"><h3>${esc(C.n)}</h3><div class="rplist">${C.l.map(r=>{const ok=roupaLivre(ch,r,d),on=ok&&(cur===r.id||(r.id==='base'&&!roupaDe(ch)));
+      return `<button class="rp${on?' on':''}${ok?'':' trava'}" data-a="rp-sel" data-c="${ch}" data-k="${r.id}" aria-pressed="${on}"><canvas width="64" height="64" data-rp="${ch}:${r.id}"></canvas><b>${esc(r.n)}</b><small>${on?'vestindo':ok?'liberada':esc(roupaReq(ch,r))}</small></button>`;}).join('')}</div></section>`;}).join('');
+  this.open(`<div class="sheet wide roupas"><div class="tabs"><p class="kick">${roupasLivres(d).length} de ${Object.values(ROUPAS).reduce((n,c)=>n+c.l.length-1,0)} liberadas</p><h2 style="margin-right:auto">Roupas</h2><button class="btn ghost" data-a="rp-back">Voltar</button></div>
+    <p class="hint">A roupa escolhida vale no jogo solo e fica salva neste aparelho. As do Mascate você compra com o dinheiro da partida.</p>${sec}</div>`,'','roupas');
+  try{OV.querySelectorAll('canvas[data-rp]').forEach(cv=>{const [ch,id]=cv.dataset.rp.split(':');roupaPrev(cv,ch,ROUPAS[ch].l.find(x=>x.id===id));});}catch(e){}
+};
+
+// ---------- título, pausa, dificuldade ----------
+{const tt=UI.title.bind(UI); UI.title=function(){tt();try{const m=OV.querySelector('.menu');if(!m)return;const nw=m.querySelector('[data-a=new]');
+  if(jmPode()){const b=document.createElement('button');b.className='btn';b.dataset.a='jm-new';b.textContent='Novo Jogo+';m.insertBefore(b,nw?nw.nextSibling:null);}
+  const r=document.createElement('button');r.className='btn';r.dataset.a='roupas';r.dataset.from='title';r.textContent='Roupas';const ac=m.querySelector('[data-a=achs]');m.insertBefore(r,ac?ac.nextSibling:null);}catch(e){}};}
+{const pz=UI.pause.bind(UI); UI.pause=function(){const res=pz.apply(this,arguments);try{if(UI.cur==='pause'&&!MP.on){const m=OV.querySelector('.menu');if(m&&!m.querySelector('[data-a=roupas]')){const b=document.createElement('button');b.className='btn';b.dataset.a='roupas';b.dataset.from='pause';b.textContent='Roupas';const q=m.querySelector('[data-a=achs]');m.insertBefore(b,q?q.nextSibling:null);}}}catch(e){}return res;};}
+{const ud=UI.diff.bind(UI); UI.diff=function(){ud();try{
+  const d=jmGet(),box=OV.querySelector('.diffs'); if(!box)return;
+  if(d.unl&&d.unl.pesadelo&&!box.querySelector('[data-d=pesadelo]'))box.insertAdjacentHTML('beforeend',`<button class="card jmpes" data-a="diff" data-d="pesadelo"><b>${DIFFS.pesadelo.n}</b><span>${DIFFS.pesadelo.d}</span></button>`);
+  if(this.jmPend){const k=OV.querySelector('.kick');if(k)k.textContent='Novo Jogo+ · '+((d.carry&&d.carry.ng|0)+1)+'ª volta';
+    const c=d.carry||{},arm=(c.owned||[]).filter((v,i)=>v&&i!==8&&WEAPONS[i]).length;
+    const prem=PREMIOS.map(p=>{const ok=p.ok(d),on=ok&&d.prem&&d.prem[p.k];return `<button class="dbgt${on?' on':''}" data-a="jm-prem" data-k="${p.k}" ${ok?'':'disabled'} aria-pressed="${!!on}">${esc(p.n)}<span>${ok?(on?'ligado':'desligado'):esc(p.req)}</span></button>`;}).join('');
+    box.insertAdjacentHTML('afterend',`<div class="jmcarry"><p class="hint">Você leva ${arm} arma${arm===1?'':'s'}, a munição nos pentes, as melhorias, ${brl(c.grana|0)} e a maleta ${c.mw||8}×${c.mh||6}. Os infectados voltam mais fortes e mais rápidos, e alguns dos piores aparecem cedo.</p><h3>Prêmios da nota S</h3><div class="dbg-list">${prem}</div></div>`);}
+}catch(e){}};}
+{const act=UI.act.bind(UI); UI.act=function(a,ds){
+  switch(a){
+    case 'new':this.jmPend=false;break;
+    case 'jm-new':if(!jmPode())return this.title();this.jmPend=true;return this.diff();
+    case 'jm-prem':{const d=jmGet();d.prem=d.prem||{};d.prem[ds.k]=!d.prem[ds.k];jmSet(d);return this.diff();}
+    case 'diff':if(this.jmPend){this.jmPend=false;newGame(ds.d);jmAplicar();return this.intro();}break;
+    case 'title':this.jmPend=false;break;
+    case 'dosave':if(jmPes()&&!MP.on){
+      if(invCount('fita')<=0){AU.locked();this.close();return toast('Sem fita de tinta. A máquina não escreve nada.');}
+      invRemove('fita',1);const s0=G.saves;const r=act(a,ds);if(G.saves===s0)invAdd('fita',1);else toast('Gastou uma fita de tinta. Sobraram '+invCount('fita')+'.');return r;}
+      break;
+    case 'jm-epi':return this.jmEpi();
+    case 'jm-epiback':return this.win();
+    case 'roupas':return this.roupas(ds.from||'title');
+    case 'rp-sel':{const ch=ds.c,r=ROUPAS[ch]&&ROUPAS[ch].l.find(x=>x.id===ds.k);if(!r)return;if(!roupaLivre(ch,r)){AU.locked();toast(roupaReq(ch,r)+'.');return;}roupaSel(ch,r.id);AU.pickup&&AU.pickup();return this.roupas();}
+    case 'rp-back':if(this.roupasFrom==='pause'){G.mode='play';return this.pause();}return this.title();
+  }
+  return act(a,ds);};}
+
+// ---------- prêmios ligados: valem a cada quadro ----------
+{const up=update; update=function(dt){const r=up.apply(this,arguments);
+  if(G.mode==='play'&&G.flags&&G.flags.jogomais&&!MP.on){
+    if(premOn('faca')&&P.owned[0])P.dur=Math.max(P.dur|0,30);
+    if(premOn('lant'))P.bat=100;
+    if(premOn('muni')){const w=WEAPONS[P.w];if(w&&w.mag&&P.w!==8&&P.w!==0)P.mags[P.w]=w.mag;}
+  }
+  return r;};}
+
+// ---------- conquistas novas ----------
+ACH.push({id:'pesadelo',n:'Acordado',d:'Escape no Pesadelo.'},{id:'jogomais',n:'De novo, não',d:'Termine um Novo Jogo+.'});
+
+// ---------- visual ----------
+(function(){try{const s=document.createElement('style');s.textContent=`
+  .jmnota{margin:10px 0 4px;border-top:1px dashed var(--line);padding-top:8px}.jmnota h3{display:flex;justify-content:space-between;margin:0 0 6px}.jmnota h3 b{color:var(--amber)}
+  .jmnota dl{display:grid;grid-template-columns:1fr auto;gap:2px 12px;margin:0}.jmnota dt small{opacity:.65}.jmnota dd{margin:0;text-align:right;font-weight:700;color:#8ac06a}.jmnota dd.neg{color:#d0604a}
+  .jmnov{color:var(--amber);font-weight:700;margin:6px 0 0}.rank.jm-nS{color:#e0b84a}.rank.jm-nD{color:#a05048}
+  .card.jmpes{border-color:#7a2a24}.card.jmpes b{color:#d0604a}.jmcarry{margin-top:10px}.jmcarry .dbg-list{display:flex;flex-wrap:wrap;gap:6px}.jmcarry .dbgt[disabled]{opacity:.5}
+  .roupas .rpch{margin:8px 0}.roupas h3{margin:6px 0}.rplist{display:flex;flex-wrap:wrap;gap:8px}
+  .rp{display:flex;flex-direction:column;align-items:center;gap:2px;width:132px;padding:6px;border:1px solid var(--line);background:rgba(0,0,0,.18);color:inherit;font:inherit;cursor:pointer;text-align:center}
+  .rp canvas{width:64px;height:64px}.rp b{font-size:13px}.rp small{font-size:11px;opacity:.75}.rp.on{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}.rp.trava canvas{filter:grayscale(1) brightness(.35)}.rp.trava{opacity:.75}
+  .jmepi p:not(.stamp){line-height:1.5}
+  @media (max-width:700px),(max-height:450px){.rp{width:104px}.rp canvas{width:48px;height:48px}}`;document.head.appendChild(s);}catch(e){}})();
+
+// ---------- menu de teste ----------
+dbgExtra('1.9 · Jogo+ e nota',[['jm:nota','Tela final com nota (dados falsos)'],['jm:tudo','Liberar tudo (Jogo+, Pesadelo, prêmios, roupas)'],['jm:ngp','Começar Novo Jogo+ agora'],['jm:pes','Mudar esta partida para Pesadelo'],['jm:roupa','Trocar as roupas de todos'],['jm:pf','Prêmio: faca infinita'],['jm:pl','Prêmio: lanterna infinita'],['jm:pm','Prêmio: munição infinita'],['jm:zera','Apagar Jogo+ e roupas']],function(k){
+  const d=jmGet();
+  switch(k){
+    case 'jm:nota':G.time=rr(38,95)*60;G.saves=ri(2,12);G.flags.mortes=ri(0,4);G.st.saved=ri(0,6);G.flags.jmDone=false;this.close();G.mode='win';return this.win();
+    case 'jm:tudo':{d.clears=Math.max(1,d.clears|0);d.best={facil:'A',normal:'S',dificil:'S',pesadelo:'S'};d.unl={pesadelo:true};
+      if(!d.carry)d.carry={owned:P.owned.slice(),mags:P.mags.slice(),up:JSON.parse(JSON.stringify(G.flags.up||{})),grana:Math.max(grana(),3000),mw:G.mw||8,mh:G.mh||6,dur:30,ng:0};
+      jmSet(d);for(const a of ['fuga','heroi','flash','trio','univali'])ach(a);const R=roupasGet();R.comp=[];for(const ch in ROUPAS)for(const r of ROUPAS[ch].l)if(r.p)R.comp.push(ch+':'+r.id);roupasSet(R);this.close();return toast('Tudo liberado.');}
+    case 'jm:ngp':{if(!d.carry){d.carry={owned:P.owned.slice(),mags:P.mags.slice(),up:G.flags.up||{},grana:grana(),mw:G.mw||8,mh:G.mh||6,dur:P.dur|0,ng:0};jmSet(d);}
+      newGame(G.diff||'normal');jmAplicar();G.flags.tutDone=true;G.tut=null;this.close();G.mode='play';document.getElementById('tc').hidden=!IN.touch;return toast('Novo Jogo+ ('+G.flags.jogomais+'ª volta).');}
+    case 'jm:pes':G.diff='pesadelo';G.D=DIFFS.pesadelo;invAdd('fita',2);this.close();return toast('Agora é Pesadelo. Ganhou 2 fitas de tinta.');
+    case 'jm:roupa':{const R=roupasGet();R.sel=R.sel||{};for(const ch in ROUPAS){const l=ROUPAS[ch].l,i=l.findIndex(x=>x.id===(R.sel[ch]||'base'));R.sel[ch]=l[(i+1)%l.length].id;}roupasSet(R);this.close();
+      return toast(Object.keys(ROUPAS).map(ch=>ROUPAS[ch].n+': '+(roupaDe(ch)?roupaDe(ch).n:'padrão')).join(' · '));}
+    case 'jm:pf':case 'jm:pl':case 'jm:pm':{const p={'jm:pf':'faca','jm:pl':'lant','jm:pm':'muni'}[k];d.prem=d.prem||{};d.prem[p]=!d.prem[p];jmSet(d);if(!G.flags.jogomais)G.flags.jogomais=1;
+      const P2=PREMIOS.find(x=>x.k===p);this.close();return toast(P2.n+(d.prem[p]?' ligado':' desligado')+(P2.ok(d)?'':' (ainda trancado: '+P2.req+')')+'.');}
+    case 'jm:zera':try{localStorage.removeItem('ps-jogomais');localStorage.removeItem('ps-roupas');}catch(e){}this.close();return toast('Jogo+ e roupas apagados.');
+  }
+});
+// ===================== 1.9: CAPÍTULO EXTRA · SONIA EM NAVEGANTES =====================
+// A mesma noite, do outro lado do rio. A Sonia está na casa da tia, em Navegantes, sem arma nenhuma:
+// só dá pra fugir, se esconder e jogar garrafa. O Balseiro (o homem do ferry-boat, de capa amarela)
+// anda atrás dela a noite inteira.
+// O bairro fica em linhas novas abaixo do mapa (HZO..HT-1). Durante a geração do mundo essas linhas
+// ficam vazias (BORDER) e o bairro só é desenhado quando o capítulo começa, com RNG próprio:
+// o mundo principal continua idêntico. Joga-se pelo título ("Capítulos extras"); não salva nada.
+
+// ---------- registro compartilhado dos capítulos extras (o do Rese usa o mesmo) ----------
+globalThis.CAPS=globalThis.CAPS||[];
+if(!UI.caps){
+  UI.caps=function(){
+    const L=globalThis.CAPS||[];
+    this.open(`<div class="sheet narrow"><p class="kick">Capítulos extras</p><h2>Outras noites</h2>
+      <p class="lede">Histórias de quem estava no litoral antes do Richard chegar. Não mexem no seu registro.</p>
+      <div class="diffs">${L.map((c,i)=>`<button class="card" data-a="cap" data-k="${c.id}" ${i===0?'data-focus':''}><b>${c.n}</b><span>${c.d}</span></button>`).join('')}</div>
+      <div class="row"><button class="btn ghost" data-a="title">Voltar</button></div></div>`,'','caps');
+  };
+}
+if(!globalThis.CAPS_UI){
+  globalThis.CAPS_UI=true;
+  {const tt=UI.title.bind(UI); UI.title=function(){tt();try{const m=OV.querySelector('.menu');if(!m||m.querySelector('[data-a=caps]'))return;
+    const b=document.createElement('button');b.className='btn';b.dataset.a='caps';b.textContent='Capítulos extras';
+    const ref=m.querySelector('[data-a=controls]');m.insertBefore(b,ref||null);}catch(e){}};}
+  {const ua=UI.act.bind(UI); UI.act=function(a,ds){
+    if(a==='caps')return this.caps();
+    if(a==='cap'){const c=(globalThis.CAPS||[]).find(c=>c.id===(ds&&ds.k));if(c){this.close();try{c.start();}catch(e){console.error(e);this.title();}}return;}
+    return ua(a,ds);};}
+  {const ub=UI.back.bind(UI); UI.back=function(){if(this.cur==='caps')return this.title();return ub();};}
+}
+
+// ---------- o bairro: linhas novas abaixo do mapa ----------
+const NY=HZO;                                   // primeira linha de Navegantes
+const NAV_D={name:'Navegantes · Rua das Gaivotas',short:'Navegantes',mx:90,y0:NY,y1:HT-1,cap:0,count:0,spawn:{zumbi:1},loot:{garrafa:1}};
+(function(){const gw=genWorld;genWorld=function(){const i=DISTRICTS.indexOf(NAV_D);if(i>=0)DISTRICTS.splice(i,1);try{gw();}finally{DISTRICTS.push(NAV_D);}};})();
+DISTRICTS.push(NAV_D);
+// no mundo principal as linhas novas são parede (nada é sorteado aqui: o RNG do mundo não muda)
+(function(){const g=genV12;genV12=function(){g();for(let y=NY;y<HT;y++)for(let x=0;x<W;x++){const k=idx(x,y);map[k]=T.BORDER;under[k]=T.BORDER;bmap[k]=-1;safeMask[k]=0;meta[k]=0;}};})();
+
+const SN={on:false,st:0};
+const SNN=['sonia','rafa','nvRadio','balseiro'];
+const SNST=['radio','sinal','esconder','garrafas','avenida','predio','cristo','ferry','fuga','fim'];
+const snT=(x,y)=>({x:tc(x),y:tc(y)});
+// lugares (tiles); y relativo a NY
+const SNP={quarto:[20,6],radio:[10,4],cozinhaG:[13,4],porta:[11,11],bar:[56,7],barG:[[52,5],[59,5],[61,8]],sinal:[108,25],caixa:[109,22],
+  bHome:[100,44],casaTia:[14,14],praca:[108,28],bloq:[121,45],passou:[126,45],predioPorta:[134,42],predioDentro:[134,36],janela:[139,37],
+  terminal:[161,51],cabo:[164,59],cabine:[170,50],rampa:[160,56],trapiche:[61,59],heli:[91,69],cristo:[172,71],lab:[118,67]};
+const snP=(k)=>{const p=SNP[k];return [p[0],NY+p[1]];};
+const snA=(k)=>{const p=SNP[k];return snT(p[0],NY+p[1]);};
+
+ETYPES.balseiro={n:'O Balseiro',hp:99999,spd:84,dmg:26,r:16,col:'#b8962a',skin:'#8f9682',sight:340};
+PCH.nvRadio={name:'Rádio da Defesa Civil',skin:'#c8a888',shade:'#90705a',hair:'#3a3a3a',iris:'#2a2a2a',bg:['#1a1a1a','#050505'],glow:'200,200,200',voice:140};
+PCH.balseiro={name:'O Balseiro',skin:'#8f9682',shade:'#5a6050',hair:'#2a2a24',iris:'#e8e0c0',bg:['#2a2410','#080602'],glow:'220,180,60',voice:70};
+LOOKS.sonia={coat:'#6a3a52',skin:'#e8bfa2',hair:'#2a1810',pants:'#23242a',look:'sonia'};
+LOOKX.sonia=function(o){ctx.fillStyle=o.hair;ctx.beginPath();ctx.ellipse(-1.8,0,6.4,6.6,0,0,6.283);ctx.fill();
+  ctx.beginPath();ctx.ellipse(-8.5,0,4.6,2.6,0,0,6.283);ctx.fill();ctx.beginPath();ctx.ellipse(-12,.5,3,1.8,.2,0,6.283);ctx.fill();
+  ctx.fillStyle=o.skin;ctx.beginPath();ctx.arc(2.4,0,3.9,-1.15,1.15);ctx.fill();};
+Object.assign(INT_LABEL,{snRadio:'Rádio de pilha da tia',snJanela:'Olhar pela janela',snCabo:'Soltar o cabo da balsa'});
+if(typeof ACH!=='undefined')ACH.push({id:'capSonia',n:'Do outro lado do rio',d:'Termine o capítulo extra da Sonia em Navegantes.'});
+
+function snRect(x,y,w,h,t){rect(x,NY+y,w,h,t);}
+function snHouse(x,y,w,h,side,o={}){const b=building(x,NY+y,w,h,{floor:o.floor??T.WOOD,roof:o.roof||pick(ROOFS),doors:[[side,o.off,o.wd||2]],name:o.name||'',kind:o.kind||'casa'});
+  b.lit=false; b.noZ=true; if(!o.empty)furnish(b,.25,[1,2,3,12,14]); if(o.locker)autoLocker(b); return b;}
+
+function genNav(){
+  const old=rnd; rnd=mulberry32(19011);
+  for(let y=NY;y<HT;y++)for(let x=0;x<W;x++){const k=idx(x,y);map[k]=T.GRASS;under[k]=T.GRASS;meta[k]=0;bmap[k]=-1;safeMask[k]=0;mark[k]=0;rdir[k]=0;reach[k]=0;explored[k]=0;tvar[k]=R();}
+  for(let x=0;x<W;x++){setT(x,NY,T.BORDER);setT(x,HT-1,T.BORDER);}
+  for(let y=NY;y<HT;y++){setT(0,y,T.BORDER);for(let x=184;x<W;x++)setT(x,y,x===184?T.FOREST:T.BORDER);}
+  snRect(1,1,183,2,T.FOREST);
+  // ruas
+  hroad(2,118,NY+12); snRect(2,11,117,1,T.SIDE); snRect(2,16,117,1,T.SIDE);
+  vroad(34,NY+16,NY+43); vroad(96,NY+16,NY+43);
+  hroad(2,182,NY+44); snRect(2,43,181,1,T.SIDE); snRect(2,48,181,1,T.SIDE);
+  // beira-rio, rio e a outra margem (Itajaí)
+  snRect(1,49,183,4,T.CONC); snRect(1,53,183,1,T.SAND); snRect(1,54,183,10,T.WATER); snRect(1,64,183,16,T.CONC);
+  for(let x=1;x<184;x++)if((x*7)%11<3)setT(x,NY+53,T.ROCK);
+  snRect(60,53,3,8,T.PIER); for(const y of [55,58])for(const x of [60,62])prop(x,NY+y,7);
+  // tapume e prédios que fecham o lado leste: só se passa pela avenida
+  snRect(119,3,2,40,T.FENCE); snRect(119,49,2,4,T.FENCE);
+  // casas do lado norte da Rua das Gaivotas
+  const tia=snHouse(8,3,16,8,'S',{off:3,name:'Casa da tia Neusa',empty:true});
+  iwall(tia,16,NY+4,16,NY+9,[[NY+6,2]]);
+  for(const [x,y,m] of [[9,4,3],[11,4,9],[12,8,1],[13,8,1],[9,8,2],[21,4,1],[22,4,1],[21,9,14]])prop(x,NY+y,m);
+  addHide(22,NY+8,'armario');
+  SN.bTia=tia.id;
+  snHouse(26,3,10,8,'S',{locker:true}); snHouse(38,4,10,7,'S');
+  const bar=snHouse(50,3,14,8,'S',{off:5,name:'Bar do Gringo',empty:true,floor:T.TILEF});
+  for(let x=52;x<=61;x++)if(x!==56)prop(x,NY+6,13); prop(54,NY+9,2); prop(60,NY+9,2); SN.bBar=bar.id;
+  snHouse(66,3,10,8,'S',{locker:true}); snHouse(78,4,12,7,'S'); snHouse(102,3,9,8,'S'); snHouse(112,4,6,7,'S',{empty:true});
+  // lado sul: casas, mercadinho e a praça da caixa d'água
+  snHouse(4,19,12,8,'N',{locker:true}); snHouse(18,19,12,8,'N'); snHouse(4,31,12,9,'S'); snHouse(18,31,12,9,'S',{locker:true});
+  snHouse(40,19,14,8,'N'); snHouse(58,19,12,8,'N',{locker:true}); snHouse(74,19,18,9,'N');
+  snHouse(40,31,16,10,'S',{name:'Mercadinho Boa Maré',floor:T.TILEF}); snHouse(60,31,12,10,'S'); snHouse(76,32,16,9,'S',{locker:true});
+  snRect(100,17,18,24,T.GRASS); snRect(100,24,18,2,T.CONC); snRect(107,17,3,24,T.CONC);
+  for(const [x,y] of [[109,21],[110,21],[109,22],[110,22]])prop(x,NY+y,15);
+  for(const [x,y] of [[102,19],[115,19],[102,33],[115,36],[103,38]])setT(x,NY+y,T.TREE);
+  for(const [x,y] of [[104,27],[113,27],[104,22],[113,22]])prop(x,NY+y,17);
+  // leste: Edifício Maré Mansa, armazém da colônia e o terminal do ferry
+  const ed=building(126,NY+22,18,19,{floor:T.TILEF,roof:'#3a3c40',name:'Edifício Maré Mansa',doors:[['S',8,2]],kind:'predio'}); ed.lit=false; ed.noZ=true; SN.bPred=ed.id;
+  iwall(ed,127,NY+31,142,NY+31,[[134,2]]); iwall(ed,131,NY+23,131,NY+30,[[NY+27,2]]);
+  for(const [x,y,m] of [[127,23,3],[128,23,9],[140,23,1],[141,23,1],[137,29,2],[127,39,4],[142,39,4],[127,33,14],[141,33,12]])prop(x,NY+y,m);
+  snRect(134,41,2,2,T.SIDE); snRect(122,3,62,19,T.FOREST); snRect(121,22,4,21,T.FOREST); snRect(145,22,2,21,T.FOREST);
+  const arm=building(148,NY+24,20,17,{floor:T.CONC,roof:'#2e3236',name:'Armazém da Colônia de Pescadores',doors:[['S',9,3]],kind:'armazem'}); arm.lit=false; arm.noZ=true;
+  for(let x=151;x<=164;x+=4)for(let y=27;y<=36;y+=4)prop(x,NY+y,4);
+  snRect(168,22,16,21,T.FOREST); snRect(147,22,21,2,T.FOREST);
+  const term=building(152,NY+49,20,6,{floor:T.CONC,roof:'#4a4038',name:'Terminal do Ferry-Boat',doors:[['N',8,3],['S',8,2]],kind:'terminal'}); term.lit=false; term.noZ=true; SN.bTerm=term.id;
+  for(const x of [154,156,165,167])prop(x,NY+51,13);
+  addHide(170,NY+50,'armario').cabine=true;
+  snRect(159,55,4,2,T.PIER); snRect(154,57,14,6,T.PIER);
+  for(let x=153;x<=168;x++){if(x<159||x>162)setT(x,NY+56,T.FENCE);setT(x,NY+63,T.FENCE);} for(let y=56;y<=63;y++){setT(153,NY+y,T.FENCE);setT(168,NY+y,T.FENCE);}
+  for(const [x,y] of [[155,58],[166,58]])prop(x,NY+y,7);
+  // barricada na avenida: ônibus, carros e entulho, com uma fresta de dois tiles
+  for(let y=43;y<=48;y++)if(y!==45&&y!==46){setT(119,NY+y,T.FENCE);setT(120,NY+y,T.FENCE);}
+  for(const [x,y] of [[121,43],[122,43],[121,48],[118,48],[118,43],[121,44],[121,47]])prop(x,NY+y,4);
+  // carros e caçambas (esconderijos)
+  const cars0=cars.length;
+  for(const [x,y,h,b] of [[20,13,true,false],[44,14,true,false],[70,13,true,true],[88,14,true,false],[104,13,true,false],[35,26,false,false],[97,33,false,true],[30,45,true,false],[64,46,true,true],[86,45,true,false],[140,46,true,false],[176,45,true,true]])addCar(x,NY+y,h,b);
+  for(const c of cars.slice(cars0))if(!c.burn){const it={tx:c.x,ty:c.y,x:(c.x+c.w/2)*TILE,y:(c.y+c.h/2)*TILE,type:'hide',kind:'carro'};interacts.push(it);}
+  for(const [x,y] of [[25,16],[48,16],[101,16],[116,18],[33,43],[94,48],[146,43],[150,48]])if(!SOLID[getT(x,NY+y)])addHide(x,NY+y,'cacamba');
+  // luzes: quase nada (a luz caiu); fogo dos carros, velas e o gerador do terminal
+  for(const [x,y,c,r] of [[10,4,'candle',70],[56,7,'candle',80],[109,25,'lamp',110],[161,51,'siren',90],[134,36,'candle',70],[160,59,'lamp',120],[61,58,'lamp',90]])lights.push({x:tc(x),y:tc(NY+y),r,c,f:1});
+  // a outra margem: Itajaí (porto, laboratório, heliponto)
+  for(let x=4;x<180;x+=9)lights.push({x:tc(x),y:tc(NY+66),r:90,c:x%2?'flood':'lamp',f:0});
+  lights.push({x:tc(SNP.lab[0]),y:tc(NY+SNP.lab[1]),r:140,c:'flood',f:1});
+  // restos
+  for(const [x,y,r] of [[46,13,1.2],[66,45,.4],[124,45,2.6],[126,46,1.9],[90,50,.2],[150,45,4]])GORE.push({k:'corpse',x:tc(x),y:tc(NY+y),rot:r,type:'zumbi',col:'#3a3e3a',skin:'#a89880',r:11});
+  for(const [x,y] of [[46,14],[124,46],[125,45],[110,26],[160,52],[57,9]])GORE.push({k:'blood',x:tc(x),y:tc(NY+y),r:24,rot:0,seed:.4});
+  graf(60,NY+15,'NÃO SAIA DE CASA',{rot:-.05}); graf(162,NY+47,'TRAVESSIA SUSPENSA',{rot:0,c:'#d8d4c8'}); graf(126,NY+42,'TEM GENTE NO 4º',{rot:.04});
+  graf(108,NY+30,'ELE VOLTOU DO RIO',{rot:-.08});
+  // itens: garrafas e pilha
+  addPick(SNP.cozinhaG[0],NY+SNP.cozinhaG[1],'garrafa',1); for(const [x,y] of SNP.barG)addPick(x,NY+y,'garrafa',1);
+  addPick(43,NY+36,'garrafa',1); addPick(63,NY+36,'pilha',1); addPick(158,NY+31,'garrafa',2); addPick(140,NY+25,'ervaV',1); addPick(26,NY+23,'ervaV',1);
+  // árvores no canteiro da avenida e nos quintais
+  for(let x=4;x<118;x+=7)if(getT(x,NY+17)===T.GRASS)setT(x,NY+17,T.TREE);
+  rnd=old;
+  // alcance a partir do quarto
+  const q=[],s=idx(SNP.quarto[0],NY+SNP.quarto[1]); reach[s]=1; q.push(s);
+  while(q.length){const k=q.pop(),x=k%W,y=(k/W)|0;for(const [dx,dy] of DIRS4){const nx=x+dx,ny=y+dy;if(!inb(nx,ny))continue;const nk=idx(nx,ny);if(reach[nk])continue;if(SOLID[map[nk]])continue;reach[nk]=1;q.push(nk);}}
+  if(typeof STATIC!=='undefined'&&STATIC&&STATIC.trees){for(let y=NY;y<HT;y++)for(let x=0;x<W;x++){const k=idx(x,y);if(map[k]===T.TREE)STATIC.trees.push(k);}}
+  staticMapImg=null; if(typeof clearChunks==='function')clearChunks(); MAPV++; flowTile=-1;
+}
+
+// ---------- utilidades ----------
+function snCut(steps,end){playCut([{npc:P,id:'sonia'},...steps],end);}
+function snSay(m,t,o){bark('sonia',m,t,o||{});}
+function snThink(t,dur){bark('sonia','s',t,{dur:dur||Math.max(2.6,t.length*.05+1.4)});}
+function snRich(m,t,dur){bark('rafa',m,t,{radio:true,dur:dur||Math.max(3,t.length*.055+1.6)});}
+function snZ(type,tx,ty,o){const [x,y]=freeTileNear(tx|0,ty|0,true);const e=makeEnemy(type,tc(x),tc(y),null);e.sn=1;if(o&&o.col)e.col=o.col;if(o&&o.feed){e.state='feed';e.feedA=rr(0,6.28);}
+  if(o&&o.dorm)e.state='dorm'; if(o&&o.chase){e.state='chase';e.lx=P.x;e.ly=P.y;} enemies.push(e);return e;}
+function snGo(tx,ty){if(P.inCar)exitCar(true);if(P.hidden)exitHide();const [x,y]=freeTileNear(tx|0,ty|0,true);P.x=tc(x);P.y=tc(y);snapCamera();flowTile=-1;}
+function snBal(){return enemies.find(e=>e.alive&&e.type==='balseiro');}
+function snBalseiro(tx,ty,st){let b=snBal();const [x,y]=freeTileNear(tx|0,ty|0,true);
+  if(!b){b=makeEnemy('balseiro',tc(x),tc(y),null);b.sn=1;b.hunt=false;enemies.push(b);}else{b.x=tc(x);b.y=tc(y);}
+  b.state=st||'wander';b.lx=P.x;b.ly=P.y;b.lost=0;b.sawHide=false;b.stun=0;b.nx=P.x;b.ny=P.y;b.it=10;SN.bd=8;return b;}
+function snSend(b,x,y,t){if(!b)return;b.state='investigate';b.nx=x;b.ny=y;b.it=t||12;b.stk=0;if(typeof buildNoiseFlow==='function')buildNoiseFlow(x,y);}
+function snInt(type,tx,ty,m){const it=m!=null?addInteract(tx,ty,type,m):{tx,ty,x:tc(tx),y:tc(ty),type};if(m==null)interacts.push(it);if(m!=null&&typeof invalidateRect==='function')invalidateRect(tx,ty,1,1);return it;}
+function snUnInt(type){for(let i=interacts.length-1;i>=0;i--)if(interacts[i].type===type)interacts.splice(i,1);}
+function snLater(ms,fn){const t=SN.tok;later(ms,()=>{if(SN.on&&SN.tok===t)fn();});}
+function finishCutSn(){for(let k=0;k<160&&CUT.on;k++){if(CUT.choice)cutChoose(0);else cutSkip();}}
+
+// ---------- começo ----------
+function soniaStart(st){
+  if(typeof MP!=='undefined'&&MP.on)return;
+  newGame('normal');
+  for(const k of Object.keys(SN))if(k!=='bTia'&&k!=='bBar'&&k!=='bPred'&&k!=='bTerm')delete SN[k];
+  genNav();
+  Object.assign(SN,{tok:Math.random(),on:true,st:0,t:0,t0:G.time,deaths:0,scT:rr(22,32),bd:8,hidT:0,awayT:0,hold:0,fuga:null,heartT:0,vul:null,cp:SNP.quarto,radioOk:0,cristo:0,heli:0,ferry:0});
+  const F=G.flags; F.tutDone=true; G.tut=null; F.cap='sonia'; F.snCap=true;
+  G.mode='play'; G.clock=23*60+48; G.wx='chuva'; G.wxSight=1; enemies=[]; projs=[]; G.comps=[]; G.qte=null; G.struggle=null; P.grab=null; G.lastD=-1;
+  for(let i=0;i<P.owned.length;i++){P.owned[i]=false;P.mags[i]=0;} P.owned[8]=true; P.w=8; P.hp=P.max=100; P.bat=100; P.lamp=true; P.lookO=LOOKS.sonia; P.thr='garrafa';
+  G.inv=new Array(G.slots).fill(null); G.box=[]; invAdd('pilha',1); if(typeof BARK!=='undefined'&&BARK.q)BARK.q.length=0;
+  snGo(SNP.quarto[0],NY+SNP.quarto[1]); P.ang=Math.PI; markExplored&&markExplored();
+  // a rua ainda "calma": um vizinho deitado na calçada e um vulto lá longe
+  snZ('zumbi',46,NY+14,{dorm:true}); snZ('zumbi',84,NY+36);
+  // os que comem na barricada da avenida
+  for(const [x,y] of [[125,45],[126,46],[127,44],[128,46],[126,47]])snZ('zumbi',x,NY+y,{feed:true});
+  // o leste
+  for(const [x,y] of [[132,46],[146,46],[172,47]])snZ('zumbi',x,NY+y); for(const [x,y] of [[152,29],[163,35]])snZ('zumbi',x,NY+y,{dorm:true});
+  if(st)return snJump(st);
+  snCut([{fx:'blackout',v:2.2},{sfx:'creak',v:.4},
+    {say:'sonia',m:'s',t:'A luz caiu de novo. A TV apagou bem no meio do plantão.',dur:2.6},
+    {say:'sonia',m:'n',t:'A tia Neusa saiu pra ver o barco do tio no trapiche. Faz uma hora. O celular dela dá fora de área.',dur:3},
+    {sfx:'scream',v:.25},
+    {say:'sonia',m:'s',t:'Tia? ...Tia Neusa?'},
+    {say:'sonia',m:'n',t:'O rádio de pilha. Fica na cozinha, em cima da geladeira. Pelo menos ele não precisa de luz.',dur:2.8}],
+    ()=>{G.banner={t:'Navegantes · Rua das Gaivotas · 23h48 · a mesma noite',life:4.5};});
+}
+globalThis.CAPS.push({id:'sonia',n:'Capítulo da Sonia',d:'Navegantes, 23h48. Do outro lado do rio, sem arma nenhuma. Só correr, se esconder e não fazer barulho.',start:()=>soniaStart()});
+
+// ---------- objetivos ----------
+function snObjective(){
+  const s=SN.st, A=snA;
+  if(s===0)return {t:'(Sonia) Ache o rádio de pilha da tia, na cozinha',at:A('radio')};
+  if(s===1)return {t:'(Sonia) O celular não pega dentro de casa. Procure sinal perto da caixa d\'água da praça',at:A('sinal')};
+  if(s===2)return {t:'(Sonia) Tem alguém vindo. Esconda-se: carro, caçamba ou armário',at:null};
+  if(s===3){const n=invCount('garrafa');return {t:`(Sonia) A avenida tá cheia deles. Pegue garrafas no Bar do Gringo (${Math.min(n,2)}/2)`,at:n>=2?null:A('bar')};}
+  if(s===4)return {t:'(Sonia) Passe pela fresta da barricada. Jogue uma garrafa por cima do tapume, pra beira do rio (G)',at:A('bloq')};
+  if(s===5)return {t:'(Sonia) CORRE! Para o Edifício Maré Mansa!',at:A('predioPorta')};
+  if(s===6)return {t:'(Sonia) Olhe pela janela do apartamento',at:A('janela')};
+  if(s===7)return {t:'(Sonia) Saia do prédio sem ser vista e chegue ao terminal do ferry-boat',at:A('terminal')};
+  if(s===8){if(SN.fuga==='balsa')return {t:'(Sonia) Solte o cabo da balsa',at:A('cabo')};
+    if(P.hidden&&P.hidden.cabine)return {t:`(Sonia) Não respira. Espere o dia clarear: ${Math.max(0,Math.ceil(SN.hold))} s`,at:null};
+    return {t:`(Sonia) Esconda-se na cabine do bilheteiro e espere o dia (${Math.max(0,Math.ceil(SN.hold))} s)`,at:A('cabine')};}
+  return {t:'(Sonia) ...',at:null};
+}
+
+// ---------- o capítulo, passo a passo ----------
+function snTick(dt){
+  if(!SN.on||G.mode!=='play')return;
+  if(P.owned[0]||P.w!==8){for(let i=0;i<8;i++)P.owned[i]=false;P.w=8;}
+  if(CUT.on)return;
+  SN.t+=dt; const s=SN.st, b=snBal(), near=(k,r)=>{const a=snA(k);return hyp(P.x-a.x,P.y-a.y)<r;};
+  if(s<5)G.clock=Math.min(G.clock,23*60+59); else if(s<8)G.clock=clamp(G.clock,3*60+10,4*60+40); else G.clock=Math.min(G.clock,5*60+10);
+  snScares(dt); snBalTick(b,dt);
+  if(s===0){/* o rádio é pelo interagir */}
+  else if(s===1){if(near('sinal',70))snLigacao();}
+  else if(s===2){
+    if(!b){snBalseiro(SNP.bHome[0],NY+SNP.bHome[1]);}
+    const bb=snBal(), d=bb?hyp(bb.x-P.x,bb.y-P.y):9999;
+    if(P.hidden&&d<760&&!bb.sawHide)SN.hidT+=dt; if(d>1100)SN.awayT+=dt; else SN.awayT=0;
+    if(P.hidden&&d<170&&!SN.closeB){SN.closeB=1;AU.breath&&AU.breath(1);G.shake+=2;snThink('Não respira. Não respira. Não respira.',2.2);}
+    if(SN.hidT>7||SN.awayT>4){SN.st=3;SN.cp=SNP.casaTia;snSend(bb,tc(SNP.casaTia[0]),tc(NY+SNP.casaTia[1]),20);
+      snLater(500,()=>{AU.drag&&AU.drag(.6);snThink('Ele foi... pro lado da casa da tia. Arrastando aquele gancho no asfalto.',3);});
+      snLater(4200,()=>snThink('Se a saída é por Itajaí, eu atravesso. O ferry fica no fim da avenida.',3));}}
+  else if(s===3){if(invCount('garrafa')>=2){SN.st=4;SN.cp=[96,44];snThink('Duas garrafas. A vovó dizia que barulho chama bicho. Hoje eu quero chamar.',3);}}
+  else if(s===4){if(P.x>tc(123)&&P.y>tc(NY+42)&&P.y<tc(NY+53))snPassou();}
+  else if(s===5){if(G.inB===SN.bPred)snPredio();}
+  else if(s===7){if(G.inB===SN.bTerm&&P.y>tc(NY+49))snTerminal();}
+  else if(s===8){
+    if(SN.fuga==='cabine'){if(P.hidden&&P.hidden.cabine){SN.hold-=dt;
+        SN.srT=(SN.srT||3)-dt; if(SN.srT<=0&&b){SN.srT=rr(6,9);const c=snA('cabine');snSend(b,c.x+rr(-90,40),c.y+rr(-20,40),8);AU.drag&&AU.drag(.5);}
+        if(b&&hyp(b.x-P.x,b.y-P.y)<90&&!SN.closeC){SN.closeC=1;AU.breath&&AU.breath(1);G.shake+=3;snThink('Ele tá do outro lado da porta. Eu ouço ele respirando pela fresta.',2.6);}
+        if(SN.hold<=0)snFinal('cabine');}}
+    if(P.hp<20)P.hp=20;
+  }
+}
+// o Balseiro: sem perseguir pelo mapa todo, mas sempre rondando por perto
+function snBalTick(b,dt){
+  if(!b)return; const d=hyp(b.x-P.x,b.y-P.y);
+  if(b.state==='chase'||b.state==='search'){b.c2=Math.max(b.c2,0);}
+  SN.bd-=dt;
+  if(SN.bd<=0&&b.state!=='chase'&&SN.st>=3&&SN.st!==6){
+    SN.bd=SN.st===8?rr(6,9):rr(9,15);
+    if(d>620){const a=Math.random()*6.283,r=rr(140,280);const [x,y]=freeTileNear(((P.x+Math.cos(a)*r)/TILE)|0,((P.y+Math.sin(a)*r)/TILE)|0,true);snSend(b,tc(x),tc(y),10);}
+  }
+  if(d>1900&&SN.st>=3&&b.state!=='chase'){const a=Math.random()*6.283;const [x,y]=freeTileNear(((P.x+Math.cos(a)*900)/TILE)|0,((P.y+Math.sin(a)*900)/TILE)|0,true);if(hyp(tc(x)-P.x,tc(y)-P.y)>700){b.x=tc(x);b.y=tc(y);}}
+  // passos pesados, coração
+  SN.stepT=(SN.stepT||0)-dt; if(d<560&&SN.stepT<=0){SN.stepT=b.state==='chase'?.42:.7;AU.thud&&AU.thud(clamp(.5-d/1300,.06,.4));if(Math.random()<.18&&AU.drag)AU.drag(clamp(.5-d/1300,.08,.4));}
+  SN.heartT-=dt; if(d<480&&SN.heartT<=0){SN.heartT=clamp(d/600,.38,.85);AU.heart(clamp(1.1-d/480,.25,1));}
+  G.fear=Math.max(G.fear||0,clamp(1-d/560,0,1)*(b.state==='chase'?1:.7));
+  if(b.state==='chase'&&!SN.saw){SN.saw=1;AU.roar();G.shake+=5;if(SN.st<5)snLater(300,()=>snThink(pick2(['Ele me viu. CORRE.','Não olha pra trás. Corre, Sonia!','A capa amarela. Ele tá vindo!']),1.8));}
+  if(b.state!=='chase')SN.saw=0;
+}
+function snLigacao(){
+  SN.st=2; SN.cp=SNP.praca;
+  snCut([{sfx:'blip',v:1},{say:'sonia',m:'n',t:'Duas barrinhas. Pega, pega, pega...',dur:1.8},
+    {sfx:'phone',v:1},{wait:.6},
+    {say:'sonia',m:'s',t:'Richard?! Graças a Deus... eu tô ligando faz uma hora. Tô na casa da minha tia, em Navegantes. Aqui ainda tá calmo.'},
+    {say:'rafa',m:'n',radio:true,t:'Tô na Dona Cida, na Avenida Brasil. Amor, tá todo mundo virando. Todo mundo.'},
+    {say:'sonia',m:'n',t:'Escuta: a TV diz que o Exército fechou tudo. Se tem saída, é por Itajaí, pelo porto. Eu vou ficar no telefone contigo enquanto der.'},
+    {say:'sonia',m:'h',t:'Se tu se perder, eu te ajudo. Tô com o mapa da cidade aberto aqui. Te amo. Volta pra mim.'},
+    {sfx:'static',v:.8},
+    {say:'sonia',m:'s',t:'Calmo. Eu disse que aqui tava calmo.',dur:2},
+    {fx:'shake',v:4},{sfx:'creak',v:1},
+    {do:()=>{const b=snBalseiro(SNP.bHome[0],NY+SNP.bHome[1]);snSend(b,P.x+rr(-60,60),P.y+rr(40,90),14);CUT.actors.balseiro=b;}},
+    {cam:'balseiro',t:1.6},
+    {say:'sonia',m:'s',t:'Uma capa amarela. É o seu Darci, do ferry. Ele arrasta o gancho de amarrar a balsa... e a cabeça dele tá torta pro lado.',dur:3.4},
+    {camFree:1},{say:'sonia',m:'s',t:'Esconde. Agora.',dur:1.4}],
+    ()=>{toast('Esconderijos: carro, caçamba ou armário (E). Lá dentro ele não te vê.');for(const [x,y] of [[78,14],[30,26]])snZ('zumbi',x,NY+y);});
+}
+function snRadio(o){
+  if(SN.radioOk)return toast('Só chiado. E a mesma gravação, de novo e de novo.');
+  SN.radioOk=1; AU.static(1,.8);
+  snCut([{sfx:'static',v:1},
+    {say:'nvRadio',m:'n',radio:true,t:'...Defesa Civil de Santa Catarina. Atenção, moradores do litoral: o Exército interditou a BR-101 e as pontes de Balneário Camboriú.'},
+    {say:'nvRadio',m:'t',radio:true,t:'Moradores de Navegantes: permaneçam em casa. A travessia do ferry-boat para Itajaí está suspensa por tempo indeterminado.'},
+    {say:'nvRadio',m:'s',radio:true,t:'Não abram a porta para pessoas feridas. Repetindo: não abram a porta para...'},
+    {sfx:'static',v:1},{say:'sonia',m:'s',t:'Para pessoas feridas? Que tipo de aviso é esse?'},
+    {sfx:'knock',v:1},{fx:'shake',v:4},
+    {say:'sonia',m:'s',t:'Bateram na porta. Três vezes. Devagar.',dur:2.2},
+    {wait:1.2},{sfx:'knock',v:1},
+    {say:'sonia',m:'s',t:'A tia tem a chave. A tia nunca bate.',dur:2.2},
+    {say:'sonia',m:'n',t:'O celular não pega aqui dentro. Na praça da caixa d\'água sempre tem sinal. E a garrafa do tio, em cima do balcão... leva.',dur:3.2}],
+    ()=>{SN.st=1;SN.cp=SNP.porta;
+      snLater(9000,()=>{if(SN.on&&SN.st<=2)snVulto(snA('porta').x+260,snA('porta').y+30);});});
+}
+function snPassou(){
+  SN.st=5; SN.cp=SNP.passou;
+  const b=snBalseiro(108,NY+45,'chase'); b.hunt=true; b.huntT=99;
+  AU.roar(); G.shake+=8; buzz([60,40,90]);
+  snLater(200,()=>{snThink('Passei... AI MEU DEUS, ELE TAVA ATRÁS DE MIM O TEMPO TODO!',2.2);});
+  snLater(2600,()=>{snThink('O prédio da esquina! A porta do Maré Mansa tá aberta!',2.2);});
+}
+function snPredio(){
+  SN.st=6; SN.cp=SNP.predioDentro; const b=snBal();
+  snCut([{fx:'slam'},{say:'sonia',m:'s',t:'Fecha, fecha, FECHA!'},
+    {do:()=>{if(b){b.hunt=false;b.state='wander';const [x,y]=freeTileNear(134,NY+46,true);b.x=tc(x);b.y=tc(y);}for(const e of enemies)if(e.alive&&e.sn&&e!==b&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<500)killEnemy(e);}},
+    {sfx:'knock',v:1},{fx:'shake',v:10},{sfx:'thud',v:1},
+    {say:'sonia',m:'s',t:'O gancho bateu na porta de vidro. Uma vez. Duas. E parou.',dur:2.4},
+    {say:'sonia',m:'s',t:'Quarto andar. Apartamento 41. A porta tava aberta. Tem um sofá e uma janela pro rio.',dur:2.8},
+    {fx:'blackout',v:3},
+    {do:()=>{G.clock=3*60+12;G.banner={t:'Edifício Maré Mansa · 4º andar · 03h12',life:4};snGo(SNP.predioDentro[0],NY+SNP.predioDentro[1]);P.ang=0;
+      if(b){const [x,y]=freeTileNear(160,NY+46,true);b.x=tc(x);b.y=tc(y);b.state='wander';}
+      snInt('snJanela',SNP.janela[0],NY+SNP.janela[1],24);}},
+    {say:'sonia',m:'s',t:'Três horas no escuro. A bateria do celular em dezenove por cento. Ninguém subiu a escada.',dur:3},
+    {say:'sonia',m:'n',t:'Lá fora, uma luz. Do lado de Balneário.',dur:2}]);
+}
+function snJanela(o){
+  if(SN.cristo)return toast('O Cristo continua aceso. E o porto de Itajaí, todo apagado, menos uma luz.');
+  SN.cristo=1; snUnInt('snJanela'); setT(o.tx,o.ty,T.TILEF); if(typeof invalidateRect==='function')invalidateRect(o.tx,o.ty,1,1);
+  const c=snA('cristo'), h=snA('heli');
+  snCut([{cam:{x:c.x-180,y:c.y-60},t:1.8},{do:()=>{AU.thud(.5);G.light=Math.max(G.light,.35);}},
+    {say:'sonia',m:'s',t:'O Cristo... o Cristo Luz acendeu. Lá em Balneário.'},
+    {sfx:'phone',v:1},
+    {say:'sonia',m:'h',t:'Richard?! O Cristo acendeu! Eu tô vendo daqui do prédio! Foi tu? ...Foi tu, né. Eu sabia.'},
+    {wait:.6},{sfx:'static',v:.8},{fx:'blackout',v:1.4},
+    {do:()=>{G.clock=Math.max(G.clock,4*60+5);G.banner={t:'04h05',life:2.4};}},
+    {cam:{x:h.x,y:h.y-200},t:1.6},
+    {say:'sonia',m:'h',t:'Tu tá em Itajaí? Eu tô do outro lado do rio, em Navegantes! Dá pra ver o porto daqui.'},
+    {say:'sonia',m:'n',t:'Tem uma luz piscando lá em cima, no heliponto. Vai pra lá. Eu te espero.'},
+    {sfx:'beep',v:1},{say:'sonia',m:'s',t:'Bateria fraca. Desligou. Não. Não, não, não.',dur:2.2},
+    {say:'sonia',m:'t',t:'Se ele vai pro heliponto, eu vou pro ferry. O mais perto que eu conseguir dele.',dur:2.8},
+    {camFree:1}],
+    ()=>{SN.st=7;SN.cp=SNP.predioDentro;const b=snBal()||snBalseiro(150,NY+46);snSend(b,tc(134.5),tc(NY+45),14);
+      for(const [x,y] of [[140,47],[156,46],[128,50]])snZ(Math.random()<.3?'corr':'zumbi',x,NY+y);
+      snLater(2500,()=>{AU.drag&&AU.drag(.7);snThink('Ele tá lá embaixo. Na frente da porta. Esperando.',2.4);});});
+}
+function snTerminal(){
+  SN.st=8; SN.cp=SNP.terminal; const h=snA('heli');
+  snCut([{say:'sonia',m:'s',t:'O terminal. Vazio. A balsa amarrada na rampa, balançando.',dur:2.4},
+    {sfx:'heli',v:1},{cam:{x:h.x,y:h.y-140},t:1.2},
+    {do:()=>{SN.heli=G.time;AU.heli();}},{wait:3},
+    {say:'sonia',m:'s',t:'Um helicóptero. Subindo do porto. No meio da fumaça.'},
+    {say:'sonia',m:'t',t:'Ele conseguiu. Eu sei que ele conseguiu. Eu sei.',dur:2.4},
+    {camFree:1},{sfx:'roar',v:1},{fx:'shake',v:8},
+    {say:'sonia',m:'s',t:'E o Balseiro ouviu também. Ele tá vindo pela avenida.',dur:2.2},
+    {choice:[
+      {t:'Soltar a balsa e deixar o rio levar',do:()=>{SN.fuga='balsa';snInt('snCabo',SNP.cabo[0],NY+SNP.cabo[1],7);}},
+      {t:'Se trancar na cabine e esperar o dia',do:()=>{SN.fuga='cabine';SN.hold=45;}}]}],
+    ()=>{const b=snBal()||snBalseiro(161,NY+42);const [x,y]=freeTileNear(161,NY+43,true);if(hyp(b.x-P.x,b.y-P.y)<400){b.x=tc(x);b.y=tc(y-4);}snSend(b,tc(161),tc(NY+50),12);SN.bd=8;
+      toast(SN.fuga==='balsa'?'O cabo fica no cais da balsa. Puxar faz barulho.':'A cabine do bilheteiro fica no canto do terminal. Entre e não saia.');});
+}
+function snCabo(o){
+  if(G.struggle)return;
+  startStruggle({label:'Soltando o cabo da balsa',need:100,pump:9,hold:14,noise:520,sfx:'creak',x:o.x,y:o.y,
+    quit:'A Sonia largou o cabo. Ainda tá preso.',
+    onDone:()=>{snUnInt('snCabo');snFinal('balsa');}});
+  const b=snBal(); if(b)snSend(b,o.x,o.y,10);
+}
+function snFinal(kind){
+  if(SN.st>=9)return; SN.st=9; G.struggle=null; const b=snBal();
+  if(P.hidden)exitHide();
+  const r=snA('rampa');
+  const steps=kind==='balsa'?[
+    {fx:'slam'},{do:()=>{SN.ferry=G.time;AU.creak(1);AU.splash&&AU.splash(1);if(b){b.state='wander';b.x=r.x;b.y=r.y-40;b.stun=99;}}},
+    {say:'sonia',m:'s',t:'Soltou! Soltou!'},
+    {sfx:'roar',v:1},{cam:r,t:1.2},
+    {say:'sonia',m:'s',t:'Ele chegou na rampa. Parou na beirada. Ficou olhando a balsa ir embora, com o gancho pendurado.',dur:3},
+    {say:'sonia',m:'t',t:'Eles não entram na água. O seu Darci nunca soube nadar.',dur:2.4},
+    {fx:'blackout',v:3},
+    {say:'sonia',m:'n',t:'A correnteza levou a balsa pro meio do rio. Do meio do rio, dá pra ver as duas margens.',dur:3},
+    {say:'sonia',m:'h',t:'Eu vi o helicóptero subir. E soube.',dur:2.4}]
+   :[{fx:'blackout',v:3},{do:()=>{G.clock=5*60+40;if(b){b.state='wander';b.stun=99;}}},
+    {say:'sonia',m:'s',t:'Quarenta e cinco minutos. Ou quatro horas. Ele arranhou a porta da cabine até parar.',dur:3},
+    {say:'sonia',m:'n',t:'Quando o céu ficou cinza, eu ouvi passos indo embora. Arrastando o gancho. Pro lado do rio.',dur:3},
+    {say:'sonia',m:'h',t:'Eu tinha visto o helicóptero subir. E soube.',dur:2.4}];
+  snCut(steps,()=>snEnd(true,kind));
+}
+function snEnd(won,kind){
+  const mins=Math.max(1,Math.round((G.time-(SN.t0||0))/60)), dt=SN.deaths||0;
+  SN.on=false; P.lookO=null; G.struggle=null; enemies=[]; projs=[]; if(G.flags)delete G.flags.cap;
+  if(won&&typeof ach==='function')ach('capSonia');
+  G.mode='title'; document.getElementById('tc').hidden=true;
+  if(!won)return UI.title();
+  const fim=kind==='balsa'?'A balsa desceu o rio no escuro, sem motor e sem ninguém no leme. A Sonia ficou na proa, olhando o porto de Itajaí sumir na fumaça.'
+    :'De manhã, a Sonia saiu da cabine do bilheteiro. O terminal estava vazio. Na rampa, só um gancho de ferro, largado no concreto.';
+  UI.open(`<div class="paper intro"><p class="stamp">Capítulo extra · concluído</p>
+    <p>${fim}</p>
+    <p>Do outro lado do rio, em Navegantes, a Sonia viu o helicóptero subir no meio da fumaça, e soube. O resto da história você já conhece. Ou vai conhecer.</p>
+    <p>Tempo: ${mins} min · Quedas: ${dt}</p>
+    <div class="row"><button class="btn primary" data-a="title" data-focus>Voltar ao título</button></div></div>`,'','capfim');
+}
+
+// ---------- sustos aleatórios ----------
+function snVulto(x,y){SN.vul={x,y,vx:rr(-1,1)<0?-340:340,t:1.1};AU.sting();}
+function snScares(dt){
+  if(SN.vul){const v=SN.vul;v.x+=v.vx*dt;v.t-=dt;if(v.t<=0)SN.vul=null;}
+  SN.scT-=dt; if(SN.scT>0||SN.st===6||SN.st>=9)return; SN.scT=rr(24,42);
+  const b=snBal(), bd=b?hyp(b.x-P.x,b.y-P.y):9999; if(bd<380)return;
+  const k=ri(0,8);
+  if(k===0){G.flick=.6;AU.static(.6,.4);snThink(pick2(['A lanterna piscou. Pilha da tia, comprada no camelô.','Não apaga. Por favor, não apaga agora.']));}
+  else if(k===1){AU.knock();snThink(pick2(['Batidas... de dentro daquela casa. Tem alguém trancado ali.','Alguém batendo numa janela. Devagar. Com a testa.']));}
+  else if(k===2){AU.scream(.35);snThink(pick2(['Um grito, lá pro lado da Meia Praia. E depois mais nada.','Era voz de criança. Não para, Sonia. Não para.']));}
+  else if(k===3){AU.shipHorn();snThink('O apito da balsa. Mas a balsa tá amarrada. Quem tá apitando?',2.6);}
+  else if(k===4){AU.phone(.4);toast('Chamada perdida: Tia Neusa');snThink('A tia. Ligou e desligou. Tia, onde tu tá?',2.4);}
+  else if(k===5){snVulto(P.x+rr(-60,60)+(Math.random()<.5?-220:220),P.y+rr(-180,-120));snThink('Passou alguém correndo ali na frente. Sem fazer barulho nenhum.',2.4);}
+  else if(k===6&&b){AU.drag&&AU.drag(.5);snThink(pick2(['Esse barulho de ferro arrastando... é ele. Tá longe. Eu acho.','O gancho no asfalto. Ele nunca para de andar.']));}
+  else if(k===7){const a=Math.random()*6.283;const e=snZ('rast',((P.x+Math.cos(a)*260)/TILE)|0,((P.y+Math.sin(a)*260)/TILE)|0,{dorm:true});if(e){e.state='chase';e.rising=.9;e.lx=P.x;e.ly=P.y;AU.groan(e,1);}snThink('O corpo da calçada... mexeu. Tá se arrastando pra cá!',2);}
+  else {AU.tn&&(AU.tn(520,380,.25,'sawtooth',.05),AU.tn(480,300,.3,'sawtooth',.04,.4),AU.tn(900,200,.4,'square',.03,1.2));snThink('O cachorro do vizinho latiu. E ganiu. E parou.',2.4);}
+}
+
+// ---------- desenho ----------
+function snDraw(){
+  if(!SN.on)return;
+  for(const it of interacts){
+    if(it.type==='snRadio'&&!SN.radioOk||it.type==='snRadio'){if(!inV(it.x,it.y,30))continue;ctx.fillStyle='#3a2a1e';ctx.fillRect(it.x-10,it.y-6,20,12);ctx.fillStyle='#c8b070';ctx.fillRect(it.x-7,it.y-3,7,6);ctx.fillStyle='#8a8a8a';ctx.fillRect(it.x+2,it.y-3,6,1.5);ctx.fillRect(it.x+2,it.y,6,1.5);
+      ctx.strokeStyle='#8a8a8a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(it.x+8,it.y-6);ctx.lineTo(it.x+14,it.y-16);ctx.stroke();}
+    if(it.type==='snJanela'){ctx.fillStyle=`rgba(120,150,190,${.35+Math.sin(G.time*2)*.1})`;ctx.fillRect(it.x-14,it.y+8,28,6);}
+    if(it.type==='snCabo'){ctx.strokeStyle='#a8946a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(it.x,it.y);ctx.quadraticCurveTo(it.x-40,it.y-30,it.x-60,it.y-92);ctx.stroke();
+      ctx.strokeStyle=`rgba(212,154,60,${.4+Math.sin(G.time*4)*.25})`;ctx.lineWidth=2;ctx.strokeRect(it.x-12,it.y-12,24,24);}
+  }
+  // a balsa (casco por baixo do convés)
+  const fx=tc(153)-16,fy=tc(NY+56)-16, off=0;
+  if(inV(fx+240,fy+120,400)){ctx.save();ctx.translate(off*.15,off);
+    ctx.strokeStyle='#d8d4c8';ctx.lineWidth=3;ctx.strokeRect(fx+4,fy+36,TILE*16-8,TILE*7-8);
+    ctx.fillStyle='rgba(30,40,46,.85)';ctx.fillRect(fx+TILE*13,fy+TILE*2,TILE*2,TILE*4);ctx.fillStyle='#c8b84a';ctx.fillRect(fx+TILE*13+4,fy+TILE*2+6,TILE*2-8,10);
+    ctx.fillStyle='#d8d4c8';ctx.font='700 13px sans-serif';ctx.textAlign='center';ctx.fillText('NAVEGANTES · ITAJAÍ',fx+TILE*7,fy+TILE*7+2);
+    ctx.restore();}
+  // a outra margem: cais de Itajaí, guindastes, prédios e o morro lá no fundo (Balneário)
+  const y0=tc(NY+64)-16;
+  if(cam.y+view.h/view.z>y0-40){
+    ctx.fillStyle='#07090c';ctx.fillRect(0,y0,W*TILE,(HT-NY-64)*TILE);
+    ctx.fillStyle='#1c1f22';ctx.fillRect(0,y0,W*TILE,10);
+    ctx.fillStyle='#0d1014';for(let x=4;x<182;x+=6){const X=tc(x),hh=50+((x*37)%110);ctx.fillRect(X,y0+70,TILE*4+((x*13)%40),hh);}
+    ctx.fillStyle='#0a0c10';ctx.beginPath();ctx.moveTo(tc(120),HT*TILE);ctx.quadraticCurveTo(tc(150),tc(NY+68),tc(172),tc(NY+70));ctx.quadraticCurveTo(tc(184),tc(NY+71),tc(190),HT*TILE);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#22262b';ctx.lineWidth=6;for(const x of [28,50,72,140]){const X=tc(x);ctx.beginPath();ctx.moveTo(X,y0+180);ctx.lineTo(X,y0+14);ctx.lineTo(X+170,y0+14);ctx.moveTo(X,y0+14);ctx.lineTo(X-60,y0+44);ctx.moveTo(X+120,y0+14);ctx.lineTo(X+120,y0+60);ctx.stroke();}
+    ctx.fillStyle='#16191d';ctx.fillRect(tc(88),tc(NY+68),TILE*6,TILE*3);ctx.strokeStyle='#3a3e44';ctx.lineWidth=2;ctx.beginPath();ctx.arc(tc(SNP.heli[0]),tc(NY+SNP.heli[1]),20,0,6.283);ctx.stroke();
+    ctx.fillStyle='#3a3e44';ctx.font='700 11px sans-serif';ctx.textAlign='center';ctx.fillText('H',tc(SNP.heli[0]),tc(NY+SNP.heli[1])+4);}
+  // o vulto
+  if(SN.vul){const v=SN.vul;ctx.globalAlpha=clamp(v.t*1.4,0,.85);drawHuman(v.x,v.y,v.vx>0?0:Math.PI,{coat:'#050506',skin:'#0a0a0a',hair:'#050505',pants:'#050505',walk:G.time*20,moving:true,legAng:v.vx>0?0:Math.PI});ctx.globalAlpha=1;}
+}
+function snGlow(){
+  if(!SN.on)return;
+  const blink=(G.time*1.6%1)<.25;
+  const h=snA('heli'), l=snA('lab'), c=snA('cristo');
+  if(inV(h.x,h.y,300)){const hy=SN.heli?h.y-Math.min(900,(G.time-SN.heli)*55):h.y;
+    if(blink||SN.heli){ctx.fillStyle='rgba(255,50,40,.9)';ctx.beginPath();ctx.arc(h.x,hy,SN.heli?4:5,0,6.283);ctx.fill();ctx.fillStyle='rgba(255,50,40,.2)';ctx.beginPath();ctx.arc(h.x,hy,22,0,6.283);ctx.fill();}
+    if(SN.heli){ctx.fillStyle='rgba(230,240,255,.12)';ctx.beginPath();ctx.moveTo(h.x-4,hy);ctx.lineTo(h.x-70,hy+260);ctx.lineTo(h.x+70,hy+260);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#0a0c0e';ctx.fillRect(h.x-14,hy-5,28,10);ctx.strokeStyle='rgba(180,190,200,.5)';ctx.lineWidth=1.5;const ra=G.time*30;ctx.beginPath();ctx.moveTo(h.x+Math.cos(ra)*24,hy+Math.sin(ra)*6);ctx.lineTo(h.x-Math.cos(ra)*24,hy-Math.sin(ra)*6);ctx.stroke();}}
+  if(inV(l.x,l.y,200)){ctx.fillStyle=`rgba(120,230,200,${.25+Math.sin(G.time*3)*.1})`;for(let i=0;i<5;i++)ctx.fillRect(l.x-60+i*26,l.y-20,8,5);}
+  if(SN.cristo&&inV(c.x,c.y,300)){const g=ctx.createRadialGradient(c.x,c.y,4,c.x,c.y,120);g.addColorStop(0,'rgba(255,240,200,.55)');g.addColorStop(1,'rgba(255,240,200,0)');ctx.fillStyle=g;ctx.fillRect(c.x-120,c.y-120,240,240);
+    ctx.fillStyle='rgba(255,248,225,.95)';ctx.beginPath();ctx.moveTo(c.x-2,c.y-20);ctx.lineTo(c.x+2,c.y-20);ctx.lineTo(c.x+5,c.y+12);ctx.lineTo(c.x-5,c.y+12);ctx.closePath();ctx.fill();ctx.fillRect(c.x-18,c.y-18,36,3);ctx.beginPath();ctx.arc(c.x,c.y-24,3.2,0,6.283);ctx.fill();ctx.fillStyle='rgba(255,248,225,.5)';ctx.fillRect(c.x-6,c.y+12,12,5);}
+  // luzes miúdas da cidade do outro lado
+  const y0=tc(NY+64); if(cam.y+view.h/view.z>y0-20){for(let x=8;x<180;x+=5){if(((x*13)%7)>2)continue;const X=tc(x),Y=y0+60+((x*29)%90);if(!inV(X,Y,20))continue;ctx.fillStyle=`rgba(255,200,130,${.35+((x*7+(G.time|0))%5===0?.3:0)})`;ctx.fillRect(X,Y,3,3);}}
+}
+function snDrawBalseiro(e){
+  const a=e.face, wk=e.anim*(e.state==='chase'?7:3)*1.5;
+  drawHuman(e.x,e.y,a,{coat:'#b8962a',skin:'#8f9682',hair:'#2a2a24',pants:'#232830',walk:wk,moving:true,zombie:true,attack:e.hitAnim>0,s:1.45,noHair:true});
+  ctx.save();ctx.translate(e.x,e.y);ctx.rotate(a);ctx.scale(1.45,1.45);
+  ctx.fillStyle='#8a6e1c';ctx.beginPath();ctx.arc(-.5,1.5,6.6,0,6.283);ctx.fill();ctx.fillStyle='#6a5414';ctx.beginPath();ctx.arc(-2,1.5,4.6,0,6.283);ctx.fill();
+  ctx.strokeStyle='#5a5e62';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(14,7);ctx.lineTo(28,9);ctx.arc(28,14,5,-1.57,1.2);ctx.stroke();
+  ctx.restore();
+  if(e.state==='chase'){ctx.fillStyle='rgba(232,224,192,.85)';const ex=e.x+Math.cos(a)*9,ey=e.y+Math.sin(a)*9;ctx.beginPath();ctx.arc(ex+Math.cos(a+1.57)*3,ey+Math.sin(a+1.57)*3,1.3,0,6.283);ctx.arc(ex-Math.cos(a+1.57)*3,ey-Math.sin(a+1.57)*3,1.3,0,6.283);ctx.fill();}
+}
+
+// ---------- pulos (menu de teste e testes) ----------
+function snJump(k){
+  const st=typeof k==='number'?k:SNST.indexOf(k); if(!SN.on)return soniaStart(st>0?st:null); if(CUT.on)finishCutSn();
+  if(st>=1){const r=interacts.find(o=>o.type==='snRadio');if(r)snRadio(r);finishCutSn();}
+  if(st>=2){snGo(SNP.sinal[0],NY+SNP.sinal[1]);snLigacao();finishCutSn();}
+  if(st>=3){SN.hidT=99;snTick(.016);finishCutSn();}
+  if(st>=4){invAdd('garrafa',2);snTick(.016);}
+  if(st>=5){snGo(SNP.passou[0],NY+SNP.passou[1]);for(const e of enemies)if(e.alive&&e.sn&&e.type!=='balseiro'&&hyp(e.x-P.x,e.y-P.y)<300)killEnemy(e);snTick(.016);}
+  if(st>=6){snGo(SNP.predioDentro[0],NY+SNP.predioDentro[1]);if(SN.st===5)snPredio();finishCutSn();}
+  if(st>=7){const j=interacts.find(o=>o.type==='snJanela');if(j)snJanela(j);finishCutSn();}
+  if(st>=8){snGo(SNP.terminal[0],NY+SNP.terminal[1]);if(SN.st===7)snTerminal();finishCutSn();}
+  if(st>=9){snFinal(SN.fuga||'balsa');finishCutSn();}
+  SN.tok=Math.random(); if(typeof BARK!=='undefined'&&BARK.q)BARK.q.length=0;
+  const b=snBal(); if(b&&st>=3&&st<9&&hyp(b.x-P.x,b.y-P.y)<500){const [x,y]=freeTileNear(((P.x/TILE)|0)-24,(P.y/TILE)|0,true);b.x=tc(x);b.y=tc(y);b.state='wander';b.hunt=false;}
+}
+
+// ---------- ganchos: durante o capítulo o resto do jogo fica quieto e não tem arma ----------
+(function(){
+  const off=fn=>typeof fn==='function'?function(){if(SN.on)return;return fn.apply(this,arguments);}:fn;
+  if(typeof syncComps==='function'){const sc=syncComps; syncComps=function(){if(SN.on){G.comps=[];return;}return sc.apply(this,arguments);};}
+  if(typeof updSpawner==='function'){const us=updSpawner; updSpawner=function(dt){if(SN.on){G.spawnT=4;return;}return us(dt);};}
+  if(typeof updEvents==='function')updEvents=off(updEvents); if(typeof updPlot==='function')updPlot=off(updPlot); if(typeof updTriggers==='function')updTriggers=off(updTriggers);
+  if(typeof updScares==='function')updScares=off(updScares); if(typeof updPers==='function')updPers=off(updPers); if(typeof updAfog==='function')updAfog=off(updAfog);
+  if(typeof cryTick==='function')cryTick=off(cryTick); if(typeof trapTick==='function')trapTick=off(trapTick); if(typeof psyTick==='function')psyTick=off(psyTick);
+  if(typeof soniaTick==='function')soniaTick=off(soniaTick); if(typeof zoeiraTick==='function')zoeiraTick=off(zoeiraTick); if(typeof terrorTick==='function')terrorTick=off(terrorTick);
+  if(typeof wxTick==='function')wxTick=off(wxTick);
+  STORY.onDistrict=off(STORY.onDistrict);
+  if(typeof mascates==='function'){const ms=mascates;mascates=function(){if(SN.on)return [];return ms.apply(this,arguments);};}
+  const b=bark; bark=function(who){if(SN.on&&!SNN.includes(who))return;return b.apply(this,arguments);};
+  const ob=objective; objective=function(){if(SN.on)return snObjective();return ob.apply(this,arguments);};
+  const ws=writeSave; writeSave=function(){if(SN.on)return false;return ws.apply(this,arguments);};
+  const sv=UI.save.bind(UI); UI.save=function(){if(SN.on){toast('Não tem máquina de escrever aqui. Só o rio.');return;}return sv();};
+  // sem arma: não ataca, não troca de arma, só joga garrafa
+  const fi=fire; fire=function(){if(SN.on){P.firing=false;return;}return fi.apply(this,arguments);};
+  const sw=switchWeapon; switchWeapon=function(i){if(SN.on)return;return sw.apply(this,arguments);};
+  const cw=cycleWeapon; cycleWeapon=function(d){if(SN.on)return;return cw.apply(this,arguments);};
+  const ct=curThrow; curThrow=function(){if(SN.on)return 'garrafa';return ct.apply(this,arguments);};
+  const tg=throwGrenade; throwGrenade=function(){if(SN.on){P.thr='garrafa';if(invCount('garrafa')<=0){toast('Sem garrafa. Procure no bar ou nas casas.');return;}}return tg.apply(this,arguments);};
+  const ke=killEnemy; killEnemy=function(e){if(SN.on&&e&&e.type==='balseiro')return;return ke.apply(this,arguments);};
+  const di=die; die=function(){if(SN.on){SN.deaths=(SN.deaths||0)+1;P.hp=P.max;G.struggle=null;P.grab=null;if(P.hidden)exitHide();
+      const bb=snBal(); if(bb){bb.state='wander';bb.hunt=false;bb.sawHide=false;const a=Math.random()*6.283;const [x,y]=freeTileNear(((P.x+Math.cos(a)*1000)/TILE)|0,((P.y+Math.sin(a)*600)/TILE)|0,true);bb.x=tc(x);bb.y=tc(y);SN.bd=14;}
+      for(const e of enemies)if(e.alive&&e!==bb&&hyp(e.x-P.x,e.y-P.y)<220){const a=Math.atan2(e.y-P.y,e.x-P.x);e.x+=Math.cos(a)*140;e.y+=Math.sin(a)*140;e.stun=2;e.state='wander';}
+      if(SN.cp)snGo(SN.cp[0],NY+SN.cp[1]);
+      G.blackout=Math.max(G.blackout,1.8);toast('A Sonia acordou no chão, com gosto de sangue na boca. Ainda não. Ainda não.');return;}
+    return di.apply(this,arguments);};
+  const vi=v12Interact; v12Interact=function(o){if(SN.on){if(o.type==='snRadio')return snRadio(o);if(o.type==='snJanela')return snJanela(o);if(o.type==='snCabo')return snCabo(o);}return vi(o);};
+  const vt=v16Tick; v16Tick=function(dt){vt(dt);try{snTick(dt);}catch(e){console.error(e);}};
+  const dp=drawParts; drawParts=function(){dp();try{snDraw();}catch(e){console.error(e);}};
+  const pl=drawPostLight; drawPostLight=function(){pl();try{snGlow();}catch(e){console.error(e);}};
+  const de=drawEnemy; drawEnemy=function(e){if(e&&e.type==='balseiro'){if((e.va??1)<.02)return;ctx.save();ctx.globalAlpha=Math.max(.0,Math.min(1,e.va??1));snDrawBalseiro(e);ctx.restore();return;}return de.apply(this,arguments);};
+  const rs=resetState; resetState=function(d){rs(d);SN.on=false;};
+  const ua=UI.act.bind(UI); UI.act=function(a,ds){if(SN.on&&(a==='quit'||a==='title')){SN.on=false;P.lookO=null;if(G.flags)delete G.flags.cap;}return ua(a,ds);};
+  // celular: sem botão de arma nem de recarga; o de arremesso só com garrafa
+  if(typeof updTouchUI==='function'){const ut=updTouchUI; updTouchUI=function(){ut();if(!SN.on)return;
+    for(const id of ['tb-wpn','tb-rel']){const el=document.getElementById(id);if(el&&el.classList)el.classList.add('gone');}
+    const g=document.getElementById('tb-gren');if(g&&g.classList)g.classList.toggle('gone',invCount('garrafa')<=0);};}
+})();
+// o rádio da cozinha
+(function(){const sg=genNav;genNav=function(){sg();interacts.push({tx:SNP.radio[0],ty:NY+SNP.radio[1],x:tc(SNP.radio[0]),y:tc(NY+SNP.radio[1]),type:'snRadio'});};})();
+
+// ---------- menu de teste ----------
+dbgExtra('1.9 · Capítulo da Sonia',[['v19s:start','Começar'],['v19s:sinal','Pular: sinal na praça'],['v19s:esconder','Pular: o Balseiro aparece'],['v19s:garrafas','Pular: garrafas'],
+  ['v19s:avenida','Pular: barricada'],['v19s:predio','Pular: correr pro prédio'],['v19s:cristo','Pular: a janela (Cristo)'],['v19s:ferry','Pular: ir pro ferry'],['v19s:fuga','Pular: no terminal'],
+  ['v19s:bal','Chamar o Balseiro aqui perto'],['v19s:susto','Susto agora'],['v19s:fim','Ir pro final']],
+  (k)=>{UI.close&&UI.close();G.mode='play';const a=k.split(':')[1];
+    if(a==='start')return soniaStart();
+    if(a==='bal'){if(!SN.on)soniaStart(3);const b=snBalseiro(((P.x/TILE)|0)+8,(P.y/TILE)|0);snSend(b,P.x,P.y,10);return;}
+    if(a==='susto'){if(!SN.on)return toast('Comece o capítulo da Sonia antes.');SN.scT=0;return;}
+    if(a==='fim'){if(!SN.on)soniaStart(8);else snJump(8);finishCutSn();return snFinal('balsa');}
+    if(SN.on)soniaStart(SNST.indexOf(a));else soniaStart(SNST.indexOf(a));});
+// ===================== 1.9: CAPÍTULO EXTRA · PROF. ALEX RESE NO MERCADO PÚBLICO =====================
+// O que o professor Rese fazia em Itajaí antes do grupo chegar: a noite do surto, as provas na Praça da Matriz,
+// o Dr. Otávio da Vértice na Igreja Matriz, os feirantes do Mercado Público, o rádio e o Fiscal.
+// Joga-se a partir do título ("Capítulos extras"). Não mexe no registro principal: o mundo é gerado do zero
+// e, no fim, volta para o título. Durante o capítulo não dá pra salvar.
+
+// ---------- registro compartilhado dos capítulos extras (a Sonia usa o mesmo) ----------
+globalThis.CAPS=globalThis.CAPS||[];
+if(!UI.caps){
+  UI.caps=function(){
+    const L=globalThis.CAPS||[];
+    this.open(`<div class="sheet narrow"><p class="kick">Capítulos extras</p><h2>Outras noites</h2>
+      <p class="lede">Histórias de quem estava no litoral antes do Richard chegar. Não mexem no seu registro.</p>
+      <div class="diffs">${L.map((c,i)=>`<button class="card" data-a="cap" data-k="${c.id}" ${i===0?'data-focus':''}><b>${c.n}</b><span>${c.d}</span></button>`).join('')}</div>
+      <div class="row"><button class="btn ghost" data-a="title">Voltar</button></div></div>`,'','caps');
+  };
+}
+if(!globalThis.CAPS_UI){
+  globalThis.CAPS_UI=true;
+  {const tt=UI.title.bind(UI); UI.title=function(){tt();try{const m=OV.querySelector('.menu');if(!m||m.querySelector('[data-a=caps]'))return;
+    const b=document.createElement('button');b.className='btn';b.dataset.a='caps';b.textContent='Capítulos extras';
+    const ref=m.querySelector('[data-a=controls]');m.insertBefore(b,ref||null);}catch(e){}};}
+  {const ua=UI.act.bind(UI); UI.act=function(a,ds){
+    if(a==='caps')return this.caps();
+    if(a==='cap'){const c=(globalThis.CAPS||[]).find(c=>c.id===(ds&&ds.k));if(c){this.close();try{c.start();}catch(e){console.error(e);this.title();}}return;}
+    return ua(a,ds);};}
+  {const ub=UI.back.bind(UI); UI.back=function(){if(this.cur==='caps')return this.title();return ub();};}
+}
+
+// ---------- o professor ----------
+LOOKS.alex={coat:'#141414',skin:'#d9a682',hair:'#1a100a',pants:'#2e2c2a',look:'alex'};
+PCH.otavio={name:'Dr. Otávio',skin:'#e0bc9e',shade:'#a8866a',hair:'#4a4642',iris:'#2a3a3a',bg:['#14221f','#050909'],glow:'120,230,200',voice:118};
+PCH.beto={name:'Seu Beto do peixe',skin:'#b8805c',shade:'#82543a',hair:'#2a2a28',iris:'#2a1a10',bg:['#102030','#04080c'],glow:'110,170,220',voice:98};
+PCH.neide={name:'Dona Neide do pastel',skin:'#e4b898',shade:'#b0866a',hair:'#6a3a20',iris:'#3a2618',bg:['#3a2410','#120a04'],glow:'240,170,80',voice:250};
+PCH.locutor={name:'Defesa Civil',skin:'#c8a888',shade:'#90705a',hair:'#3a3a3a',iris:'#2a2a2a',bg:['#1a1a1a','#050505'],glow:'200,200,200',voice:140};
+PCH.richC=Object.assign({},PCH.rafa);
+Object.assign(ITEMS,{
+  provaRese:{n:'Provas do 2º ano',s:'PROVAS',c:'#e8e4d8',st:3,k:'key',d:'Provas de química do Colégio Estadual, corrigidas pela metade. Caneta vermelha em tudo.'},
+  extintor:{n:'Extintor de incêndio',s:'EXTINTOR',c:'#b02a20',st:1,k:'key',d:'Pesado, vermelho e vencido desde 2019. Serve pra apagar fogo e pra convencer gente.'},
+});
+Object.assign(INT_LABEL,{rcBarr:'Barricar a porta',rcRadio:'Rádio da administração',rcExt:'Extintor na parede'});
+if(typeof ACH!=='undefined')ACH.push({id:'capRese',n:'Chamada feita',d:'Termine o capítulo extra do professor Rese no Mercado Público.'});
+
+const RC={on:false,st:0,t:0};
+const RCN=['alex','otavio','beto','neide','locutor','richC'];
+const rcT=(x,y)=>({x:tc(x),y:tc(y)});
+// lugares (tiles) do Centro Histórico de Itajaí
+const RCP={coreto:[63.5,61.5],folhas:[[54,56],[75,65],[67,53]],igreja:[63.5,44],otavio:[63,42],mercS:[30.5,49],beto:[26,41],neide:[35,45],
+  barrS:[30.5,46],barrE:[37,42.5],doorS:[[30,47],[31,47]],doorE:[[38,42],[38,43]],radio:[33,40],ext:[25,45],dentro:[30.5,43]};
+const RCST=['provas','igreja','otavio','rua','feira','barricar','radio','defesa','chefe','fim'];
+
+function rcCut(steps,end){playCut([{npc:P,id:'alex'},...steps],end);}
+function rcZ(type,tx,ty,o){const [x,y]=freeTileNear(tx|0,ty|0,false);const e=makeEnemy(type,tc(x),tc(y),null);if(o&&o.chase){e.state='chase';e.hunt=true;e.huntT=60;e.lx=P.x;e.ly=P.y;}if(o&&o.col)e.col=o.col;e.rc=1;enemies.push(e);return e;}
+function rcPick(id,q,tx,ty){const [x,y]=freeTileNear(tx|0,ty|0,true);pickups.push({uid:'rc'+id+(RC.pk=(RC.pk||0)+1),tx:x,ty:y,x:tc(x),y:tc(y),id,q,kind:'item'});}
+function rcInt(type,tx,ty){const it={tx:tx|0,ty:ty|0,x:tc(tx),y:tc(ty),type};interacts.push(it);return it;}
+function rcUnInt(type){for(let i=interacts.length-1;i>=0;i--)if(interacts[i].type===type&&(!RC.doneB||true))interacts.splice(i,1);}
+function rcPlug(list,on){for(const [x,y] of list){const k=idx(x,y);if(on){if(map[k]!==T.PROP){RC.under=RC.under||{};RC.under[k]=map[k];prop(x,y,1);}}else{const u=(RC.under&&RC.under[k]!=null)?RC.under[k]:T.SAFE;setT(x,y,u);}}
+  const xs=list.map(a=>a[0]),ys=list.map(a=>a[1]);if(typeof invalidateRect==='function')invalidateRect(Math.min(...xs),Math.min(...ys),3,3);flowTile=-1;}
+function rcMercadoSafe(on){const b=buildings.find(b=>b.name==='Mercado Público');if(!b)return;for(let y=b.y;y<b.y+b.h;y++)for(let x=b.x;x<b.x+b.w;x++)safeMask[idx(x,y)]=on?1:0;}
+function rcGo(tx,ty){if(P.inCar)exitCar(true);const [x,y]=freeTileNear(tx|0,ty|0,true);P.x=tc(x);P.y=tc(y);snapCamera();flowTile=-1;}
+
+// ---------- começo ----------
+function reseStart(st){
+  if(typeof MP!=='undefined'&&MP.on)return;
+  newGame('normal');
+  for(const k of Object.keys(RC))delete RC[k];
+  RC.on=true; RC.st=0; RC.t=0; RC.got=[0,0,0]; RC.talk={}; RC.barr={S:0,E:0}; RC.kills=0; RC.deaths=0; RC.t0=G.time; RC.bt=8; RC.hold=0; RC.spT=0; RC.boss=null; RC.under={}; RC.pk=0; RC.ext=0;
+  const F=G.flags; F.tutDone=true; G.tut=null; F.rcCap=true; F.cap='rese';
+  G.mode='play'; G.clock=22*60+31; G.wx='chuva'; enemies=[]; projs=[]; G.comps=[]; G.qte=null; G.struggle=null; P.grab=null;
+  // o Rese do jogo principal sai de cena (quem anda aqui é ele mesmo)
+  for(const n of npcs)if(n.id==='alex'||n.id==='alexG'){n.id+='_main';n.cond=()=>false;}
+  for(let i=0;i<P.owned.length;i++){P.owned[i]=false;P.mags[i]=0;} P.owned[8]=true; P.w=8; P.hp=P.max=100; P.bat=100; P.lamp=true; P.lookO=LOOKS.alex;
+  G.inv=new Array(G.slots).fill(null); G.box=[]; invAdd('ervaV',1);
+  npcs.push({id:'otavio',name:'Dr. Otávio',x:tc(RCP.otavio[0]),y:tc(RCP.otavio[1]),ang:Math.PI/2,col:'#e8e8e4',hair:'#4a4642',skin:'#e0bc9e',cond:()=>RC.on&&RC.st<=2&&!RC.otTurned,crouch:true});
+  npcs.push({id:'beto',name:'Seu Beto do peixe',x:tc(RCP.beto[0]),y:tc(RCP.beto[1]),ang:0,col:'#2c4a6a',hair:'#2a2a28',skin:'#b8805c',cond:()=>RC.on&&(RC.st<7||RC.st>=9)});
+  npcs.push({id:'neide',name:'Dona Neide do pastel',x:tc(RCP.neide[0]),y:tc(RCP.neide[1]),ang:Math.PI,col:'#a83a3a',hair:'#6a3a20',skin:'#e4b898',cond:()=>RC.on&&(RC.st<7||RC.st>=9)});
+  rcGo(RCP.coreto[0],RCP.coreto[1]); P.ang=-Math.PI/2;
+  for(const [x,y] of [[52,66],[77,55],[70,68]])rcZ('zumbi',x,y);
+  if(st)return rcJump(st);
+  rcCut([{fx:'blackout',v:2},
+    {say:'alex',m:'n',think:true,t:'Vinte e três provas. Dezenove escreveram "óxido" com ch. Eu devia ter ficado em casa.',dur:3},
+    {sfx:'scream',v:.5},{fx:'shake',v:4},
+    {say:'alex',m:'a',t:'Isso foi um grito? Na Praça da Matriz? Numa segunda-feira?'},
+    {do:()=>{AU.nz&&AU.nz(.6,600,1,.2,'lowpass',0);G.shake+=3;}},
+    {say:'alex',m:'s',t:'E o vento levou as provas. Claro. Se eu perder as provas, a direção me crucifica antes de qualquer zumbi.'},
+    {say:'alex',m:'n',think:true,t:'Zumbi. Que palavra eu escolhi. Deve ser o cansaço.',dur:2.2}],
+    ()=>{G.banner={t:'Itajaí · Praça da Matriz · 22h31 · a noite do surto',life:4.5};});
+}
+globalThis.CAPS.push({id:'rese',n:'Capítulo do Prof. Rese',d:'Itajaí, 22h31. Antes do Richard aparecer, o professor tinha provas pra corrigir e um mercado pra segurar.',start:()=>reseStart()});
+
+// ---------- objetivos ----------
+function rcObjective(){
+  const s=RC.st, A=(p)=>rcT(p[0],p[1]);
+  if(s===0){const i=RC.got.findIndex(g=>!g);const n=RC.got.filter(Boolean).length;return {t:`(Rese) Recolha as provas que o vento espalhou pela praça (${n}/3)`,at:i>=0?A(RCP.folhas[i]):null};}
+  if(s===1)return {t:'(Rese) O sino da Igreja Matriz tocou. Ninguém toca sino às onze da noite. Vá ver',at:A(RCP.igreja)};
+  if(s===2)return {t:'(Rese) O Otávio virou. Não deixe ele sair da igreja',at:null};
+  if(s===3)return {t:'(Rese) Vá até o Mercado Público. Tem luz lá dentro',at:A(RCP.mercS)};
+  if(s===4){const f=['beto','neide'].filter(k=>!RC.talk[k]);return {t:`(Rese) Fale com os feirantes que ficaram presos no mercado (${2-f.length}/2)`,at:f.length?A(RCP[f[0]]):null};}
+  if(s===5){const n=(RC.barr.S?1:0)+(RC.barr.E?1:0);return {t:`(Rese) Barrique as duas portas com as bancas (${n}/2)`,at:!RC.barr.S?A(RCP.barrS):A(RCP.barrE)};}
+  if(s===6)return {t:RC.radioOk?'(Rese) Pegue o extintor da parede. Pra garantir':'(Rese) Ligue o rádio da administração',at:A(RC.radioOk?RCP.ext:RCP.radio)};
+  if(s===7)return {t:`(Rese) A porta do sul cedeu! Segure o mercado: ${Math.max(0,Math.ceil(RC.hold))} s`,at:null};
+  if(s===8)return {t:'(Rese) O Fiscal do Mercado. Reprove ele',at:null};
+  return {t:'(Rese) Espere. Alguém vem vindo',at:null};
+}
+
+// ---------- o capítulo, passo a passo ----------
+function rcTick(dt){
+  if(!RC.on||CUT.on||G.mode!=='play')return;
+  RC.t+=dt; const s=RC.st, near=(p,r)=>hyp(P.x-tc(p[0]),P.y-tc(p[1]))<r;
+  G.clock=Math.min(G.clock,23*60+50);
+  if(P.hp<P.max*.25&&!RC.lowT){RC.lowT=1;bark('alex','s','Eu tenho cinquenta e poucos anos e um joelho ruim. Calma.');}
+  if(P.hp>P.max*.5)RC.lowT=0;
+  rcBarks(dt);
+  if(s===0){
+    RCP.folhas.forEach((f,i)=>{if(!RC.got[i]&&near(f,34)){RC.got[i]=1;invAdd('provaRese',1);AU.pickup();
+      const n=RC.got.filter(Boolean).length;
+      if(n===1)bark('alex','n','Uma. Nota 4. Pelo menos escreveu o nome.');
+      if(n===2){bark('alex','a','Duas. Essa aqui tá com sangue. Não é tinta vermelha. Não é minha.');for(const [x,y] of [[f[0]+7,f[1]+3],[f[0]-6,f[1]+5]])rcZ('zumbi',x,y,{chase:true});}
+      if(n===3){RC.st=1;later(800,()=>{AU.tn&&(AU.tn(330,330,1.6,'triangle',.07),AU.tn(330,330,1.6,'triangle',.06,1.8),AU.tn(330,330,1.6,'triangle',.05,3.6));
+        rcCut([{cam:rcT(63.5,40),t:1.6},{say:'alex',m:'t',t:'O sino da Matriz. Três batidas.'},{say:'alex',m:'s',think:true,t:'O padre Anselmo tem oitenta anos e dorme às oito. Não é ele.',dur:2.2},{camFree:1}]);});}}});
+  }
+  else if(s===1){if(near(RCP.igreja,120)&&G.inB>=0)rcOtavio();}
+  else if(s===2){const z=RC.otZ;if(!z||!z.alive){RC.st=3;RC.cp=RCP.igreja;
+      later(600,()=>{bark('alex','t','Desculpa, Otávio. Tu nunca chegou no horário. Hoje chegou cedo demais.');
+        for(const [x,y] of [[44,52],[48,50],[40,55],[36,51],[46,47]])rcZ(Math.random()<.25?'corr':'zumbi',x,y);
+        later(4200,()=>bark('alex','n','O mercado. A Dona Neide sempre fica até tarde fechando o caixa. Tem luz lá.'));});}}
+  else if(s===3){if(near(RCP.dentro,150)&&G.inB>=0&&G.pSafe)rcFeira();}
+  else if(s===4){for(const k of ['beto','neide'])if(!RC.talk[k]){const n=npcs.find(n=>n.id===k);if(n&&hyp(n.x-P.x,n.y-P.y)<70){rcTalk(n);break;}}
+    if(RC.talk.beto&&RC.talk.neide&&!CUT.on){RC.st=5;RC.cp=RCP.dentro;rcInt('rcBarr',RCP.barrS[0],RCP.barrS[1]).k='S';rcInt('rcBarr',RCP.barrE[0],RCP.barrE[1]).k='E';
+      bark('neide','a','Professor, as bancas de fruta! Empurra as bancas nas portas!');
+      for(const [x,y] of [[28,53],[33,53],[44,44],[45,40]])rcZ('zumbi',x,y);}}
+  else if(s===5){RC.bt2=(RC.bt2||0)-dt;if(RC.bt2<=0){RC.bt2=rr(2,3.5);AU.knock();AU.thud(.5);G.shake+=1;}
+    if(RC.barr.S&&RC.barr.E){RC.st=6;rcInt('rcRadio',RCP.radio[0],RCP.radio[1]);bark('alex','n','Duas portas. Duas bancas. Física básica: eles empurram, a banca empurra de volta.');}}
+  else if(s===6){if(RC.radioOk&&RC.ext){RC.st=7;rcDefesa();}}
+  else if(s===7){RC.hold-=dt;RC.spT-=dt;
+    if(RC.spT<=0){RC.spT=rr(2.2,3.4);const alive=enemies.filter(e=>e.alive&&e.rc).length;if(alive<9){const n=ri(1,2);for(let i=0;i<n;i++)rcZ(Math.random()<.3?'corr':Math.random()<.15?'incha':'zumbi',30+rr(-4,4),52+rr(0,3),{chase:true});}}
+    if(RC.hold<=0)rcChefe();}
+  else if(s===8){const b=RC.boss;if(b&&!b.alive&&!RC.bossDead){RC.bossDead=1;later(900,()=>rcFim());}}
+}
+function rcOtavio(){
+  RC.st=2; RC.cp=RCP.igreja; const n=npcs.find(n=>n.id==='otavio');
+  rcCut([{npc:n,id:'otavio'},{startle:'otavio'},
+    {say:'otavio',m:'s',t:'Alex... graças a Deus. Eu fui na tua casa. Depois no colégio. O porteiro disse que tu corrigia prova na praça.'},
+    {say:'alex',m:'a',t:'Otávio? Da Vértice? Seis anos sem te ver e tu me aparece tocando o sino da igreja?'},
+    {say:'otavio',m:'t',t:'Era o único jeito de tu vir. Tu nunca atende telefone.'},
+    {say:'otavio',m:'s',t:'O Arantes abriu o contêiner zero. No porto, às sete. Disseram que era pra "conter".'},
+    {say:'otavio',m:'t',t:'Agora o T-00 tá num navio parado no canal. E tudo que ele tocou levantou de novo.'},
+    {say:'alex',m:'t',t:'Eu avisei. Eu saí daquele laboratório justamente porque avisei.'},
+    {say:'otavio',m:'s',t:'Tu foi o único que entendeu o tecido dele. O cloro, Alex. Tu lembra do cloro.'},
+    {say:'alex',m:'n',t:'Muito cloro, de uma vez só. Lembro. Ninguém quis ouvir.'},
+    {say:'otavio',m:'k',t:'Toma. A pistola da segurança da Vértice. Me morderam na Hercílio Luz... eu não vou precisar.'},
+    {do:()=>{P.owned[1]=true;P.mags[1]=6;invAdd('m9',10);P.w=1;AU.reload();toast('O Dr. Otávio te deu uma pistola 9mm e um punhado de balas.');}},
+    {say:'alex',m:'s',t:'Otávio. Otávio, olha pra mim. Fica acordado.'},
+    {fx:'shake',v:6},{sfx:'roar',v:1},
+    {do:()=>{RC.otTurned=1;const e=rcZ('zumbi',RCP.otavio[0],RCP.otavio[1],{chase:true,col:'#e8e8e4'});e.hp=e.max=e.max*1.6;RC.otZ=e;bloodBurst&&bloodBurst(e.x,e.y,14,0);}},
+    {say:'alex',m:'a',t:'Não. NÃO. Tu sempre foi péssimo de pontualidade, Otávio, e justo hoje resolve se adiantar!'}]);
+}
+function rcFeira(){
+  RC.st=4; RC.cp=RCP.dentro;
+  rcCut([{say:'alex',m:'n',think:true,t:'Mercado Público. Aberto desde 1917. Hoje é abrigo.',dur:2},
+    {say:'neide',m:'a',t:'PROFESSOR! Fecha isso, fecha, fecha!'},
+    {say:'alex',m:'n',t:'Boa noite, Dona Neide. Calma. Ninguém vai fechar nada gritando.'}]);
+}
+function rcTalk(n){
+  if(!n)return;
+  if(n.id==='beto'&&!RC.talk.beto){RC.talk.beto=1;
+    return rcCut([{npc:n,id:'beto'},
+      {say:'beto',m:'s',t:'Professor Rese... meu filho fez prova com o senhor. Tirou cinco.'},
+      {say:'alex',m:'n',t:'Cinco e meio. Arredondei pra baixo porque ele colou do colega.'},
+      {say:'beto',m:'t',t:'Tem uma coisa lá fora comendo o Seu Valdemar. Na frente da minha banca.'},
+      {say:'beto',m:'n',t:'Leva a faca de peixe. Tá afiada. Eu afio toda segunda.'},
+      {do:()=>{P.owned[0]=true;if(P.w===8)P.w=0;AU.pickup();toast('Seu Beto te deu a faca de peixeiro dele.');}}]);}
+  if(n.id==='neide'&&!RC.talk.neide){RC.talk.neide=1;
+    return rcCut([{npc:n,id:'neide'},
+      {say:'neide',m:'s',t:'Eu tava fechando o caixa. Aí a mulher do caldo de cana entrou mordendo todo mundo.'},
+      {say:'alex',m:'t',t:'E onde ela tá agora?'},
+      {say:'neide',m:'a',t:'Lá fora, na porta do sul. Batendo. Faz meia hora que bate.'},
+      {say:'neide',m:'n',t:'Toma. Erva da minha horta e um pastel de palmito. Ninguém enfrenta isso de barriga vazia.'},
+      {do:()=>{invAdd('ervaV',1);P.hp=Math.min(P.max,P.hp+20);toast('Dona Neide te deu uma erva e um pastel. O pastel você comeu ali mesmo.');}}]);}
+  bark(n.id,'n',pick2(n.id==='beto'?['Afiada, professor. Corta até osso de tainha.','Meu filho vai querer saber que o senhor salvou o mercado. Mas não muda a nota dele não.','Se o senhor sair, eu não abro de volta. Sem ofensa.']
+    :['O senhor tá pálido. Come alguma coisa.','Minha filha mora em Balneário. Ela não atende.','Depois disso o pastel é por conta da casa. Pra sempre.']));
+}
+function rcBarr(o){
+  if(RC.barr[o.k])return toast('Essa porta já está barricada.');
+  startStruggle({label:o.k==='S'?'Empurrando a banca de frutas':'Empurrando a banca de peixe',need:100,pump:11,hold:15,noise:260,sfx:'door',x:o.x,y:o.y,
+    quit:'O professor largou a banca no meio do caminho.',
+    onDone:()=>{RC.barr[o.k]=1;rcPlug(o.k==='S'?RCP.doorS:RCP.doorE,true);const i=interacts.indexOf(o);if(i>=0)interacts.splice(i,1);AU.thud(1);G.shake+=4;
+      bark('alex','n',o.k==='S'?'Uma. Fica aí, banca. Tu é a melhor aluna que eu tive hoje.':'Pronto. Agora só falta o resto do mundo cooperar.');}});
+}
+function rcRadio(o){
+  if(RC.radioOk)return toast('Só chiado agora.');
+  RC.radioOk=1; const i=interacts.indexOf(o); if(i>=0)interacts.splice(i,1);
+  rcInt('rcExt',RCP.ext[0],RCP.ext[1]);
+  rcCut([{sfx:'static',v:1},
+    {say:'locutor',m:'t',radio:true,t:'...Defesa Civil de Balneário Camboriú. A cidade caiu às 22h16. Repito: Balneário caiu.'},
+    {say:'locutor',m:'s',radio:true,t:'Haverá um último helicóptero de resgate no Porto de Itajaí. Quem puder, vá até o porto...'},
+    {sfx:'static',v:.8},
+    {say:'alex',m:'t',t:'Balneário. Metade da minha turma mora em Balneário.'},
+    {say:'alex',m:'s',think:true,t:'O Richard mora lá. Faltou o semestre inteiro. Se alguém sobrevive a isso é ele: nunca tá onde devia estar.',dur:3.2},
+    {say:'alex',m:'n',t:'Se ele aparecer, faz a prova de recuperação. Nem que seja no helicóptero.'},
+    {say:'beto',m:'a',t:'Professor! A porta do sul tá rangendo!'}]);
+}
+function rcExt(o){
+  if(RC.ext)return; RC.ext=1; const i=interacts.indexOf(o); if(i>=0)interacts.splice(i,1);
+  invAdd('extintor',1); AU.pickup();
+  toast('Extintor de incêndio. Vencido desde 2019. Pesado o bastante.');
+  bark('alex','a','Ninguém entra. Eu tô com um extintor e não tenho medo de usar.');
+}
+function rcDefesa(){
+  RC.hold=50; RC.spT=2; RC.cp=RCP.dentro; rcMercadoSafe(false);
+  rcCut([{fx:'slam'},{fx:'shake',v:12},{sfx:'bigBoom',v:.4},
+    {do:()=>{rcPlug(RCP.doorS,false);for(let i=0;i<30;i++)parts.push({k:'debris',x:tc(30.5),y:tc(47),vx:rr(-200,200),vy:rr(-260,-40),life:.7,max:.7,s:rr(2,4),c:'#7a5a3a'});
+      for(const [x,y] of [[29,50],[32,50],[30,52]])rcZ('zumbi',x,y,{chase:true});rcPick('m9',12,34,42);rcPick('m9',10,26,46);}},
+    {cam:rcT(30.5,47),t:1},
+    {say:'alex',m:'a',t:'A banca de frutas! A minha melhor aluna!'},
+    {say:'neide',m:'s',t:'Beto, a câmara fria! Pra câmara fria!'},
+    {say:'alex',m:'a',t:'Vão! Eu seguro a porta. Eu seguro turma de trinta adolescente numa sexta à tarde, eu seguro isso.'},
+    {camFree:1}],()=>{toast('Tem munição nas bancas. Segure o mercado.');});
+}
+function rcChefe(){
+  RC.st=8; RC.cp=RCP.dentro;
+  rcCut([{fx:'slam'},{sfx:'roar',v:1},{fx:'shake',v:16},
+    {do:()=>{rcPlug(RCP.doorE,false);const e=rcZ('brut',43,42.5,{chase:true,col:'#c8a020'});e.t=Object.assign({},e.t,{n:'O Fiscal do Mercado',boss:true});e.hp=e.max=360*(G.D.ehp||1);RC.boss=e;
+      for(let i=0;i<24;i++)parts.push({k:'debris',x:tc(38),y:tc(42.5),vx:rr(-260,60),vy:rr(-200,200),life:.7,max:.7,s:rr(2,5),c:'#5a4a3a'});rcPick('m9',12,32,40);}},
+    {cam:rcT(40,42.5),t:1.2},
+    {say:'alex',m:'s',t:'Colete amarelo. Prancheta. É o fiscal da prefeitura. Ele vinha toda semana multar a Dona Neide.'},
+    {say:'alex',m:'a',t:'Tu nunca aprovou nada aqui dentro. Hoje quem reprova sou eu.'},
+    {camFree:1}]);
+}
+function rcFim(){
+  RC.st=9; for(const e of enemies)if(e.alive&&e.rc)killEnemy(e);
+  const [rx,ry]=freeTileNear(30,52,true);
+  const rich={id:'richC',name:'Richard',x:tc(rx),y:tc(ry),ang:-Math.PI/2,col:'#1f2b4e',hair:'#3a2415',skin:'#d29d7c',cond:()=>RC.on&&RC.st>=9&&RC.richIn};
+  npcs.push(rich);
+  rcCut([{say:'alex',m:'k',t:'Acabou. Por enquanto.'},
+    {say:'neide',m:'s',t:'Professor... o senhor tá bem?'},
+    {say:'alex',m:'n',t:'Vou ficar aqui. Alguém precisa segurar o mercado. E alguém da turma vai aparecer. Sempre aparece alguém atrasado.'},
+    {say:'alex',m:'t',think:true,t:'Hipoclorito na estação de tratamento. Ácido na loja de piscina. Se o Otávio tinha razão, o cloro ainda serve.',dur:3},
+    {fx:'blackout',v:2.4},
+    {do:()=>{G.banner={t:'Mercado Público · horas depois',life:3.4};G.clock=Math.max(G.clock,23*60+55);RC.richIn=1;rcGo(RCP.dentro[0],RCP.dentro[1]-1);P.ang=Math.PI/2;}},
+    {npc:rich,id:'richC'},
+    {sfx:'knock',v:1},{walk:'richC',to:rcT(30.5,45.5),spd:70,tmax:3},
+    {startle:'alex'},
+    {say:'alex',m:'a',t:'PARADO! ...Eu tô com um extintor e não tenho medo de usar.'},
+    {say:'richC',m:'s',t:'Professor Rese?!'},
+    {say:'alex',m:'s',t:'Richard?! Tu falta na minha aula o semestre inteiro e aparece aqui, no fim do mundo?'},
+    {say:'richC',m:'h',t:'Pelo jeito hoje a chamada é só eu, professor.'},
+    {fx:'blackout',v:2}],
+    ()=>rcEnd(true));
+}
+function rcEnd(won){
+  const mins=Math.max(1,Math.round((G.time-(RC.t0||0))/60)), dt=RC.deaths||0;
+  const nota=Math.max(5,Math.min(10,10-dt*.5-(mins>18?.5:0)));
+  RC.on=false; P.lookO=null; G.struggle=null; enemies=[]; projs=[];
+  if(won&&typeof ach==='function')ach('capRese');
+  G.mode='title'; document.getElementById('tc').hidden=true;
+  if(!won)return UI.title();
+  const nt=String(nota.toFixed(1)).replace('.',',');
+  UI.open(`<div class="paper intro"><p class="stamp">Capítulo extra · concluído</p>
+    <p>O professor Alex Rese segurou o Mercado Público de Itajaí até o Richard aparecer. O resto da história você já conhece. Ou vai conhecer.</p>
+    <p>Tempo: ${mins} min · Quedas: ${dt}</p>
+    <p><b>Nota ${nt}.</b> ${nota>=10?'Com louvor. Não se acostume.':nota>=8?'Perdeu ponto pela letra.':'Passou. Raspando. Como sempre.'}</p>
+    <div class="row"><button class="btn primary" data-a="title" data-focus>Voltar ao título</button></div></div>`,'','capfim');
+}
+
+// ---------- humor de professor: o Rese corrige até zumbi ----------
+const RC_BARKS=['Não é "grrr", é "grr". Uma consoante a menos, por favor.','Mastigar de boca aberta. Menos um ponto.','Isso aí é gemido ou é dúvida? Levanta a mão.',
+  'Chegou atrasado e sem material. Típico.','Fila indiana! Ninguém aprende nada se todo mundo vier junto.','Concordância, gente. "Eles quer" não existe. "Eles querem". Querem me comer, no caso.',
+  'Nota zero em postura. E em higiene.','Essa resposta eu não aceito. Volta pro teu lugar.','Quem não estudou que não venha com fome.'];
+function rcBarks(dt){
+  RC.bt-=dt; if(RC.bt>0)return;
+  const e=enemies.find(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<320);
+  if(!e){RC.bt=3;return;}
+  RC.bt=rr(13,20); bark('alex',Math.random()<.5?'a':'n',pick2(RC_BARKS));
+}
+
+// ---------- desenho: folhas, barricadas, rádio, extintor ----------
+function drawRese(){
+  if(!RC.on)return;
+  if(RC.st===0)RCP.folhas.forEach((f,i)=>{if(RC.got[i])return;const x=tc(f[0]),y=tc(f[1]);if(!inV(x,y,40))return;const w=Math.sin(G.time*3+i)*.25;
+    ctx.save();ctx.translate(x,y);ctx.rotate(w+i);ctx.fillStyle='#e8e4d8';ctx.fillRect(-7,-9,14,18);ctx.fillStyle='#b02a20';ctx.fillRect(-4,-6,6,1.5);ctx.fillRect(-4,-2,8,1.2);ctx.fillStyle='#4a4a4a';ctx.fillRect(-4,2,8,1);ctx.restore();});
+  for(const it of interacts){if(it.type==='rcRadio'){ctx.fillStyle='#2a2a2a';ctx.fillRect(it.x-9,it.y-6,18,12);ctx.fillStyle='#c8a020';ctx.fillRect(it.x-6,it.y-3,5,5);ctx.fillStyle='#8a8a8a';ctx.fillRect(it.x+2,it.y-3,5,1.5);ctx.fillRect(it.x+2,it.y,5,1.5);}
+    if(it.type==='rcExt'){ctx.fillStyle='#b02a20';ctx.fillRect(it.x-4,it.y-9,8,16);ctx.fillStyle='#1a1a1a';ctx.fillRect(it.x-2,it.y-11,4,3);}
+    if(it.type==='rcBarr'){ctx.strokeStyle=`rgba(212,154,60,${.4+Math.sin(G.time*4)*.25})`;ctx.lineWidth=2;ctx.strokeRect(it.x-12,it.y-12,24,24);}}
+}
+
+// ---------- pulos (menu de teste e testes) ----------
+function rcJump(k){
+  const st=typeof k==='number'?k:RCST.indexOf(k); if(!RC.on)return reseStart(st>0?st:null); if(CUT.on)finishCutNow();
+  if(st>=1)RC.got=[1,1,1];
+  if(st>=2){RC.st=1;rcGo(RCP.igreja[0],RCP.igreja[1]+2);rcOtavio();finishCutNow();if(RC.otZ&&st>2)killEnemy(RC.otZ);}
+  if(st===1){RC.st=1;rcGo(RCP.igreja[0],RCP.igreja[1]+8);}
+  if(st>=3){RC.st=3;rcGo(RCP.mercS[0],RCP.mercS[1]+1);}
+  if(st>=4){P.owned[1]=true;P.mags[1]=6;RC.st=3;rcGo(RCP.dentro[0],RCP.dentro[1]);rcFeira();finishCutNow();}
+  if(st>=5){for(const k of ['beto','neide']){rcTalk(npcs.find(n=>n.id===k));finishCutNow();}rcTick(.016);finishCutNow();}
+  if(st>=6){for(const o of interacts.filter(o=>o.type==='rcBarr')){RC.barr[o.k]=1;rcPlug(o.k==='S'?RCP.doorS:RCP.doorE,true);}rcUnInt('rcBarr');rcTick(.016);}
+  if(st>=7){const r=interacts.find(o=>o.type==='rcRadio');if(r)rcRadio(r);finishCutNow();const e=interacts.find(o=>o.type==='rcExt');if(e)rcExt(e);rcTick(.016);finishCutNow();}
+  if(st>=8){RC.hold=0;rcTick(.016);finishCutNow();}
+  if(st>=9){if(RC.boss)killEnemy(RC.boss);RC.bossDead=1;rcFim();}
+  for(const e of enemies)if(e.alive&&st>=3&&st<7&&hyp(e.x-P.x,e.y-P.y)<300)killEnemy(e);
+}
+function finishCutNow(){for(let k=0;k<120&&CUT.on;k++){if(CUT.choice)cutChoose(0);else cutSkip();}}
+
+// ---------- ganchos: durante o capítulo o resto do jogo fica quieto ----------
+(function(){
+  const off=fn=>function(){if(RC.on)return;return fn.apply(this,arguments);};
+  const sc=syncComps; syncComps=function(){if(RC.on){G.comps=[];return;}return sc.apply(this,arguments);};
+  const us=updSpawner; updSpawner=function(dt){if(RC.on){G.spawnT=4;return;}return us(dt);};
+  updEvents=off(updEvents); updPlot=off(updPlot); updTriggers=off(updTriggers); updScares=off(updScares); updPers=off(updPers); updAfog=off(updAfog);
+  cryTick=off(cryTick); trapTick=off(trapTick); psyTick=off(psyTick); soniaTick=off(soniaTick); zoeiraTick=off(zoeiraTick); terrorTick=off(terrorTick);
+  STORY.onDistrict=off(STORY.onDistrict);
+  if(typeof mascates==='function'){const ms=mascates;mascates=function(){if(RC.on)return [];return ms.apply(this,arguments);};}
+  const b=bark; bark=function(who){if(RC.on&&!RCN.includes(who))return;return b.apply(this,arguments);};
+  const ob=objective; objective=function(){if(RC.on)return rcObjective();return ob.apply(this,arguments);};
+  const ws=writeSave; writeSave=function(){if(RC.on)return false;return ws.apply(this,arguments);};
+  const sv=UI.save.bind(UI); UI.save=function(){if(RC.on){toast('O professor não tem tempo de registrar nada. Tem prova pra corrigir.');return;}return sv();};
+  const di=die; die=function(){if(RC.on){RC.deaths=(RC.deaths||0)+1;P.hp=P.max;G.struggle=null;P.grab=null;
+      for(const e of enemies)if(e.alive&&hyp(e.x-P.x,e.y-P.y)<200){const a=Math.atan2(e.y-P.y,e.x-P.x);e.x+=Math.cos(a)*120;e.y+=Math.sin(a)*120;e.stun=2;}
+      if(RC.cp)rcGo(RC.cp[0],RC.cp[1]);
+      G.blackout=Math.max(G.blackout,1.4);toast('O professor caiu... e levantou. "Ainda não terminei de corrigir."');return;}
+    return di.apply(this,arguments);};
+  const nf=UI.npc; UI.npc=function(n){if(RC.on&&n&&RCN.includes(n.id))return rcTalk(n);return nf.apply(this,arguments);};
+  const vi=v12Interact; v12Interact=function(o){if(RC.on){if(o.type==='rcBarr')return rcBarr(o);if(o.type==='rcRadio')return rcRadio(o);if(o.type==='rcExt')return rcExt(o);}return vi(o);};
+  const vt=v16Tick; v16Tick=function(dt){vt(dt);try{rcTick(dt);}catch(e){console.error(e);}};
+  const dp=drawParts; drawParts=function(){dp();drawRese();};
+  const rs=resetState; resetState=function(d){rs(d);RC.on=false;};
+  const ke=killEnemy; killEnemy=function(e){const a=e&&e.alive;const r=ke.apply(this,arguments);if(RC.on&&a&&e.rc)RC.kills++;return r;};
+  const ua=UI.act.bind(UI); UI.act=function(a,ds){if(RC.on&&(a==='quit'||a==='title')){RC.on=false;P.lookO=null;}return ua(a,ds);};
+})();
+
+// ---------- menu de teste ----------
+if(typeof dbgExtra==='function')dbgExtra('1.9 · Capítulo do Rese',[['v19r:start','Começar'],['v19r:igreja','Pular · sino da Matriz'],['v19r:rua','Pular · rua até o mercado'],
+  ['v19r:feira','Pular · feirantes'],['v19r:barricar','Pular · barricar portas'],['v19r:radio','Pular · rádio e extintor'],['v19r:defesa','Pular · defesa do mercado'],
+  ['v19r:chefe','Pular · o Fiscal'],['v19r:fim','Pular · final (chega o Richard)']],
+  function(k){const s=String(k).replace('v19r:','');if(s==='start'){if(typeof UI.close==='function')UI.close();return reseStart();}if(typeof UI.close==='function')UI.close();if(!RC.on)reseStart(RCST.indexOf(s));else rcJump(s);});
+// ===================== 1.9: MISSÕES SECUNDÁRIAS E EVENTOS ALEATÓRIOS =====================
+// Tudo fica em G.flags.v19m (vai junto no registro). Os eventos são passageiros (não salvam).
+// Ganchos: genV12 (lugares, NPCs e itens), STORY.npc (conversas), findInteract/promptText/doInteract
+// (pontos virtuais: cachorro, antena, fotos, caixa, telefone...), v16Tick (lógica), drawComps (desenho),
+// objective (rumo da missão seguida só quando a história não tem rumo), UI.pause (botão Missões).
+
+const V19P={};            // lugares calculados na geração do mundo
+const V19T={};            // coisas passageiras: seguidores, zumbis da farmácia, evento atual
+const V19E={cur:null,t:110,objs:[]};
+
+Object.assign(ITEMS,{
+  insulina:{n:'Insulina da Dona Zuleica',s:'INSUL',c:'#d8e8f0',st:1,k:'key',d:'Duas canetas de insulina geladas, do frigobar da cozinha do Hotel Atlântida.'},
+  cartaJu:{n:'Carta para a Jurema',s:'CARTA',c:'#e8dcc0',st:1,k:'key',d:'Envelope amassado: "Para Jurema, Colônia de Pescadores Z-7, Laranjeiras. Entregar em mãos."'},
+  prancha:{n:'Prancha do Lipe',s:'PRANC',c:'#e8a040',st:1,k:'key',d:'Uma prancha 6\'2 com um adesivo de caveira. Tem o nome LIPE escrito na rabeta.'},
+  chaveBarco:{n:'Chave do barco',s:'CHAVE',c:'#c8a040',st:1,k:'key',d:'Chave com chaveiro de boia: "Maria Clara II". O barco do Seu Dário.'},
+  galao:{n:'Galão de gasolina',s:'GALÃO',c:'#c83a2a',st:5,k:'key',d:'Galão vermelho de cinco litros. A Tânia do Ginásio precisa de cinco pro gerador.'},
+  cachaca:{n:'Garrafa de cachaça',s:'PINGA',c:'#d8c070',st:4,k:'key',d:'Cachaça artesanal de alambique. O Zé do Rancho paga por cada uma.'},
+  vinil:{n:'Disco de vinil',s:'VINIL',c:'#1a1a1a',st:3,k:'key',d:'Um LP antigo, sem arranhão. O DJ Tavinho do Ressaca Club quer três.'},
+  camera:{n:'Câmera da Carol',s:'FOTO',c:'#2a2a2e',st:1,k:'key',d:'Câmera de filme da Carol, do Estúdio de Fotografia. Tem um rolo novo dentro.'},
+});
+
+// rostos e nomes de quem fala
+Object.assign(PCH,{
+  valdir:{name:'Seu Valdir',skin:'#c89878',shade:'#9a6a50',hair:'#d8d4cc',iris:'#3a2a1a',bg:['#2a2418','#0a0806'],glow:'220,180,110',voice:110},
+  zuleica:{name:'Dona Zuleica',skin:'#d8a888',shade:'#a87a5e',hair:'#b8b0a8',iris:'#3a2618',bg:['#2a1a24','#0a0608'],glow:'210,150,170',voice:220},
+  osni:{name:'Seu Osni',skin:'#c8946c',shade:'#9a6a4a',hair:'#8a8680',iris:'#2a1a10',bg:['#1a2418','#060904'],glow:'140,190,120',voice:100},
+  haroldo:{name:'Seu Haroldo',skin:'#d0a080',shade:'#a07658',hair:'#3a3632',iris:'#2a1a10',bg:['#e8e4d8','#6a6a60'],glow:'230,230,220',voice:120},
+  jurema:{name:'Dona Jurema',skin:'#a8724e',shade:'#7a4e34',hair:'#2a1e16',iris:'#1a120a',bg:['#16242e','#04080c'],glow:'110,170,210',voice:205},
+  lipe:{name:'Lipe',skin:'#c8906a',shade:'#9a6a4a',hair:'#e0c070',iris:'#3a2a18',bg:['#0e2a32','#03090c'],glow:'90,190,210',voice:165},
+  dario:{name:'Seu Dário',skin:'#a8724e',shade:'#7a4e34',hair:'#c8c4bc',iris:'#1a120a',bg:['#14202a','#04070a'],glow:'100,150,190',voice:95},
+  tania:{name:'Tânia',skin:'#b07a5a',shade:'#7a4e38',hair:'#1a120c',iris:'#2a1a10',bg:['#3a2a10','#100a04'],glow:'230,170,80',voice:200},
+  ze:{name:'Zé do Rancho',skin:'#c8946c',shade:'#9a6a4a',hair:'#2a2622',iris:'#2a1a10',bg:['#3a2410','#120a04'],glow:'230,150,80',voice:105},
+  tavinho:{name:'DJ Tavinho',skin:'#8a5a3e',shade:'#5e3a26',hair:'#141010',iris:'#1a100a',bg:['#2a1030','#08040a'],glow:'200,90,220',voice:150},
+  carol:{name:'Carol',skin:'#e0b090',shade:'#b08060',hair:'#6a2a1a',iris:'#2a3a2a',bg:['#1a1a1e','#060608'],glow:'200,200,210',voice:230},
+  arlindo:{name:'Seu Arlindo',skin:'#d0a080',shade:'#a07658',hair:'#e0dcd4',iris:'#3a2a1a',bg:['#24201a','#080706'],glow:'200,180,140',voice:100},
+  locutor:{name:'Rádio Maré 98.3',skin:'#c8946c',shade:'#9a6a4a',hair:'#2a2622',iris:'#2a1a10',bg:['#1a1a1a','#050505'],glow:'200,200,160',voice:130},
+  saq:{name:'Saqueador',skin:'#b88a68',shade:'#8a5e44',hair:'#1a1410',iris:'#1a120a',bg:['#201a16','#070605'],glow:'180,120,90',voice:115},
+});
+
+// ---------- as missões ----------
+// at: lugar do NPC (chave de LM) e deslocamento; cor da roupa; quem fala
+const V19M=[
+  {id:'pipoca',n:'O Pipoca',onde:'Coreto da Avenida',npc:'valdir',at:['coreto',-3,4],col:'#5a4a3a',hair:'#d8d4cc',skin:'#c89878'},
+  {id:'insulina',n:'A insulina da Dona Zuleica',onde:'Edifício Moacir',npc:'zuleica',at:['moacir',0,0],col:'#7a3a5a',hair:'#b8b0a8',skin:'#d8a888'},
+  {id:'antena',n:'A antena do Seu Osni',onde:'Edifício Pôr do Sol (Brava)',npc:null,radio:'osni'},
+  {id:'farmacia',n:'A drogaria do Seu Haroldo',onde:'Drogaria, perto do Ruth Cardoso',npc:'haroldo',at:['farmacia',0,3],col:'#e8e4d8',hair:'#3a3632',skin:'#d0a080'},
+  {id:'carta',n:'Carta para a Jurema',onde:'Colônia de Pescadores Z-7',npc:'jurema',at:['colonia',0,5],col:'#2a4a6a',hair:'#2a1e16',skin:'#a8724e'},
+  {id:'prancha',n:'A prancha do Lipe',onde:'Quiosques da Brava',npc:'lipe',at:['quiosqueBrava',0,0],col:'#2a8aa0',hair:'#e0c070',skin:'#c8906a'},
+  {id:'barco',n:'O barco do Seu Dário',onde:'Cabeçudas',npc:'dario',at:['bombeiros',2,8],col:'#c8a040',hair:'#c8c4bc',skin:'#a8724e'},
+  {id:'gerador',n:'Gasolina pro Ginásio',onde:'Ginásio Municipal',npc:'tania',at:['ginasio',0,-1],col:'#d86a20',hair:'#1a120c',skin:'#b07a5a'},
+  {id:'cachaca',n:'A pinga do Zé',onde:'Rancho das Laranjeiras',npc:'ze',at:['rancho',0,0],col:'#3a2a1a',hair:'#2a2622',skin:'#c8946c'},
+  {id:'vinil',n:'Os discos do DJ Tavinho',onde:'Ressaca Club',npc:'tavinho',at:['boate',0,0],col:'#4a1a5a',hair:'#141010',skin:'#8a5a3e'},
+  {id:'fotos',n:'O último rolo da Carol',onde:'Bloco 9 · Universidade de BC',npc:'carol',at:['bloco9',0,0],col:'#1a1a1e',hair:'#6a2a1a',skin:'#e0b090'},
+  {id:'escolta',n:'Seu Arlindo vai pra clínica',onde:'Mercado da Brava',npc:'arlindo',at:['mercadoBrava',0,0],col:'#6a6a5a',hair:'#e0dcd4',skin:'#d0a080'},
+];
+const V19MI=Object.fromEntries(V19M.map(m=>[m.id,m]));
+const V19NEED={gerador:5,cachaca:4,vinil:3,fotos:3};
+const V19FOTOS=[['foyer','o Foyer, onde ia ser a formatura'],['uniBib','a Biblioteca'],['quadraUni','a Quadra de Esportes']];
+
+function v19S(id){const F=G.flags;F.v19m=F.v19m||{};return F.v19m[id]||(F.v19m[id]={s:0});}
+function v19St(id){return ((G.flags.v19m||{})[id]||{}).s|0;}
+function v19Give(id,q){const l=invAdd(id,q);if(l)boxAdd(id,l);if(typeof mSync==='function')mSync();}
+function v19Start(id,quiet){const s=v19S(id);if(s.s)return false;s.s=1;s.t0=G.time|0;const m=V19MI[id];
+  if(!G.flags.v19seg||v19St(G.flags.v19seg)!==1)G.flags.v19seg=id;
+  if(!quiet){toast('Missão secundária: '+m.n+'.');G.banner={t:'Missão secundária: '+m.n,life:2.6};}return true;}
+function v19Done(id,rw){const s=v19S(id);if(s.s===2)return false;s.s=2;s.t1=G.time|0;const m=V19MI[id];const got=[];
+  if(rw){if(rw.grana){granaAdd(rw.grana);got.push(brl(rw.grana));}for(const [it,q] of (rw.it||[])){v19Give(it,q);got.push(ITEMS[it].n+(q>1?' ×'+q:''));}if(rw.ach)ach(rw.ach);}
+  AU.pickup();toast('Missão concluída: '+m.n+(got.length?' · '+got.join(', '):'')+'.');
+  if(G.flags.v19seg===id){const nx=V19M.find(x=>v19St(x.id)===1);G.flags.v19seg=nx?nx.id:null;}
+  const n=V19M.filter(x=>v19St(x.id)===2).length; if(n>=5)ach('v19cinco'); if(n>=V19M.length)ach('v19todas');
+  return true;}
+const V19REW={
+  pipoca:{grana:300,ach:'pipoca'},
+  insulina:{grana:200,it:[['m9',15]]},
+  antena:{grana:250,it:[['cart',6]]},
+  farmacia:{grana:150,it:[['ervaV',2],['spray',1]]},
+  carta:{grana:100,it:[['joia',1]]},
+  prancha:{grana:200,it:[['cart',8]]},
+  barco:{grana:250,it:[['pecas',3]]},
+  gerador:{grana:400,it:[['gran',1]]},
+  cachaca:{grana:100,it:[['polv',2]]},
+  vinil:{grana:300,it:[['pilha',2]]},
+  fotos:{grana:200,it:[['calmante',1]]},
+  escolta:{grana:250,it:[['ervaR',1],['polv',1]]},
+};
+
+// ---------- lugares, NPCs e itens (a cada geração do mundo) ----------
+function v19Spot(tx,ty){const [x,y]=freeTileNear(tx|0,ty|0,true);return {x:tc(x),y:tc(y),tx:x,ty:y};}
+function v19Anchor(k){
+  const L=LM[k]; if(L&&L.x!=null)return [(L.x/TILE)|0,(L.y/TILE)|0];
+  const B=n=>buildings.find(b=>b.name&&b.name.startsWith(n)), mid=b=>b?[b.x+((b.w/2)|0),b.y+((b.h/2)|0)]:null;
+  if(k==='moacir')return mid(B('Edifício Moacir'));
+  if(k==='quiosqueBrava'){const q=buildings.find(b=>b.name==='Quiosque'&&b.y>110&&b.y<125&&b.x>180);return q?[q.x-2,q.y+1]:null;}
+  if(k==='rancho')return mid(B('Rancho das Laranjeiras'));
+  if(k==='bloco9')return mid(B('Bloco 9'));
+  if(k==='mercadoBrava')return mid(B('Mercado da Brava'));
+  if(k==='quadraUni')return mid(B('Quadra de Esportes'));
+  if(k==='porDoSol')return mid(B('Edifício Pôr do Sol'));
+  if(k==='surfShop')return mid(B('Surf Shop Brava'));
+  if(k==='casaCab'){const b=buildings.find(b=>b.kind==='casa'&&b.x>=178&&b.y>=35&&b.y<=40);return mid(b);}
+  return null;
+}
+function v19Pick(uid,k,dx,dy,id,q){const a=v19Anchor(k);if(!a)return;const [x,y]=freeTileNear(a[0]+(dx|0),a[1]+(dy|0),true);const p={uid:'v19_'+uid,tx:x,ty:y,x:tc(x),y:tc(y),id,q:q||1,kind:'item'};pickups.push(p);pickOcc.add(idx(x,y));}
+(function(){
+  const g=genV12; genV12=function(){g();
+    for(const k in V19P)delete V19P[k];
+    for(const m of V19M){if(!m.npc)continue;const a=v19Anchor(m.at[0]);if(!a)continue;const s=v19Spot(a[0]+m.at[1],a[1]+m.at[2]);V19P[m.id]=s;
+      npcs.push({id:'v19_'+m.id,v19:m.id,name:PCH[m.npc].name,look:null,x:s.x,y:s.y,col:m.col,hair:m.hair,skin:m.skin,ang:Math.PI/2,
+        cond:m.id==='escolta'?()=>v19St('escolta')!==2:null});}
+    const put=(k,a,dx,dy)=>{const A=v19Anchor(a);if(A)V19P[k]=v19Spot(A[0]+(dx|0),A[1]+(dy|0));};
+    put('dog','cemiterio',0,2); put('antena','porDoSol',0,0); put('clinicaBrava','clinica',0,3);
+    for(const [k] of V19FOTOS)put('foto_'+k,k==='foyer'?'foyerIn':k,0,0);
+    // itens das missões
+    v19Pick('insulina','hotel',-3,2,'insulina');
+    v19Pick('carta','rodov',2,0,'cartaJu');
+    v19Pick('prancha','mirante',-2,-1,'prancha');
+    v19Pick('chaveBarco','casaCab',0,0,'chaveBarco');
+    [['posto',0,2],['lava',0,0],['obra',0,2],['oficina',-4,4],['estac',0,0]].forEach(([k,dx,dy],i)=>v19Pick('galao'+i,k==='lava'?'bombas':k,dx,dy+(k==='lava'?10:0),'galao'));
+    [['colonia',3,-2],['laranj',-2,4],['bondMA',2,2],['taquarinhas',0,-2]].forEach(([k,dx,dy],i)=>v19Pick('cachaca'+i,k,dx,dy,'cachaca'));
+    [['museu',0,0],['surfShop',0,0],['casa4',0,2]].forEach(([k,dx,dy],i)=>v19Pick('vinil'+i,k,dx,dy,'vinil'));
+  };
+})();
+
+// pegar o item de uma missão que você ainda não conhece já começa a missão
+const V19ITEM={insulina:'insulina',cartaJu:'carta',prancha:'prancha',chaveBarco:'barco',galao:'gerador',cachaca:'cachaca',vinil:'vinil'};
+{const tp=takePickup; takePickup=function(p){const r=tp.apply(this,arguments);
+  if(p&&p.kind==='item'&&V19ITEM[p.id]&&G.taken&&G.taken.has(p.uid)){const id=V19ITEM[p.id];
+    if(!v19St(id)){v19Start(id,true);toast(id==='carta'?'Uma carta pra alguém da Colônia Z-7. Missão secundária: '+V19MI.carta.n+'.':'Isso parece ser de alguém. Missão secundária: '+V19MI[id].n+'.');}
+    else if(V19NEED[id]&&v19St(id)===1){const n=invCount(p.id);toast(`${ITEMS[p.id].n}: ${n} de ${V19NEED[id]}.`);}}
+  return r;};}
+
+// ---------- conversas ----------
+function v19Cut(n,steps,end){playCut([{npc:n,id:n.npcId||PCHid(n)},...steps],end);}
+function PCHid(n){return V19MI[n.v19].npc;}
+function v19Talk(n){
+  const id=n.v19, m=V19MI[id], st=v19S(id), w=m.npc, F=G.flags;
+  const S=(t,mo)=>({say:w,m:mo||'n',t}), R_=(t,mo)=>({say:'rafa',m:mo||'n',t});
+  const done=()=>v19Done(id,V19REW[id]);
+  if(st.s===2){const fim={pipoca:'O Pipoca não sai mais do meu pé. Obrigado, rapaz.',insulina:'Tô melhor, meu filho. Deus te pague.',farmacia:'Pega o que precisar no balcão. Só não mexe no controlado.',
+      carta:'Eu leio essa carta toda noite. Obrigada.',prancha:'Quando o mar baixar eu volto pra água. Tu vai ver.',barco:'A Maria Clara tá pronta. Se precisar sair pelo mar, me chama.',gerador:'A luz do Ginásio tá acesa por tua causa.',
+      cachaca:'Volta quando quiser, a casa é tua.',vinil:'Tô no ar, parceiro. Liga o rádio.',fotos:'Eu vou revelar quando tiver um laboratório de novo.',escolta:'A doutora disse que eu fico.'}[id];
+    if(id==='cachaca'&&invCount('cachaca')>0)return v19Cachaca(n);
+    return bark(w,'h',fim||'Valeu.');}
+  if(id==='pipoca'){
+    if(!st.s)return v19Cut(n,[S('Rapaz! Rapaz, tu viu um cachorro? Caramelo, coleira vermelha. Atende por Pipoca.','t'),R_('Não vi, não, senhor.'),
+      S('Ele fugiu quando começaram os tiros. Ele tem medo de fogos, sempre correu pro cemitério, lá perto do Ruth Cardoso. Na hora do Ano Novo era sempre lá que eu achava ele.','s'),
+      S('Eu não consigo andar até lá. Não com essas pernas. Não com essas coisas na rua.','t'),R_('Vou dar uma olhada.'),{do:()=>v19Start(id)}]);
+    if(V19T.dog&&V19T.dog.f&&hyp(V19T.dog.x-n.x,V19T.dog.y-n.y)<160)return v19Cut(n,[S('PIPOCA! Ô meu Deus, Pipoca!','h'),{do:()=>{V19T.dog.home=true;st.f=0;}},S('Ele tá magro, mas tá inteiro. Toma, rapaz, é tudo que eu guardei debaixo do colchão.','h'),{do:done}]);
+    return bark(w,'t','Cemitério, rapaz. Ele sempre ia pro cemitério.');}
+  if(id==='insulina'){
+    if(!st.s&&invCount('insulina')<=0)return v19Cut(n,[S('Moço... moço, tu tem açúcar? Não, espera. Não é açúcar. É insulina.','t'),R_('A senhora tá bem?'),
+      S('Eu sou diabética. Acabou ontem. Meu filho é cozinheiro no Hotel Atlântida, ele guardava as minhas canetas no frigobar da cozinha.','s'),
+      S('A farmácia tá cheia daquelas coisas. Mas o hotel... o hotel é aqui do lado.','t'),{do:()=>v19Start(id)}]);
+    if(invCount('insulina')>0)return v19Cut(n,[R_('Dona Zuleica. Tava no frigobar, como a senhora disse.'),S('Ai, graças... Me dá aqui.','h'),S('O meu filho... tu viu ele lá? Não? Tá bom. Tá bom. Ele deve ter saído antes.','s'),
+      {do:()=>{invRemove('insulina',1);done();}}]);
+    return bark(w,'t','Cozinha do Hotel Atlântida, moço. No frigobar.');}
+  if(id==='farmacia'){
+    if(!st.s)return v19Cut(n,[S('Não entra aí! A drogaria tá cheia. Eu me tranquei no depósito e saí pela janela dos fundos.','t'),
+      S('Eu sou o farmacêutico. Tem soro, tem curativo, tem remédio pra muita gente lá dentro. Mas eles tão lá. Seis, sete.','s'),R_('E se eu limpar?'),
+      S('Se tu limpar a minha drogaria, rapaz, eu te dou do bom. E abro o balcão pra quem precisar.','n'),{do:()=>{v19Start(id);st.k=0;}}]);
+    if(st.lim)return v19Cut(n,[S('Silêncio... tu conseguiu mesmo. Toma. Do bom, como eu prometi.','h'),{do:done}]);
+    return bark(w,'t','Eles ainda tão lá dentro. Eu tô ouvindo.');}
+  if(id==='carta'){
+    if(invCount('cartaJu')>0)return v19Cut(n,[R_('A senhora é a Jurema? Achei isso na Rodoviária.'),S('...É a letra do meu irmão. Ele ia pegar o ônibus pra cá ontem de manhã.','t'),
+      {fx:'zoom',v:1.05},S('"Ju, se o ônibus não sair, eu vou a pé. Guarda o meu lugar na mesa." ...Ele sempre chegava atrasado.','s'),{fx:'zoom',v:1},
+      S('Toma. Era da nossa mãe. Eu prefiro que tu use pra sair dessa cidade.','s'),{do:()=>{invRemove('cartaJu',1);v19Start(id,true);done();}}]);
+    return bark(w,'s',pick2(['Tu viu algum ônibus vindo de Balneário? Meu irmão vinha pra cá.','A gente espera os barcos aqui. Ninguém sai da Colônia sozinho.']));}
+  if(id==='prancha'){
+    if(invCount('prancha')>0)return v19Cut(n,[S('MINHA PRANCHA! Mano, tu achou!','h'),R_('Tava lá no Morro do Careca. Que diabo ela fazia lá em cima?'),S('Eu subi pra ver a onda e eles vieram. Larguei tudo e desci rolando.','a'),
+      S('Toma. O Kadu não precisa saber que eu tinha isso aqui guardado.','h'),{do:()=>{invRemove('prancha',1);v19Start(id,true);done();}}]);
+    if(!st.s)return v19Cut(n,[S('Ô, parceiro. Tu tá indo pro lado do Morro do Careca?','n'),S('Deixei a minha prancha lá no mirante. Ela foi cara, mano. Foi o primeiro salário de garçom.','s'),R_('Tu quer que eu vá buscar uma prancha. No meio disso tudo.'),
+      S('Eu pago! Tenho cartucho de escopeta que o meu tio deixou na barraca.','h'),{do:()=>v19Start(id)}]);
+    return bark(w,'n','No mirante do Morro do Careca, mano. Lá em cima.');}
+  if(id==='barco'){
+    if(invCount('chaveBarco')>0)return v19Cut(n,[R_('Seu Dário? Chaveiro de boia. Maria Clara II.'),S('É ela! Achou na casa do meu genro? Eu deixei lá quando tudo começou.','h'),
+      S('Agora sim. A Maria Clara tem diesel pra chegar em Porto Belo. Se um dia tu precisar sair pelo mar, me procura.','n'),{do:()=>{invRemove('chaveBarco',1);v19Start(id,true);F.v19barco=true;done();}}]);
+    if(!st.s)return v19Cut(n,[S('Psiu. Tu. Não grita, que eles escutam.','t'),S('Eu tenho um barco ali na Cabeçudas. Maria Clara II. Tem diesel, tem tudo. Só não tem chave.','s'),
+      S('Ficou na casa do meu genro, a última casa da rua, perto do Corpo de Bombeiros. Ele... ele não abre mais a porta pra ninguém.','t'),{do:()=>v19Start(id)}]);
+    return bark(w,'t','A casa do meu genro, rapaz. A última da rua.');}
+  if(id==='gerador'){
+    const q=invCount('galao');
+    if(st.s===1&&q>=5)return v19Cut(n,[R_('Cinco galões. Onde eu deixo?'),S('Bem aqui! Ai, menino. Tu não sabe o que é ter quarenta pessoas no escuro.','h'),{do:()=>{invRemove('galao',5);AU.unlock();G.flick=.3;done();}},S('A luz voltou! Escutou? As crianças tão gritando, mas é de alegria.','h')]);
+    if(!st.s)return v19Cut(n,[S('Ei! Tu tá sozinho? Eu sou a Tânia, voluntária da Defesa Civil. Tem gente aqui no Ginásio.','n'),
+      S('O gerador tá seco. Se eu não ligar ele hoje, a gente fica no escuro de novo. E no escuro... tu sabe.','t'),
+      S('Preciso de cinco galões de gasolina. Posto, lava-jato, oficina, a obra do Residencial... tem coisa por aí.','n'),{do:()=>v19Start(id)}]);
+    return bark(w,'n',`Tu tem ${q} de 5 galões. Posto, lava-jato, obra, oficina da Barra Sul, estacionamento do hospital.`);}
+  if(id==='cachaca'){
+    if(!st.s)return v19Cut(n,[S('Ô de casa! Entra, entra, que lá fora tá feio.','h'),S('O Rancho fecha nunca, mas a pinga acabou. Eu tinha garrafa escondida pela Laranjeiras inteira, da época do alambique do meu pai.','n'),
+      S('Pago sessenta conto por garrafa. Tem quatro por aí: na Colônia, na Praia de Laranjeiras, na estação do bondinho e na Taquarinhas.','n'),R_('Sessenta por garrafa. No apocalipse.'),S('Apocalipse sem pinga é que não dá, rapaz.','h'),{do:()=>v19Start(id)}]);
+    if(invCount('cachaca')>0)return v19Cachaca(n);
+    return bark(w,'n',`Já me trouxe ${st.n|0} de 4. Colônia, praia, bondinho, Taquarinhas.`);}
+  if(id==='vinil'){
+    const q=invCount('vinil');
+    if(st.s===1&&q>=3)return v19Cut(n,[S('Três! Três bolachas! Tu é dos meus, irmão.','h'),{do:()=>{invRemove('vinil',3);done();F.v19dj=true;}},S('O transmissor do clube ainda pega no rádio comunicador. Toda noite eu vou tocar alguma coisa. Pra quem ainda tá vivo saber que não tá sozinho.','n')]);
+    if(!st.s)return v19Cut(n,[S('Desliga essa lanterna, irmão. Aqui é cabine de DJ, não é delegacia.','a'),S('A boate tá vazia, mas a mesa funciona. Tem um transmissor de rádio pirata aqui atrás.','n'),
+      S('Só que os meus discos ficaram tudo pela cidade. Um no Museu lá de Itajaí, um na Surf Shop da Brava, um na Casa 4 do condomínio. Me traz três e eu volto pro ar.','n'),{do:()=>v19Start(id)}]);
+    return bark(w,'n',`${q} de 3 discos. Museu de Itajaí, Surf Shop da Brava, Casa 4.`);}
+  if(id==='fotos'){
+    const tir=(st.fotos||[]).length;
+    if(st.s===1&&tir>=3)return v19Cut(n,[R_('Três fotos. O Foyer, a Biblioteca e a Quadra.'),S('Obrigada. É o meu TCC: "a universidade vazia". Eu nunca imaginei que ia ficar vazia de verdade.','s'),
+      {do:()=>{invRemove('camera',1);done();}}]);
+    if(!st.s)return v19Cut(n,[S('Tu é da Gastronomia? Não? Tanto faz.','n'),S('Eu sou a Carol, do Estúdio. Falta três fotos pro meu trabalho final e eu não vou sair desse bloco nem morta.','t'),
+      S('Leva a minha câmera. O Foyer, a Biblioteca e a Quadra. Tira e me traz.','n'),{do:()=>{v19Start(id);st.fotos=[];v19Give('camera',1);}}]);
+    if(invCount('camera')<=0)return v19Cut(n,[S('Tu perdeu a minha câmera?! Toma a reserva. Cuida dessa, pelo amor.','a'),{do:()=>v19Give('camera',1)}]);
+    return bark(w,'n',`Faltam ${3-tir}. O Foyer, a Biblioteca e a Quadra.`);}
+  if(id==='escolta'){
+    if(!st.s)return v19Cut(n,[S('Eu tô aqui desde a meia-noite, rapaz. Atrás das gôndolas.','t'),S('A minha neta disse que tem uma clínica aqui na Brava com médica. Eu tenho marca-passo. Se a pilha acabar...','s'),
+      R_('A Clínica da Brava. Fica perto da praia.'),S('Tu me leva? Eu ando devagar, mas eu ando.','t'),{do:()=>{v19Start(id);st.f=1;}}]);
+    if(st.f)return bark(w,'t','Vai na frente, rapaz. Eu vou atrás.');
+    return v19Cut(n,[S('Tu volta pra me levar?','t'),{do:()=>{st.f=1;toast('O Seu Arlindo está te seguindo.');}}]);}
+}
+function v19Cachaca(n){const st=v19S('cachaca'),q=invCount('cachaca');if(q<=0)return;invRemove('cachaca',q);st.n=(st.n|0)+q;granaAdd(60*q);
+  playCut([{npc:n,id:'ze'},{say:'ze',m:'h',t:q>1?`${q} garrafas! Toma ${brl(60*q)}.`:`Essa é das boas. Toma ${brl(60)}.`}],()=>{if(st.n>=4&&st.s===1)v19Done('cachaca',V19REW.cachaca);});}
+(function(){const sn=STORY.npc;STORY.npc=function(n){if(n&&n.v19)return v19Talk(n);return sn(n);};})();
+
+// ---------- pontos virtuais: o que dá pra usar sem ser NPC ----------
+function v19Points(){
+  const out=[], F=G.flags;
+  const d=V19T.dog; if(d&&!d.home&&!d.f&&v19St('pipoca')===1)out.push({x:d.x,y:d.y,lab:'Chamar o cachorro',use:()=>{d.f=1;v19S('pipoca').f=1;AU.pickup();bark('rafa','h','Pipoca? Vem cá, Pipoca. Vem.');toast('O Pipoca está te seguindo. Leve ele até o Seu Valdir, no coreto.');}});
+  const an=V19P.antena; if(an&&v19St('antena')===1)out.push({x:an.x,y:an.y,lab:'Consertar o amplificador da antena',use:v19Antena});
+  if(v19St('fotos')===1&&invCount('camera')>0)for(const [k,nome] of V19FOTOS){const p=V19P['foto_'+k];const st=v19S('fotos');if(p&&!(st.fotos||[]).includes(k))out.push({x:p.x,y:p.y,lab:'Fotografar '+nome,use:()=>v19Foto(k,nome)});}
+  for(const o of V19E.objs)if(!o.gone)out.push(o);
+  return out;
+}
+function v19Antena(){const st=v19S('antena');
+  if(invCount('pilha')<=0)return toast('O amplificador está sem bateria. Precisa de uma pilha.');
+  invRemove('pilha',1);AU.unlock();AU.static(.5,.5);
+  playCut([{say:'rafa',m:'n',think:true,t:'Fio solto, pilha nova, conector no lugar. Tem que funcionar.'},{do:()=>AU.radio()},
+    {say:'osni',m:'h',radio:true,t:'...ATENÇÃO! Câmbio! Tô te ouvindo limpo agora! Daqui do Pôr do Sol dá pra falar até com Florianópolis!'},
+    {say:'osni',m:'n',radio:true,t:'Deixei um pacote na portaria pra ti. Cartucho que era do meu cunhado. E dinheiro, que agora não serve pra nada pra mim.'}],
+    ()=>v19Done('antena',V19REW.antena));}
+function v19Foto(k,nome){const st=v19S('fotos');st.fotos=st.fotos||[];if(st.fotos.includes(k))return;st.fotos.push(k);G.flick=.12;AU.tn(1800,1800,.05,'square',.06);AU.tn(400,300,.12,'sawtooth',.04,.06);
+  toast(`Foto: ${nome}. ${st.fotos.length} de 3.`);if(st.fotos.length>=3)later(700,()=>bark('rafa','n','Pronto. Três fotos. Agora volta pro Bloco 9.'));}
+
+{const fi=findInteract; findInteract=function(){let best=fi();if(P.inCar||P.hidden||(typeof MP!=='undefined'&&MP.on))return best;
+  let bd=best?22:46; for(const o of v19Points()){const d=hyp(o.x-P.x,o.y-P.y)-6;if(d<bd){bd=d;best={k:'v19',o};}} return best;};}
+{const pt=promptText; promptText=function(pr){if(pr&&pr.k==='v19')return pr.o.lab;return pt(pr);};}
+{const di=doInteract; doInteract=function(){const pr=G.prompt;if(pr&&pr.k==='v19'){try{pr.o.use();}catch(e){console.error(e);}return;}return di();};}
+
+// ---------- lógica das missões ----------
+function v19Follow(f,dt,dist,spd){
+  const d=hyp(P.x-f.x,P.y-f.y); f.moving=false;
+  if(d>700){const a=Math.random()*6.283;const s=v19Spot(((P.x+Math.cos(a)*50)/TILE)|0,((P.y+Math.sin(a)*50)/TILE)|0);f.x=s.x;f.y=s.y;return;}
+  if(d<dist)return; const a=Math.atan2(P.y-f.y,P.x-f.x), nx=f.x+Math.cos(a)*spd*dt, ny=f.y+Math.sin(a)*spd*dt;
+  const ok=(x,y)=>!SOLID[getT((x/TILE)|0,(y/TILE)|0)];
+  if(ok(nx,ny)){f.x=nx;f.y=ny;}else if(ok(nx,f.y))f.x=nx;else if(ok(f.x,ny))f.y=ny;
+  f.ang=a;f.moving=true;f.walk=(f.walk||0)+dt*8;
+}
+function v19MissTick(dt){
+  const F=G.flags, M=F.v19m||{};
+  // o Pipoca
+  if(v19St('pipoca')===1){
+    if(!V19T.dog){const s=v19S('pipoca');if(s.f){const p=v19Spot(((P.x-40)/TILE)|0,(P.y/TILE)|0);V19T.dog={x:p.x,y:p.y,f:1,ang:0};}else if(V19P.dog)V19T.dog={x:V19P.dog.x,y:V19P.dog.y,f:0,ang:0};}
+    const d=V19T.dog; if(d&&d.f&&!d.home){v19Follow(d,dt,46,210);const v=npcs.find(n=>n.v19==='pipoca');
+      if(v&&hyp(d.x-v.x,d.y-v.y)<110&&!CUT.on)v19Talk(v);}
+    if(d&&!d.f&&hyp(d.x-P.x,d.y-P.y)<260&&!d.ganiu){d.ganiu=1;AU.tn(900,600,.3,'sine',.05);AU.tn(900,600,.3,'sine',.05,.4);psyFloat(d.x,d.y,'(ganido)',{life:2,c:'#e8d8a8'});}
+  }
+  if(V19T.dog&&V19T.dog.home){const v=npcs.find(n=>n.v19==='pipoca');if(v){V19T.dog.x+=(v.x+18-V19T.dog.x)*Math.min(1,dt*3);V19T.dog.y+=(v.y+10-V19T.dog.y)*Math.min(1,dt*3);}}
+  if(v19St('pipoca')===2&&!V19T.dog){const v=npcs.find(n=>n.v19==='pipoca');if(v)V19T.dog={x:v.x+18,y:v.y+10,home:true,ang:0};}
+  // antena: o Seu Osni chama pelo rádio (só depois do rádio comunicador)
+  if(!v19St('antena')&&F.walkie&&G.time>240&&!G.ev.silent){G.ev.v19osni=(G.ev.v19osni||0)+dt;if(G.ev.v19osni>40&&!CUT.on&&evOK(30)){evMark();v19Start('antena',true);AU.radio();
+    bark('osni','n','Alguém na escuta? Aqui é o Osni, radioamador, do último andar do Edifício Pôr do Sol, lá na Brava. Câmbio.',{radio:true});
+    later(5500,()=>bark('osni','t','A minha antena tá mal-ligada e eu não consigo descer. Quem estiver perto, o amplificador fica na entrada. Câmbio.',{radio:true}));
+    later(9000,()=>toast('Missão secundária: '+V19MI.antena.n+'. Leve uma pilha.'));}}
+  // a drogaria: os zumbis aparecem quando você chega perto
+  if(v19St('farmacia')===1&&LM.farmacia){const st=v19S('farmacia'),L=LM.farmacia,d=hyp(P.x-L.x,P.y-L.y);
+    if(!V19T.farm&&!st.lim&&d<520){V19T.farm=[];const n=Math.max(2,6-(st.k|0));for(let i=0;i<n;i++){const [x,y]=freeTileNear(((L.x/TILE)|0)+ri(-3,3),((L.y/TILE)|0)+ri(-4,-1),true);const e=makeEnemy(i===0?'corr':'zumbi',tc(x),tc(y),null);e.v19='farm';enemies.push(e);V19T.farm.push(e);}}
+    if(V19T.farm&&!st.lim){const vivos=V19T.farm.filter(e=>e.alive).length;st.k=6-vivos;if(!vivos){st.lim=1;toast('A drogaria está limpa. Volte e fale com o Seu Haroldo.');}}}
+  // escolta
+  if(v19St('escolta')===1){const n=npcs.find(n=>n.v19==='escolta'),st=v19S('escolta');
+    if(n&&st.f){if(!V19T.esc){V19T.esc=1;if(hyp(n.x-P.x,n.y-P.y)>300){const p=v19Spot(((P.x+40)/TILE)|0,(P.y/TILE)|0);n.x=p.x;n.y=p.y;}}
+      const pr=enemies.some(e=>e.alive&&hyp(e.x-n.x,e.y-n.y)<140);
+      if(pr){G.ev.v19arl=(G.ev.v19arl||0)-dt;if(G.ev.v19arl<=0){G.ev.v19arl=6;bark('arlindo','t',pick2(['Rapaz! Tem um ali!','Ai, meu coração...','Não deixa ele chegar perto de mim!']));}}
+      else v19Follow(n,dt,54,95);
+      const c=V19P.clinicaBrava; if(c&&hyp(n.x-c.x,n.y-c.y)<120&&!CUT.on){st.f=0;
+        playCut([{npc:n,id:'arlindo'},{say:'arlindo',m:'h',t:'A clínica... Tem luz lá dentro. Obrigado, rapaz. Tu é um bom menino.'},{say:'rafa',m:'n',t:'Bate na porta e fala que foi o Richard que trouxe.'}],()=>v19Done('escolta',V19REW.escolta));}}}
+}
+
+// ---------- EVENTOS ALEATÓRIOS ----------
+const V19EV=['caixa','radio','pisca','telefone','cinza','amarrado','saqueador','musica','fita'];
+const V19EVN={caixa:'Caixa de suprimentos',radio:'Transmissão da Rádio Maré',pisca:'Luzes piscando',telefone:'Telefone tocando',cinza:'Chuva de cinza',amarrado:'Zumbi amarrado',saqueador:'Saqueador',musica:'Caixa de som ligada',fita:'Fita da câmera'};
+function v19Blocked(){
+  if(G.mode!=='play'||CUT.on)return true;
+  if(typeof MP!=='undefined'&&MP.on)return true;
+  if(typeof FB!=='undefined'&&FB.on)return true;
+  if(G.flags.cap||G.cap||G.flags.capOn||(G.ev&&G.ev.cap))return true;
+  if(G.wave>0||G.heli||G.flags.radio||G.struggle||G.qte||P.inCar||P.hidden||inSafe())return true;
+  if(G.ev&&(G.ev.silent||G.ev.uniWave||G.ev.posto))return true;
+  if(typeof inSew==='function'&&inSew())return true;
+  return false;
+}
+function v19Obj(o){o.gone=false;V19E.objs.push(o);return o;}
+function v19EvEnd(){V19E.cur=null;V19E.objs=V19E.objs.filter(o=>o.keep&&!o.gone);}
+function v19Outdoor(minD,maxD){const sp=evSpot(minD,maxD,null,false);return sp&&bOfXY(sp.x,sp.y)<0?sp:null;}
+function v19FarSpot(minD,maxD){for(let i=0;i<60;i++){const a=Math.random()*6.283,d=rr(minD,maxD),tx=((P.x+Math.cos(a)*d)/TILE)|0,ty=((P.y+Math.sin(a)*d)/TILE)|0;if(!inb(tx,ty))continue;const k=idx(tx,ty);if(SOLID[map[k]]||!reach[k]||safeMask[k])continue;if(inZone()!==(ty>=ZY))continue;return {x:tc(tx),y:tc(ty),a};}return null;}
+function v19Dir(x,y){const a=Math.atan2(y-P.y,x-P.x),i=Math.round(a/(Math.PI/4));return ['a leste','a sudeste','ao sul','a sudoeste','a oeste','a noroeste','ao norte','a nordeste'][(i+8)%8];}
+function v19Zs(x,y,n,type){let k=0;for(let i=0;i<n*3&&k<n;i++){const a=Math.random()*6.283,d=rr(180,280),tx=((x+Math.cos(a)*d)/TILE)|0,ty=((y+Math.sin(a)*d)/TILE)|0;if(!inb(tx,ty))continue;const q=idx(tx,ty);if(SOLID[map[q]]||!reach[q]||safeMask[q])continue;const e=makeEnemy(type||'zumbi',tc(tx),tc(ty),null);e.state='investigate';e.nx=x;e.ny=y;e.it=20;enemies.push(e);k++;}return k;}
+const V19LOOT=[['m9',12],['ervaV',1],['pilha',1],['cart',5],['polv',1],['spray',1],['gran',1],['m357',4]];
+function v19Loot(n){const got=[];for(let i=0;i<n;i++){const [id,q]=pick2(V19LOOT);v19Give(id,q);got.push(ITEMS[id].n+(q>1?' ×'+q:''));}return got.join(', ');}
+
+const V19START={
+  caixa(){const sp=v19Outdoor(240,420);if(!sp)return false;
+    const o=v19Obj({x:sp.x,y:sp.y,lab:'Abrir a caixa de suprimentos',fall:3.2,draw:'caixa',use(){if(o.fall>0)return;o.gone=true;AU.creak(.5);toast('Caixa da Defesa Civil: '+v19Loot(3)+'.');v19EvEnd();}});
+    V19E.cur={k:'caixa',life:150,o}; AU.tn(80,70,3,'sawtooth',.03); bark('rafa','s','Um avião... largou alguma coisa de paraquedas. Ali!'); return true;},
+  radio(){if(!G.flags.walkie)return false;const sp=v19FarSpot(520,900);if(!sp)return false;
+    const o=v19Obj({x:sp.x,y:sp.y,lab:'Pegar a mochila da Rádio Maré',draw:'mochila',use(){o.gone=true;toast('Na mochila: '+v19Loot(2)+'. E um bilhete: "Força, Balneário."');v19EvEnd();}});
+    V19E.cur={k:'radio',life:400,o}; AU.radio(); const dir=v19Dir(sp.x,sp.y);
+    bark('locutor','n','...Rádio Maré, 98.3. Se você está ouvindo, não está sozinho. Nossa equipe deixou mantimentos numa mochila laranja.',{radio:true});
+    later(6000,()=>bark('locutor','n',`Pelo sinal do teu rádio, a mochila ficou ${dir} de onde você está. Pouco mais de quinhentos metros. Boa sorte.`,{radio:true}));
+    later(11000,()=>toast(`Mochila da rádio: ${dir} daqui.`)); return true;},
+  pisca(){if(G.inB<0)return false;V19E.cur={k:'pisca',life:6,t:0,step:0};AU.static(.3,.4);bark('rafa','t','As luzes... tão piscando.');return true;},
+  telefone(){let sp=null;for(let i=0;i<60&&!sp;i++){const a=Math.random()*6.283,d=rr(200,420),tx=((P.x+Math.cos(a)*d)/TILE)|0,ty=((P.y+Math.sin(a)*d)/TILE)|0;if(!inb(tx,ty))continue;const k=idx(tx,ty);if(SOLID[map[k]]||!reach[k]||safeMask[k]||bmap[k]<0)continue;const b=buildings[bmap[k]];if(b&&(b.safe||b.big))continue;sp={x:tc(tx),y:tc(ty)};}
+    if(!sp)return false;
+    const o=v19Obj({x:sp.x,y:sp.y,lab:'Atender o telefone',draw:'fone',use(){o.gone=true;v19Fone(o);}});
+    V19E.cur={k:'telefone',life:50,o,ring:0}; later(900,()=>bark('rafa','s','Um telefone tocando. Telefone fixo. Num prédio vazio.')); return true;},
+  cinza(){if(inZone()&&G.inB>=0)return false;V19E.cur={k:'cinza',life:70,t:0};G.ev.v19cinza=70;bark('rafa','s','Isso é... cinza? Tá chovendo cinza. É dos prédios queimando.');return true;},
+  amarrado(){const sp=v19Outdoor(220,360);if(!sp)return false;
+    const o=v19Obj({x:sp.x,y:sp.y,lab:'Ler o bilhete pregado nele',draw:'amarrado',lido:false,use(){
+      if(!o.lido){o.lido=true;o.lab='Acabar com o sofrimento dele';AU.creak(.3);
+        return playCut([{say:'rafa',m:'t',think:true,t:'"Esse é o Jair, meu marido. Eu não tive coragem. Se você tiver, faz por mim. Deixei as coisas dele no bolso. — M."',dur:4.2},{say:'rafa',m:'s',think:true,t:'Ele ainda tá de aliança.'}]);}
+      o.gone=true;AU.thud(1);G.shake+=3;addDecal({k:'corpse',x:o.x,y:o.y,rot:Math.random()*6.28,type:'zumbi',col:'#4a5a6a',skin:'#a8b0a0',r:11});addDecal({k:'blood',x:o.x,y:o.y,r:18,rot:0,seed:Math.random()});
+      toast('No bolso dele: '+v19Loot(2)+'.');bark('rafa','s','Descansa, Jair.');v19EvEnd();}});
+    V19E.cur={k:'amarrado',life:240,o,gr:0}; EV.seen.push({x:sp.x,y:sp.y,t:'Tem um deles amarrado no poste. Com corda de varal.'}); return true;},
+  saqueador(){if(G.inB>=0)return false;const sp=v19Outdoor(260,360);if(!sp)return false;V19E.cur={k:'saqueador',life:60,s:{x:sp.x,y:sp.y,ang:0,walk:0,fase:0}};return true;},
+  musica(){const sp=v19Outdoor(220,380);if(!sp)return false;
+    const o=v19Obj({x:sp.x,y:sp.y,lab:'Desligar a caixa de som',draw:'som',use(){o.gone=true;AU.unlock();v19Give('pilha',1);toast('Caixa de som de bluetooth, com 12% de bateria. Você tirou a pilha dela.');v19EvEnd();}});
+    V19E.cur={k:'musica',life:45,o,n:0,b:0}; later(1200,()=>bark('rafa','a','Quem é que deixa uma caixa de som tocando AGORA? Isso vai chamar todos eles.')); return true;},
+  fita(){const sp=v19Outdoor(140,280);if(!sp)return false;
+    const o=v19Obj({x:sp.x,y:sp.y,lab:'Ver a fita da câmera',draw:'fita',use(){o.gone=true;AU.static(.4,.6);
+      playCut([{say:'rafa',m:'n',think:true,t:'Uma câmera de mão. A fita ainda tá dentro. REC, 23:12, do dia do surto.'},
+        {say:'rafa',m:'t',think:true,t:'"...Gravando! Olha a Atlântica, amor, tá todo mundo correndo. Deve ser briga. Não, olha, ele tá... ele mordeu o..."'},
+        {say:'rafa',m:'s',think:true,t:'Depois só o chão. E alguém respirando perto do microfone. A fita acaba.'}],
+        ()=>{toast('Na bolsa da câmera: '+v19Loot(1)+'.');});v19EvEnd();}});
+    V19E.cur={k:'fita',life:200,o}; return true;},
+};
+function v19Fone(o){const r=Math.random();
+  if(r<.34)return playCut([{say:'rafa',m:'t',t:'...Alô?'},{say:'rafa',m:'s',think:true,t:'"Mãe? Mãe, é tu? Eu tô no Bloco 6, tem gente batendo na porta, mãe, vem me buscar..."'},{say:'rafa',m:'t',think:true,t:'Caiu. Era uma gravação na secretária eletrônica. Repetindo.'}],()=>{v19Give('ervaV',1);toast('Do lado do telefone: uma erva verde num pote de vidro.');v19EvEnd();});
+  if(r<.67)return playCut([{say:'rafa',m:'t',t:'Alô?'},{say:'rafa',m:'s',think:true,t:'"...unidade sete, confirma código âmbar no setor Barra Sul. Vértice, câmbio." Desligaram.'},{say:'rafa',m:'a',think:true,t:'Eles ainda estão contando quem tá vivo.'}],()=>{granaAdd(80);toast('Na gaveta embaixo do telefone: '+brl(80)+'.');v19EvEnd();});
+  playCut([{say:'rafa',m:'t',t:'Alô?'},{say:'rafa',m:'k',think:true,t:'Só respiração. Respiração molhada. E ela tá vindo do quarto, não do telefone.'}],()=>{const e=makeEnemy('zumbi',o.x+rr(-30,30),o.y+rr(-30,30),null);const [x,y]=freeTileNear((e.x/TILE)|0,(e.y/TILE)|0,true);e.x=tc(x);e.y=tc(y);e.state='chase';e.lx=P.x;e.ly=P.y;enemies.push(e);AU.sting();G.shake+=4;v19EvEnd();});
+}
+function v19Saq(c,dt){const s=c.s,d=hyp(P.x-s.x,P.y-s.y);
+  if(s.fase===0){const a=Math.atan2(P.y-s.y,P.x-s.x);s.ang=a;const nx=s.x+Math.cos(a)*90*dt,ny=s.y+Math.sin(a)*90*dt;if(!SOLID[getT((nx/TILE)|0,(ny/TILE)|0)]){s.x=nx;s.y=ny;}s.walk+=dt*7;s.moving=true;
+    if(d<70&&!CUT.on){s.fase=1;s.moving=false;const g=grana(),armed=P.owned.slice(0,8).some(x=>x),pede=Math.max(50,Math.round(g*.3/10)*10);
+      CUT.actors.saq=s;
+      if(g<=0)return playCut([{say:'saq',m:'a',t:'Ô, parceiro. Devagar. Passa o dinheiro.'},{say:'rafa',m:'n',t:'Que dinheiro?'},{say:'saq',m:'s',t:'...Nem dinheiro tu tem. Some daqui, vai.'}],()=>{s.fase=2;});
+      playCut([{say:'saq',m:'a',t:'Ô, parceiro. Devagar. Mão onde eu possa ver.'},{say:'saq',m:'a',t:`Passa ${brl(pede)} e ninguém se machuca. Hoje todo mundo tá fazendo o que pode.`},
+        {choice:[{t:`Dar ${brl(pede)}.`,then:[{do:()=>{granaAdd(-pede);}},{say:'saq',m:'n',t:'Valeu. Sem ressentimento. Boa sorte aí.'}]},
+          {t:'Nem pensar.',then:armed?[{say:'rafa',m:'a',t:'Eu tô armado. Tu não tá.'},{say:'saq',m:'t',t:'Tá, tá! Calma! Eu já tô indo!'},{do:()=>{if(Math.random()<.6){dropAt(s.x,s.y,'pecas',1);toast('Ele derrubou alguma coisa correndo.');}}}]:
+            [{say:'saq',m:'a',t:'Então vai ser do jeito difícil.'},{do:()=>{hurtPlayer(14,s.x,s.y);const lv=Math.min(grana(),Math.round(pede*.7));granaAdd(-lv);toast(`Ele te deu um soco e levou ${brl(lv)}.`);}}]}]}],()=>{s.fase=2;});}
+    if(c.life<5)s.fase=2; return;}
+  if(s.fase===2){const a=Math.atan2(s.y-P.y,s.x-P.x);s.ang=a;s.x+=Math.cos(a)*170*dt;s.y+=Math.sin(a)*170*dt;s.walk+=dt*10;s.moving=true;if(d>700){v19EvEnd();}}
+}
+function v19EvTick(dt){
+  const c=V19E.cur;
+  if(G.ev&&G.ev.v19cinza>0)G.ev.v19cinza-=dt;
+  if(c){c.life-=dt;
+    if(c.k==='caixa'&&c.o.fall>0){c.o.fall-=dt;if(c.o.fall<=0){AU.thud(1);G.shake+=4;alertNoise(c.o.x,c.o.y,520);v19Zs(c.o.x,c.o.y,3);}}
+    if(c.k==='pisca'){c.t+=dt;G.flick=Math.max(G.flick||0,Math.random()<.5?.12:0);if(c.t>2.2&&!c.step){c.step=1;G.flick=.6;
+      let ok=false;for(let i=0;i<20&&!ok;i++){const a=P.ang+Math.PI+rr(-.8,.8),d=rr(60,110),tx=((P.x+Math.cos(a)*d)/TILE)|0,ty=((P.y+Math.sin(a)*d)/TILE)|0;if(!inb(tx,ty))continue;const k=idx(tx,ty);if(SOLID[map[k]]||safeMask[k]||!los(P.x,P.y,tc(tx),tc(ty)))continue;
+        const e=makeEnemy('zumbi',tc(tx),tc(ty),null);e.state='chase';e.lx=P.x;e.ly=P.y;enemies.push(e);ok=true;}
+      AU.sting();AU.groan({x:P.x,y:P.y},1);later(700,()=>bark('rafa','k','ATRÁS DE MIM!'));}}
+    if(c.k==='telefone'&&!c.o.gone){c.ring-=dt;if(c.ring<=0){c.ring=2.6;const v=clamp(1-hyp(c.o.x-P.x,c.o.y-P.y)/700,.15,1);for(let i=0;i<2;i++){AU.tn(880,880,.35,'square',.03*v,i*.45);AU.tn(1100,1100,.35,'square',.02*v,i*.45);}psyFloat(c.o.x,c.o.y,'(trim, trim)',{life:1.6,c:'#e8e0c8'});}}
+    if(c.k==='musica'&&!c.o.gone){c.b-=dt;c.n-=dt;if(c.b<=0){c.b=.42;const f=pick2([330,392,440,494,523]);AU.tn(f,f,.3,'triangle',.05*clamp(1-hyp(c.o.x-P.x,c.o.y-P.y)/800,.1,1));AU.tn(82,60,.18,'sine',.08);}
+      if(c.n<=0){c.n=3;alertNoise(c.o.x,c.o.y,460);}}
+    if(c.k==='amarrado'&&!c.o.gone){c.gr-=dt;if(c.gr<=0){c.gr=rr(4,7);if(hyp(c.o.x-P.x,c.o.y-P.y)<500)AU.groan({x:c.o.x,y:c.o.y},.5);}if(hyp(c.o.x-P.x,c.o.y-P.y)>1600)v19EvEnd();}
+    if(c.k==='saqueador')v19Saq(c,dt);
+    if(V19E.cur&&V19E.cur.life<=0){if(c.k==='musica'&&!c.o.gone)toast('A música parou. A bateria da caixa acabou.');if(c.k==='telefone'&&!c.o.gone)toast('O telefone parou de tocar.');v19EvEnd();}
+    return;}
+  if(v19Blocked())return;
+  V19E.t-=dt; if(V19E.t>0)return;
+  V19E.t=rr(160,260);
+  if(typeof evOK==='function'&&!evOK(60)){V19E.t=30;return;}
+  if(enemies.some(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<420)){V19E.t=20;return;}
+  const night=isNight(), W8=[['caixa',6],['radio',G.flags.walkie?6:0],['pisca',G.inB>=0?9:0],['telefone',G.inZ?0:6],['cinza',G.flags.caos||night?5:2],['amarrado',5],['saqueador',G.inB<0?5:0],['musica',night?6:4],['fita',5]];
+  let tot=0;for(const [,w] of W8)tot+=w;let r=Math.random()*tot,k=null;for(const [kk,w] of W8){r-=w;if(r<=0){k=kk;break;}}
+  if(k&&v19EvStart(k)&&typeof evMark==='function')evMark(); else V19E.t=25;
+}
+function v19EvStart(k){if(V19E.cur)v19EvEnd();V19E.objs=V19E.objs.filter(o=>!o.gone);const f=V19START[k];if(!f)return false;try{return !!f();}catch(e){console.error(e);V19E.cur=null;return false;}}
+
+// ---------- desenho ----------
+function v19DrawDog(d){ctx.save();ctx.translate(d.x,d.y);ctx.rotate(d.ang||0);const w=Math.sin(d.walk||0)*2;
+  ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(0,3,13,6,0,0,6.283);ctx.fill();
+  ctx.fillStyle='#c8904a';ctx.fillRect(-11,-4,18,9);ctx.fillRect(-9+w,-6,3,13);ctx.fillRect(3-w,-6,3,13);
+  ctx.beginPath();ctx.arc(9,0,5,0,6.283);ctx.fill();ctx.fillStyle='#a8703a';ctx.fillRect(10,-6,3,3);ctx.fillRect(10,3,3,3);
+  ctx.fillStyle='#c8261e';ctx.fillRect(5,-4,2,8);ctx.strokeStyle='#c8904a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-11,0);ctx.lineTo(-16,Math.sin(G.time*14)*3);ctx.stroke();ctx.restore();}
+function v19Tag(x,y,t,c){ctx.font=`700 10px ${FONT_UI}`;ctx.textAlign='center';const w=ctx.measureText(t).width+8;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y-11,w,13);ctx.fillStyle=c||'#e8d8a8';ctx.fillText(t,x,y-1);}
+function v19DrawWorld(){
+  const F=G.flags;
+  // marca em cima de quem tem missão
+  for(const n of npcs){if(!n.v19||(n.cond&&!n.cond())||!inV(n.x,n.y,60))continue;const s=v19St(n.v19);if(s===2)continue;
+    const pronto=v19Ready(n.v19); if(s===1&&!pronto)continue; v19Tag(n.x,n.y-32,s?'!':'?',s?'#e8c050':'#d8d0b8');}
+  if(V19T.dog&&inV(V19T.dog.x,V19T.dog.y,40))v19DrawDog(V19T.dog);
+  const n=npcs.find(n=>n.v19==='escolta'); if(n&&n.moving){n.walk=(n.walk||0);}
+  for(const o of v19Points()){if(!inV(o.x,o.y,80))continue;
+    if(o.draw==='caixa'){const h=o.fall>0?o.fall*60:0;ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(o.x,o.y+6,14*(1-h/240),6,0,0,6.283);ctx.fill();
+      if(h>0){ctx.strokeStyle='rgba(230,230,220,.7)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(o.x-12,o.y-h-6);ctx.lineTo(o.x-22,o.y-h-40);ctx.moveTo(o.x+12,o.y-h-6);ctx.lineTo(o.x+22,o.y-h-40);ctx.stroke();ctx.fillStyle='#d86a20';ctx.beginPath();ctx.ellipse(o.x,o.y-h-44,26,10,0,Math.PI,0);ctx.fill();}
+      ctx.fillStyle='#6a5a3a';ctx.fillRect(o.x-12,o.y-h-10,24,18);ctx.strokeStyle='#3a2e1c';ctx.lineWidth=2;ctx.strokeRect(o.x-12,o.y-h-10,24,18);ctx.fillStyle='#d8c890';ctx.fillRect(o.x-8,o.y-h-4,16,5);
+      if(h<=0)v19Tag(o.x,o.y-20,'DEFESA CIVIL','#e8a050');}
+    else if(o.draw==='mochila'){ctx.fillStyle='#d86a20';ctx.fillRect(o.x-7,o.y-8,14,16);ctx.fillStyle='#8a3a10';ctx.fillRect(o.x-5,o.y-2,10,6);if(hyp(o.x-P.x,o.y-P.y)<200)v19Tag(o.x,o.y-16,'MOCHILA');}
+    else if(o.draw==='fone'){ctx.fillStyle='#1a1a1a';ctx.fillRect(o.x-6,o.y-4,12,8);ctx.fillStyle='#c8261e';if(Math.sin(G.time*12)>0)ctx.fillRect(o.x-2,o.y-8,4,3);}
+    else if(o.draw==='som'){ctx.fillStyle='#202024';ctx.fillRect(o.x-9,o.y-6,18,12);ctx.fillStyle=`rgba(80,160,255,${.5+.5*Math.sin(G.time*8)})`;ctx.fillRect(o.x-7,o.y+4,14,2);ctx.fillStyle='#3a3a40';ctx.beginPath();ctx.arc(o.x-4,o.y,3,0,6.283);ctx.arc(o.x+4,o.y,3,0,6.283);ctx.fill();}
+    else if(o.draw==='fita'){ctx.fillStyle='#2a2a2e';ctx.fillRect(o.x-8,o.y-5,16,10);ctx.fillStyle='#c8261e';ctx.fillRect(o.x+5,o.y-4,2,2);}
+    else if(o.draw==='amarrado'){ctx.fillStyle='#5a4a3a';ctx.fillRect(o.x-3,o.y-26,6,40);const sw=Math.sin(G.time*3)*.25;drawHuman(o.x,o.y+4,Math.PI/2+sw,{coat:'#4a5a6a',skin:'#a8b0a0',hair:'#3a3632',pants:'#22201c'});
+      ctx.strokeStyle='#d8d4c0';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(o.x-10,o.y-2);ctx.lineTo(o.x+10,o.y+2);ctx.moveTo(o.x-10,o.y+6);ctx.lineTo(o.x+10,o.y+10);ctx.stroke();ctx.fillStyle='#e8e4d8';ctx.fillRect(o.x-5,o.y-14,10,7);}
+    else if(o.lab&&hyp(o.x-P.x,o.y-P.y)<220){ctx.strokeStyle='rgba(232,192,80,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(o.x,o.y,10+Math.sin(G.time*4)*2,0,6.283);ctx.stroke();}}
+  const c=V19E.cur; if(c&&c.k==='saqueador'&&inV(c.s.x,c.s.y,60))drawHuman(c.s.x,c.s.y,c.s.ang,{coat:'#3a3a2a',skin:'#b88a68',hair:'#1a1410',pants:'#22201c',walk:c.s.walk,moving:c.s.moving,legAng:c.s.ang});
+}
+function v19Ready(id){const st=v19S(id);if(st.s!==1)return false;
+  if(id==='insulina')return invCount('insulina')>0; if(id==='farmacia')return !!st.lim; if(id==='gerador')return invCount('galao')>=5;
+  if(id==='cachaca')return invCount('cachaca')>0; if(id==='vinil')return invCount('vinil')>=3; if(id==='fotos')return (st.fotos||[]).length>=3;
+  if(id==='pipoca')return !!(V19T.dog&&V19T.dog.f); return false;}
+function v19DrawAsh(){if(!(G.ev&&G.ev.v19cinza>0)||G.mode!=='play')return;ctx.setTransform(dpr,0,0,dpr,0,0);const a=clamp(G.ev.v19cinza/8,0,1)*clamp((70-G.ev.v19cinza)/6,0,1);
+  ctx.fillStyle=`rgba(90,84,78,${.14*a})`;ctx.fillRect(0,0,view.w,view.h);ctx.fillStyle=`rgba(200,196,188,${.55*a})`;
+  for(let i=0;i<70;i++){const s=i*97.13,x=((s*13.7+G.time*(14+i%5*4))%(view.w+40))-20,y=((s*7.3+G.time*(36+i%7*6))%(view.h+40))-20;ctx.fillRect(x,y,2+(i%3),2);}}
+
+// ---------- rumo da missão seguida (só quando a história não aponta pra lugar nenhum) ----------
+function v19Target(id){const st=v19S(id),F=G.flags,P_=V19P;
+  const npc=()=>{const n=npcs.find(n=>n.v19===id);return n?{x:n.x,y:n.y}:null;};
+  if(v19Ready(id)||id==='escolta'&&st.f)return id==='escolta'?P_.clinicaBrava:npc();
+  const pk=itid=>{const p=pickups.find(p=>p.id===itid&&String(p.uid).startsWith('v19_'));return p?{x:p.x,y:p.y}:null;};
+  switch(id){case 'pipoca':return V19T.dog?{x:V19T.dog.x,y:V19T.dog.y}:P_.dog;case 'insulina':return pk('insulina');case 'antena':return P_.antena;case 'farmacia':return LM.farmacia;
+    case 'carta':return npc();case 'prancha':return pk('prancha');case 'barco':return pk('chaveBarco');case 'gerador':return pk('galao');case 'cachaca':return pk('cachaca');case 'vinil':return pk('vinil');
+    case 'fotos':{for(const [k] of V19FOTOS)if(!(st.fotos||[]).includes(k))return P_['foto_'+k];return npc();}case 'escolta':return npc();}
+  return null;}
+function v19Hint(id){const st=v19S(id),q=it=>invCount(it);
+  if(v19Ready(id))return 'Volte e fale com '+(PCH[V19MI[id].npc]||{}).name+'.';
+  return {pipoca:'Procure o Pipoca no cemitério, perto do Ruth Cardoso.',insulina:'Cozinha do Hotel Atlântida, no frigobar.',antena:'Amplificador na entrada do Edifício Pôr do Sol, na Brava. Leve uma pilha.',
+    farmacia:`Limpe a drogaria: ${st.k|0} de 6.`,carta:'Entregue a carta para a Jurema, na Colônia Z-7 (Laranjeiras).',prancha:'A prancha ficou no mirante do Morro do Careca.',barco:'A chave está na última casa da rua, perto do Corpo de Bombeiros.',
+    gerador:`Galões: ${q('galao')} de 5.`,cachaca:`Garrafas entregues: ${st.n|0} de 4.`,vinil:`Discos: ${q('vinil')} de 3.`,fotos:`Fotos: ${(st.fotos||[]).length} de 3.`,escolta:st.f?'Leve o Seu Arlindo até a Clínica da Brava.':'Volte pro Mercado da Brava e chame o Seu Arlindo.'}[id]||'';}
+{const ob=objective; objective=function(){const o=ob();
+  try{if(!o||o.at||G.heli||G.flags.radio||G.wave>0||(typeof FB!=='undefined'&&FB.on)||(typeof MP!=='undefined'&&MP.on))return o;
+    const id=G.flags.v19seg; if(!id||v19St(id)!==1)return o; const t=v19Target(id); if(!t)return o;
+    return Object.assign({},o,{t:(o.t?o.t+' · ':'')+V19MI[id].n+': '+v19Hint(id),at:t});}catch(e){return o;}};}
+
+// ---------- tela de missões (no menu de pausa) ----------
+UI.v19m=function(){
+  const rows=V19M.map(m=>{const s=v19St(m.id);
+    if(!s)return `<div class="lrow"><span class="ln"><b>???</b><small>Ainda não encontrada. Fale com quem você encontrar pela cidade.</small></span></div>`;
+    const seg=G.flags.v19seg===m.id;
+    return `<div class="lrow"><span class="ln"><b>${esc(m.n)}${s===2?' · concluída':''}</b><small>${esc(m.onde)}${s===1?' · '+esc(v19Hint(m.id)):''}</small></span>${s===1?`<button class="btn mini${seg?' primary':''}" data-a="v19m-seg" data-k="${m.id}">${seg?'Seguindo':'Seguir'}</button>`:''}</div>`;}).join('');
+  const n=V19M.filter(m=>v19St(m.id)===2).length;
+  this.open(`<div class="sheet wide loja"><div class="tabs"><h2 style="margin-right:auto">Missões secundárias</h2><b class="lgrana">${n} de ${V19M.length}</b><button class="btn ghost" data-a="v19m-back">Voltar</button></div>
+    <p class="hint">A missão seguida aparece na bússola só quando a história não está apontando pra nenhum lugar.</p><div class="lista">${rows}</div></div>`,'','v19m');
+};
+{const op=UI.open.bind(UI); UI.open=function(html,cls,name){if(name==='pause'&&typeof html==='string'&&!html.includes('data-a="v19m"')){const act=V19M.filter(m=>v19St(m.id)===1).length;
+    html=html.replace('<button class="btn" data-a="controls2"',`<button class="btn" data-a="v19m">Missões${act?' ('+act+' ativas)':''}</button><button class="btn" data-a="controls2"`);}
+  return op(html,cls,name);};}
+{const act=UI.act.bind(UI); UI.act=function(a,ds){
+  if(a==='v19m')return this.v19m();
+  if(a==='v19m-seg'){G.flags.v19seg=ds.k;return this.v19m();}
+  if(a==='v19m-back'){this.close();G.mode='play';return this.pause();}
+  return act(a,ds);};}
+
+// ---------- conquistas ----------
+ACH.push({id:'pipoca',n:'Bom garoto',d:'Leve o Pipoca de volta para o Seu Valdir.'},{id:'v19cinco',n:'Vizinho de confiança',d:'Complete cinco missões secundárias.'},{id:'v19todas',n:'Defesa Civil honorária',d:'Complete todas as missões secundárias.'});
+
+// ---------- ganchos ----------
+(function(){
+  const vt=v16Tick; v16Tick=function(dt){vt(dt);if(G.mode!=='play'||CUT.on||!dt)return;
+    if((typeof MP!=='undefined'&&MP.on)||(typeof FB!=='undefined'&&FB.on))return;
+    try{v19MissTick(dt);v19EvTick(dt);if(G.flags.v19dj&&!v19Blocked()){G.ev.v19dj=(G.ev.v19dj??rr(200,320))-dt;if(G.ev.v19dj<=0&&G.flags.walkie&&isNight()){G.ev.v19dj=rr(300,480);AU.radio();bark('tavinho','h',pick2(['Rádio Ressaca no ar. Se tu tá ouvindo, tu tá vivo. Segura a onda aí.','Essa vai pro parceiro da mochila, que trouxe os meus discos.','Fica no escuro, fica quieto e escuta essa. Ressaca Club, a noite toda.']),{radio:true});}}}catch(e){console.error(e);}};
+  const dc=drawComps; drawComps=function(){dc();if(G.mode==='title')return;try{v19DrawWorld();}catch(e){}};
+  const ds=drawPsy; drawPsy=function(){ds();try{v19DrawAsh();}catch(e){}};
+  const rs=resetState; resetState=function(d){rs(d);V19T.dog=null;V19T.farm=null;V19T.esc=0;V19E.cur=null;V19E.objs=[];V19E.t=rr(100,160);};
+})();
+
+// ---------- menu de teste ----------
+function v19Debug(k){
+  if(k==='v19m:list')return UI.v19m();
+  if(k==='v19m:all'){for(const m of V19M)v19Start(m.id,true);toast('Todas as missões começaram.');return;}
+  if(k==='v19m:done'){for(const m of V19M)v19DoneProg(m.id);toast('Todas as missões concluídas.');return;}
+  if(k==='v19m:reset'){G.flags.v19m={};G.flags.v19seg=null;V19T.dog=null;V19T.farm=null;toast('Missões zeradas.');return;}
+  if(k&&k.startsWith('v19e:')){UI.close&&UI.cur&&UI.close();G.mode='play';const ok=v19EvStart(k.slice(5));toast(ok?'Evento: '+V19EVN[k.slice(5)]:'Esse evento não cabe aqui.');return ok;}
+}
+// completa uma missão pelo caminho dela (usado no teste e no menu): entrega os itens e chama a recompensa
+function v19DoneProg(id){v19Start(id,true);const st=v19S(id);if(st.s===2)return;
+  if(id==='cachaca'){st.n=4;}
+  if(id==='fotos'){st.fotos=V19FOTOS.map(x=>x[0]);}
+  v19Done(id,V19REW[id]);}
+if(typeof dbgExtra==='function')dbgExtra('1.9 · Missões e eventos',[['v19m:list','Ver missões'],['v19m:all','Começar todas'],['v19m:done','Completar todas'],['v19m:reset','Zerar missões'],...V19EV.map(k=>['v19e:'+k,V19EVN[k]])],v19Debug);
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;

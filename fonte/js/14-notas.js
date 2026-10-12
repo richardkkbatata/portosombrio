@@ -1,6 +1,16 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9',d:'11/10/2026',t:'Capítulos extras',itens:[
+    'Nota no final, de S a D: tempo, mortes, registros, sobreviventes salvos e dificuldade, com os pontos de cada um na tela.',
+    'Novo Jogo+: depois de zerar, recomeça com armas, melhorias, dinheiro e maleta. Infectados mais fortes e rápidos, os piores aparecem cedo, chefões aguentam mais, e tem um epílogo novo no fim.',
+    'Dificuldade Pesadelo (libera na primeira vitória): quase nada no chão, mordida que dói, Perseguidor cedo, e salvar gasta Fita de tinta.',
+    'Roupas: 11 roupas novas pro Richard e a turma (título e pausa), liberadas por conquista, nota S ou compradas no Mascate. Prêmios da nota S: faca, lanterna e munição infinitas no Jogo+.',
+    'Capítulos extras no título. Capítulo da Sonia: Navegantes, mesma noite, sem arma nenhuma; fuja, esconda-se, jogue garrafa e escape do Balseiro até a balsa ou o amanhecer.',
+    'Capítulo do Prof. Rese: Itajaí, 22h31, antes do Richard chegar. Recolha as provas, descubra quem tocou o sino da Matriz, segure o Mercado Público com os feirantes e enfrente o Fiscal do Mercado.',
+    '12 missões secundárias novas (o cachorro Pipoca, a insulina da Dona Zuleica, a antena do Seu Osni, a drogaria do Seu Haroldo, os discos do DJ Tavinho e mais) com botão Missões na pausa.',
+    '9 eventos aleatórios novos: caixa de paraquedas, rádio com mochila escondida, luzes piscando, telefone tocando, chuva de cinza, zumbi amarrado, saqueador, caixa de som chamando a horda, fita de câmera.',
+    'Correções: o Mascate não vende mais arma que está no baú, a corrida do celular desliga numa partida nova, o dinheiro aparece separado na maleta.']},
   {v:'1.8.3',d:'10/10/2026',t:'Caído é caído',itens:[
     'Multiplayer: quem cai não atira, não anda, não recarrega, não se cura e não joga granada. Antes dava pra continuar atirando caído, e a cura fazia os amigos verem você de pé enquanto a sua tela dizia "Caído".',
     'Menos atraso: o jogo prevê pra onde os zumbis e os amigos estão indo (usando o ping de cada um) e as atualizações chegam 20 vezes por segundo. O ping aparece no canto da tela (pro convidado, o dele e o do anfitrião).',

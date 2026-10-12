@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.8.3",
+  "versao_atual": "1.9",
   "versoes": [
+    {
+      "versao": "1.9",
+      "data": "2026-10-11",
+      "titulo": "Capítulos extras",
+      "resumo": "Nota no final, Novo Jogo+, dificuldade Pesadelo, roupas e prêmios",
+      "mudancas": [
+        "Nota no final, Novo Jogo+, dificuldade Pesadelo, roupas e prêmios",
+        "Capítulo da Sonia (Navegantes, sem armas) e Capítulo do Prof. Rese (Itajaí)",
+        "12 missões secundárias e 9 eventos aleatórios novos",
+        "Correções de bugs"
+      ]
+    },
     {
       "versao": "1.8.3",
       "data": "2026-10-10",

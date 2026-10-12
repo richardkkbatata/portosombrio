@@ -65,7 +65,7 @@ function reseStart(st){
   newGame('normal');
   for(const k of Object.keys(RC))delete RC[k];
   RC.on=true; RC.st=0; RC.t=0; RC.got=[0,0,0]; RC.talk={}; RC.barr={S:0,E:0}; RC.kills=0; RC.deaths=0; RC.t0=G.time; RC.bt=8; RC.hold=0; RC.spT=0; RC.boss=null; RC.under={}; RC.pk=0; RC.ext=0;
-  const F=G.flags; F.tutDone=true; G.tut=null; F.rcCap=true;
+  const F=G.flags; F.tutDone=true; G.tut=null; F.rcCap=true; F.cap='rese';
   G.mode='play'; G.clock=22*60+31; G.wx='chuva'; enemies=[]; projs=[]; G.comps=[]; G.qte=null; G.struggle=null; P.grab=null;
   // o Rese do jogo principal sai de cena (quem anda aqui é ele mesmo)
   for(const n of npcs)if(n.id==='alex'||n.id==='alexG'){n.id+='_main';n.cond=()=>false;}

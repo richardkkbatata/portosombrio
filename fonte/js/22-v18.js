@@ -325,7 +325,7 @@ let MIRA=true; try{MIRA=localStorage.getItem('ps-mira')!=='0';}catch(e){}
   st.parentNode.parentNode.insertBefore(d,st.parentNode);}catch(e){}};}
 {const op=UI.opts.bind(UI); UI.opts=function(from){op(from);try{if(!IN.touch)return;const box=OV.querySelector('.opts');if(!box)return;
   const d=document.createElement('div');d.className='opt';d.innerHTML=`<h3>Mira assistida</h3><div class="seg"><button data-a="mira" data-k="1" class="${MIRA?'on':''}">Ligada</button><button data-a="mira" data-k="0" class="${MIRA?'':'on'}">Desligada</button></div>`;box.appendChild(d);}catch(e){}};}
-{const ib=UI.itensBody; UI.itensBody=function(){return ib.call(this).replace('<span>Condição</span>',`<span>Condição · <b style="color:#8ac06a">${brl(grana())}</b></span>`);};}
+{const ib=UI.itensBody; UI.itensBody=function(){return ib.call(this).replace(/(<div class="status[^"]*">[\s\S]*?<\/div>)/,`$1<p class="hint" style="margin:4px 0 0">Dinheiro: <b style="color:#8ac06a">${brl(grana())}</b></p>`);};}
 function hordaSolo(){
   const c=contaGet()||{nome:'Sobrevivente',apelido:'eu',cor:'#d9a33c',fav:'richard'};
   mpLeave(); MP.role='host'; MP.myId='0'; MP.players={}; MP.peers={}; MP.me={nome:c.nome,apelido:c.apelido,cor:c.cor,frase:c.frase||'',char:c.fav||'richard'}; MP.modo='horda';
