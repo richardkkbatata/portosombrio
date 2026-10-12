@@ -6,7 +6,7 @@ const ZY=H+82;                       // primeira linha da região oeste
 function zoneB(){return -1;}
 function inZone(){return ((P.y/TILE)|0)>=ZY;}
 function inZonePx(x,y){return ((y/TILE)|0)>=ZY;}
-const OESTE_D={name:'BR-101 · Universidade de BC',short:'Universidade de BC',mx:100,y0:ZY,y1:HT-1,cap:13,count:0,spawn:{zumbi:8,corr:2,cao:1,rast:1},loot:{m9:1,ervaV:3,pilha:3,polv:2}};
+const OESTE_D={name:'BR-101 · Universidade de BC',short:'Universidade de BC',mx:100,y0:ZY,y1:HZO-1,cap:13,count:0,spawn:{zumbi:8,corr:2,cao:1,rast:1},loot:{m9:1,ervaV:3,pilha:3,polv:2}};
 (function(){const gw=genWorld;genWorld=function(){const i=DISTRICTS.indexOf(OESTE_D);if(i>=0)DISTRICTS.splice(i,1);try{gw();}finally{DISTRICTS.push(OESTE_D);}};})();
 DISTRICTS.push(OESTE_D);
 const UNI_COL='#2a5a3a';            // camiseta verde de estudante
@@ -28,19 +28,19 @@ DOCS.push(
 function genOeste(){
   const old=rnd; rnd=mulberry32(15151);
   const Y=ZY;
-  for(let y=Y;y<HT-1;y++)for(let x=1;x<W-1;x++){const k=idx(x,y);map[k]=T.GRASS;bmap[k]=-1;}
-  for(let x=0;x<W;x++){setT(x,Y,T.BORDER);setT(x,HT-1,T.BORDER);} for(let y=Y;y<HT;y++){setT(0,y,T.BORDER);setT(W-1,y,T.BORDER);}
-  rect(1,Y+1,W-2,8,T.FOREST); rect(1,HT-8,W-2,6,T.FOREST);
+  for(let y=Y;y<HZO-1;y++)for(let x=1;x<W-1;x++){const k=idx(x,y);map[k]=T.GRASS;bmap[k]=-1;}
+  for(let x=0;x<W;x++){setT(x,Y,T.BORDER);setT(x,HZO-1,T.BORDER);} for(let y=Y;y<HZO;y++){setT(0,y,T.BORDER);setT(W-1,y,T.BORDER);}
+  rect(1,Y+1,W-2,8,T.FOREST); rect(1,HZO-8,W-2,6,T.FOREST);
   // ruas
   hroad(4,156,Y+10,4); hroad(4,156,Y+112,4); vroad(4,Y+10,Y+138,4); vroad(152,Y+10,Y+115,4);
   hroad(140,205,Y+60,4);
   // a BR-101: duas pistas e o canteiro
-  vroad(160,Y+9,HT-9,6); vroad(170,Y+9,HT-9,6);
-  for(let y=Y+9;y<HT-9;y++)for(let x=166;x<170;x++)if(getT(x,y)===T.GRASS)setT(x,y,T.GRASS);
-  rect(158,Y+8,20,2,T.RUBBLE); rect(158,HT-10,20,2,T.RUBBLE);
-  for(let i=0;i<26;i++){const x=ri(160,175),y=ri(Y+12,HT-14);if(getT(x,y)===T.ROAD&&getT(x+1,y)===T.ROAD&&y!==Y+60&&y!==Y+61&&y!==Y+62&&y!==Y+63)addCar(x,y,true,R()<.4);}
-  for(let i=0;i<10;i++){const x=ri(160,175),y=ri(Y+14,HT-14);if(Math.abs(y-(Y+61))<4)continue;for(let j=0;j<2;j++)for(let k=0;k<2;k++)if(getT(x+k,y+j)===T.ROAD)setT(x+k,y+j,T.RUBBLE);GORE.push({k:'scorch',x:tc(x),y:tc(y),r:46,rot:0,seed:R()});}
-  graf(167,Y+11,'BR-101 INTERDITADA',{rot:0,c:'#d8d4c8'}); graf(167,HT-12,'VIADUTO CAIU',{rot:0});
+  vroad(160,Y+9,HZO-9,6); vroad(170,Y+9,HZO-9,6);
+  for(let y=Y+9;y<HZO-9;y++)for(let x=166;x<170;x++)if(getT(x,y)===T.GRASS)setT(x,y,T.GRASS);
+  rect(158,Y+8,20,2,T.RUBBLE); rect(158,HZO-10,20,2,T.RUBBLE);
+  for(let i=0;i<26;i++){const x=ri(160,175),y=ri(Y+12,HZO-14);if(getT(x,y)===T.ROAD&&getT(x+1,y)===T.ROAD&&y!==Y+60&&y!==Y+61&&y!==Y+62&&y!==Y+63)addCar(x,y,true,R()<.4);}
+  for(let i=0;i<10;i++){const x=ri(160,175),y=ri(Y+14,HZO-14);if(Math.abs(y-(Y+61))<4)continue;for(let j=0;j<2;j++)for(let k=0;k<2;k++)if(getT(x+k,y+j)===T.ROAD)setT(x+k,y+j,T.RUBBLE);GORE.push({k:'scorch',x:tc(x),y:tc(y),r:46,rot:0,seed:R()});}
+  graf(167,Y+11,'BR-101 INTERDITADA',{rot:0,c:'#d8d4c8'}); graf(167,HZO-12,'VIADUTO CAIU',{rot:0});
   // posto do Exército abandonado (norte da BR)
   {const b=building(178,Y+12,10,7,{floor:T.CONC,roof:'#4a5232',name:'Posto do Exército · km 132',kind:'tenda',doors:[['W',3,2]],loot:true});addPick(183,Y+15,DOC15+2,1,'file');addPick(185,Y+16,'m9',12);addPick(181,Y+17,'gran',1);
     npcs.push({id:'juliana',name:'Cabo Juliana',look:null,x:tc(181),y:tc(Y+14),col:'#3d4a2f',hair:'#1a120c',skin:'#b07a5a',ang:Math.PI,cond:()=>!G.flags.julianaGone});}
@@ -101,10 +101,10 @@ function genOeste(){
   graf(CX+64,CY+57,'UNIV. DE BC',{rot:0,c:'#d8d4c8',s:1.4}); graf(CX+100,CY+57,'SOCORRO 6A',{rot:.02});
   // estudantes que viraram
   for(let i=0;i<40;i++){const x=ri(CX+2,CX+124),y=ri(CY+2,CY+88),k=idx(x,y);if(SOLID[map[k]])continue;if(hyp(x-(CX+107),y-(CY+44))<14)continue;initEnemies.push({uid:'uz'+i,type:R()<.15?'corr':'zumbi',x:tc(x),y:tc(y),col:R()<.6?UNI_COL:null,dorm:bmap[k]>=0&&R()<.5});}
-  for(let i=0;i<14;i++){const x=ri(150,205),y=ri(Y+14,HT-14),k=idx(x,y);if(SOLID[map[k]])continue;initEnemies.push({uid:'uzb'+i,type:R()<.2?'cao':'zumbi',x:tc(x),y:tc(y)});}
+  for(let i=0;i<14;i++){const x=ri(150,205),y=ri(Y+14,HZO-14),k=idx(x,y);if(SOLID[map[k]])continue;initEnemies.push({uid:'uzb'+i,type:R()<.2?'cao':'zumbi',x:tc(x),y:tc(y)});}
   // casas do bairro a sudoeste
   bigHouse(12,Y+120,12,10,'N'); bigHouse(26,Y+120,12,10,'N'); bigHouse(40,Y+120,14,10,'N'); bigHouse(58,Y+120,12,10,'N'); bigHouse(74,Y+120,12,10,'N'); bigHouse(92,Y+120,14,10,'N');
-  trees(8,Y+118,150,HT-10,.04);
+  trees(8,Y+118,150,HZO-10,.04);
   for(const [x,y,c] of [[60,Y+12,'lamp'],[100,Y+12,'lamp'],[168,Y+40,'fire'],[164,Y+90,'fire'],[172,Y+120,'fire'],[190,Y+62,'lamp'],[CX+70,CY+28,'lamp']])lights.push({x:tc(x),y:tc(y),r:c==='fire'?160:130,c,f:1});
   for(const [x,y] of [[168,Y+40],[164,Y+90],[172,Y+120]])ZFIRES.push({x:tc(x),y:tc(y)});
   rnd=old;
@@ -315,7 +315,7 @@ function drawZoneTop(){
 
 // ---------- mapa (tecla M) da região oeste ----------
 function drawZoneMapTo(c){
-  const cx=c.getContext('2d'), w=W, h=HT-ZY, img=cx.createImageData(w,h);
+  const cx=c.getContext('2d'), w=W, h=HZO-ZY, img=cx.createImageData(w,h);
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){const k=idx(x,ZY+y),t=map[k],o=(y*w+x)*4;let col=[34,44,30];
     if(t===T.ROAD)col=[70,70,74];else if(t===T.SIDE||t===T.CONC)col=[110,110,106];else if(t===T.WALL)col=[28,28,30];else if(t===T.FOREST||t===T.TREE)col=[16,40,18];else if(t===T.CAR)col=[120,50,40];else if(t===T.RUBBLE)col=[80,64,54];else if(bmap[k]>=0)col=[150,146,136];else if(t===T.SAFE)col=[60,160,90];
     if(!explored[k])col=col.map(v=>v*.35);img.data[o]=col[0];img.data[o+1]=col[1];img.data[o+2]=col[2];img.data[o+3]=255;}
@@ -329,7 +329,7 @@ function drawZoneMapTo(c){
 }
 (function(){const pm=UI.paintMap.bind(UI);UI.paintMap=function(){if(!inZone()&&!inSew())return pm();const c=document.getElementById('mapc');if(!c)return pm();
   if(inSew())return pm();
-  const wrap=(c.parentElement||c).getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1),cssW=Math.max(200,Math.min(wrap.width-14,560)),cssH=cssW*(HT-ZY)/W;
+  const wrap=(c.parentElement||c).getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1),cssW=Math.max(200,Math.min(wrap.width-14,560)),cssH=cssW*(HZO-ZY)/W;
   c.style.width=cssW+'px';c.style.height=cssH+'px';c.width=Math.round(cssW*d);c.height=Math.round(cssH*d);drawZoneMapTo(c);};})();
 
 // ===================== BRANDT: LUTAS NO QUICK TIME =====================
