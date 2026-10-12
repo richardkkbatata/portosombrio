@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.9",
+  "versao_atual": "1.9.1",
   "versoes": [
+    {
+      "versao": "1.9.1",
+      "data": "2026-10-12",
+      "titulo": "Cabe no celular",
+      "resumo": "Celular deitado: o menu do título não corta mais em cima (antes o Novo jogo sumia e não dava pra chegar nele).",
+      "mudancas": [
+        "Celular deitado: o menu do título não corta mais em cima (antes o Novo jogo sumia e não dava pra chegar nele).",
+        "Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela.",
+        "Celular em pé pequeno: menu mais compacto, sem precisar rolar.",
+        "Qualquer janela maior que a tela agora rola desde o começo."
+      ]
+    },
     {
       "versao": "1.9",
       "data": "2026-10-11",

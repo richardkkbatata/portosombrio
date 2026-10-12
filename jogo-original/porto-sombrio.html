@@ -10399,6 +10399,11 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.1',d:'12/10/2026',t:'Cabe no celular',itens:[
+    'Celular deitado: o menu do título não corta mais em cima. Antes o "Novo jogo" e os primeiros botões sumiam e não dava pra chegar neles.',
+    'Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela sem rolar.',
+    'Qualquer janela maior que a tela agora rola desde o começo, em vez de esconder a parte de cima.',
+    'Menu de teste: seção 1.9.1 com a tela de título, a dificuldade e uma medição dos botões.']},
   {v:'1.9',d:'11/10/2026',t:'Capítulos extras',itens:[
     'Nota no final, de S a D: tempo, mortes, registros, sobreviventes salvos e dificuldade, com os pontos de cada um na tela.',
     'Novo Jogo+: depois de zerar, recomeça com armas, melhorias, dinheiro e maleta. Infectados mais fortes e rápidos, os piores aparecem cedo, chefões aguentam mais, e tem um epílogo novo no fim.',
@@ -14150,6 +14155,38 @@ function v19DoneProg(id){v19Start(id,true);const st=v19S(id);if(st.s===2)return;
   if(id==='fotos'){st.fotos=V19FOTOS.map(x=>x[0]);}
   v19Done(id,V19REW[id]);}
 if(typeof dbgExtra==='function')dbgExtra('1.9 · Missões e eventos',[['v19m:list','Ver missões'],['v19m:all','Começar todas'],['v19m:done','Completar todas'],['v19m:reset','Zerar missões'],...V19EV.map(k=>['v19e:'+k,V19EVN[k]])],v19Debug);
+// ===================== 1.9.1 · CELULAR: MENUS CABEM NA TELA =====================
+// Antes: o .ov centralizava (ou alinhava embaixo) com flex + overflow:auto. Quando o conteúdo
+// era maior que a tela (celular deitado), a parte de cima saía da tela e não dava pra rolar
+// até ela ("Novo jogo" sumia). Agora o alinhamento é feito com margin:auto, que centraliza
+// quando cabe e começa do topo (com rolagem) quando não cabe.
+// No título com o celular deitado, os botões ficam em duas colunas pra caber sem rolar.
+{const st=document.createElement('style');st.id='v191-css';st.textContent=`
+.ov{align-items:flex-start;justify-content:flex-start}
+.ov>*{margin:auto;flex-shrink:0;max-width:100%}
+.ov.title-ov>*{margin:auto auto 0 0}
+.ov.vn-ov>*{margin:auto auto 0}
+@media (max-height:500px){
+  .title{max-width:min(720px,100%);padding-block:4px}
+  .title .menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:min(620px,100%);max-width:none;gap:5px 8px}
+  .title .menu>*{min-width:0}
+  .title .menu .btn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .title .lede{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
+@media (orientation:portrait) and (max-height:880px){.title{gap:8px;padding-block:6px}.title .menu{gap:4px}.title .menu .btn{min-height:34px;font-size:13px;padding:4px 12px}.title .foot{display:none}.title .lede{font-size:13px}}
+@media (max-height:380px){.title .menu .btn{min-height:30px;font-size:13px;padding:3px 12px}.title{gap:6px}}
+@media (max-height:340px){.title .lede{display:none}.title h1{font-size:clamp(28px,10vh,40px)}}
+`;try{(document.head||document.body).appendChild(st);}catch(e){}}
+
+dbgExtra('1.9.1 · Menus no celular',[['v191:titulo','Abrir a tela de título'],['v191:dif','Abrir a escolha de dificuldade'],['v191:medir','Medir: algum botão fora da tela?']],function(k){
+  if(k==='v191:titulo'){G.mode='title';return this.title();}
+  if(k==='v191:dif'){G.mode='title';return this.diff();}
+  if(k==='v191:medir'){
+    const ov=document.getElementById('ov');
+    const fora=[...ov.querySelectorAll('button')].filter(b=>{const r=b.getBoundingClientRect();return r.top<ov.getBoundingClientRect().top-1&&ov.scrollTop===0;}).length;
+    toast(fora?`${fora} botão(ões) acima da tela`:`Tudo alcançável (${innerWidth}x${innerHeight})`);
+  }
+});
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;

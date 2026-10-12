@@ -1,6 +1,11 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.1',d:'12/10/2026',t:'Cabe no celular',itens:[
+    'Celular deitado: o menu do título não corta mais em cima. Antes o "Novo jogo" e os primeiros botões sumiam e não dava pra chegar neles.',
+    'Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela sem rolar.',
+    'Qualquer janela maior que a tela agora rola desde o começo, em vez de esconder a parte de cima.',
+    'Menu de teste: seção 1.9.1 com a tela de título, a dificuldade e uma medição dos botões.']},
   {v:'1.9',d:'11/10/2026',t:'Capítulos extras',itens:[
     'Nota no final, de S a D: tempo, mortes, registros, sobreviventes salvos e dificuldade, com os pontos de cada um na tela.',
     'Novo Jogo+: depois de zerar, recomeça com armas, melhorias, dinheiro e maleta. Infectados mais fortes e rápidos, os piores aparecem cedo, chefões aguentam mais, e tem um epílogo novo no fim.',
