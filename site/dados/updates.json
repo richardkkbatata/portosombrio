@@ -1,17 +1,7 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.9.2",
+  "versao_atual": "1.9.1",
   "versoes": [
-    {
-      "versao": "1.9.2",
-      "data": "2026-10-12",
-      "titulo": "Menu de teste arrumado",
-      "resumo": "Menu de teste organizado por assunto, com tudo da 1.9 nas abas certas",
-      "mudancas": [
-        "Menu de teste organizado por assunto, com tudo da 1.9 nas abas certas",
-        "Celular: o jogo abre no tamanho certo da tela também fora do site, e nenhum menu passa da borda"
-      ]
-    },
     {
       "versao": "1.9.1",
       "data": "2026-10-12",
@@ -21,7 +11,9 @@
         "Celular deitado: o menu do título não corta mais em cima (antes o Novo jogo sumia e não dava pra chegar nele).",
         "Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela.",
         "Celular em pé pequeno: menu mais compacto, sem precisar rolar.",
-        "Qualquer janela maior que a tela agora rola desde o começo."
+        "Qualquer janela maior que a tela agora rola desde o começo.",
+        "Menu de teste organizado por assunto, com tudo da 1.9 nas abas certas",
+        "Celular: o jogo abre no tamanho certo da tela também fora do site, e nenhum menu passa da borda"
       ]
     },
     {

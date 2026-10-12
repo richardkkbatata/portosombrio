@@ -19,7 +19,8 @@ AND = RAIZ / 'android'
 JAR = next(Path('/usr/lib/android-sdk/platforms').glob('*/android.jar'), None)  # sem o SDK: main() avisa e sai
 CHAVE, SENHA = AND / 'porto-sombrio.keystore', 'portosombrio'
 DOWN = RAIZ / 'site' / 'downloads'
-APP_REV = 1  # suba quando mudar só o app (android/), sem versão nova do jogo
+APP_REV = 12  # 12: a 1.9.2 foi juntada na 1.9.1 e o APK 1.9.2 (109021) já tinha saído; o código precisa ser maior.
+# suba quando mudar só o app (android/), sem versão nova do jogo
 
 
 def rodar(*cmd):
