@@ -10062,6 +10062,8 @@ Object.assign(PXH,{
       if(!F.ademirTalk&&!has('chaveUni'))return {t:'Ache o Seu Ademir na guarita da entrada de pedestres da Universidade de BC',at:LM.uniGuarita};
       if(!F.uniMeet)return {t:'Abra a biblioteca do Bloco 6A com a chave mestra',at:LM.uniBib};
     }
+    // o Matheus pediu a pasta do Paciente Zero: a seta leva até o isolamento do Santa Clara (opcional, nada trava sem ela)
+    if(F.matRadio&&F.uniMat&&!F.hospLock&&!F.pastaGot&&!has('pastaZero')&&!F.heli&&!F.radio&&!G.heli&&!(G.wave>0))return {t:'Pegue a pasta do Paciente Zero no isolamento do Santa Clara, em Itajaí. Entre devagar.',at:LM.pasta||LM.isol||LM.hospIt};
     if(F.hospLock&&!F.hospOut&&F.uniMat&&!F.pastaGot&&!has('pastaZero'))return {t:'Trancado no Santa Clara. Pegue a pasta do Paciente Zero no isolamento. Ande devagar: ela escuta.',at:LM.pasta||LM.isol};
     return ob();
   };
@@ -10405,6 +10407,10 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.3',d:'12/10/2026',t:'História mais coerente',itens:[
+    'Começo menos pesado: a vizinhança da primeira faca, na cozinha do prédio da frente, não tem mais cães nem corredor. Antes eram 6 cães e 1 corredor perto do único lugar onde se pega arma, com o jogador desarmado.',
+    'Matheus pede a pasta do Paciente Zero no Santa Clara depois de resgatado na Universidade, mas o objetivo da tela nunca levava até lá. Agora a seta leva (opcional, nada trava sem ela).',
+    'Missões secundárias não aparecem mais misturadas em nenhuma luta ou fuga: Sargento Brandt, defesas, perseguições e contagens. Antes só o pavio e a biblioteca estavam cobertos.']},
   {v:'1.9.2',d:'12/10/2026',t:'Setas que faziam sentido',itens:[
     'Esgoto: com 1 ou 2 fusíveis da bomba na mão, a seta apontava para o quadro de energia. Agora ela aponta para o fusível que ainda falta.',
     'Missões secundárias não roubam mais a seta nos momentos de pressa: pavio da dinamite aceso e defesa da biblioteca. Antes a seta mandava o jogador para o outro lado do mapa no meio da contagem.',
@@ -14114,7 +14120,7 @@ function v19Hint(id){const st=v19S(id),q=it=>invCount(it);
     farmacia:`Limpe a drogaria: ${st.k|0} de 6.`,carta:'Entregue a carta para a Jurema, na Colônia Z-7 (Laranjeiras).',prancha:'A prancha ficou no mirante do Morro do Careca.',barco:'A chave está na última casa da rua, perto do Corpo de Bombeiros.',
     gerador:`Galões: ${q('galao')} de 5.`,cachaca:`Garrafas entregues: ${st.n|0} de 4.`,vinil:`Discos: ${q('vinil')} de 3.`,fotos:`Fotos: ${(st.fotos||[]).length} de 3.`,escolta:st.f?'Leve o Seu Arlindo até a Clínica da Brava.':'Volte pro Mercado da Brava e chame o Seu Arlindo.'}[id]||'';}
 {const ob=objective; objective=function(){const o=ob();
-  try{if(!o||o.at||G.heli||G.flags.radio||G.wave>0||/\d+ s\b/.test(o.t||'')||(G.ev&&(G.ev.uniWave||G.ev.fuse||G.ev.chase))||(typeof FB!=='undefined'&&FB.on)||(typeof MP!=='undefined'&&MP.on))return o;
+  try{if(!o||o.at||G.heli||G.flags.radio||G.wave>0||/\d+ s\b/.test(o.t||'')||/^(Sobreviva|Segure|Aguente|Defenda|CORRE|Corra|Fuja|VAZAMENTO|Pavio|Derrube|Escape)/i.test(o.t||'')||(G.flags.brFight&&!G.flags.brandtDone)||(G.ev&&(G.ev.uniWave||G.ev.fuse||G.ev.chase))||(typeof FB!=='undefined'&&FB.on)||(typeof MP!=='undefined'&&MP.on))return o;
     const id=G.flags.v19seg; if(!id||v19St(id)!==1)return o; const t=v19Target(id); if(!t)return o;
     return Object.assign({},o,{t:(o.t?o.t+' · ':'')+V19MI[id].n+': '+v19Hint(id),at:t});}catch(e){return o;}};}
 
@@ -14259,6 +14265,18 @@ dbgExtra('1.9.1 · Menus no celular',[['v191:titulo','Abrir a tela de título'],
   };
   for(const k of ['v19d:fita','v19d:caps','v19d:roupas','v19d:epi'])DBG_EXTRA_FN[k]=fn;
 })();
+// ===================== 1.9.2 · AJUSTES DE LÓGICA E DIFICULDADE =====================
+// O começo estava mais pesado que o final: a única arma inicial fica na cozinha do prédio da frente
+// e ali perto andavam 6 cães e um corredor, com o jogador sem arma nenhuma.
+// Agora, numa partida nova, a vizinhança da primeira faca fica só com zumbis lentos (dá pra desviar).
+{const ng=newGame; newGame=function(){
+  const r=ng.apply(this,arguments);
+  try{
+    const L=LM&&LM.faca1; if(!L||!enemies)return r;
+    const armado=P.owned&&P.owned.slice(0,8).some(x=>x); if(armado)return r;
+    enemies=enemies.filter(e=>!((e.type==='cao'||e.type==='corr')&&Math.hypot(e.x-L.x,e.y-L.y)<18*TILE));
+  }catch(e){console.error(e);}
+  return r;};}
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;

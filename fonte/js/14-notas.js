@@ -1,6 +1,10 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.3',d:'12/10/2026',t:'História mais coerente',itens:[
+    'Começo menos pesado: a vizinhança da primeira faca, na cozinha do prédio da frente, não tem mais cães nem corredor. Antes eram 6 cães e 1 corredor perto do único lugar onde se pega arma, com o jogador desarmado.',
+    'Matheus pede a pasta do Paciente Zero no Santa Clara depois de resgatado na Universidade, mas o objetivo da tela nunca levava até lá. Agora a seta leva (opcional, nada trava sem ela).',
+    'Missões secundárias não aparecem mais misturadas em nenhuma luta ou fuga: Sargento Brandt, defesas, perseguições e contagens. Antes só o pavio e a biblioteca estavam cobertos.']},
   {v:'1.9.2',d:'12/10/2026',t:'Setas que faziam sentido',itens:[
     'Esgoto: com 1 ou 2 fusíveis da bomba na mão, a seta apontava para o quadro de energia. Agora ela aponta para o fusível que ainda falta.',
     'Missões secundárias não roubam mais a seta nos momentos de pressa: pavio da dinamite aceso e defesa da biblioteca. Antes a seta mandava o jogador para o outro lado do mapa no meio da contagem.',

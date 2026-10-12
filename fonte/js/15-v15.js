@@ -284,6 +284,8 @@ Object.assign(PXH,{
       if(!F.ademirTalk&&!has('chaveUni'))return {t:'Ache o Seu Ademir na guarita da entrada de pedestres da Universidade de BC',at:LM.uniGuarita};
       if(!F.uniMeet)return {t:'Abra a biblioteca do Bloco 6A com a chave mestra',at:LM.uniBib};
     }
+    // o Matheus pediu a pasta do Paciente Zero: a seta leva até o isolamento do Santa Clara (opcional, nada trava sem ela)
+    if(F.matRadio&&F.uniMat&&!F.hospLock&&!F.pastaGot&&!has('pastaZero')&&!F.heli&&!F.radio&&!G.heli&&!(G.wave>0))return {t:'Pegue a pasta do Paciente Zero no isolamento do Santa Clara, em Itajaí. Entre devagar.',at:LM.pasta||LM.isol||LM.hospIt};
     if(F.hospLock&&!F.hospOut&&F.uniMat&&!F.pastaGot&&!has('pastaZero'))return {t:'Trancado no Santa Clara. Pegue a pasta do Paciente Zero no isolamento. Ande devagar: ela escuta.',at:LM.pasta||LM.isol};
     return ob();
   };

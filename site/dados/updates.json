@@ -1,7 +1,18 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.9.2",
+  "versao_atual": "1.9.3",
   "versoes": [
+    {
+      "versao": "1.9.3",
+      "data": "2026-10-12",
+      "titulo": "História mais coerente",
+      "resumo": "Começo menos pesado: sem cães e corredor perto da primeira faca.",
+      "mudancas": [
+        "Começo menos pesado: sem cães e corredor perto da primeira faca.",
+        "Seta leva à pasta do Paciente Zero depois do pedido do Matheus.",
+        "Missões secundárias não se misturam mais com lutas e fugas."
+      ]
+    },
     {
       "versao": "1.9.2",
       "data": "2026-10-12",
