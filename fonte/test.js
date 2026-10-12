@@ -269,7 +269,7 @@ ctx.__timeouts.forEach(f=>f());
  A.takePickup(cm);const mg=A.getGates().find(g=>g.id==='maqResort');A.useGate(mg);ok(mg.open,'casa de máquinas do resort não abriu');
  P.x=ds.x;P.y=ds.y;A.enemies=[];A.takePickup(ds);ok(G.flags.ambush&&A.enemies.some(e=>e.type==='pers'),'emboscada do Perseguidor');finishTalk();A.enemies=[];ctx.__timeouts.length=0;
  const gi=A.getInteracts().find(i=>i.type==='gerador');P.x=gi.x;P.y=gi.y+30;G.prompt={k:'int',o:gi};A.doInteract();finishTalk();ok(G.flags.clinicPower&&G.flags.v7&&G.flags.eduFollow,'gerador / V-7 / Edu');
- G.flags.transfer=true;G.flags.uniDone=true;for(let i=0;i<90&&!G.flags.eduVan;i++){P.x=L.van.x+400;P.y=L.van.y;step(1,{});}ok(G.flags.eduVan,'Edu não foi pra van');
+ G.flags.transfer=true;G.flags.uniDone=true;for(let i=0;i<90&&!G.flags.eduVan;i++){A.enemies=[];G.struggle=null;if(G.mode!=='play')G.mode='play';P.hp=P.max;P.x=L.van.x+400;P.y=L.van.y;step(1,{});}ok(G.flags.eduVan,'Edu não foi pra van '+JSON.stringify({m:G.mode,c:A.CUT.on,ef:G.flags.eduFollow,v7:G.flags.v7,dg:G.flags.detGot,hp:P.hp,st:!!G.struggle,ui:A.UI.cur,hid:!!P.hidden,car:P.inCar}));
  const ev=A.getNpcs().find(n=>n.id==='eduV');ok(ev&&R((ev.x/32)|0,(ev.y/32)|0),'Edu da van inalcançável');P.x=ev.x+40;P.y=ev.y;for(let i=0;i<120&&!G.flags.detGot;i++){step(1,{});finishTalk();P.x=ev.x+40;P.y=ev.y;}ok(G.flags.detGot&&A.invCount('detector')>0,'detector não entregue');
  const _mh=G.flags.metHelena;G.flags.metHelena=false;A.toggleDetector();ok(G.detOn,'detector não ligou');A.enemies=[];P.x=A.tc(60);P.y=A.tc(245.5);const mz=A.makeEnemy('zumbi',P.x+200,P.y,null);mz.state='chase';mz.hp=mz.max=1e7;A.enemies.push(mz);let bl=0;for(let i=0;i<90;i++){G.mode='play';if(A.CUT.on)finishTalk();G.detOn=true;mz.x+=1.5;mz.y+=1;step(1,{});mz.state='chase';if(G.blips.length>0)bl=1;}ok(bl,'detector não mostrou movimento '+JSON.stringify({a:mz.alive,d:Math.hypot(mz.x-P.x,mz.y-P.y)|0,on:G.detOn,inv:A.invCount('detector'),det:P.det|0,n:A.enemies.length,st:mz.state,m:G.mode,sil:!!G.ev.silent,cut:A.CUT.on}));const b0=P.det;for(let i=0;i<60;i++){G.mode='play';G.detOn=true;step(1,{});}ok(P.det<b0,'detector não gastou');G.flags.metHelena=_mh;
  P.det=0.01;A.invAdd('pilha',1);const pc=A.invCount('pilha');step(3,{});ok(A.invCount('pilha')===pc-1&&P.det>90,'detector não trocou a pilha');A.IN.touch=true;step(7,{});A.IN.touch=false;
@@ -569,6 +569,9 @@ ok(G.mode==='dead','não morreu');ctx.__timeouts.forEach(f=>f());
   R(`mpEnd(false);`); ok(R('UI.cur')==='win'&&!R('MP.on'),'fim da horda'); ok(R('contaGet().hordaMax')>=6,'recorde salvo');
   R(`UI.act('mp-leave',{})`);
 }
+// testes extras em fonte/testes/*.js (corpo de função com A,R,ok,step,finishTalk,vm,ctx,G,P)
+{const pth=require('path'),dir=pth.join(__dirname,'testes');if(fs.existsSync(dir))for(const f of fs.readdirSync(dir).filter(f=>f.endsWith('.js')).sort()){
+  const Rr=c=>vm.runInContext(c,ctx);try{new Function('A','R','ok','step','finishTalk','vm','ctx','G','P',fs.readFileSync(pth.join(dir,f),'utf8'))(A,Rr,ok,step,finishTalk,vm,ctx,A.G,A.P);}catch(e){ok(false,'testes/'+f+': '+(e&&e.stack||e));}}}
 // frame loop
 A.newGame('facil');G.mode='title';for(let i=0;i<30;i++)A.frame(i*16);
 console.log(fails?`${fails} falhas`:'TUDO OK');
