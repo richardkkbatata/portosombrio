@@ -419,7 +419,10 @@ function sewObjective(){
   const F=G.flags, has=id=>invCount(id)>0;
   if(G.ev.chase)return {t:'CORRE! Até o poço de saída, no fim do sifão!',at:LM.sewOut};
   if(!F.sewPump){const n=['fus10','fus20','fus30'].filter(has).length;
-    if(n<3)return {t:`O poço está inundado. Ache os fusíveis da bomba (${n}/3) e religue a estação de bombeamento`,at:n===0?{x:tc(38),y:tc(SEWY0+15)}:LM.quadroBomba};
+    if(n<3){// a seta vai para o fusível que ainda falta (o mais perto), não para o quadro
+      const falta=['fus10','fus20','fus30'].filter(i=>!has(i));let alvo=null,dm=1e9;
+      for(const p of pickups){if(p.kind==='item'&&falta.includes(p.id)){const d=Math.hypot(p.x-P.x,p.y-P.y);if(d<dm){dm=d;alvo={x:p.x,y:p.y};}}}
+      return {t:`O poço está inundado. Ache os fusíveis da bomba (${n}/3) e religue a estação de bombeamento`,at:alvo||(n===0?{x:tc(38),y:tc(SEWY0+15)}:LM.quadroBomba)};}
     return {t:'Encaixe os três fusíveis no quadro da estação de bombeamento',at:LM.quadroBomba};}
   if(!F.sewDrain)return {t:'Desça pelo poço até o coletor-tronco e abra o sifão na sala de controle das comportas',at:LM.mapaDren};
   return {t:'Atravesse o sifão debaixo do rio até o poço de saída',at:LM.sewOut};

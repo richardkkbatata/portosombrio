@@ -1,7 +1,17 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.9.1",
+  "versao_atual": "1.9.2",
   "versoes": [
+    {
+      "versao": "1.9.2",
+      "data": "2026-10-12",
+      "titulo": "Setas que faziam sentido",
+      "resumo": "Esgoto: com 1 ou 2 fusíveis da bomba na mão, a seta agora aponta para o fusível que ainda falta, e não para o quadro de energia.",
+      "mudancas": [
+        "Esgoto: com 1 ou 2 fusíveis da bomba na mão, a seta agora aponta para o fusível que ainda falta, e não para o quadro de energia.",
+        "Missões secundárias não roubam mais a seta no pavio da dinamite aceso nem na defesa da biblioteca."
+      ]
+    },
     {
       "versao": "1.9.1",
       "data": "2026-10-12",

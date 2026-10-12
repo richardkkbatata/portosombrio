@@ -9203,7 +9203,10 @@ function sewObjective(){
   const F=G.flags, has=id=>invCount(id)>0;
   if(G.ev.chase)return {t:'CORRE! Até o poço de saída, no fim do sifão!',at:LM.sewOut};
   if(!F.sewPump){const n=['fus10','fus20','fus30'].filter(has).length;
-    if(n<3)return {t:`O poço está inundado. Ache os fusíveis da bomba (${n}/3) e religue a estação de bombeamento`,at:n===0?{x:tc(38),y:tc(SEWY0+15)}:LM.quadroBomba};
+    if(n<3){// a seta vai para o fusível que ainda falta (o mais perto), não para o quadro
+      const falta=['fus10','fus20','fus30'].filter(i=>!has(i));let alvo=null,dm=1e9;
+      for(const p of pickups){if(p.kind==='item'&&falta.includes(p.id)){const d=Math.hypot(p.x-P.x,p.y-P.y);if(d<dm){dm=d;alvo={x:p.x,y:p.y};}}}
+      return {t:`O poço está inundado. Ache os fusíveis da bomba (${n}/3) e religue a estação de bombeamento`,at:alvo||(n===0?{x:tc(38),y:tc(SEWY0+15)}:LM.quadroBomba)};}
     return {t:'Encaixe os três fusíveis no quadro da estação de bombeamento',at:LM.quadroBomba};}
   if(!F.sewDrain)return {t:'Desça pelo poço até o coletor-tronco e abra o sifão na sala de controle das comportas',at:LM.mapaDren};
   return {t:'Atravesse o sifão debaixo do rio até o poço de saída',at:LM.sewOut};
@@ -10402,15 +10405,15 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.2',d:'12/10/2026',t:'Setas que faziam sentido',itens:[
+    'Esgoto: com 1 ou 2 fusíveis da bomba na mão, a seta apontava para o quadro de energia. Agora ela aponta para o fusível que ainda falta.',
+    'Missões secundárias não roubam mais a seta nos momentos de pressa: pavio da dinamite aceso e defesa da biblioteca. Antes a seta mandava o jogador para o outro lado do mapa no meio da contagem.',
+    'Nesses dois momentos o texto da missão secundária também não aparece mais misturado com o aviso da contagem regressiva.']},
   {v:'1.9.1',d:'12/10/2026',t:'Cabe no celular',itens:[
     'Celular deitado: o menu do título não corta mais em cima. Antes o "Novo jogo" e os primeiros botões sumiam e não dava pra chegar neles.',
     'Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela sem rolar.',
     'Qualquer janela maior que a tela agora rola desde o começo, em vez de esconder a parte de cima.',
-    'Menu de teste: seção 1.9.1 com a tela de título, a dificuldade e uma medição dos botões.',
-    'Menu de teste organizado: tudo que a 1.9 trouxe (capítulos da Sonia e do Rese com os pulos de cada etapa, missões, eventos, Novo Jogo+, nota, Pesadelo, roupas e prêmios) agora aparece também na aba certa, e não só em "Novidades".',
-    'A aba "Novidades" ficou com as duas últimas versões; o resto foi pras abas por assunto, sem perder nenhum botão.',
-    'Lugares, inimigos e chefes novos entram sozinhos nas listas do menu de teste.',
-    'Celular: o jogo agora abre no tamanho certo da tela também no arquivo solto e na versão instalada (antes só no site), e nenhum menu passa da borda.']},
+    'Menu de teste: seção 1.9.1 com a tela de título, a dificuldade e uma medição dos botões.']},
   {v:'1.9',d:'11/10/2026',t:'Capítulos extras',itens:[
     'Nota no final, de S a D: tempo, mortes, registros, sobreviventes salvos e dificuldade, com os pontos de cada um na tela.',
     'Novo Jogo+: depois de zerar, recomeça com armas, melhorias, dinheiro e maleta. Infectados mais fortes e rápidos, os piores aparecem cedo, chefões aguentam mais, e tem um epílogo novo no fim.',
@@ -14111,7 +14114,7 @@ function v19Hint(id){const st=v19S(id),q=it=>invCount(it);
     farmacia:`Limpe a drogaria: ${st.k|0} de 6.`,carta:'Entregue a carta para a Jurema, na Colônia Z-7 (Laranjeiras).',prancha:'A prancha ficou no mirante do Morro do Careca.',barco:'A chave está na última casa da rua, perto do Corpo de Bombeiros.',
     gerador:`Galões: ${q('galao')} de 5.`,cachaca:`Garrafas entregues: ${st.n|0} de 4.`,vinil:`Discos: ${q('vinil')} de 3.`,fotos:`Fotos: ${(st.fotos||[]).length} de 3.`,escolta:st.f?'Leve o Seu Arlindo até a Clínica da Brava.':'Volte pro Mercado da Brava e chame o Seu Arlindo.'}[id]||'';}
 {const ob=objective; objective=function(){const o=ob();
-  try{if(!o||o.at||G.heli||G.flags.radio||G.wave>0||(typeof FB!=='undefined'&&FB.on)||(typeof MP!=='undefined'&&MP.on))return o;
+  try{if(!o||o.at||G.heli||G.flags.radio||G.wave>0||/\d+ s\b/.test(o.t||'')||(G.ev&&(G.ev.uniWave||G.ev.fuse||G.ev.chase))||(typeof FB!=='undefined'&&FB.on)||(typeof MP!=='undefined'&&MP.on))return o;
     const id=G.flags.v19seg; if(!id||v19St(id)!==1)return o; const t=v19Target(id); if(!t)return o;
     return Object.assign({},o,{t:(o.t?o.t+' · ':'')+V19MI[id].n+': '+v19Hint(id),at:t});}catch(e){return o;}};}
 

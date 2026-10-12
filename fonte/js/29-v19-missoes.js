@@ -428,7 +428,7 @@ function v19Hint(id){const st=v19S(id),q=it=>invCount(it);
     farmacia:`Limpe a drogaria: ${st.k|0} de 6.`,carta:'Entregue a carta para a Jurema, na Colônia Z-7 (Laranjeiras).',prancha:'A prancha ficou no mirante do Morro do Careca.',barco:'A chave está na última casa da rua, perto do Corpo de Bombeiros.',
     gerador:`Galões: ${q('galao')} de 5.`,cachaca:`Garrafas entregues: ${st.n|0} de 4.`,vinil:`Discos: ${q('vinil')} de 3.`,fotos:`Fotos: ${(st.fotos||[]).length} de 3.`,escolta:st.f?'Leve o Seu Arlindo até a Clínica da Brava.':'Volte pro Mercado da Brava e chame o Seu Arlindo.'}[id]||'';}
 {const ob=objective; objective=function(){const o=ob();
-  try{if(!o||o.at||G.heli||G.flags.radio||G.wave>0||(typeof FB!=='undefined'&&FB.on)||(typeof MP!=='undefined'&&MP.on))return o;
+  try{if(!o||o.at||G.heli||G.flags.radio||G.wave>0||/\d+ s\b/.test(o.t||'')||(G.ev&&(G.ev.uniWave||G.ev.fuse||G.ev.chase))||(typeof FB!=='undefined'&&FB.on)||(typeof MP!=='undefined'&&MP.on))return o;
     const id=G.flags.v19seg; if(!id||v19St(id)!==1)return o; const t=v19Target(id); if(!t)return o;
     return Object.assign({},o,{t:(o.t?o.t+' · ':'')+V19MI[id].n+': '+v19Hint(id),at:t});}catch(e){return o;}};}
 

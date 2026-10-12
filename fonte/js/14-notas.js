@@ -1,15 +1,15 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.9.2',d:'12/10/2026',t:'Setas que faziam sentido',itens:[
+    'Esgoto: com 1 ou 2 fusíveis da bomba na mão, a seta apontava para o quadro de energia. Agora ela aponta para o fusível que ainda falta.',
+    'Missões secundárias não roubam mais a seta nos momentos de pressa: pavio da dinamite aceso e defesa da biblioteca. Antes a seta mandava o jogador para o outro lado do mapa no meio da contagem.',
+    'Nesses dois momentos o texto da missão secundária também não aparece mais misturado com o aviso da contagem regressiva.']},
   {v:'1.9.1',d:'12/10/2026',t:'Cabe no celular',itens:[
     'Celular deitado: o menu do título não corta mais em cima. Antes o "Novo jogo" e os primeiros botões sumiam e não dava pra chegar neles.',
     'Celular deitado: os botões do título ficam em duas colunas e tudo cabe na tela sem rolar.',
     'Qualquer janela maior que a tela agora rola desde o começo, em vez de esconder a parte de cima.',
-    'Menu de teste: seção 1.9.1 com a tela de título, a dificuldade e uma medição dos botões.',
-    'Menu de teste organizado: tudo que a 1.9 trouxe (capítulos da Sonia e do Rese com os pulos de cada etapa, missões, eventos, Novo Jogo+, nota, Pesadelo, roupas e prêmios) agora aparece também na aba certa, e não só em "Novidades".',
-    'A aba "Novidades" ficou com as duas últimas versões; o resto foi pras abas por assunto, sem perder nenhum botão.',
-    'Lugares, inimigos e chefes novos entram sozinhos nas listas do menu de teste.',
-    'Celular: o jogo agora abre no tamanho certo da tela também no arquivo solto e na versão instalada (antes só no site), e nenhum menu passa da borda.']},
+    'Menu de teste: seção 1.9.1 com a tela de título, a dificuldade e uma medição dos botões.']},
   {v:'1.9',d:'11/10/2026',t:'Capítulos extras',itens:[
     'Nota no final, de S a D: tempo, mortes, registros, sobreviventes salvos e dificuldade, com os pontos de cada um na tela.',
     'Novo Jogo+: depois de zerar, recomeça com armas, melhorias, dinheiro e maleta. Infectados mais fortes e rápidos, os piores aparecem cedo, chefões aguentam mais, e tem um epílogo novo no fim.',
