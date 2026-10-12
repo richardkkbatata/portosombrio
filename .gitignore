@@ -4,3 +4,4 @@ Thumbs.db
 __pycache__/
 server/node_modules/
 .wrangler/
+.claude/worktrees/
