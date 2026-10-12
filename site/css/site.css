@@ -544,3 +544,45 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
 .ranking-lista li b{font-family:var(--f-maquina);font-weight:400;font-size:17px}
 .ranking-lista li span{display:block;font-size:16px;opacity:.75}
 .ranking-lista li.vazio{list-style:none;margin-left:-34px;opacity:.7}
+
+/* ===== Página inicial: Modo história x Modo online ===== */
+.modos-sub{font:400 clamp(15px,1.8vw,18px)/1.5 var(--f-maquina);margin:14px 0 0}
+.modos-grade{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:0;margin-top:26px}
+.modo{position:relative;padding:24px clamp(18px,3vw,34px) 26px;display:flex;flex-direction:column}
+.modo .rotulo{margin-bottom:6px}
+.modo-tipo{font:400 13px var(--f-maquina);letter-spacing:.24em;text-transform:uppercase;margin:10px 0 0}
+.modo-tipo small{font-size:11px;border:1px solid currentColor;padding:1px 5px;margin-left:6px;letter-spacing:.14em}
+.modo-nome{font:400 clamp(56px,8vw,96px)/.9 var(--f-titulo);text-transform:uppercase;letter-spacing:.02em;margin:6px 0 14px}
+.modo-selo{position:absolute;top:58px;right:clamp(12px,2.4vw,26px);font-size:clamp(20px,2.6vw,28px);transform:rotate(8deg)}
+.modo-lista{list-style:none;margin:0 0 16px;padding:0;flex:1}
+.modo-lista li{position:relative;padding:8px 0 8px 26px;border-top:1px dashed currentColor;line-height:1.45}
+.modo-lista li::before{content:"";position:absolute;left:4px;top:15px;width:10px;height:10px;border:2px solid currentColor;transform:rotate(45deg)}
+.modo-como{font:400 14px var(--f-maquina);margin:0 0 16px}
+.modo-botao{align-self:flex-start;font-size:26px;padding:14px 22px 11px}
+/* fita 01: folha de papel */
+.modo-historia{background:#f3edda;background-image:var(--ruido);color:var(--tinta);transform:rotate(-.8deg);
+  box-shadow:0 1px 0 rgba(0,0,0,.08),6px 8px 0 var(--papel-3),6px 8px 0 1.5px var(--tinta-3);z-index:1}
+.modo-historia .modo-nome{color:var(--tinta)}
+.modo-historia .modo-lista li::before{background:var(--carimbo);border-color:var(--carimbo)}
+/* fita 02: tela de monitor ligada */
+.modo-online{background:var(--tela);color:var(--monitor);transform:rotate(.8deg);border:8px solid #1d1f1c;border-radius:10px;
+  box-shadow:inset 0 0 60px rgba(63,212,106,.18),6px 8px 0 var(--tinta);overflow:hidden}
+.modo-online::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,.28) 0 2px,transparent 2px 4px);mix-blend-mode:multiply}
+.modo-online .rotulo{color:var(--monitor-2);border-bottom-color:rgba(141,255,168,.35)}
+.modo-online .modo-nome{color:var(--monitor);text-shadow:0 0 18px rgba(141,255,168,.45)}
+.modo-online .modo-lista li{border-top-color:rgba(141,255,168,.3)}
+.modo-online .modo-lista b,.modo-online .modo-como b{color:#d8ffe2;font-weight:400}
+.modo-online .modo-selo{color:var(--monitor);border-color:var(--monitor);text-shadow:0 0 10px rgba(141,255,168,.5)}
+.modo-online .modo-botao{background:var(--monitor);color:var(--tela);box-shadow:3px 3px 0 var(--monitor-2)}
+.modo-online .modo-botao:hover{background:var(--papel);color:var(--tinta);box-shadow:3px 3px 0 var(--monitor-2)}
+.modos-ou{align-self:center;z-index:2;margin:0 -14px;font:400 clamp(30px,4vw,44px)/1 var(--f-titulo);text-transform:uppercase;
+  background:var(--carimbo);color:var(--papel);padding:10px 12px 6px;border-radius:50%;transform:rotate(-8deg);box-shadow:3px 3px 0 var(--tinta)}
+.modos-rodape{margin:22px 0 0 12px;transform:rotate(-1deg)}
+@media (max-width:820px){
+  .modos-grade{grid-template-columns:1fr}
+  .modo{transform:none}
+  .modos-ou{justify-self:center;margin:-12px 0;padding:8px 14px 4px}
+  .modo-selo{top:52px}
+}
+@media (max-width:420px){.modo-selo{position:static;align-self:flex-start;margin:0 0 12px}}
