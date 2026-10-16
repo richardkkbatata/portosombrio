@@ -634,7 +634,7 @@ function silenceTick(dt){
   if(!on){G.ev.silent=false;if(b&&b.down<=0&&(!silentBC()||hyp(b.x-P.x,b.y-P.y)>600))b.alive=false;return;}
   if(!G.ev.silent){
     G.ev.silent=true;
-    for(const e of enemies){if(!e.alive||e.stalker||e.t.boss||e.type==='manequim')continue;const tx=(e.x/TILE)|0,ty=(e.y/TILE)|0;if(dAt(tx,ty)>=5&&bmap[idx(tx,ty)]<0)e.alive=false;}
+    for(const e of enemies){if(!e.alive||e.stalker||e.t.boss||e.type==='manequim')continue;const tx=(e.x/TILE)|0,ty=(e.y/TILE)|0;if(dAt(tx,ty)>=5&&bmap[idx(tx,ty)]<0&&!(typeof CBY!=='undefined'&&ty>=CBY))e.alive=false;}
     G.ev.bombT=F.bcSilentSeen?6:16; if(!F.cidaTurned&&(F.catDone||!F.askedCat)&&F.marlon!=='cida')cidaFall(true);
     if(!F.bcSilentSeen){F.bcSilentSeen=true;later(2200,()=>bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'Richard... cadê todo mundo? Cadê ELES? Tá tudo quieto.':'Silêncio. Nenhum grito, nenhum tiro. Cadê eles?'));
       later(8000,()=>bark('rafa','t','As fogueiras apagaram. Só fumaça... e esse cheiro.'));}

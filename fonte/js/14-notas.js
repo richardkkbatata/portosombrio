@@ -1,6 +1,15 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.12',d:'16/10/2026',t:'Camboriú: a Congregação do Cervo',itens:[
+    'Capítulo novo na história, depois da Universidade de BC: Camboriú. O Richard vai sozinho (Edu e Matheus ficam na Caçulinha do Marlon). Lá não tem zumbi: tem um culto, a Congregação do Cervo.',
+    'Inimigos novos: cultistas de capuz com foice e lanterna (procuram em grupo e chamam os outros), vigias que tocam o sino se te veem, os Marcados (cultistas que viraram bicho, de quatro e com chifre) e o chefe, o Cervo, o Espécime T-03 da Vértice.',
+    'A Igreja Matriz, a praça com as figueiras, o estádio, o açougue, a casa do Pregador nas Areias e o morro do Rio Pequeno. Vai e volta de chaves no estilo Resident Evil clássico: três selos (sino, vela e cervo) abrem o portal da Matriz, com senha de cadeado escondida num caderno.',
+    'O Nicolas agora aparece pela primeira vez em Camboriú (não mais na Brava), no morro com o rifle do irmão. Missão da luneta: a câmera abre a praça inteira, o drone dele marca os vigias, a lupa mostra o alvo de perto, e você segura a respiração para mirar. Se um vigia vê o outro cair, ele toca o sino.',
+    'Depois disso o Nicolas te cobre do morro: cultista que grudar em você na rua cai sozinho. No fim, o rifle de precisão do irmão fica com o Richard (ele saiu do bloqueio da Vértice). Com o rifle na mão, a câmera abre para ver longe.',
+    'Terror o tempo todo: rituais na rua (dá para salvar a vítima se for rápido), procissões cantando, gente pendurada nas árvores, símbolos que aparecem onde você acabou de passar, sussurros, o sermão no alto-falante que passa a falar seu nome, e o Cervo atravessando a rua lá longe. Tocar o sino começa a noite do ritual: os postes apagam e todo mundo sai de lanterna.',
+    'Menu de teste: seção "1.12 · Camboriú" com atalho para cada parte do capítulo e para os eventos de terror.',
+  ]},
   {v:'1.11',d:'16/10/2026',t:'O som do medo',itens:[
     'Todos os sons do jogo foram refeitos. Acabou o som de videogame antigo: agora o jogo cria cada som com camadas, eco e variações logo que abre.',
     'Tiros com estalo, pancada grave, eco batendo nos prédios e o estojo caindo no chão. Cada arma tem o seu som: pistola, .38, metralhadora, espingarda, cano duplo, Magnum, fuzil, rifle de precisão, silenciador, lança-granadas e besta.',

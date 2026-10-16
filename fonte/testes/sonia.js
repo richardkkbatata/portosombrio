@@ -5,7 +5,7 @@ const hashMundo=()=>R(`(()=>{let h=0;const n=W*HZO;for(let i=0;i<n;i++){h=(h*31+
 A.newGame('normal'); G.mode='play'; G.flags.tutDone=true; G.tut=null; G.flags.marcaSonia=7; R('writeSave()');
 const before=R(`localStorage.getItem(SAVE_KEY)`), mundo0=hashMundo();
 ok(R(`(globalThis.CAPS||[]).some(c=>c.id==='sonia')`),'sonia: capítulo não registrado');
-ok(R(`map[idx(50,NY+10)]===T.BORDER`),'sonia: linhas de Navegantes deviam ser parede no mundo principal');
+ok(R(`NAV_D.short==='Camboriú'&&gates.some(g=>g.id==='cbPortal')`),'sonia: no mundo principal as linhas de baixo deviam ser Camboriú');
 R(`UI.title()`); R(`UI.act('caps',{})`); ok(R('UI.cur')==='caps','sonia: tela de capítulos');
 R(`UI.act('cap',{k:'sonia'})`); finishTalk();
 ok(R('SN.on'),'sonia: não começou'); ok(R('G.flags.cap')==='sonia','sonia: flag cap'); ok(R('P.lookO')===R('LOOKS.sonia'),'sonia: sem visual');
@@ -76,7 +76,7 @@ R(`UI.act('quit',{})`); ok(!R('SN.on')&&!R('P.lookO'),'sonia: sair pelo menu');
 ok(R(`localStorage.getItem(SAVE_KEY)`)===before,'sonia: registro principal mudou (fim)');
 // mundo principal igual
 A.newGame('normal'); ok(hashMundo()===mundo0,'sonia: mundo principal mudou');
-ok(R(`map[idx(50,NY+10)]===T.BORDER`),'sonia: Navegantes ficou no mundo principal');
+ok(R(`NAV_D.short==='Camboriú'&&gates.some(g=>g.id==='cbPortal')&&!pickups.some(p=>p.uid&&String(p.uid).startsWith('sn'))`),'sonia: Navegantes ficou no mundo principal');
 R(`{const s=readSave();loadState(s);}`); ok(R('G.flags.marcaSonia')===7&&!R('SN.on'),'sonia: carregar o registro depois');
 R(`UI.title()`);
 }

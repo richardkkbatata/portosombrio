@@ -144,7 +144,7 @@ function w110Pick(uid,tx,ty,id,q,kind){const [x,y]=freeTileNear(tx,ty,true);pick
     if(LM.uniBib){const [x,y]=T(LM.uniBib);w110Pick('w110m38b',x-3,y-4,'m38',12);}
     if(LM.colonia){w110Pick('w110cano',137,412,WI('cano'),2,'weapon');w110Pick('w110cart',138,412,'cart',6);}
     if(LM.bombeiros){const [x,y]=T(LM.bombeiros);w110Pick('w110mach',x,y-3,WI('machado'),1,'weapon');}
-    if(LM.vertice){const [x,y]=T(LM.vertice);w110Pick('w110snip',x+2,y+2,WI('sniper'),5,'weapon');w110Pick('w110r308a',x+3,y+2,'r308',10);}
+    if(LM.vertice){const [x,y]=T(LM.vertice);w110Pick('w110r308a',x+3,y+2,'r308',10);}
     if(LM.lab){const [x,y]=T(LM.lab);w110Pick('w110r308b',x-2,y+3,'r308',8);}
   }catch(e){console.error(e);}};}
 // o Marlon avisa do .38 no fim da Universidade

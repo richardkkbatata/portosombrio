@@ -419,8 +419,8 @@ ctx.__timeouts.forEach(f=>f());
  ok(A.getNpcs().find(n=>n.id==='marlonC').cond(),'Marlon não está com a Dona Cida');
  // Nicolas: o drone e a conversa
  A.newGame('normal');G.mode='play';ctx.__timeouts.length=0;X("dbgJump('nico')");finishTalk();ctx.__timeouts.length=0;G.mode='play';
- for(let i=0;i<60*9;i++)A.update(1/60);finishTalk();ok(G.flags.droneSeen,'drone do Nicolas não apareceu');
- A.STORY.nicoTalk(A.getNpcs().find(n=>n.id==='nico'));finishTalk();ok(G.flags.nicoMet&&A.invCount('rojao')>0,'Nicolas / rojões');
+ for(let i=0;i<60*9;i++)A.update(1/60);finishTalk();ok(!G.flags.droneSeen,'1.12: o drone do Nicolas não devia aparecer na Brava');
+ A.STORY.cbNicoTalk(A.getNpcs().find(n=>n.id==='cbNico'));finishTalk();vm.runInContext("if(G.scope){cbScopeEnd('ok');}",ctx);for(const f of ctx.__timeouts.splice(0))try{f()}catch(e){};finishTalk();for(const f of ctx.__timeouts.splice(0))try{f()}catch(e){};finishTalk();ok(G.flags.nicoMet&&A.invCount('rojao')>0,'Nicolas (Camboriú) / rojões');
  // rojão e sinalizador
  P.thr='rojao';const r0=A.invCount('rojao');A.throwGrenade();ok(A.invCount('rojao')===r0-1,'rojão não saiu');A.invAdd('sinal',1);P.thr='sinal';A.throwGrenade();for(let i=0;i<60;i++)A.update(1/60);ok(X('FLARES.length')===1,'sinalizador não acendeu');
  // Alex: entra no Mercado, escolha "junto"

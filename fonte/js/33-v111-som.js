@@ -204,6 +204,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     J('bed_rain',rainBed);J('bed_wind',windBed);J('bed_drone',droneBed);J('bed_room',roomBed);J('bed_ten',tensionBed);J('bed_pulse',pulseBed);
     J('piano_lo',()=>piano(220));J('piano_hi',()=>piano(880));J('pad',()=>padS(110));
     J('kick',kickS);J('snare',snareS);J('hat',hatS);J('taiko',taikoS);J('brass',()=>brassS(146.83));
+    for(const [nm,fn,k] of (SND.extra||[]))J(nm,fn,k||1);
   }
   SND.pump=function(c,ms){
     if(!c)return; if(!SND.started){SND.started=true;SR=c.sampleRate||44100;seed=20261016;queue();SND.total=SND.jobs.length;}
@@ -216,7 +217,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     }
     if(!SND.jobs.length&&!SND.ok){SND.ok=true;try{AU.bedsOn();}catch(e){console.error(e);}}
   };
-  SND.dsp={voice,gun,GUNS,N,F};
+  SND.dsp={voice,gun,GUNS,N,F,add,ex,sat,norm,fadeOut,ping,sweep,saw,smooth,envA,len:d=>len(d),rnd:()=>rnd(),loopify,BQ,VW};
 })();
 
 // ---------- tocar ----------

@@ -1,6 +1,6 @@
 module.exports=(A,R,ok)=>{
   A.newGame('normal');A.G.mode='play';
-  for(const id of ['sniper','cano','machado','rev38']){const i=R(`WI('${id}')`);ok(i>=0,'1.10: arma '+id);const p=A.getPickups().find(p=>p.kind==='weapon'&&p.id===i);ok(p&&A.reach[A.idx(p.tx,p.ty)],'1.10: '+id+' no mapa e alcançável');}
+  for(const id of ['cano','machado','rev38']){const i=R(`WI('${id}')`);ok(i>=0,'1.10: arma '+id);const p=A.getPickups().find(p=>p.kind==='weapon'&&p.id===i);ok(p&&A.reach[A.idx(p.tx,p.ty)],'1.10: '+id+' no mapa e alcançável');}
   ok(R('mascates().length')===0,'1.10: sem Mascate no modo história');
   R('FB.on=true');A.G.flags.persOn=true;A.G.persT=0;A.P.x=A.LM.lab.x;A.P.y=A.LM.lab.y+60;for(let i=0;i<90;i++)A.update(1/60);
   ok(!A.enemies.some(e=>e.alive&&e.type==='pers'),'1.10: Perseguidor fora do flashback');
