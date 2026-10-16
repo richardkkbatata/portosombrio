@@ -81,7 +81,7 @@ function updComps(dt){
     const dx=P.x-c.x,dy=P.y-c.y,d=hyp(dx,dy);
     if(d>820){const a=P.ang+Math.PI+rr(-.6,.6);const [x,y]=freeTileNear(((P.x+Math.cos(a)*60)/TILE)|0,((P.y+Math.sin(a)*60)/TILE)|0,false);c.x=tc(x);c.y=tc(y);continue;}
     let tx=0,ty=0,spd=0;
-    const keep=c.id==='edu'?52:64;
+    const keep=c.cpos?1e9:(c.id==='edu'?52:64);
     if(d>keep){
       spd=d>220?150:d>110?100:Math.max(P.crouch?44:60,P.running?130:P.crouch?48:80);
       if(d>110&&!los(c.x,c.y,P.x,P.y)){const f=flowDir(c);if(f){const l=hyp(f[0],f[1])||1;tx=f[0]/l;ty=f[1]/l;}else{tx=dx/d;ty=dy/d;}}

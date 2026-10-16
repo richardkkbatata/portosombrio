@@ -100,7 +100,7 @@ DOCS.push(
 Object.assign(ETYPES,{
   cego:{n:'Cego da galeria',hp:58,spd:48,dmg:13,r:11,col:'#8a8478',skin:'#d8d0c0',sight:0,blind:true},
   coletor:{n:'T-11 · O Coletor',hp:99999,spd:96,dmg:30,r:22,col:'#c8beb0',skin:'#e4dacb',sight:0},
-  brandt:{n:'Sargento Brandt',hp:620,spd:96,dmg:9,r:12,col:'#16181b',skin:'#c9a486',sight:9999,boss:true},
+  brandt:{n:'Sargento Brandt',hp:1050,spd:104,dmg:13,r:12,col:'#16181b',skin:'#c9a486',sight:9999,boss:true},
 });
 // retrato do Brandt
 PCH.brandt={name:'Sargento Brandt',skin:'#c9a486',shade:'#946a50',hair:'#141618',iris:'#5a6a70',bg:['#101418','#030405'],glow:'200,60,50',voice:96};
@@ -184,7 +184,7 @@ const BR_TAUNT={
   low:['Tá bom... tá bom. Você quer que seja assim.','Eles não me pagam o suficiente pra isso.'],
 };
 function spawnBrandt(x,y){
-  const e=makeEnemy('brandt',x,y,'brandt'); e.mode='stalk'; e.mag=9; e.mt=0; e.smokeCd=6; e.rushCd=7; e.tauntT=10; e.light=true; e.ph=1; e.state='chase'; e.hunt=true; e.cut=false; e.va=1;
+  const e=makeEnemy('brandt',x,y,'brandt'); e.mode='stalk'; e.mag=12; e.mt=0; e.smokeCd=6; e.rushCd=7; e.tauntT=10; e.light=true; e.ph=1; e.state='chase'; e.hunt=true; e.cut=false; e.va=1;
   enemies.push(e); return e;
 }
 function updBrandt(e,dt){
@@ -209,7 +209,7 @@ function updBrandt(e,dt){
         if(d<190){go(-dx,-dy,spd*.8);}            // perto demais: recua atirando
         else if(d<420){const s=e.str||(e.str=Math.random()<.5?1:-1);go(-dy*s,dx*s,spd*.45);if(Math.random()<dt*.3)e.str=-s;}
         else go(dx,dy,spd*.6);
-        e.aimT=(e.aimT||0)+dt; if(e.aimT>(e.ph===1?.85:.65)){e.mode='aim';e.mt=0;e.aimA=a;AU.beep(.6,2200);}
+        e.aimT=(e.aimT||0)+dt; if(e.aimT>(e.ph===1?.62:.42)){e.mode='aim';e.mt=0;e.aimA=a;AU.beep(.6,2200);}
       } else {
         e.aimT=0;
         const f=flowDir(e,flow); if(f)go(f[0],f[1],spd*(e.light?.55:.75)); else if(d<700)go(dx,dy,spd*.5);
@@ -221,7 +221,7 @@ function updBrandt(e,dt){
       e.mt+=dt; const lead=.18; const tx=P.x+(P.moving?Math.cos(P.legAng||P.ang)*20*lead*10:0),ty=P.y+(P.moving?Math.sin(P.legAng||P.ang)*20*lead*10:0);
       e.aimA+=angDiff(e.aimA,Math.atan2(ty-e.y,tx-e.x))*Math.min(1,dt*(e.ph===1?3.5:5)); e.face=e.aimA;
       if(!e.los&&e.mt>.25){e.mode='stalk';e.aimT=0;break;}
-      if(e.mt>.62){e.mode='burst';e.burst=3;e.bt=0;}
+      if(e.mt>(e.ph===1?.55:.45)){e.mode='burst';e.burst=e.ph===1?3:4;e.bt=0;}
       break;}
     case 'burst':{
       e.bt-=dt; e.face=e.aimA; if(e.bt>0)break; e.bt=.11;
@@ -231,7 +231,7 @@ function updBrandt(e,dt){
       break;}
     case 'reload':{ // recarregando: a sua janela
       e.mt+=dt; go(-dx,-dy,spd*.55); e.face+=angDiff(e.face,a)*Math.min(1,dt*3);
-      if(e.mt>2.6){e.mag=9;e.mode='stalk';e.aimT=0;AU.reload();}
+      if(e.mt>(e.ph===3?1.6:2.0)){e.mag=12;e.mode='stalk';e.aimT=0;AU.reload();}
       break;}
     case 'rush':{
       e.mt+=dt; e.face=a; go(dx,dy,230);

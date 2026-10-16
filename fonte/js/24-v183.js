@@ -187,7 +187,7 @@ setInterval(()=>{
   return da(k,ds);};}
 
 // ===================== 1.8.3 · sincronia do multiplayer (o que acontece tem que bater em todas as telas) =====================
-const mpComOutros=()=>MP.on&&(MP.role==='guest'||Object.keys(MP.players).length>0);
+const mpComOutros=()=>MP.on&&(MP.role==='guest'||Object.values(MP.players).some(p=>Date.now()-(p._t||(p._t=Date.now()))<15000));
 
 // ---------- menu aberto (pausa, maleta, Mascate, opções) NÃO congela a partida ----------
 // Antes: o anfitrião abria a pausa e o mundo parava pra todo mundo (os zumbis sumiam da tela dos amigos);

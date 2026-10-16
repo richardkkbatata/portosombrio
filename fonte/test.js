@@ -543,14 +543,15 @@ ok(G.mode==='dead','não morreu');ctx.__timeouts.forEach(f=>f());
   A.newGame('normal');G.mode='play';G.flags.tutDone=true;G.tut=null;
   // dinheiro cai e é pego
   R(`for(let i=0;i<40;i++){const z=makeEnemy('zumbi',P.x+60,P.y);enemies.push(z);killEnemy(z);}`);
-  const gp=R(`pickups.filter(p=>p.id==='grana')`); ok(gp.length>0,'zumbi não deixou dinheiro');
+  const gp=R(`pickups.filter(p=>p.id==='grana')`); ok(gp.length===0,'1.10: no modo história zumbi não deixa dinheiro');
+  R(`pickups.push({uid:'gteste',tx:(P.x/TILE)|0,ty:(P.y/TILE)|0,x:P.x,y:P.y,id:'grana',q:50,kind:'item'})`);
   const g0=R('grana()'); R(`takePickup(pickups.find(p=>p.id==='grana'))`); ok(R('grana()')>g0,'pegar dinheiro');
   // loja: comprar munição e arma, vender
   R(`{G.flags.grana=5000;globalThis.__n0=invCount('m9');lojaComprar('0:0');}`); ok(R(`invCount('m9')`)>=R('__n0')+15,'comprar munição'); ok(R('grana()')===5000-90,'preço da munição');
   R(`P.owned[2]=false;lojaComprar('3:0');`); ok(R('P.owned[2]')||R('grana()')===4910,'comprar escopeta (ou sem espaço)');
   R(`{invAdd('joia',2);globalThis.__g=grana();lojaVender('joia',2);}`); ok(R('grana()')===R('__g')+1000,'vender joia');
   R(`UI.loja('c');UI.loja('v');UI.close();`);
-  ok(R('mascates().length')>=2,'mascates no mapa '+R('mascates().length'));
+  ok(R('mascates().length')===0,'1.10: mascates fora do modo história '+R('mascates().length'));R('MP.on=true');ok(R('mascates().length')>=2,'mascates no online '+R('mascates().length'));R('MP.on=false');
   // salvar guarda o dinheiro
   R(`{G.flags.grana=777;const s=JSON.parse(JSON.stringify(serialize()));G.flags.grana=0;loadState(s);}`); ok(R('grana()')===777,'dinheiro salvo');
   // Horda solo: passa onda, intervalo e chega no chefão da onda 5

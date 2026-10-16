@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.9.3",
+  "versao_atual": "1.10",
   "versoes": [
+    {
+      "versao": "1.10",
+      "data": "2026-10-16",
+      "titulo": "Mais medo, armas novas e amigos que lutam",
+      "resumo": "Visão em cone (estilo Darkwood), falso morto, mão tremendo e passos no escuro.",
+      "mudancas": [
+        "Visão em cone (estilo Darkwood), falso morto, mão tremendo e passos no escuro.",
+        "Quatro armas novas: revólver .38, cano duplo, machado de incêndio e rifle de precisão.",
+        "Edu e Matheus com estratégia própria em combate; Marlon e Nicolas se mexem.",
+        "Brandt mais difícil, Mascate só no online e várias correções."
+      ]
+    },
     {
       "versao": "1.9.3",
       "data": "2026-10-12",

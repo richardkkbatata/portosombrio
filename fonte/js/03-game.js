@@ -670,7 +670,7 @@ function melee(){
   const wpn=WEAPONS[P.w], knife=wpn.id==='faca', a=P.ang; let hit=false;
   for(const e of enemies){
     if(!e.alive||(e.stalker&&e.down>0))continue;
-    const d=hyp(e.x-P.x,e.y-P.y); if(d>(knife?46:40)+e.r)continue;
+    const d=hyp(e.x-P.x,e.y-P.y); if(d>(wpn.range||(knife?46:40))+e.r)continue;
     if(Math.abs(angDiff(a,Math.atan2(e.y-P.y,e.x-P.x)))>.85)continue;
     const big=bigE(e);
     if(knife){hurtEnemy(e,wpn.dmg,Math.cos(a)*140,Math.sin(a)*140,{crit:.15});e.stun=Math.max(e.stun,.3);}
@@ -1167,7 +1167,10 @@ function separate(){
     const dx=a.x-P.x,dy=a.y-P.y,d=hyp(dx,dy),m=a.r+P.r;
     if(d<m&&d>0.01&&!P.hidden){a.x+=dx/d*(m-d);a.y+=dy/d*(m-d);resolve(a,true);}
   }
-  for(const n2 of npcs){if(n2.cond&&!n2.cond())continue;const dx=P.x-n2.x,dy=P.y-n2.y,d=hyp(dx,dy),m=P.r+11;if(d<m&&d>0.01){P.x+=dx/d*(m-d);P.y+=dy/d*(m-d);resolve(P,false);}}
+  // NPC não vira parede: o jogador empurra a pessoa pro lado; se ela não tem pra onde ir (porta, trilha), ele passa por ela
+  for(const n2 of npcs){if(n2.cond&&!n2.cond())continue;if(CUT.on)continue;const dx=P.x-n2.x,dy=P.y-n2.y,d=hyp(dx,dy),m=P.r+11;if(d<m&&d>0.01){
+    const k=(m-d)*.85,nx=n2.x-dx/d*k,ny=n2.y-dy/d*k,t=getT((nx/TILE)|0,(ny/TILE)|0);
+    if(!SOLID[t]&&!n2.fixed){if(n2.hx==null){n2.hx=n2.x;n2.hy=n2.y;}n2.x=nx;n2.y=ny;n2.pushT=G.time;}}}
 }
 
 // ===================== PROJÉTEIS, PARTÍCULAS =====================

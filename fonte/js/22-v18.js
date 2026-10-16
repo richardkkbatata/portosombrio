@@ -66,6 +66,7 @@ function lojaVender(id,q){q=Math.min(q|0,invCount(id));if(q<=0||!VENDA[id])retur
   const was=e&&e.alive&&!e.ghost; const r=ke.apply(this,arguments);
   if(was&&!e.alive&&!(MP.on&&MP.role==='guest')){
     if(MP.on&&MP.role==='host'&&MP.stats){const id=MP.creditId||'0';const s=MP.stats[id];if(s)s.k++;}
+    if(!MP.on)return r;
     const boss=e.t.boss||e.type==='boss'||e.type==='pers'||e.type==='bombeiro', big=e.max>=200;
     const ch=MP.on&&MP.modo==='horda'?.6:MP.on?.5:.3;
     if(boss)dropAt(e.x,e.y,'grana',ri(300,600));

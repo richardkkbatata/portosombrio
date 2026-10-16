@@ -1,6 +1,16 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.10',d:'16/10/2026',t:'Mais medo, armas novas e amigos que lutam',itens:[
+    'Visão em cone, inspirada em Darkwood: o que está atrás do Richard fica no escuro. Dá pra desligar em Opções.',
+    'Falso morto: alguns corpos no chão levantam quando você passa do lado. Com muito medo, a mão treme na mira e a lanterna falha. No escuro, sozinho, dá pra ouvir passos que não são seus.',
+    'Quatro armas novas: revólver .38 (guarita da Universidade, com munição; o Marlon avisa, é pro bicho do shopping), espingarda de cano duplo (casa do Seu Ivo), machado de incêndio (Bombeiros de Itajaí) e rifle de precisão com mira a laser (bloqueio da Vértice em Cabeçudas).',
+    'Edu e Matheus lutam do jeito deles: o Edu chega pelo lado do zumbi, o Matheus cobre de trás, e os dois gritam pra puxar o zumbi que está em cima de você quando você está machucado.',
+    'Marlon e Nicolas se mexem no heliponto: recuam, andam de lado e não ficam parados como estátua.',
+    'Sargento Brandt mais difícil: mais vida, mira mais rápida, recarga mais curta e reforço a cada fase.',
+    'O Mascate saiu do modo história (fica só no online), e zumbi não deixa mais dinheiro na história.',
+    'Correções: a chuva de cinza não fica mais presa na tela; NPC parado numa porta ou trilha não trava mais o caminho (você empurra e ele volta pro lugar); o Perseguidor não aparece mais no flashback do Matheus, nos capítulos extras nem na Universidade; na Universidade a seta leva até o túnel de saída.',
+    'Online: o intervalo da Horda agora é intervalo de verdade (a onda some e não nasce zumbi); jogando sozinho, a pausa pausa mesmo quando um amigo caiu sem avisar.']},
   {v:'1.9.3',d:'12/10/2026',t:'História mais coerente',itens:[
     'Começo menos pesado: a vizinhança da primeira faca, na cozinha do prédio da frente, não tem mais cães nem corredor. Antes eram 6 cães e 1 corredor perto do único lugar onde se pega arma, com o jogador desarmado.',
     'Matheus pede a pasta do Paciente Zero no Santa Clara depois de resgatado na Universidade, mas o objetivo da tela nunca levava até lá. Agora a seta leva (opcional, nada trava sem ela).',
