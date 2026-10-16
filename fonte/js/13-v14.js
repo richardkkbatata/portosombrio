@@ -463,7 +463,7 @@ function sewDescend(first){
   playCut([{fx:'blackout',v:1.2},{sfx:'creak',v:.8},
     {do:()=>{P.x=LM.sewIn.x;P.y=LM.sewIn.y;for(const c of (G.comps||[])){c.x=P.x+20;c.y=P.y+10;}snapCamera();flowTile=-1;}},{wait:.8},
     ...(first?[{say:'rafa',m:'s',t:'Que cheiro... é carne. Carne velha e água parada.'},
-      ...(F.eduFollow?[{say:'edu',m:'s',t:'Mano, eu tô com água até a canela. E a água tá quente. Por que a água tá quente?'}]:[]),
+      ...(eduAqui()?[{say:'edu',m:'s',t:'Mano, eu tô com água até a canela. E a água tá quente. Por que a água tá quente?'}]:[]),
       {say:'rafa',m:'t',think:true,t:'Lanterna baixa. Passo leve. Aqui embaixo o barulho anda longe.',dur:2}]:[])],
     ()=>{});
 }
@@ -511,7 +511,7 @@ UI.dren=function(){
 function sewPumpOn(){
   const F=G.flags; F.sewPump=true; for(const l of lights)if(l.sewPump)l.off=false;
   AU.thud(1);AU.creak(1);G.shake+=8;AU.alarm();alertNoise(P.x,P.y,900);
-  bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'LIGOU! ...e acordou tudo que tava dormindo aqui embaixo. Ótimo.':'Ligou. A bomba tá puxando... e o barulho chegou longe.');
+  bark(eduAqui()?'edu':'rafa','s',eduAqui()?'LIGOU! ...e acordou tudo que tava dormindo aqui embaixo. Ótimo.':'Ligou. A bomba tá puxando... e o barulho chegou longe.');
   later(2500,()=>{sewFlood(false,null);toast('O poço secou. Dá pra descer até o coletor-tronco.');});
   for(const e of enemies)if(e.alive&&e.type==='cego'&&hyp(e.x-P.x,e.y-P.y)<900){if(e.state==='dorm')riseEnemy(e);e.heard=4;e.nx=P.x;e.ny=P.y;e.state='chase';}
 }
@@ -543,7 +543,7 @@ function sewDrained(){
     {wait:.5},{sfx:'roar',v:1},{fx:'shake',v:16},{fx:'slow',v:.5},
     {do:()=>{coletorRelease();}},{wait:.3},
     {cam:'coletor',t:1.2},{fx:'zoom',v:1.35},
-    {say:F.eduFollow?'edu':'rafa',m:'s',t:F.eduFollow?'QUE PORRA É ESSA?! ELE SAIU DE DENTRO DO CANAL! RICHARD, CORRE!':'Saiu de dentro do canal. Isso... isso é o T-11.'},
+    {say:eduAqui()?'edu':'rafa',m:'s',t:eduAqui()?'QUE PORRA É ESSA?! ELE SAIU DE DENTRO DO CANAL! RICHARD, CORRE!':'Saiu de dentro do canal. Isso... isso é o T-11.'},
     {camFree:1},{fx:'zoom',v:1}],
     ()=>{G.ev.chase={t:0};AU.sting();toast('CORRA até o poço de saída! Ele não morre.');});
 }
@@ -606,7 +606,7 @@ function sewExit(){
     {do:()=>{const pt=LM.bondMA;const [x,y]=freeTileNear((pt.x/TILE)|0,((pt.y/TILE)|0)+5,true);P.x=tc(x);P.y=tc(y);for(const cc of (G.comps||[])){cc.x=P.x+20;cc.y=P.y;}snapCamera();flowTile=-1;F.bondRide=1;}},
     {wait:1},{fx:'shake',v:8},
     {say:'rafa',m:'s',t:'...Fechei. Fechei a tampa. Ele bateu por baixo três vezes e parou.'},
-    ...(F.eduFollow?[{say:'edu',m:'s',t:'Eu nunca mais desço num bueiro na minha vida. Nunca mais, Richard.'},{say:'edu',m:'n',t:'Ali embaixo é a trilha. A praia das Laranjeiras.'}]:[{say:'rafa',m:'n',think:true,t:'A trilha da Mata Atlântica. Daqui até a praia é descida.',dur:2}])],
+    ...(eduAqui()?[{say:'edu',m:'s',t:'Eu nunca mais desço num bueiro na minha vida. Nunca mais, Richard.'},{say:'edu',m:'n',t:'Ali embaixo é a trilha. A praia das Laranjeiras.'}]:[{say:'rafa',m:'n',think:true,t:'A trilha da Mata Atlântica. Daqui até a praia é descida.',dur:2}])],
     ()=>{G.banner={t:'Praia das Laranjeiras',life:3.2};ach('galeria');});
 }
 // tampa do almoxarifado (no shopping) e a escada de volta (na galeria)

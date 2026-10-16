@@ -220,7 +220,7 @@ function drawMarks(){
 // =============== Perseguidor: depois da Helena, alguém se arrasta pela rua... ===============
 (function(){
   STORY.onBrava=function(){const F=G.flags;if(F.persHint)return;F.persHint=true;
-    later(9000,()=>bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'Richard... tô com a sensação de que tem alguém olhando a gente do mato.':'Tem alguma coisa no mato... me olhando. Eu sinto.',{dur:2.4}));};
+    later(9000,()=>bark(eduAqui()?'edu':'rafa','s',eduAqui()?'Richard... tô com a sensação de que tem alguém olhando a gente do mato.':'Tem alguma coisa no mato... me olhando. Eu sinto.',{dur:2.4}));};
   const up=updPers; updPers=function(dt){if(!G.flags.persCine)return;return up(dt);};
   STORY.introPers=function(p){if(G.flags.persCine){AU.roar();return;}G.flags.persSeen=true;};
 })();
@@ -258,7 +258,7 @@ STORY.persCine=function(){
       for(let i=0;i<3;i++)addDecal({k:'gib',x:vic.x+rr(-18,18),y:vic.y+rr(-18,18),r:rr(3,5),rot:0,c:'#8a2a20'});const i=peds.indexOf(vic);if(i>=0)peds.splice(i,1);AU.splat();AU.thud(1);buzz([160,40,200]);G.fear=1;G.shockT=Math.max(G.shockT||0,25);}},
     {wait:1.2},{fx:'zoom',v:1.15},
     {say:'rafa',m:'s',t:'Ele pisou nela. Ele nem parou de andar. Ele nem olhou pra baixo.'},
-    ...(F.eduFollow?[{say:'edu',m:'s',t:'Richard... ele tá olhando pra gente agora. Ele tá olhando PRA GENTE.'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'s',t:'Richard... ele tá olhando pra gente agora. Ele tá olhando PRA GENTE.'}]:[]),
     {face:'pers',at:'rafa'},{sfx:'roar',v:.8},{fx:'shake',v:6},
     {say:'rafa',m:'a',think:true,t:'Não dá pra lutar com isso. Corre. CORRE.',dur:1.6},
     {camFree:1}],()=>{p.cut=false;p.state='chase';p.hunt=true;p.lx=P.x;p.ly=P.y;F.persOn=true;G.persT=0;G.banner={t:'O Perseguidor',life:3.2};});

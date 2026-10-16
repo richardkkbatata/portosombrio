@@ -1,6 +1,12 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.13.1',d:'16/10/2026',t:'Revisão de falas e correções',itens:[
+    'Ninguém fala mais de onde não está: o Matheus e o Edu não comentam nada em Camboriú (ou em qualquer lugar em que não estejam com você). Quando o amigo não está do lado, quem fala é o Richard.',
+    'Em Camboriú não acontecem mais eventos de zumbi (gente presa embaixo de carro, sobrevivente fugindo de zumbi, chuva de cinza etc.) e a seta de missão secundária não puxa mais você para fora da cidade.',
+    'O rojão não diz mais que é "do Nicolas" quando você acha um antes de conhecer ele, e o final só fala do Nicolas se você conheceu ele.',
+    'Menu de teste: "Nicolas" agora leva ao morro de Camboriú.',
+  ]},
   {v:'1.13',d:'16/10/2026',t:'Caos, missões e registros',itens:[
     'Aba Missões na mochila: a missão principal de agora com o lugar, a distância e a direção, a lista da história (sem spoiler do que vem), o que falta em Camboriú e todas as missões secundárias com "Seguir".',
     'Registros: 5 slots na máquina de escrever, e dá para exportar o registro num arquivo (.pssave) e importar em outro computador. No título, botão Registros.',

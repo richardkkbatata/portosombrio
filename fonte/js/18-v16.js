@@ -163,7 +163,7 @@ function uniMissionsTick(dt){
   const F=G.flags;
   if(!F.provaDone&&invCount('folhaProva')>=3&&LM.sala102&&hyp(P.x-LM.sala102.x,P.y-LM.sala102.y)<120&&!CUT.on){F.provaDone=true;invRemove('folhaProva',3);
     playCut([{say:'rafa',m:'h',think:true,t:'Três folhas. A prova inteira. Vou deixar na mesa dele.',dur:2},
-      ...(F.matFollow?[{say:'matheus',m:'a',t:'Tu vai FAZER a prova? No meio do apocalipse?'},{say:'rafa',m:'h',t:'Ele disse que eu ia fazer nem que fosse no helicóptero.'}]:[]),
+      ...(matAqui()?[{say:'matheus',m:'a',t:'Tu vai FAZER a prova? No meio do apocalipse?'},{say:'rafa',m:'h',t:'Ele disse que eu ia fazer nem que fosse no helicóptero.'}]:[]),
       {do:()=>{const l=invAdd('calmante',2);if(l)boxAdd('calmante',l);ach('prova');toast('Prova entregue. Na gaveta do professor: dois calmantes e um bilhete: "Bom trabalho. Nota 7."');}}]);}
   if(!F.foneDone&&invCount('foneMat')>0&&F.matFollow&&compOf('matheus')&&hyp(compOf('matheus').x-P.x,compOf('matheus').y-P.y)<120&&!CUT.on){F.foneDone=true;invRemove('foneMat',1);
     playCut([{say:'rafa',m:'h',t:'Matheus. Toma. Teu fone de nerd.'},{say:'matheus',m:'h',t:'MEU FONE! ...Valeu, mano. Sério.'},{say:'matheus',m:'a',t:'Mas não é de nerd.'},

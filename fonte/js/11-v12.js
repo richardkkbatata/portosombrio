@@ -69,7 +69,7 @@ const LOOK12={marlon:{col:'#1c1e21',hair:'#1c120a',skin:'#e0b090',look:'marlon'}
 
 // ---------- itens novos ----------
 Object.assign(ITEMS,{
-  rojao:{n:'Rojão',s:'ROJÃO',c:'#d84a8a',st:6,k:'throw',d:'Sobra do réveillon do Nicolas. Explode longe com luz e estouro: tudo que escuta vai pra lá. Arremesse como granada.'},
+  rojao:{n:'Rojão',s:'ROJÃO',c:'#d84a8a',st:6,k:'throw',d:'Sobra de réveillon. Explode longe com luz e estouro: tudo que escuta vai pra lá. Arremesse como granada.'},
   sinal:{n:'Sinalizador',s:'SINAL',c:'#e8503a',st:4,k:'throw',d:'Bastão de luz vermelha. Queima por meio minuto onde cair: ilumina e atrai os que enxergam.'},
   calmante:{n:'Calmante',s:'CALM.',c:'#9ab8d8',st:3,k:'heal',h:10,d:'Comprimido de farmácia. A mão para de tremer, o coração desacelera. Tira o medo na hora.'},
 });
@@ -473,7 +473,7 @@ function camTick(dt){
   const baseEnd=STORY.ending;
   STORY.ending=function(){
     const r=baseEnd.call(STORY), F=G.flags;
-    let add=' O helicóptero era da Defesa Civil: o Nicolas tinha trocado a frequência no último minuto, e a Vértice nunca soube.';
+    let add=F.nicoMet?' O helicóptero era da Defesa Civil: o Nicolas tinha trocado a frequência no último minuto, e a Vértice nunca soube.':'';
     if(G.ev&&G.ev.allyIn)add+=' O Marlon sentou na porta aberta do helicóptero, com a carabina no colo, e não tirou o olho do porto. O Nicolas dormiu em dois minutos, abraçado ao controle do drone.';
     if(F.alexMorto)add+=F.alex==='junto'?' Lá embaixo, a cabine do guindaste ainda queimava. O professor Rese ficou lá em cima, de onde dava pra ver o porto inteiro.':' Lá embaixo, onde o caminhão de cloro explodiu, ainda subia uma fumaça verde. O professor Rese nunca deu a prova de recuperação.';
     if(F.marlon==='cida'&&!F.cidaTurned)add+=' Em algum lugar no mar, um barco de pescador levava a Dona Cida e um gato laranja muito irritado.';
@@ -585,7 +585,7 @@ function ductTick(dt){
       o.x=t.x;o.y=t.y;o.heard=3.5;o.nx=P.x+rr(-50,50);o.ny=P.y+rr(-50,50);o.hot=false;o.listen=0;o.smell=0;o.vx=0;o.vy=0;
       for(let i=0;i<26;i++)parts.push({k:'debris',x:t.x,y:t.y,vx:rr(-200,200),vy:rr(-200,200),life:.7,max:.7,s:rr(2,4),c:i%2?'#6a6e72':'#3a3c40'});
       AU.thud(1);AU.click2(1);AU.roar();G.shake+=12;buzz([90,40,120]);
-      if(!F.ductTip){F.ductTip=true;later(500,()=>bark(F.matFollow?'matheus':'rafa','s',F.matFollow?'ELA VEIO PELO DUTO! Ela anda por dentro das paredes, mano!':'Ela saiu do duto... ela anda por dentro das paredes.',{dur:2.2}));}}
+      if(!F.ductTip){F.ductTip=true;later(500,()=>bark(matAqui()?'matheus':'rafa','s',matAqui()?'ELA VEIO PELO DUTO! Ela anda por dentro das paredes, mano!':'Ela saiu do duto... ela anda por dentro das paredes.',{dur:2.2}));}}
     return;}
   G.ev.ductCd=(G.ev.ductCd??20)-dt; if(G.ev.ductCd>0)return;
   if(hyp(o.x-P.x,o.y-P.y)<480||o.heard>0&&o.hot)return;   // perto: ela vem andando mesmo
@@ -669,7 +669,7 @@ function bombCallTick(dt){
   const F=G.flags; if(F.bombMet||!G.ev.silent||CUT.on)return;
   if(!F.bombCall){G.ev.bcT=(G.ev.bcT??8)-dt;if(G.ev.bcT>0)return;F.bombCall=true;
     const B=LM.bombas||LM.posto; AU.cry('socorro',B.x,B.y,1.2); psyFloat(B.x,B.y,'"SOCORRO! ALGUÉM! NO POSTO!"',{life:3.4,c:'#f0c8b8'});
-    later(1500,()=>bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'Richard, tem alguém vivo gritando lá do posto queimado! A gente tem que ir!':'Alguém vivo... gritando lá do posto queimado. Na Avenida do Estado.',{dur:2.6}));return;}
+    later(1500,()=>bark(eduAqui()?'edu':'rafa','s',eduAqui()?'Richard, tem alguém vivo gritando lá do posto queimado! A gente tem que ir!':'Alguém vivo... gritando lá do posto queimado. Na Avenida do Estado.',{dur:2.6}));return;}
   const B=LM.bombas||LM.posto; G.ev.bcC=(G.ev.bcC??6)-dt;
   if(G.ev.bcC<=0){G.ev.bcC=rr(7,10);AU.cry(pick2(['socorro','meajuda']),B.x,B.y,1);psyFloat(B.x,B.y,pick2(['"SOCORRO!"','"Tem alguém aí?! O fogo tá chegando!"','"Me tira daqui, por favor!"']),{life:2.6,c:'#f0c8b8'});}
   G.ev.bcLate=(G.ev.bcLate||0)+dt; if(G.ev.bcLate>240&&!G.ev.bombLate){G.ev.bombLate=true;G.ev.bombT=4;return;}  // ignorou o pedido: ele vem de qualquer jeito
@@ -698,7 +698,7 @@ STORY.bombCine=function(){
       addDecal({k:'gib',x:surv.x+Math.cos(a)*44,y:surv.y+Math.sin(a)*44,r:6,rot:0,c:surv.skin});const i=cutNpcs.indexOf(surv);if(i>=0)cutNpcs.splice(i,1);AU.splat();buzz([140,40,200]);G.fear=1;G.shockT=Math.max(G.shockT||0,25);}},
     {wait:1.2},{fx:'zoom',v:1.2},
     {say:'rafa',m:'s',t:'Ele... ele arrancou a cabeça dele. Com o machado. Num golpe só.'},
-    ...(F.eduFollow?[{say:'edu',m:'s',t:'Ele tava no posto quando explodiu, Richard. Ele virou ISSO. E agora ele tá olhando pra gente.'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'s',t:'Ele tava no posto quando explodiu, Richard. Ele virou ISSO. E agora ele tá olhando pra gente.'}]:[]),
     {face:'bomb',at:'rafa'},{sfx:'roar',v:1},{fx:'shake',v:8},
     {say:'rafa',m:'a',think:true,t:'Não dá pra matar isso. Só correr. E não parar nunca.',dur:2},
     {camFree:1}],()=>{bomb.cut=false;bomb.state='chase';bomb.hunt=true;bomb.lx=P.x;bomb.ly=P.y;G.banner={t:'O Bombeiro',life:3.2};});
@@ -727,7 +727,7 @@ STORY.introPers=function(p){
     {fx:'blackout',v:.7},{sfx:'thud',v:.9},{do:()=>put(110)},{wait:.9},{fx:'zoom',v:1.3},
     {fx:'blackout',v:.7},{sfx:'thud',v:1},{do:()=>{put(44);AU.roar();}},{fx:'shake',v:10},{startle:'rafa'},
     {say:'rafa',m:'s',t:'ELE TÁ AQUI!'},
-    ...(F.eduFollow?[{say:'edu',m:'s',t:'CORRE, RICHARD! ELE NÃO PARA! ESSE AÍ NÃO PARA!'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'s',t:'CORRE, RICHARD! ELE NÃO PARA! ESSE AÍ NÃO PARA!'}]:[]),
     {camFree:1}],()=>{p.cut=false;p.state='chase';p.hunt=true;p.lx=P.x;p.ly=P.y;G.banner={t:'O Perseguidor',life:3.2};});
 };
 (function(){

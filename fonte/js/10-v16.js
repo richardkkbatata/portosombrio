@@ -90,7 +90,7 @@ function struggleTick(dt){
   P.x=s.px;P.y=s.py;
   if(KEYS.KeyE||KEYS.Space){s.prog+=s.hold*dt;s.tick-=dt;if(s.tick<=0){s.tick=.6;struggleNoise(s);}}
   if(s.shk>0)s.shk-=dt;
-  if(s.warn&&!s.warned){const o=enemies.find(e=>e.alive&&e.type==='ouvinte'&&hyp(e.x-P.x,e.y-P.y)<170);if(o){s.warned=true;bark(G.flags.matFollow?'matheus':'rafa','s',G.flags.matFollow?'PARA! Ela tá do teu lado! Solta e sai daí!':'Ela tá aqui. Do meu lado. Solta. Solta.',{dur:1.8});}}
+  if(s.warn&&!s.warned){const o=enemies.find(e=>e.alive&&e.type==='ouvinte'&&hyp(e.x-P.x,e.y-P.y)<170);if(o){s.warned=true;bark(matAqui()?'matheus':'rafa','s',matAqui()?'PARA! Ela tá do teu lado! Solta e sai daí!':'Ela tá aqui. Do meu lado. Solta. Solta.',{dur:1.8});}}
   if(s.hp==null)s.hp=P.hp; if(P.hp<s.hp-.5){G.struggle=null;if(s.keep)G.flags[s.keep]=s.prog;const o=enemies.find(e=>e.alive&&e.type==='ouvinte'&&hyp(e.x-P.x,e.y-P.y)<70);toast(o?'Ela te pegou. Você soltou tudo.':'Te pegaram. Você soltou tudo.');return;}
   if(s.fake&&s.prog>=s.fakeAt){G.struggle=null;s.onFail&&s.onFail();return;}
   if(s.prog>=s.need){G.struggle=null;AU.unlock();s.onDone&&s.onDone();}
@@ -121,7 +121,7 @@ function cryTick(dt){
   const caos=F.caos>=1&&!G.ev.silent&&inBC(), silent=G.ev.silent&&inBC(), night=isNight();
   if(caos){G.ev.cryT=F.caos>=2?rr(28,50):rr(45,80);const s=farSpot(380,900);if(!s)return;
     const r=Math.random(); if(r<.45)cryAt(pick2(['socorro','ajuda','meajuda']),s.x,s.y); else if(r<.7){cryAt('naonao',s.x,s.y);later(1400,()=>{AU.cry('grito',s.x,s.y,.9);});} else if(r<.85)cryAt('grito',s.x,s.y); else cryAt('choro',s.x,s.y,.8);
-    if(!F.cryTip){F.cryTip=true;later(2200,()=>bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'Tem gente viva gritando, Richard... a gente não consegue chegar em todo mundo.':'Tem gente viva pedindo ajuda... e eu não consigo chegar em todo mundo.',{dur:2.4}));}
+    if(!F.cryTip){F.cryTip=true;later(2200,()=>bark(eduAqui()?'edu':'rafa','s',eduAqui()?'Tem gente viva gritando, Richard... a gente não consegue chegar em todo mundo.':'Tem gente viva pedindo ajuda... e eu não consigo chegar em todo mundo.',{dur:2.4}));}
     return;}
   if(silent){G.ev.cryT=rr(70,120);const s=farSpot(500,900);if(s)cryAt(Math.random()<.6?'choro':'socorro',s.x,s.y,.6);return;}
   G.ev.cryT=night?rr(100,170):rr(150,240); if(night&&G.inB<0&&Math.random()<.6){const s=farSpot(700,1100);if(s)cryAt(pick2(['socorro','grito','choro']),s.x,s.y,.45);}
@@ -178,7 +178,7 @@ function psyTick(dt){
     later(2400,()=>bark('rafa','s','A máquina de escrever dela... alguém tá batendo nas teclas.',{dur:2.2}));}
   if(F.ivoMorto&&F.laranjGone&&!F.ghostIvo&&dAt((P.x/TILE)|0,(P.y/TILE)|0)<=1&&nearCoast()>.5){F.ghostIvo=true;const s=farSpot(300,500);if(s){AU.cry('sussurro',s.x,s.y,1.4);psyFloat(s.x,s.y,'...Rosa? Rosinha?...',{life:3,c:'#9aa8b8'});}}
   // culpa no quarto seguro
-  if(G.pSafe&&!F.guilt1&&F.tiaoMorto){F.guilt1=true;later(1200,()=>bark('rafa','t',F.eduFollow?'O Tião ficou pra trás por nossa causa, Edu.':'Ele ficou pra trás pra eu fugir. Eu nem olhei pra trás.',{dur:2.6}));
+  if(G.pSafe&&!F.guilt1&&F.tiaoMorto){F.guilt1=true;later(1200,()=>bark('rafa','t',eduAqui()?'O Tião ficou pra trás por nossa causa, Edu.':'Ele ficou pra trás pra eu fugir. Eu nem olhei pra trás.',{dur:2.6}));
     if(F.eduFollow)later(4400,()=>bark('edu','t','Ele escolheu, Richard. Deixa ele ter escolhido.',{dur:2.4}));}
   // ver alguém morrer não passa: o medo fica lá em cima por um tempo
   for(const k of ['tiaoMorto','ivoMorto','cidaTurned']){if(F[k]&&!G.ev['shock'+k]){G.ev['shock'+k]=1;if(!G.ev.shockInit)continue;G.shockT=40;}}

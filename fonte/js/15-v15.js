@@ -134,7 +134,7 @@ function goZone(toZone){
   const to=toZone?LM.zoneIn:{x:tc(9),y:tc(273.5)};
   playCut([{fx:'blackout',v:1.2},{sfx:'creak',v:.5},{do:()=>{P.x=to.x;P.y=to.y;for(const c of (G.comps||[])){c.x=P.x-20;c.y=P.y+12;}snapCamera();flowTile=-1;}},{wait:.5},
     ...(toZone&&!G.flags.zoneSeen?[{do:()=>{G.flags.zoneSeen=true;}},{say:'rafa',m:'s',t:'A BR... olha isso. Os dois sentidos parados. Tem caminhão pegando fogo até onde dá pra ver.'},
-      ...(G.flags.eduFollow?[{say:'edu',m:'n',t:'Pelo menos não tem trânsito.'}]:[]),
+      ...(eduAqui()?[{say:'edu',m:'n',t:'Pelo menos não tem trânsito.'}]:[]),
       {say:'rafa',m:'t',think:true,t:'A Universidade de BC fica do outro lado da pista. Três minutos a pé, num dia normal.',dur:2.2}]:[])]);
 }
 
@@ -148,7 +148,7 @@ STORY.uniCall=function(){
     {say:'marlon',m:'t',radio:true,t:'Na Universidade de BC. Na biblioteca do 6A. Eu vim buscar o Matheus, ele tava virando a noite no laboratório.'},
     {say:'matheus',m:'s',radio:true,t:'Richard? Sou eu. A gente trancou a porta com mesa. Tem uns cinquenta do lado de fora. Estudante, mano. Gente da nossa turma.'},
     {say:'marlon',m:'n',radio:true,t:'O túnel no fim da Avenida do Estado passa por baixo da BR. Do outro lado é a faculdade. O Seu Ademir da guarita tem a chave da biblioteca.'},
-    ...(F.eduFollow?[{say:'edu',m:'n',t:'O Matheus tá vivo. ...Ok. Vamos buscar o nerd.'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'n',t:'O Matheus tá vivo. ...Ok. Vamos buscar o nerd.'}]:[]),
     {say:'rafa',m:'a',t:'Segura aí. A gente tá indo.'}],
     ()=>{G.banner={t:'Universidade de BC',life:2.6};});
 };
@@ -235,7 +235,7 @@ function uniAfter(){
     {choice:[{t:'Busca a Dona Cida no prédio dela.',then:[{say:'marlon',m:'n',t:'A senhora do Edifício Atlântida? Fechou. Eu levo ela pro barco do Saco da Fazenda.'},{do:()=>{F.marlon='cida';}}]},
       {t:'Vai pro porto e cobre o heliponto.',then:[{say:'marlon',m:'a',t:'Fechou. Eu subo num guindaste e fico de olho. Quando a merda começar, olha pra cima.'},{do:()=>{F.marlon='arm';}}]}]});}
   else steps.push({say:'marlon',m:'n',t:'Eu volto pro que a gente combinou. Te vejo no porto, Richard. Cuida desses dois.'});
-  steps.push({say:'edu',m:'n',t:F.eduFollow?'Tchau, Marlon. Não morre.':'...'},{do:()=>{F.uniDone=true;const mu=npcs.find(x=>x.id==='marlonU');if(mu)mu.cond=()=>false;}});
+  steps.push({say:'edu',m:'n',t:eduAqui()?'Tchau, Marlon. Não morre.':'...'},{do:()=>{F.uniDone=true;const mu=npcs.find(x=>x.id==='marlonU');if(mu)mu.cond=()=>false;}});
   if(!F.eduFollow)steps.splice(steps.length-2,1);
   playCut(steps,()=>{G.banner={t:'O Matheus está com você',life:3};ach('univali');});
 }
@@ -430,7 +430,7 @@ drawBrandt=function(e){
   const cc=compChat;
   compChat=function(id){
     const F=G.flags;
-    if(id==='edu')return rpick(F.matFollow?['Matheus, para de falar.','Hm.','Ótimo. Mais escuro ainda.','Se o Richard pegar no teu pé de novo, eu deixo.','...','Bela noite pra morrer.']
+    if(id==='edu')return rpick(matAqui()?['Matheus, para de falar.','Hm.','Ótimo. Mais escuro ainda.','Se o Richard pegar no teu pé de novo, eu deixo.','...','Bela noite pra morrer.']
       :['Hm.','Fala baixo.','Ótimo. Mais zumbi.','...','Lindo. Muito lindo.','Eu tô bem. Não pergunta de novo.']);
     if(id==='matheus'&&F.uniMat&&!F.hospLock)return rpick(['Richard, se tu falar dos óculos de novo eu te largo aqui.','Eu não tô com medo. Eu tô... atento.','O Marlon me deve uma coca. Eu sei que não é hora.','Mano, eu tava estudando. ESTUDANDO. Numa sexta.','Para de rir, Richard.']);
     return cc(id);
@@ -540,7 +540,7 @@ STORY.surf=function(n){
     {say:'bia',m:'n',t:'A gente tá na areia desde o pôr do sol. Eles não gostam da água. Nem de fogo.'},
     {say:'rafa',m:'s',t:'Vocês tão tocando violão. No meio disso.'},
     {say:'kadu',m:'h',t:'Mano, se o mundo vai acabar, que acabe com um Charlie Brown Jr.'},
-    ...(F.eduFollow?[{say:'edu',m:'n',t:'...Justo.'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'n',t:'...Justo.'}]:[]),
     {say:'bia',m:'n',t:'Leva isso. A gente pegou no quiosque antes de tudo virar.'},
     {do:()=>{for(const [id,q] of [['calmante',1],['ervaV',1],['virote',4]]){const l=invAdd(id,q);if(l)boxAdd(id,l);}AU.pickup();toast('Os surfistas te deram um calmante, uma erva e virotes.');}}],
     ()=>{toast('Perto da fogueira o medo baixa.');});

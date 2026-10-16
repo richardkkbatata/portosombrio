@@ -99,7 +99,7 @@ function updComps(dt){
 }
 function compChat(id){
   const F=G.flags;
-  if(id==='edu')return rpick(F.matFollow?['Matheus, tu ainda tem aquele fone? Tu é muito nerd, mano.','Quando isso acabar a gente volta pro Gui... não. Não volta.','Richard, tu tá sangrando de novo, véi.']:
+  if(id==='edu')return rpick(matAqui()?['Matheus, tu ainda tem aquele fone? Tu é muito nerd, mano.','Quando isso acabar a gente volta pro Gui... não. Não volta.','Richard, tu tá sangrando de novo, véi.']:
     F.inibidorDone?['Tu acha que a doutora vai virar?','Se eu virar, tu atira. Promete.','O Matheus não atende, Richard. Desde a meia-noite.']:
     ['Eu ainda ouço o barulho... deles comendo o Gui.','Fala baixo, mano. Eu tô ouvindo passo.','Eu nunca tinha pegado numa arma. Agora não solto mais.','Se tu morrer, eu te mato.']);
   return rpick(F.hospOut?['Esse porto eu conheço de olho fechado.','O guindaste da ala B ainda tem energia, eu acho.','Valeu por voltar por mim, Richard. Sério.','Se esse helicóptero não vier, a gente rouba um barco.']:
@@ -223,7 +223,7 @@ function caosTick(dt){
       addFire(tc(tx),tc(ty),rr(28,44),true); for(let j=0;j<20;j++){const an=Math.random()*6.28,s=rr(40,260);parts.push({k:'fire',x:tc(tx),y:tc(ty),vx:Math.cos(an)*s,vy:Math.sin(an)*s,life:rr(.3,.7),max:.7,s:rr(6,12),c:'#ff8a3a'});}
       alertNoise(tc(tx),tc(ty),900);
       if(Math.random()<.35&&map[k]===T.ROAD)placeWreck(tc(tx),tc(ty),Math.random()<.5?0:Math.PI/2,pick2(CAR_COLS),null,true);
-      if(!F.caosBark){F.caosBark=true;later(900,()=>{bark(G.flags.eduFollow?'edu':'rafa','s',G.flags.eduFollow?'Mano... a cidade tá explodindo inteira.':'Mais uma explosão... Balneário tá desmoronando.');});}
+      if(!F.caosBark){F.caosBark=true;later(900,()=>{bark(eduAqui()?'edu':'rafa','s',eduAqui()?'Mano... a cidade tá explodindo inteira.':'Mais uma explosão... Balneário tá desmoronando.');});}
       break;}
   } else if(r<.75){
     // alguém pegando fogo correndo
@@ -248,7 +248,7 @@ function updHeliCrash(dt){
     G.ev.hc=null; const F=G.flags; F.heliCrash=true; F.hcx=Math.round(h.tx); F.hcy=Math.round(h.ty);
     explodeBig(h.tx,h.ty,{r:300,heavy:130,dmg:60});
     heliWreck(h.tx,h.ty,true);
-    later(1000,()=>{bark(G.flags.eduFollow?'edu':'rafa','s',G.flags.eduFollow?'CARALHO! Caiu bem na nossa frente! Tem soldado saindo dos destroços... eles tão pegando fogo, Richard!':'Caiu... os soldados estão saindo do fogo. Eles não deviam estar se mexendo.');});
+    later(1000,()=>{bark(eduAqui()?'edu':'rafa','s',eduAqui()?'CARALHO! Caiu bem na nossa frente! Tem soldado saindo dos destroços... eles tão pegando fogo, Richard!':'Caiu... os soldados estão saindo do fogo. Eles não deviam estar se mexendo.');});
   }
 }
 function heliWreck(x,y,live){
@@ -265,7 +265,7 @@ function heliWreck(x,y,live){
 // ---------- ATO 2: a Brava ----------
 STORY.onBrava=function(){
   const F=G.flags; if(F.persOn)return; F.persOn=true; G.persT=Math.max(G.persT,45);
-  later(9000,()=>{bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'Richard... tem alguém parado lá no fim da rua. De sobretudo. Ele não se mexe.':'Tem alguém parado lá no fim da rua. De sobretudo. Ele não se mexe.');AU.thud(.6);});
+  later(9000,()=>{bark(eduAqui()?'edu':'rafa','s',eduAqui()?'Richard... tem alguém parado lá no fim da rua. De sobretudo. Ele não se mexe.':'Tem alguém parado lá no fim da rua. De sobretudo. Ele não se mexe.');AU.thud(.6);});
 };
 STORY.dieselAmbush=function(){
   const F=G.flags; if(F.ambush)return; F.ambush=true; F.persOn=true;
@@ -428,13 +428,13 @@ STORY.shipStart=function(){
   G.ev.ship={t0:G.time};
   const at={x:tc(140),y:tc(6)};
   playCut([{cam:{x:tc(182),y:tc(6)},t:1.1},{sfx:'shipHorn'},{wait:.6},
-    {say:F.matFollow?'matheus':'rafa',m:'s',t:F.matFollow?'Aquele cargueiro... ele tá vindo direto pro cais. Não tem ninguém no leme!':'Um navio... vindo direto pro cais. Não tem ninguém no leme.'},
+    {say:matAqui()?'matheus':'rafa',m:'s',t:matAqui()?'Aquele cargueiro... ele tá vindo direto pro cais. Não tem ninguém no leme!':'Um navio... vindo direto pro cais. Não tem ninguém no leme.'},
     {cam:at,t:2.6},{sfx:'shipHorn'},{wait:2.2},
     {do:()=>shipCrash(true)},
     {wait:1.2},
     {say:'rafa',m:'s',t:'Tem gente saindo do navio... não. Não é gente.'},
     {wait:.5},{sfx:'roar',v:1},{fx:'shake',v:14},
-    {say:F.matFollow?'matheus':'rafa',m:'s',t:F.matFollow?'Tem uma coisa ENORME no porão. Richard... atira em tudo.':'Tem uma coisa enorme no porão do navio...'},
+    {say:matAqui()?'matheus':'rafa',m:'s',t:matAqui()?'Tem uma coisa ENORME no porão. Richard... atira em tudo.':'Tem uma coisa enorme no porão do navio...'},
     {cam:{x:P.x,y:P.y},t:.5}]);
 };
 function shipCrash(live){
@@ -472,7 +472,7 @@ function drawShip(){
 }
 STORY.eduFixJeep=function(){
   const F=G.flags;F.jeepFixedEdu=(F.jeepFixedEdu||0)+1;
-  playCut([{say:F.eduFollow?'edu':'rafa',m:'t',t:F.eduFollow?'O Tião me mostrou o depósito de peças antes... deixa comigo. Vai demorar.':'O depósito do Tião ainda tem peças. Vai demorar.'},{fx:'blackout',v:1.4},{sfx:'thud',v:.6},{wait:.8},{sfx:'rev',v:1},
+  playCut([{say:eduAqui()?'edu':'rafa',m:'t',t:eduAqui()?'O Tião me mostrou o depósito de peças antes... deixa comigo. Vai demorar.':'O depósito do Tião ainda tem peças. Vai demorar.'},{fx:'blackout',v:1.4},{sfx:'thud',v:.6},{wait:.8},{sfx:'rev',v:1},
     {do:()=>{const j=LM.jipe||{x:V.x,y:V.y};Object.assign(V,{x:j.x,y:j.y,ang:-Math.PI/2,spd:0,hp:V.max*.6,ok:true,dead:false});G.clock+=40;toast('O jipe voltou a funcionar. Quarenta minutos se passaram.');}}]);
 };
 function drawHeliCrash(){
@@ -505,7 +505,7 @@ function plotTriggers(){
   if((n=near('eduV',110))&&(!F.detGot||F.boss_especime||F.shopOpen))return STORY.npc2(n);
   if(!F.matheusJoin&&F.hospLock&&(n=near('matH',120)))return STORY.npc2(n);
   if(F.caos>=2&&!F.heliCrash&&!G.ev.hc&&dAt((P.x/TILE)|0,(P.y/TILE)|0)===5&&((P.y/TILE)|0)<232)heliCrashStart();
-  if(F.hospOut&&!F.sino&&!F.sinoHint&&dAt((P.x/TILE)|0,(P.y/TILE)|0)===0){F.sinoHint=true;bark(F.matFollow?'matheus':'rafa','s',F.matFollow?'O porto tá lotado deles, mano. Se a gente tocar o sino da Matriz, eles vão todos pra igreja. Barulho chama.':'O porto está lotado. Precisava de um barulho bem longe daqui pra tirar eles.');}
+  if(F.hospOut&&!F.sino&&!F.sinoHint&&dAt((P.x/TILE)|0,(P.y/TILE)|0)===0){F.sinoHint=true;bark(matAqui()?'matheus':'rafa','s',matAqui()?'O porto tá lotado deles, mano. Se a gente tocar o sino da Matriz, eles vão todos pra igreja. Barulho chama.':'O porto está lotado. Precisava de um barulho bem longe daqui pra tirar eles.');}
   if(!F.matRadio&&F.vertice&&dAt((P.x/TILE)|0,(P.y/TILE)|0)===1){G.ev.mrT=(G.ev.mrT||0)+(lastDt||1/60);if(G.ev.mrT>2.5)return STORY.matRadio();}
   hospLockTick();
 }
@@ -597,7 +597,7 @@ function bossSmash(e){
     if(Math.random()<.5)GORE.push({k:'glass',x:tc(x),y:tc(y),r:10,rot:Math.random()*6,seed:Math.random()});
     for(let k=0;k<5;k++)parts.push({k:'debris',x:tc(x),y:tc(y),vx:rr(-220,220)+e.cdx*120,vy:rr(-220,220)+e.cdy*120,life:rr(.4,.8),max:.8,s:rr(2,5),c:t===T.WALL?'#4a4640':t===T.PROP?'#6e3529':'#5a5650'});
   }
-  if(hit){if(typeof invalidateRect==='function')invalidateRect(cx-R0-1,cy-R0-1,R0*2+3,R0*2+3);flowTile=-1;AU.thud(1);G.shake+=Math.min(6,hit);if(!G.flags.smashBark){G.flags.smashBark=true;later(400,()=>bark(G.flags.matFollow?'matheus':'rafa','s',G.flags.matFollow?'ELA TÁ DERRUBANDO OS CONTÊINERES! Não fica atrás de nada!':'Ela atravessa tudo... não adianta se esconder atrás de nada!'));}}
+  if(hit){if(typeof invalidateRect==='function')invalidateRect(cx-R0-1,cy-R0-1,R0*2+3,R0*2+3);flowTile=-1;AU.thud(1);G.shake+=Math.min(6,hit);if(!G.flags.smashBark){G.flags.smashBark=true;later(400,()=>bark(matAqui()?'matheus':'rafa','s',matAqui()?'ELA TÁ DERRUBANDO OS CONTÊINERES! Não fica atrás de nada!':'Ela atravessa tudo... não adianta se esconder atrás de nada!'));}}
 }
 function bossThrow(e,rage){
   const n=rage?3:1, a0=Math.atan2(P.y-e.y,P.x-e.x);
@@ -636,7 +636,7 @@ function silenceTick(dt){
     G.ev.silent=true;
     for(const e of enemies){if(!e.alive||e.stalker||e.t.boss||e.type==='manequim')continue;const tx=(e.x/TILE)|0,ty=(e.y/TILE)|0;if(dAt(tx,ty)>=5&&bmap[idx(tx,ty)]<0&&!(typeof CBY!=='undefined'&&ty>=CBY))e.alive=false;}
     G.ev.bombT=F.bcSilentSeen?6:16; if(!F.cidaTurned&&(F.catDone||!F.askedCat)&&F.marlon!=='cida')cidaFall(true);
-    if(!F.bcSilentSeen){F.bcSilentSeen=true;later(2200,()=>bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'Richard... cadê todo mundo? Cadê ELES? Tá tudo quieto.':'Silêncio. Nenhum grito, nenhum tiro. Cadê eles?'));
+    if(!F.bcSilentSeen){F.bcSilentSeen=true;later(2200,()=>bark(eduAqui()?'edu':'rafa','s',eduAqui()?'Richard... cadê todo mundo? Cadê ELES? Tá tudo quieto.':'Silêncio. Nenhum grito, nenhum tiro. Cadê eles?'));
       later(8000,()=>bark('rafa','t','As fogueiras apagaram. Só fumaça... e esse cheiro.'));}
   }
   for(const e of enemies){if(!e.alive||e.stalker||e.t.boss||e.type==='manequim'||e.uid==='cidaZ'||e.cut)continue;const d=dAt((e.x/TILE)|0,(e.y/TILE)|0);if(d>=5&&d<=7)e.alive=false;}
@@ -662,7 +662,7 @@ STORY.introBombeiro=function(b){
   playCut([{npc:b,id:'bomb'},{fx:'blackout',v:.8},{wait:.4},{cam:{x:b.x,y:b.y},t:1.3},{sfx:'drag',v:1},{wait:.5},{sfx:'drag',v:1},
     {walk:'bomb',to:{x:b.x+(P.x-b.x)*.15,y:b.y+(P.y-b.y)*.15},spd:34},{sfx:'thud',v:1},{fx:'shake',v:6},
     {say:'rafa',m:'s',t:'Um bombeiro... o rosto dele derreteu no capacete. Ele tá arrastando um machado.'},
-    ...(F.eduFollow?[{say:'edu',m:'s',t:'Ele tava no posto quando explodiu, Richard. Ele veio atrás da gente. Ele VEIO ATRÁS DA GENTE.'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'s',t:'Ele tava no posto quando explodiu, Richard. Ele veio atrás da gente. Ele VEIO ATRÁS DA GENTE.'}]:[]),
     {say:'rafa',m:'a',think:true,t:'Não dá pra matar isso. Só correr. E não parar.',dur:1.8},
     {cam:{x:P.x,y:P.y},t:.4}],()=>{G.banner={t:'O Bombeiro',life:3};});
 };
@@ -713,7 +713,7 @@ STORY.sino=function(o){
     {say:'rafa',m:'s',t:'O porto inteiro vai ouvir isso.'},
     {do:()=>{alertNoise(cx,cy,2400);for(let i=0;i<8;i++){const a=Math.random()*6.28,d=rr(500,800);const x=cx+Math.cos(a)*d,y=cy+Math.sin(a)*d,tx=(x/TILE)|0,ty=(y/TILE)|0;if(!inb(tx,ty)||SOLID[map[idx(tx,ty)]])continue;const e=makeEnemy(Math.random()<.3?'corr':'zumbi',x,y,null);e.state='investigate';e.nx=cx;e.ny=cy;e.it=40;enemies.push(e);}}},
     {wait:.8},{sfx:'roar',v:.6},
-    {say:F.matFollow?'matheus':'rafa',m:'s',t:F.matFollow?'Tão vindo todos pra cá, mano! Do porto inteiro! Agora o caminho tá livre... se a gente sair vivo daqui.':'Estão vindo todos pra cá. Do porto inteiro. Agora é sair daqui vivo.'}],
+    {say:matAqui()?'matheus':'rafa',m:'s',t:matAqui()?'Tão vindo todos pra cá, mano! Do porto inteiro! Agora o caminho tá livre... se a gente sair vivo daqui.':'Estão vindo todos pra cá. Do porto inteiro. Agora é sair daqui vivo.'}],
     ()=>{G.ev.bellT=0;});
   G.ev.bells=6;
 };
@@ -760,7 +760,7 @@ STORY.bondinho=function(){
   const mid=[(CABLE[0][0]+CABLE[1][0])/2,(CABLE[0][1]+CABLE[1][1])/2];
   playCut([{sfx:'click'},{sfx:'creak',v:.8},{do:()=>rideStart([CABLE[0],CABLE[1]],9,.92)},
     {cam:{x:tc(CABLE[0][0]),y:tc(CABLE[0][1])},t:1.4},
-    {say:G.flags.eduFollow?'edu':'rafa',m:'s',t:G.flags.eduFollow?'Mano, eu nunca gostei dessa porra de bondinho. Nunca.':'Eu nunca gostei desse bondinho.'},
+    {say:eduAqui()?'edu':'rafa',m:'s',t:eduAqui()?'Mano, eu nunca gostei dessa porra de bondinho. Nunca.':'Eu nunca gostei desse bondinho.'},
     {cam:{x:tc(mid[0]),y:tc(mid[1])},t:2.2},
     {say:'rafa',m:'s',t:'Aquela cabine parada ali... tem gente dentro. Batendo no vidro.'},
     {say:'rafa',m:'s',think:true,t:'Não é gente. Não mais.',dur:1.4},
@@ -768,7 +768,7 @@ STORY.bondinho=function(){
     {sfx:'thud',v:1},{fx:'blackout',v:2},{fx:'shake',v:8},{sfx:'creak',v:1},
     {say:'rafa',m:'s',t:'A energia caiu! ...Paramos na estação do meio. Na Mata Atlântica.'},
     {do:()=>{G.ev.gond=null;F.bondRide=1;placeParty(LM.bondMA);}},
-    {say:G.flags.eduFollow?'edu':'rafa',m:'t',t:G.flags.eduFollow?'Daqui até a praia é trilha. No meio do mato. No escuro. Que maravilha.':'Daqui até a praia, só pela trilha. No escuro.'}],
+    {say:eduAqui()?'edu':'rafa',m:'t',t:eduAqui()?'Daqui até a praia é trilha. No meio do mato. No escuro. Que maravilha.':'Daqui até a praia, só pela trilha. No escuro.'}],
     ()=>{G.banner={t:'Praia das Laranjeiras',life:3.2};});
 };
 STORY.bondMA=function(){const F=G.flags;toast(F.geradorL?'O painel acendeu. A linha voltou: a cabine sobe da estação Laranjeiras, lá embaixo.':'Painel da estação: SEM ENERGIA. Um adesivo diz: "Gerador auxiliar: Rancho das Laranjeiras".');};
@@ -781,7 +781,7 @@ STORY.ivo=function(n){
     {say:'rafa',m:'n',t:'Seu Ivo? Foi o Tião que mandou a gente. Ele disse que o senhor tem dinamite.'},
     {say:'ivo',m:'t',t:'O Tião... aquele velho teimoso ainda tá vivo? Tenho. Pesca proibida, mas tenho.'},
     {say:'ivo',m:'n',t:'Os meninos saíram com os dois barcos às dez. Prometeram voltar pra buscar a gente quando clarear.'},
-    ...(F.eduFollow?[{say:'edu',m:'s',t:'E se eles não voltarem, seu Ivo?'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'s',t:'E se eles não voltarem, seu Ivo?'}]:[]),
     {say:'ivo',m:'t',t:'Voltam. Têm que voltar. A Rosa não aguenta andar até lugar nenhum.'},
     {do:()=>{const l=invAdd('dinamite',1);if(l)boxAdd('dinamite',l);AU.pickup();toast(l?'Mochila cheia: a dinamite do Seu Ivo foi pro baú dos abrigos. Pegue lá antes da barricada.':'Você recebeu a dinamite de pesca do Seu Ivo.');}},
     {say:'ivo',m:'n',t:'Toma. Três bananas e pavio curto. Acende e corre, que ela não espera ninguém.'},
@@ -799,7 +799,7 @@ STORY.ivo=function(n){
         if(r){r.x=iv.x+18;r.y=iv.y;r.state='chase';r.lx=P.x;r.ly=P.y;r.hunt=true;r.huntT=30;r.face=Math.PI;}}
       F.ivoMorto=true;AU.scream(1);G.shake+=12;buzz([100,40,160]);}},
     {wait:.8},{fx:'zoom',v:1.15},{say:'rafa',m:'s',t:'SEU IVO!'},{camFree:1},
-    {say:G.flags.eduFollow?'edu':'rafa',m:'s',t:G.flags.eduFollow?'Ela arrancou a garganta dele com o dente! A própria mulher! SAI, SAI!':'Ela arrancou a garganta dele. A própria mulher dele.'},
+    {say:eduAqui()?'edu':'rafa',m:'s',t:eduAqui()?'Ela arrancou a garganta dele com o dente! A própria mulher! SAI, SAI!':'Ela arrancou a garganta dele. A própria mulher dele.'},
     {say:'rafa',m:'a',think:true,t:'O bondinho. O gerador do restaurante religa a linha. Agora.',dur:1.8}]);
 };
 STORY.geradorL=function(){
@@ -807,7 +807,7 @@ STORY.geradorL=function(){
   if(!F.ivoMet&&invCount('dinamite')<=0)return toast('Um gerador a diesel. Ainda tem combustível. Melhor achar o Seu Ivo antes.');
   F.geradorL=true; G.ev.genL={x:LM.geradorL.x,y:LM.geradorL.y,t:0};
   AU.creak(1);AU.thud(1);G.shake+=6;
-  later(500,()=>bark(F.eduFollow?'edu':'rafa','s',F.eduFollow?'PEGOU! ...e tá fazendo um barulho do caralho. Todo mundo da praia vai vir. PRO BONDINHO!':'Pegou... e a praia inteira vai ouvir isso. Pro bondinho, já.'));
+  later(500,()=>bark(eduAqui()?'edu':'rafa','s',eduAqui()?'PEGOU! ...e tá fazendo um barulho do caralho. Todo mundo da praia vai vir. PRO BONDINHO!':'Pegou... e a praia inteira vai ouvir isso. Pro bondinho, já.'));
   spawnRing(3,'corr',380,560,true);
 };
 STORY.bondinho2=function(){
@@ -820,7 +820,7 @@ STORY.bondinho2=function(){
     {cam:{x:tc(CABLE[2][0]),y:tc(CABLE[2][1])},t:1.6},
     {say:'rafa',m:'s',t:'Sobe... sobe, sobe, sobe...'},
     {cam:{x:LM.geradorL.x,y:LM.geradorL.y},t:1.4},
-    {say:G.flags.eduFollow?'edu':'rafa',m:'s',t:G.flags.eduFollow?'Olha o restaurante! Tem dezenas deles em volta do gerador! O botijão, Richard, os botijões!':'Eles cercaram o gerador... e os botijões de gás do lado.'},
+    {say:eduAqui()?'edu':'rafa',m:'s',t:eduAqui()?'Olha o restaurante! Tem dezenas deles em volta do gerador! O botijão, Richard, os botijões!':'Eles cercaram o gerador... e os botijões de gás do lado.'},
     {do:()=>laranjBoom()},{sfx:'bigBoom',v:1},{fx:'shake',v:22},{fx:'flash',v:1},{wait:1.4},
     {do:()=>{const c=LM.colonia;explodeFx(c.x,c.y+40,1.2);}},{sfx:'boom',v:1},{wait:.9},
     {cam:{x:tc(CABLE[1][0]),y:tc(CABLE[1][1])},t:2.4},
@@ -828,7 +828,7 @@ STORY.bondinho2=function(){
     {say:'rafa',m:'s',t:'A torre... o fogo pegou na torre! O cabo vai arrebentar!'},
     {cam:{x:tc(mid[0]),y:tc(mid[1])},t:2.2},{sfx:'thud',v:1},{fx:'shake',v:14},
     {do:()=>{F.laranjGone=true;}},
-    {say:G.flags.eduFollow?'edu':'rafa',m:'s',t:G.flags.eduFollow?'ARREBENTOU ATRÁS DA GENTE! Segura, segura!':'Arrebentou atrás de nós...'},
+    {say:eduAqui()?'edu':'rafa',m:'s',t:eduAqui()?'ARREBENTOU ATRÁS DA GENTE! Segura, segura!':'Arrebentou atrás de nós...'},
     {cam:{x:tc(CABLE[0][0]),y:tc(CABLE[0][1])},t:2.6},
     {do:()=>{G.ev.gond=null;placeParty(LM.bondBS);}},
     {say:'rafa',m:'t',t:'Barra Sul. A gente voltou. As Laranjeiras... não existem mais.'}],
@@ -867,7 +867,7 @@ STORY.tiaoDeath=function(){
       const [px,py]=freeTileNear(156,376,true);if(!P.owned[2])pickups.push({uid:'tiaoG',tx:px,ty:py,x:tc(px),y:tc(py),id:2,q:6,kind:'weapon'});else pickups.push({uid:'tiaoG',tx:px,ty:py,x:tc(px),y:tc(py),id:'cart',q:10,kind:'item'});
       for(const e of horde)if(e.alive){e.state='chase';e.lx=P.x;e.ly=P.y;}}},
     {wait:1},{camFree:1},{fx:'zoom',v:1.14},
-    {say:G.flags.eduFollow?'edu':'rafa',m:'k',t:G.flags.eduFollow?'...Ele parou de atirar. Richard. Ele parou de atirar.':'Os tiros pararam.'},
+    {say:eduAqui()?'edu':'rafa',m:'k',t:eduAqui()?'...Ele parou de atirar. Richard. Ele parou de atirar.':'Os tiros pararam.'},
     {say:'rafa',m:'a',think:true,t:'A escopeta dele ficou no chão. A dinamite na mochila. A barricada. Agora.',dur:2}],
     ()=>{ach('tiao');});
 };
@@ -886,7 +886,7 @@ function fuseTick(dt){
     if(g&&!g.open)openGate(g);F.bloqWeak=true;F.bloqueio_g=true;
     for(const [dx,dy] of [[-2,1],[3,1],[0,3]])addFire(f.x+dx*TILE,f.y+dy*TILE,44,true);
     placeWreck(f.x-TILE*3,f.y+TILE*2,0,'#3d4a2f','army',true);
-    later(900,()=>bark(F.eduFollow?'edu':'rafa','a',F.eduFollow?'ABRIU! O caminhão-tanque virou uma bola de fogo! Pro jipe!':'Abriu. Agora o jipe passa.'));}
+    later(900,()=>bark(eduAqui()?'edu':'rafa','a',eduAqui()?'ABRIU! O caminhão-tanque virou uma bola de fogo! Pro jipe!':'Abriu. Agora o jipe passa.'));}
 }
 
 // =============== Dona Cida virou ===============
@@ -906,7 +906,7 @@ function cidaTick(){
   playCut([{npc:z,id:'cz'},{fx:'blackout',v:.6},{say:'rafa',m:'s',t:'A luz verde apagou... Dona Cida? A porta tava aberta...'},{wait:.6},{sfx:'roar',v:.4},
     {cam:{x:z.x,y:z.y},t:1},{say:'rafa',m:'s',t:'...Não. Não, não, não. Dona Cida...'},
     ...(F.catDone?[{say:'rafa',m:'t',think:true,t:'O Mingau tá embaixo da cama. Ele não sai de lá.',dur:1.6}]:[]),
-    ...(F.eduFollow?[{say:'edu',m:'s',t:'Richard... ela não é mais ela. Faz o que tem que fazer.'}]:[]),
+    ...(eduAqui()?[{say:'edu',m:'s',t:'Richard... ela não é mais ela. Faz o que tem que fazer.'}]:[]),
     {do:()=>{z.state='chase';z.lx=P.x;z.ly=P.y;z.rising=.3;AU.roar();}}]);
 }
 

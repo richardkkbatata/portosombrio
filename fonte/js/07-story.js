@@ -456,7 +456,7 @@ const STORY={
           {t:'Você vem comigo.',do:()=>{F.helena='levar';},then:[L_('helena','h','Eu conheço a trilha pela costa. Te espero no heliponto.'),L_('rafa','t','Ela ainda está tossindo. Será que eu fiz a coisa certa?',{think:true}),{do:()=>{F.helenaGone=true;}}]},
           {t:'Não posso arriscar. Desculpa.',do:()=>{F.helena='ficar';},then:[L_('helena','t','...Eu sei. Eu faria o mesmo.'),L_('helena','n','Vai. Antes que eu mude de ideia sobre te ajudar.')]},
         ]},
-        ...(F.eduJoin&&F.eduFollow?[L_('edu','t','Richard... eu vou ficar. Alguém tem que cuidar dela até o helicóptero. Tu acha o Matheus.'),
+        ...(F.eduJoin&&eduAqui()?[L_('edu','t','Richard... eu vou ficar. Alguém tem que cuidar dela até o helicóptero. Tu acha o Matheus.'),
           L_('rafa','a','Edu...'),L_('edu','h','Vai logo, antes que eu desista. A gente se vê no porto.')]:[]),
         ...(F.eduJoin&&F.eduVan?[L_('helena','n','O seu amigo, o Edu, passou aqui antes de você. Disse que fica comigo até o fim. Teimoso.')]:[]),
         {do:()=>{if(F.eduJoin){F.eduFollow=false;F.eduVan=false;F.eduClinic=true;dropComp('edu');}}},
