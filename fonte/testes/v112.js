@@ -26,7 +26,8 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   run(60);A.renderWorld();A.drawHUD();R('drawPsy()');
   ok(R('G.camF')<.75,'1.12: câmera abre na luneta');
   R("(()=>{const S=G.scope;S.t=5;for(const v of S.tg.slice()){if(!v.alive)continue;S.hold=true;S.t=Math.PI*2*10;S.x=v.x-cbScopeSway(S)[0];S.y=v.y-cbScopeSway(S)[1];cbScopeFire(S);}})()");
-  run(30);flush();finishTalk();flush();
+  ok(R('G.scope.tg.every(v=>!v.alive)')&&R('G.scope.ammo')>0,'1.13: vigias caem, ainda sobra bala pra quem quiser');R("cbScopeEnd('ok')");
+  run(60);flush();finishTalk();flush();
   ok(!R('G.scope'),'1.12: luneta termina');
   ok(G.flags.cbSt>=3&&G.flags.nicoMet&&A.invCount('rojao')>0,'1.12: Nicolas encontrado, rojões');
   ok(!A.enemies.some(e=>e.alive&&['cbv1','cbv2','cbv3'].includes(e.uid)),'1.12: o Nicolas derrubou os vigias');

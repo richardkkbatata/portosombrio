@@ -1,6 +1,16 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.13',d:'16/10/2026',t:'Caos, missões e registros',itens:[
+    'Aba Missões na mochila: a missão principal de agora com o lugar, a distância e a direção, a lista da história (sem spoiler do que vem), o que falta em Camboriú e todas as missões secundárias com "Seguir".',
+    'Registros: 5 slots na máquina de escrever, e dá para exportar o registro num arquivo (.pssave) e importar em outro computador. No título, botão Registros.',
+    'Depois do posto, caos total em Balneário: gente se matando na rua, gente pegando fogo, corpo caindo do prédio, carro explodindo e casas que explodem e ficam destruídas e fechadas para sempre.',
+    'Os sobreviventes da rua (que não são da história) agora podem morrer pelas suas mãos. O Richard sente: o medo sobe, ele fala, e mais tarde ouve a voz de quem matou.',
+    'Camboriú mais medieval e mais cruel: tochas na avenida e na fachada da Matriz, braseiros na praça, uma vela em cada porta, enforcados nas figueiras, corpos com velas, cabeças em estacas, gente fugindo dos cultistas (dá pra salvar) e oferecidos queimando em estacas.',
+    'Missão da luneta mais livre: 10 balas, câmera ainda mais aberta, e você derruba quem quiser na praça. O sino não acaba mais a missão (traz mais gente). Q sai da luneta. Com o rifle na mão, fora da luneta, a câmera abre bem mais.',
+    'Som: trilha ambiente nova que aparece e some (o silêncio também assusta), coro grave nas ruas de Camboriú, sustos menos frequentes, e o rangido de porta não parece mais gemido de zumbi.',
+    'Correções: o Cervo não nasce de novo depois de morrer; a neblina não fica mais quadriculada nem presa na tela; a tela não pisca mais à toa (nem na luneta); a música do título não começa mais com a antiga.',
+  ]},
   {v:'1.12',d:'16/10/2026',t:'Camboriú: a Congregação do Cervo',itens:[
     'Capítulo novo na história, depois da Universidade de BC: Camboriú. O Richard vai sozinho (Edu e Matheus ficam na Caçulinha do Marlon). Lá não tem zumbi: tem um culto, a Congregação do Cervo.',
     'Inimigos novos: cultistas de capuz com foice e lanterna (procuram em grupo e chamam os outros), vigias que tocam o sino se te veem, os Marcados (cultistas que viraram bicho, de quatro e com chifre) e o chefe, o Cervo, o Espécime T-03 da Vértice.',

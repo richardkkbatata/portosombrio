@@ -118,10 +118,12 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   function doorS(){const n=len(1),x=sweep(n,t=>85*Math.exp(-t*6)+52,t=>Math.exp(-t*12));add(x,ex(F(N(n),'lp',420,.707,2),15,.002));
     const r=ex(F(N(n),'bp',1500,4),8);for(let i=0;i<n;i++)r[i]*=.5+.5*Math.sin(TAU*35*i/SR);add(x,r,.02,.12);return fadeOut(norm(sat(x,1.4)));}
   function knockS(){const n=len(1.1),x=new Float32Array(n);for(let k=0;k<3;k++){const o=k*.31+rnd()*.02;add(x,ex(F(N(len(.12)),'bp',210,6),55),o,1);add(x,ping(.1,150+rnd()*15,40),o,.6);add(x,ex(F(N(len(.01)),'hp',2500),300),o,.3);}return fadeOut(norm(sat(x,1.5)));}
-  function creakS(v){const d=1.2+v*.4,n=len(d),x=new Float32Array(n),sm=smooth(n,3);let ph=0;
-    for(let i=0;i<n;i++){const t=i/SR,f=55+45*Math.sin(Math.PI*t/d)+30*sm[i];ph+=f/SR;if(ph>=1){ph-=1;x[i]=1+rnd()*.5;}}
-    const y=F(x.slice(),'bp',700+v*120,8);add(y,F(x.slice(),'bp',1450+v*200,10),0,.8);add(y,F(x.slice(),'bp',2700,12),0,.4);
-    for(let i=0;i<n;i++)y[i]*=Math.pow(Math.sin(Math.PI*i/n),.8);return fadeOut(norm(sat(norm(y),1.6)));}
+  // rangido de dobradiça/madeira: atrito irregular com ressonâncias agudas (nada de faixa de voz)
+  function creakS(v){const d=.9+v*.35,n=len(d),x=new Float32Array(n),sm=smooth(n,4);let ph=0;
+    for(let i=0;i<n;i++){const t=i/SR,f=(38+28*Math.sin(Math.PI*t/d)+22*sm[i])*(1+v*.15);ph+=f/SR;if(ph>=1){ph-=1;x[i]=.6+rnd()*.8;}}
+    const y=F(x.slice(),'bp',1900+v*260,26);add(y,F(x.slice(),'bp',3300+v*300,30),0,.7);add(y,F(x.slice(),'bp',5100,34),0,.35);
+    add(y,ex(F(x.slice(),'lp',260,.707,2),2),0,.5);
+    for(let i=0;i<n;i++)y[i]*=Math.pow(Math.sin(Math.PI*i/n),.6);return fadeOut(norm(sat(norm(y),1.3)));}
   function glassS(){const n=len(1.1),x=ex(F(N(n),'hp',3200,.707,2),12);for(let i=0;i<n;i++)x[i]*=.5;
     for(let k=0;k<26;k++)add(x,ping(.2,2500+rnd()*4800,40+rnd()*50),Math.pow(rnd(),2)*.5,.25+rnd()*.35);add(x,ex(F(N(len(.2)),'bp',900,1.5),30),0,.6);return fadeOut(norm(x));}
   function thudS(){const n=len(.9),x=sweep(n,t=>70*Math.exp(-t*8)+34,t=>Math.exp(-t*10));add(x,ex(F(N(n),'lp',180,.707,2),9),0,1.1);add(x,ex(F(N(n),'bp',650,2),22),.01,.25);return fadeOut(norm(sat(x,1.6)));}
@@ -161,6 +163,16 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     for(let i=0;i<n;i++){const t=i/SR;x[i]*=.75+.25*Math.sin(TAU*6.5*t+c);}ch.push(loopify(x,cf));}return norm(ch,.9);}
   function pulseBed(){const d=3.2,n=len(d),x=new Float32Array(n);for(let k=0;k<4;k++){const o=k*.8;add(x,sweep(len(.4),t=>52*Math.exp(-t*14)+36,t=>Math.exp(-t*16)),o,1);add(x,sweep(len(.3),t=>58*Math.exp(-t*14)+40,t=>Math.exp(-t*18)),o+.22,.6);}
     for(let k=0;k<8;k++)add(x,ex(F(N(len(.02)),'bp',5200,6),200),k*.4+.1,.08);return [x,x.slice()];}
+  // trilha de exploração: acordes graves que respiram devagar, com um brilho metálico lá no fundo (32 s, loop)
+  function ambBed(){const d=32,cf=3,n=len(d+cf),ch=[];for(let c=0;c<2;c++){const x=new Float32Array(n);
+    for(const [f,a,ph] of [[73.42,1,0],[110,.55,1.3],[155.56,.35,2.1],[220*1.006,.18,.7],[61.74,.5,2.8]]){const s=saw(n,()=>f*(c?1.003:.997));for(let i=0;i<n;i++){const t=i/SR;s[i]*=a*(.25+.75*Math.pow(Math.sin(Math.PI*((t/d*2+ph/6.283)%1)),2));}add(x,s);}
+    F(x,'lp',t=>320+260*Math.sin(TAU*t/d+c),.8,2);
+    for(let k=0;k<6;k++){const t0=rnd()*d,p=ping(4,880*Math.pow(2,[0,1,3,6,7][(rnd()*5)|0]/12)*(rnd()<.5?1:2),.6);for(let i=0;i<p.length;i++)p[i]*=Math.min(1,i/SR/1.5);add(x,p,t0,.05);}
+    ch.push(loopify(x,cf));}return norm(ch,.9);}
+  // coro de Camboriú: vozes graves cantando "uuu/ooo" bem devagar, como numa igreja vazia (24 s, loop)
+  function coroBed(){const d=24,cf=3,n=len(d+cf),ch=[];for(let c=0;c<2;c++){const x=new Float32Array(n);
+    for(const [f,v,a] of [[73.42,'u',1],[73.42*1.004,'o',.8],[110,'u',.6],[103.83,'o',.35],[146.83,'u',.3]]){const y=voice({dur:d+cf,f0:(u,t)=>f*(1+.004*Math.sin(t*.7+c)),v:[v,v==='u'?'o':'u',v],rough:.02,br:.08,jit:.006,q:[9,11,13],env:(u,t)=>.35+.65*Math.pow(Math.sin(Math.PI*((t/8+a)%1)),2),sat:1.1});add(x,y,0,a*.3);}
+    F(x,'lp',1800,.707,2);ch.push(loopify(x,cf));}return norm(ch,.9);}
   // ---------- INSTRUMENTOS (música) ----------
   function piano(f){const d=5,n=len(d),x=new Float32Array(n),B=.0004;
     for(let k=1;k<=9;k++){const fk=f*k*Math.sqrt(1+B*k*k);if(fk>SR*.45)break;const a=1/Math.pow(k,1.15)*(k===1?1:.8),dk=.7+.45*k,dtu=1+(rnd()-.5)*.0015;
@@ -178,6 +190,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   // ---------- fila de geração (um pouco por quadro, sem travar) ----------
   const J=(name,fn,k=1)=>{for(let v=0;v<k;v++)SND.jobs.push([name,()=>fn(v)]);};
   function queue(){
+    J('piano_lo',()=>piano(220));J('piano_hi',()=>piano(880));J('pad',()=>padS(110));
     for(const id in GUNS)J('shot_'+id,()=>gun(GUNS[id]),2);
     J('shot_sil',silenced,2);J('shot_lgran',launcher);J('shot_besta',crossbow);J('flame',flameS);J('shell',shell,2);
     J('hit',hitS,4);J('swish',swishS,3);J('step',stepS,4);J('click',clickS);J('dry',dryS);J('reload',reloadS);
@@ -201,8 +214,8 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     J('breath_in',()=>breathS(true));J('breath_out',()=>breathS(false));J('heart',heartS);
     J('door',doorS,2);J('knock',knockS);J('creak',creakS,2);J('glass',glassS,2);J('thud',thudS,2);
     J('boom',()=>boomS(false),2);J('bigboom',()=>boomS(true));J('thunder',thunderS,2);J('drag',dragS);J('chain',chainS);J('sting',stingS,2);
+    J('bed_amb',ambBed);J('bed_coro',coroBed);
     J('bed_rain',rainBed);J('bed_wind',windBed);J('bed_drone',droneBed);J('bed_room',roomBed);J('bed_ten',tensionBed);J('bed_pulse',pulseBed);
-    J('piano_lo',()=>piano(220));J('piano_hi',()=>piano(880));J('pad',()=>padS(110));
     J('kick',kickS);J('snare',snareS);J('hat',hatS);J('taiko',taikoS);J('brass',()=>brassS(146.83));
     for(const [nm,fn,k] of (SND.extra||[]))J(nm,fn,k||1);
   }
@@ -276,7 +289,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   const GRT={corr:'gr_corr',cao:'gr_cao',brut:'gr_big',gordo:'gr_big',boss:'gr_big',bombeiro:'gr_big',pescador:'gr_big',especime:'gr_big',rast:'gr_gurg',afog:'gr_gurg',incha:'gr_gurg',cusp:'gr_gurg'};
   AU.groan=function(e,v){
     if(!this.ctx||!has('gr_z'))return O.groan.call(this,e,v);
-    const now=this.ctx.currentTime;if(now-this.lastGroan<.55)return;
+    const now=this.ctx.currentTime;if(now-this.lastGroan<1.1)return;
     const p=posOf(e.x,e.y,850);const vol=clamp(1-p.d/850,0,1)*.16*(v||1);if(vol<.015)return;this.lastGroan=now;
     const nm=GRT[e.type]||'gr_z',rate=e.type==='zumbi'||!GRT[e.type]?(.88+((e.id||e.x||0)*7%10)/40):1;
     this.pb(nm,{vol,pan:p.pan,far:p.far*.8,wet:.35,rate,jit:.08});
@@ -284,7 +297,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   AU.spit=function(e){if(!has('spit'))return O.spit.call(this,e);this.pbAt('spit',e.x,e.y,{vol:.18,wet:.2});};
   AU.hiss=function(e){if(!has('hiss'))return O.hiss.call(this,e);if(e)this.pbAt('hiss',e.x,e.y,{vol:.25,wet:.3,maxD:700});else this.pb('hiss',{vol:.12,far:.5,wet:.4});};
   AU.roar=function(){if(!has('roar'))return O.roar.call(this);this.pb('roar',{vol:.6,wet:.45,must:true,jit:.05});};
-  AU.sting=function(){if(!has('sting'))return O.sting.call(this);this.pb('sting',{vol:.4,wet:.35,must:true,jit:.02});};
+  AU.sting=function(){const t=this.ctx?this.ctx.currentTime:0;if(t-(this._stT||-99)<12)return;this._stT=t;if(!has('sting'))return O.sting.call(this);this.pb('sting',{vol:.4,wet:.35,must:true,jit:.02});};
   AU.scream=function(v=1){if(!has('scream'))return O.scream.call(this,v);const far=clamp(1-v,0,.92);this.pb('scream',{vol:.11*Math.min(1.2,v+.15),far,pan:far>.3?(Math.random()-.5)*1.4:0,wet:.45+far*.4,jit:.1});};
   AU.knock=function(){if(!this.pb('knock',{vol:.6,wet:.5,far:.15,pan:(Math.random()-.5)}))O.knock.call(this);};
   AU.steps=function(){if(!has('step'))return O.steps.call(this);const pan=Math.random()<.5?-.7:.7;for(let i=0;i<5;i++)this.pb('step',{vol:.1,pan,far:.35,wet:.45,delay:i*.42+Math.random()*.04});};
@@ -329,6 +342,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     const dest=(typeof MUS!=='undefined'&&MUS.out)||this.master;
     SND.ten=c.createGain();SND.ten.gain.value=0;SND.ten.connect(dest);SND.tenDest=dest;
     SND.tenPad=loop('bed_ten',SND.ten,0);SND.tenPulse=loop('bed_pulse',SND.ten,0);
+    SND.score=c.createGain();SND.score.gain.value=0;SND.score.connect(dest);SND.scDest=dest;SND.scAmb=loop('bed_amb',SND.score,0);SND.scCoro=loop('bed_coro',SND.score,0);
   };
   const AMB={next:20,lvl:0};
   const EVT=[
@@ -368,8 +382,14 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     const want=boss||safe||!play?0:clamp(ch*.6+fear*.45,0,1);AMB.lvl+=(want-AMB.lvl)*Math.min(1,dt*(want>AMB.lvl?1.2:.35));
     if(SND.ten){const dest=(typeof MUS!=='undefined'&&MUS.out)||this.master;if(dest!==SND.tenDest){try{SND.ten.disconnect();}catch(e){}SND.ten.connect(dest);SND.tenDest=dest;}
       SND.tenPad&&SND.tenPad.gain.setTargetAtTime(Math.pow(AMB.lvl,1.2)*.5,t,.3);SND.tenPulse&&SND.tenPulse.gain.setTargetAtTime(clamp(AMB.lvl*1.5-.45,0,1)*.6,t,.3);SND.ten.gain.setTargetAtTime(this.on?.55:0,t,.3);}
+    // trilha ambiente: toca um tempo, some, volta. O silêncio também assusta.
+    if(SND.score){const dest=(typeof MUS!=='undefined'&&MUS.out)||this.master;if(dest!==SND.scDest){try{SND.score.disconnect();}catch(e){}SND.score.connect(dest);SND.scDest=dest;}
+      AMB.sc=(AMB.sc??20)-dt;if(AMB.sc<=0){AMB.scOn=!AMB.scOn;AMB.sc=AMB.scOn?rr(55,95):rr(35,70);}
+      const cb=typeof inCb==='function'&&play&&inCb(), want2=play&&!safe&&!boss&&AMB.lvl<.35&&AMB.scOn&&!(typeof CUT!=='undefined'&&CUT.on&&!cb);
+      SND.scAmb&&SND.scAmb.gain.setTargetAtTime(want2&&!cb?.32:0,t,4);SND.scCoro&&SND.scCoro.gain.setTargetAtTime(want2&&cb?.4:(cb&&play&&!boss?.08:0),t,4);
+      SND.score.gain.setTargetAtTime(this.on?.6:0,t,.5);}
     // barulhos ao longe
-    if(play&&!safe&&!(typeof CUT!=='undefined'&&CUT.on)&&!(typeof MP!=='undefined'&&MP.on)){AMB.next-=dt;if(AMB.next<=0){AMB.next=(18+Math.random()*30)*(1-fear*.45);if(AMB.lvl<.5)ambEvent(inside,fear);}}
+    if(play&&!safe&&!(typeof CUT!=='undefined'&&CUT.on)&&!(typeof MP!=='undefined'&&MP.on)){AMB.next-=dt;if(AMB.next<=0){AMB.next=(45+Math.random()*65)*(1-fear*.3);if(AMB.lvl<.5&&Math.random()<.7)ambEvent(inside,fear);}}
   };
   SND.amb=AMB;
 })();
@@ -384,7 +404,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     s.start(at);s.stop(at+(s.buffer.duration/rate)+.05);}
   const pno=(c,m,at,vol,wet=.55,pan=0)=>{const f=HZ(m),hi=f>440;smp(c,hi?'piano_hi':'piano_lo',at,f/(hi?880:220),vol,wet,pan);};
   musMenu=function(s,at,c){
-    if(!SND.ok)return om(s,at,c);
+    if(!SND.ok)return;
     const chords=[[57,60,64],[53,57,60],[48,52,55],[52,56,59]],bar=(s/16)|0,ch=chords[bar%4],k=s%16;
     if(k===0){for(const m of ch)smp(c,'pad',at,HZ(m-12)/110,.09,.5);pno(c,ch[0]-24,at,.32,.6);}
     const arp=[0,1,2,1,0,2,1,2];if(k%2===0||Math.random()<.35)pno(c,ch[arp[k%8]]+12,at,.08+Math.random()*.05,.55,(k%4-1.5)*.2);

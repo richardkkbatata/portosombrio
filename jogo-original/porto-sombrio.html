@@ -4128,7 +4128,7 @@ function renderLighting(sx,sy,showPlayer){
     punch(P.x,P.y,44,.3);
   } else if(showPlayer){
     punch(P.x,P.y,P.lamp&&P.bat>0?90:66,P.lamp&&P.bat>0?.74:.58);
-    if(Math.random()<.004)G.flick=.12+Math.random()*.15;
+    if(Math.random()<.0008&&!G.scope)G.flick=.1+Math.random()*.12;
     if(G.flick>0)G.flick-=lastDt;
     const lowBat=P.bat<20&&Math.sin(renderT*23)+Math.sin(renderT*7.7)>1.2;
     const lampOn=P.lamp&&P.bat>0&&!(G.flick>0)&&!lowBat;
@@ -10409,6 +10409,16 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.13',d:'16/10/2026',t:'Caos, missões e registros',itens:[
+    'Aba Missões na mochila: a missão principal de agora com o lugar, a distância e a direção, a lista da história (sem spoiler do que vem), o que falta em Camboriú e todas as missões secundárias com "Seguir".',
+    'Registros: 5 slots na máquina de escrever, e dá para exportar o registro num arquivo (.pssave) e importar em outro computador. No título, botão Registros.',
+    'Depois do posto, caos total em Balneário: gente se matando na rua, gente pegando fogo, corpo caindo do prédio, carro explodindo e casas que explodem e ficam destruídas e fechadas para sempre.',
+    'Os sobreviventes da rua (que não são da história) agora podem morrer pelas suas mãos. O Richard sente: o medo sobe, ele fala, e mais tarde ouve a voz de quem matou.',
+    'Camboriú mais medieval e mais cruel: tochas na avenida e na fachada da Matriz, braseiros na praça, uma vela em cada porta, enforcados nas figueiras, corpos com velas, cabeças em estacas, gente fugindo dos cultistas (dá pra salvar) e oferecidos queimando em estacas.',
+    'Missão da luneta mais livre: 10 balas, câmera ainda mais aberta, e você derruba quem quiser na praça. O sino não acaba mais a missão (traz mais gente). Q sai da luneta. Com o rifle na mão, fora da luneta, a câmera abre bem mais.',
+    'Som: trilha ambiente nova que aparece e some (o silêncio também assusta), coro grave nas ruas de Camboriú, sustos menos frequentes, e o rangido de porta não parece mais gemido de zumbi.',
+    'Correções: o Cervo não nasce de novo depois de morrer; a neblina não fica mais quadriculada nem presa na tela; a tela não pisca mais à toa (nem na luneta); a música do título não começa mais com a antiga.',
+  ]},
   {v:'1.12',d:'16/10/2026',t:'Camboriú: a Congregação do Cervo',itens:[
     'Capítulo novo na história, depois da Universidade de BC: Camboriú. O Richard vai sozinho (Edu e Matheus ficam na Caçulinha do Marlon). Lá não tem zumbi: tem um culto, a Congregação do Cervo.',
     'Inimigos novos: cultistas de capuz com foice e lanterna (procuram em grupo e chamam os outros), vigias que tocam o sino se te veem, os Marcados (cultistas que viraram bicho, de quatro e com chifre) e o chefe, o Cervo, o Espécime T-03 da Vértice.',
@@ -10977,7 +10987,7 @@ const LOOKS={
 // chuva (normal) · tempestade (abafa passos, mais escuro) · neblina do mar (ninguém enxerga longe) · apagão (postes do bairro apagam)
 const WX={chuva:{n:'Chuva fina',sight:1,noise:1,dk:0},tempestade:{n:'Tempestade',sight:.85,noise:.6,dk:.06},neblina:{n:'Neblina do mar',sight:.55,noise:1,dk:.02},apagao:{n:'Apagão no bairro',sight:1,noise:1,dk:.08}};
 function wxSet(k,quiet){
-  if(!WX[k])return; G.wx=k; G.wxT=rr(170,320); G.wxSight=WX[k].sight; G._dkWx=WX[k].dk;
+  if(!WX[k])return; G.wx=k; G.wxT=k==='neblina'?rr(60,120):rr(170,320); G.wxSight=WX[k].sight; G._dkWx=WX[k].dk;
   if(k==='apagao'){G.wxD=dAt((P.x/TILE)|0,(P.y/TILE)|0);}
   if(quiet)return;
   const msg={tempestade:'A chuva engrossou. O barulho abafa os seus passos... e os deles.',neblina:'A neblina subiu do mar. Não dá pra ver nada a dez metros.',apagao:'Os postes apagaram, um por um. O bairro inteiro ficou no escuro.',chuva:'A chuva afinou.'}[k];
@@ -11000,9 +11010,9 @@ function drawWx(){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   if(G.wx==='tempestade'&&G.inB<0){ctx.strokeStyle='rgba(170,190,210,.16)';ctx.lineWidth=1.2;ctx.beginPath();for(let i=0;i<90;i++){const x=((i*137+renderT*900)%(view.w+200))-100,y=((i*251+renderT*1400)%(view.h+60))-30;ctx.moveTo(x,y);ctx.lineTo(x-6,y-22);}ctx.stroke();}
   if(G.wx==='neblina'){
-    if(!WXFOG){WXFOG=document.createElement('canvas');WXFOG.width=256;WXFOG.height=256;const g=WXFOG.getContext('2d');for(let i=0;i<40;i++){const x=Math.random()*256,y=Math.random()*256,r=rr(30,80),gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(190,200,205,.14)');gr.addColorStop(1,'rgba(190,200,205,0)');g.fillStyle=gr;g.fillRect(0,0,256,256);}}
-    const ox=-(renderT*12+cam.x*.4)%256,oy=-(cam.y*.4)%256; ctx.globalAlpha=G.inB>=0?.35:.9;
-    for(let y=oy-256;y<view.h;y+=256)for(let x=ox-256;x<view.w;x+=256)ctx.drawImage(WXFOG,x,y);
+    if(!WXFOG){const S=512;WXFOG=document.createElement('canvas');WXFOG.width=S;WXFOG.height=S;const g=WXFOG.getContext('2d');for(let i=0;i<46;i++){const x=Math.random()*S,y=Math.random()*S,r=rr(70,170);for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const X=x+dx*S,Y=y+dy*S;if(X+r<0||Y+r<0||X-r>S||Y-r>S)continue;const gr=g.createRadialGradient(X,Y,0,X,Y,r);gr.addColorStop(0,'rgba(190,200,205,.11)');gr.addColorStop(1,'rgba(190,200,205,0)');g.fillStyle=gr;g.fillRect(X-r,Y-r,r*2,r*2);}}}
+    const T2=512,ox=-(renderT*10+cam.x*.4)%T2,oy=-(cam.y*.4)%T2; ctx.globalAlpha=G.inB>=0?.25:.6;
+    for(let y=oy-T2;y<view.h;y+=T2)for(let x=ox-T2;x<view.w;x+=T2)ctx.drawImage(WXFOG,x,y);
     ctx.globalAlpha=1; const g=ctx.createRadialGradient(view.w/2,view.h/2,Math.min(view.w,view.h)*.15,view.w/2,view.h/2,Math.max(view.w,view.h)*.6);g.addColorStop(0,'rgba(150,160,165,0)');g.addColorStop(1,`rgba(150,160,165,${G.inB>=0?.12:.38})`);ctx.fillStyle=g;ctx.fillRect(0,0,view.w,view.h);}
 }
 (function(){
@@ -14502,7 +14512,7 @@ function drawFov(){
       if(Math.random()<.2){GORE.splice(i,1);const e=makeEnemy(c.type==='corr'?'corr':'zumbi',c.x,c.y,null);e.state='chase';e.lx=P.x;e.ly=P.y;e.rising=.45;e.hunt=true;enemies.push(e);
         AU.roar();G.shake+=6;G.fear=Math.max(fear,.75);buzz&&buzz([60,30,90]);G.ev.fkT=rr(45,80);
         if(!F.fkTip){F.fkTip=true;later(900,()=>bark('rafa','s','Ele... tava morto. Eu juro que tava morto.',{dur:2.2}));}break;}}}
-  if(fear>.5&&!P.inCar&&Math.random()<dt*(fear-.4)*.6){G.flick=Math.max(G.flick||0,rr(.08,.22));if(Math.random()<.3)AU.static(.2,.15);}
+  if(fear>.6&&!P.inCar&&!G.scope&&Math.random()<dt*(fear-.5)*.25){G.flick=Math.max(G.flick||0,rr(.06,.14));if(Math.random()<.08)AU.static(.15,.12);}
   G.ev.ofT=(G.ev.ofT??rr(30,50))-dt;
   if(G.ev.ofT<=0){G.ev.ofT=rr(35,70);if(!capOn()&&!inSafe()&&!G.pSafe&&(isNight()||G.inB>=0)&&!(G.comps&&G.comps.length)&&!enemies.some(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<500)){
     const pan=-Math.cos(P.ang)*.7;AU.stepAt(pan,.55,0);AU.stepAt(pan,.5,.42);if(Math.random()<.4)AU.stepAt(-pan,.45,1.1);G.fear=Math.max(fear,.4);}}};}
@@ -14653,10 +14663,12 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   function doorS(){const n=len(1),x=sweep(n,t=>85*Math.exp(-t*6)+52,t=>Math.exp(-t*12));add(x,ex(F(N(n),'lp',420,.707,2),15,.002));
     const r=ex(F(N(n),'bp',1500,4),8);for(let i=0;i<n;i++)r[i]*=.5+.5*Math.sin(TAU*35*i/SR);add(x,r,.02,.12);return fadeOut(norm(sat(x,1.4)));}
   function knockS(){const n=len(1.1),x=new Float32Array(n);for(let k=0;k<3;k++){const o=k*.31+rnd()*.02;add(x,ex(F(N(len(.12)),'bp',210,6),55),o,1);add(x,ping(.1,150+rnd()*15,40),o,.6);add(x,ex(F(N(len(.01)),'hp',2500),300),o,.3);}return fadeOut(norm(sat(x,1.5)));}
-  function creakS(v){const d=1.2+v*.4,n=len(d),x=new Float32Array(n),sm=smooth(n,3);let ph=0;
-    for(let i=0;i<n;i++){const t=i/SR,f=55+45*Math.sin(Math.PI*t/d)+30*sm[i];ph+=f/SR;if(ph>=1){ph-=1;x[i]=1+rnd()*.5;}}
-    const y=F(x.slice(),'bp',700+v*120,8);add(y,F(x.slice(),'bp',1450+v*200,10),0,.8);add(y,F(x.slice(),'bp',2700,12),0,.4);
-    for(let i=0;i<n;i++)y[i]*=Math.pow(Math.sin(Math.PI*i/n),.8);return fadeOut(norm(sat(norm(y),1.6)));}
+  // rangido de dobradiça/madeira: atrito irregular com ressonâncias agudas (nada de faixa de voz)
+  function creakS(v){const d=.9+v*.35,n=len(d),x=new Float32Array(n),sm=smooth(n,4);let ph=0;
+    for(let i=0;i<n;i++){const t=i/SR,f=(38+28*Math.sin(Math.PI*t/d)+22*sm[i])*(1+v*.15);ph+=f/SR;if(ph>=1){ph-=1;x[i]=.6+rnd()*.8;}}
+    const y=F(x.slice(),'bp',1900+v*260,26);add(y,F(x.slice(),'bp',3300+v*300,30),0,.7);add(y,F(x.slice(),'bp',5100,34),0,.35);
+    add(y,ex(F(x.slice(),'lp',260,.707,2),2),0,.5);
+    for(let i=0;i<n;i++)y[i]*=Math.pow(Math.sin(Math.PI*i/n),.6);return fadeOut(norm(sat(norm(y),1.3)));}
   function glassS(){const n=len(1.1),x=ex(F(N(n),'hp',3200,.707,2),12);for(let i=0;i<n;i++)x[i]*=.5;
     for(let k=0;k<26;k++)add(x,ping(.2,2500+rnd()*4800,40+rnd()*50),Math.pow(rnd(),2)*.5,.25+rnd()*.35);add(x,ex(F(N(len(.2)),'bp',900,1.5),30),0,.6);return fadeOut(norm(x));}
   function thudS(){const n=len(.9),x=sweep(n,t=>70*Math.exp(-t*8)+34,t=>Math.exp(-t*10));add(x,ex(F(N(n),'lp',180,.707,2),9),0,1.1);add(x,ex(F(N(n),'bp',650,2),22),.01,.25);return fadeOut(norm(sat(x,1.6)));}
@@ -14696,6 +14708,16 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     for(let i=0;i<n;i++){const t=i/SR;x[i]*=.75+.25*Math.sin(TAU*6.5*t+c);}ch.push(loopify(x,cf));}return norm(ch,.9);}
   function pulseBed(){const d=3.2,n=len(d),x=new Float32Array(n);for(let k=0;k<4;k++){const o=k*.8;add(x,sweep(len(.4),t=>52*Math.exp(-t*14)+36,t=>Math.exp(-t*16)),o,1);add(x,sweep(len(.3),t=>58*Math.exp(-t*14)+40,t=>Math.exp(-t*18)),o+.22,.6);}
     for(let k=0;k<8;k++)add(x,ex(F(N(len(.02)),'bp',5200,6),200),k*.4+.1,.08);return [x,x.slice()];}
+  // trilha de exploração: acordes graves que respiram devagar, com um brilho metálico lá no fundo (32 s, loop)
+  function ambBed(){const d=32,cf=3,n=len(d+cf),ch=[];for(let c=0;c<2;c++){const x=new Float32Array(n);
+    for(const [f,a,ph] of [[73.42,1,0],[110,.55,1.3],[155.56,.35,2.1],[220*1.006,.18,.7],[61.74,.5,2.8]]){const s=saw(n,()=>f*(c?1.003:.997));for(let i=0;i<n;i++){const t=i/SR;s[i]*=a*(.25+.75*Math.pow(Math.sin(Math.PI*((t/d*2+ph/6.283)%1)),2));}add(x,s);}
+    F(x,'lp',t=>320+260*Math.sin(TAU*t/d+c),.8,2);
+    for(let k=0;k<6;k++){const t0=rnd()*d,p=ping(4,880*Math.pow(2,[0,1,3,6,7][(rnd()*5)|0]/12)*(rnd()<.5?1:2),.6);for(let i=0;i<p.length;i++)p[i]*=Math.min(1,i/SR/1.5);add(x,p,t0,.05);}
+    ch.push(loopify(x,cf));}return norm(ch,.9);}
+  // coro de Camboriú: vozes graves cantando "uuu/ooo" bem devagar, como numa igreja vazia (24 s, loop)
+  function coroBed(){const d=24,cf=3,n=len(d+cf),ch=[];for(let c=0;c<2;c++){const x=new Float32Array(n);
+    for(const [f,v,a] of [[73.42,'u',1],[73.42*1.004,'o',.8],[110,'u',.6],[103.83,'o',.35],[146.83,'u',.3]]){const y=voice({dur:d+cf,f0:(u,t)=>f*(1+.004*Math.sin(t*.7+c)),v:[v,v==='u'?'o':'u',v],rough:.02,br:.08,jit:.006,q:[9,11,13],env:(u,t)=>.35+.65*Math.pow(Math.sin(Math.PI*((t/8+a)%1)),2),sat:1.1});add(x,y,0,a*.3);}
+    F(x,'lp',1800,.707,2);ch.push(loopify(x,cf));}return norm(ch,.9);}
   // ---------- INSTRUMENTOS (música) ----------
   function piano(f){const d=5,n=len(d),x=new Float32Array(n),B=.0004;
     for(let k=1;k<=9;k++){const fk=f*k*Math.sqrt(1+B*k*k);if(fk>SR*.45)break;const a=1/Math.pow(k,1.15)*(k===1?1:.8),dk=.7+.45*k,dtu=1+(rnd()-.5)*.0015;
@@ -14713,6 +14735,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   // ---------- fila de geração (um pouco por quadro, sem travar) ----------
   const J=(name,fn,k=1)=>{for(let v=0;v<k;v++)SND.jobs.push([name,()=>fn(v)]);};
   function queue(){
+    J('piano_lo',()=>piano(220));J('piano_hi',()=>piano(880));J('pad',()=>padS(110));
     for(const id in GUNS)J('shot_'+id,()=>gun(GUNS[id]),2);
     J('shot_sil',silenced,2);J('shot_lgran',launcher);J('shot_besta',crossbow);J('flame',flameS);J('shell',shell,2);
     J('hit',hitS,4);J('swish',swishS,3);J('step',stepS,4);J('click',clickS);J('dry',dryS);J('reload',reloadS);
@@ -14736,8 +14759,8 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     J('breath_in',()=>breathS(true));J('breath_out',()=>breathS(false));J('heart',heartS);
     J('door',doorS,2);J('knock',knockS);J('creak',creakS,2);J('glass',glassS,2);J('thud',thudS,2);
     J('boom',()=>boomS(false),2);J('bigboom',()=>boomS(true));J('thunder',thunderS,2);J('drag',dragS);J('chain',chainS);J('sting',stingS,2);
+    J('bed_amb',ambBed);J('bed_coro',coroBed);
     J('bed_rain',rainBed);J('bed_wind',windBed);J('bed_drone',droneBed);J('bed_room',roomBed);J('bed_ten',tensionBed);J('bed_pulse',pulseBed);
-    J('piano_lo',()=>piano(220));J('piano_hi',()=>piano(880));J('pad',()=>padS(110));
     J('kick',kickS);J('snare',snareS);J('hat',hatS);J('taiko',taikoS);J('brass',()=>brassS(146.83));
     for(const [nm,fn,k] of (SND.extra||[]))J(nm,fn,k||1);
   }
@@ -14811,7 +14834,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   const GRT={corr:'gr_corr',cao:'gr_cao',brut:'gr_big',gordo:'gr_big',boss:'gr_big',bombeiro:'gr_big',pescador:'gr_big',especime:'gr_big',rast:'gr_gurg',afog:'gr_gurg',incha:'gr_gurg',cusp:'gr_gurg'};
   AU.groan=function(e,v){
     if(!this.ctx||!has('gr_z'))return O.groan.call(this,e,v);
-    const now=this.ctx.currentTime;if(now-this.lastGroan<.55)return;
+    const now=this.ctx.currentTime;if(now-this.lastGroan<1.1)return;
     const p=posOf(e.x,e.y,850);const vol=clamp(1-p.d/850,0,1)*.16*(v||1);if(vol<.015)return;this.lastGroan=now;
     const nm=GRT[e.type]||'gr_z',rate=e.type==='zumbi'||!GRT[e.type]?(.88+((e.id||e.x||0)*7%10)/40):1;
     this.pb(nm,{vol,pan:p.pan,far:p.far*.8,wet:.35,rate,jit:.08});
@@ -14819,7 +14842,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
   AU.spit=function(e){if(!has('spit'))return O.spit.call(this,e);this.pbAt('spit',e.x,e.y,{vol:.18,wet:.2});};
   AU.hiss=function(e){if(!has('hiss'))return O.hiss.call(this,e);if(e)this.pbAt('hiss',e.x,e.y,{vol:.25,wet:.3,maxD:700});else this.pb('hiss',{vol:.12,far:.5,wet:.4});};
   AU.roar=function(){if(!has('roar'))return O.roar.call(this);this.pb('roar',{vol:.6,wet:.45,must:true,jit:.05});};
-  AU.sting=function(){if(!has('sting'))return O.sting.call(this);this.pb('sting',{vol:.4,wet:.35,must:true,jit:.02});};
+  AU.sting=function(){const t=this.ctx?this.ctx.currentTime:0;if(t-(this._stT||-99)<12)return;this._stT=t;if(!has('sting'))return O.sting.call(this);this.pb('sting',{vol:.4,wet:.35,must:true,jit:.02});};
   AU.scream=function(v=1){if(!has('scream'))return O.scream.call(this,v);const far=clamp(1-v,0,.92);this.pb('scream',{vol:.11*Math.min(1.2,v+.15),far,pan:far>.3?(Math.random()-.5)*1.4:0,wet:.45+far*.4,jit:.1});};
   AU.knock=function(){if(!this.pb('knock',{vol:.6,wet:.5,far:.15,pan:(Math.random()-.5)}))O.knock.call(this);};
   AU.steps=function(){if(!has('step'))return O.steps.call(this);const pan=Math.random()<.5?-.7:.7;for(let i=0;i<5;i++)this.pb('step',{vol:.1,pan,far:.35,wet:.45,delay:i*.42+Math.random()*.04});};
@@ -14864,6 +14887,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     const dest=(typeof MUS!=='undefined'&&MUS.out)||this.master;
     SND.ten=c.createGain();SND.ten.gain.value=0;SND.ten.connect(dest);SND.tenDest=dest;
     SND.tenPad=loop('bed_ten',SND.ten,0);SND.tenPulse=loop('bed_pulse',SND.ten,0);
+    SND.score=c.createGain();SND.score.gain.value=0;SND.score.connect(dest);SND.scDest=dest;SND.scAmb=loop('bed_amb',SND.score,0);SND.scCoro=loop('bed_coro',SND.score,0);
   };
   const AMB={next:20,lvl:0};
   const EVT=[
@@ -14903,8 +14927,14 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     const want=boss||safe||!play?0:clamp(ch*.6+fear*.45,0,1);AMB.lvl+=(want-AMB.lvl)*Math.min(1,dt*(want>AMB.lvl?1.2:.35));
     if(SND.ten){const dest=(typeof MUS!=='undefined'&&MUS.out)||this.master;if(dest!==SND.tenDest){try{SND.ten.disconnect();}catch(e){}SND.ten.connect(dest);SND.tenDest=dest;}
       SND.tenPad&&SND.tenPad.gain.setTargetAtTime(Math.pow(AMB.lvl,1.2)*.5,t,.3);SND.tenPulse&&SND.tenPulse.gain.setTargetAtTime(clamp(AMB.lvl*1.5-.45,0,1)*.6,t,.3);SND.ten.gain.setTargetAtTime(this.on?.55:0,t,.3);}
+    // trilha ambiente: toca um tempo, some, volta. O silêncio também assusta.
+    if(SND.score){const dest=(typeof MUS!=='undefined'&&MUS.out)||this.master;if(dest!==SND.scDest){try{SND.score.disconnect();}catch(e){}SND.score.connect(dest);SND.scDest=dest;}
+      AMB.sc=(AMB.sc??20)-dt;if(AMB.sc<=0){AMB.scOn=!AMB.scOn;AMB.sc=AMB.scOn?rr(55,95):rr(35,70);}
+      const cb=typeof inCb==='function'&&play&&inCb(), want2=play&&!safe&&!boss&&AMB.lvl<.35&&AMB.scOn&&!(typeof CUT!=='undefined'&&CUT.on&&!cb);
+      SND.scAmb&&SND.scAmb.gain.setTargetAtTime(want2&&!cb?.32:0,t,4);SND.scCoro&&SND.scCoro.gain.setTargetAtTime(want2&&cb?.4:(cb&&play&&!boss?.08:0),t,4);
+      SND.score.gain.setTargetAtTime(this.on?.6:0,t,.5);}
     // barulhos ao longe
-    if(play&&!safe&&!(typeof CUT!=='undefined'&&CUT.on)&&!(typeof MP!=='undefined'&&MP.on)){AMB.next-=dt;if(AMB.next<=0){AMB.next=(18+Math.random()*30)*(1-fear*.45);if(AMB.lvl<.5)ambEvent(inside,fear);}}
+    if(play&&!safe&&!(typeof CUT!=='undefined'&&CUT.on)&&!(typeof MP!=='undefined'&&MP.on)){AMB.next-=dt;if(AMB.next<=0){AMB.next=(45+Math.random()*65)*(1-fear*.3);if(AMB.lvl<.5&&Math.random()<.7)ambEvent(inside,fear);}}
   };
   SND.amb=AMB;
 })();
@@ -14919,7 +14949,7 @@ const SND={b:{},jobs:[],ok:false,started:false,active:0,beds:null,last:{}};
     s.start(at);s.stop(at+(s.buffer.duration/rate)+.05);}
   const pno=(c,m,at,vol,wet=.55,pan=0)=>{const f=HZ(m),hi=f>440;smp(c,hi?'piano_hi':'piano_lo',at,f/(hi?880:220),vol,wet,pan);};
   musMenu=function(s,at,c){
-    if(!SND.ok)return om(s,at,c);
+    if(!SND.ok)return;
     const chords=[[57,60,64],[53,57,60],[48,52,55],[52,56,59]],bar=(s/16)|0,ch=chords[bar%4],k=s%16;
     if(k===0){for(const m of ch)smp(c,'pad',at,HZ(m-12)/110,.09,.5);pno(c,ch[0]-24,at,.32,.6);}
     const arp=[0,1,2,1,0,2,1,2];if(k%2===0||Math.random()<.35)pno(c,ch[arp[k%8]]+12,at,.08+Math.random()*.05,.55,(k%4-1.5)*.2);
@@ -15234,7 +15264,7 @@ STORY.cbNicoTalk=function(n){
       {say:'rafa',m:'n',t:'Eu nunca atirei com um desses.'},
       {say:'nico',m:'n',t:'Segura a respiração antes de apertar. E começa pelo que enxerga os outros dois: se um vê o amigo caindo, ele toca o sino.'});
     playCut(steps,()=>cbScopeStart(vig,res=>{
-      const after=res==='ok'?[{say:'nico',m:'h',t:'Três. Limpo. Tu nasceu pra isso, hein.'}]:res==='sino'?[{say:'nico',m:'s',t:'Ele tocou o sino! Eles tão acordando lá embaixo... A praça vai ficar cheia. Vai pelas beiradas.'}]:[{say:'nico',m:'t',t:'Acabou a bala. Sobrou vigia lá embaixo. Vai com cuidado, desvia do olhar deles.'}];
+      const after=res==='ok'?[{say:'nico',m:'h',t:'Limpo. Tu nasceu pra isso, hein.'}]:res==='sai'?[{say:'nico',m:'t',t:'Ainda tem vigia lá embaixo. Desvia do olhar deles.'}]:res==='sino'?[{say:'nico',m:'s',t:'Ele tocou o sino! Eles tão acordando lá embaixo... A praça vai ficar cheia. Vai pelas beiradas.'}]:[{say:'nico',m:'t',t:'Acabou a bala. Sobrou vigia lá embaixo. Vai com cuidado, desvia do olhar deles.'}];
       playCut([{say:'nico',m:'n',t:'Me devolve. Daqui eu te cubro.'},...after],fim);}));}
   else{steps.push({say:'nico',m:'h',t:'...Tu já derrubou os vigias da praça? Respeito.'});playCut(steps,fim);}
 };
@@ -15327,7 +15357,7 @@ function cbBossTick(dt){
   const F=cbF(); if(!F.cbPortal||F.cbBoss)return;
   const inChurch=G.inB===CBL.igB&&P.y<CBL.portal.y-tc(3);
   if(!F.cbBossOn&&inChurch&&!CUT.on){F.cbBossOn=true;cbBossStart();}
-  if(F.cbBossOn&&!enemies.some(e=>e.alive&&e.type==='chifrudo')&&!CUT.on&&!F.cbBoss){const e=makeEnemy('chifrudo',CBL.altar.x,CBL.altar.y+40,null);e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;enemies.push(e);}
+  if(F.cbBossOn&&!F.cbBoss&&!F.cbBossSpawned&&!enemies.some(e=>e.alive&&e.type==='chifrudo')&&!CUT.on){F.cbBossSpawned=true;const e=makeEnemy('chifrudo',CBL.altar.x,CBL.altar.y+40,null);e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;enemies.push(e);}
 }
 function cbBossStart(){
   const g=gates.find(x=>x.id==='cbPortal'); if(g)closeGate(g);
@@ -15342,7 +15372,7 @@ function cbBossStart(){
     {do:()=>{for(const l of lights)if(l.ig)l.off=true;G.flick=.6;AU.cbBreath(CBL.altar.x,CBL.altar.y,1.3);}},
     {cam:{x:CBL.altar.x,y:CBL.altar.y},t:1.2},
     {spawn:'chifrudo',x:CBL.altar.x,y:CBL.altar.y,id:'cervo'},
-    {do:()=>{const e=CUT.actors.cervo;if(e){e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;e.face=Math.PI/2;}AU.roar();G.shake+=10;}},
+    {do:()=>{cbF().cbBossSpawned=true;const e=CUT.actors.cervo;if(e){e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;e.face=Math.PI/2;}AU.roar();G.shake+=10;}},
     {say:'pregador',m:'s',t:'DE JOELHOS!'},{camFree:true},
     {do:()=>{for(const l of lights)if(l.ig)l.off=false;}}]);
 }
@@ -15373,7 +15403,7 @@ function cbChifrudoAI(e,dt){
   if(Math.random()<dt*.15)AU.cbBreath(e.x,e.y,.8);
 }
 function cbBossDead(e){
-  const F=cbF(); F.cbBoss=true; F.cbSt=5; ach&&ach('cbCervo');
+  const F=cbF(); if(F.cbBossFim)return; F.cbBossFim=true; F.cbBoss=true; F.cbSt=5; ach&&ach('cbCervo');
   const pr=npcs.find(n=>n.id==='cbPreg');
   for(const x of enemies)if(x.alive&&x.cb&&x.type==='marc')x.alive=false;
   playCut([{fx:'slow',v:.8},{wait:.8},{fx:'shake',v:12},
@@ -15549,7 +15579,7 @@ function cbEvTick(dt){
       if(e.type==='cult'||e.type==='vig'||e.type==='marc'){G.flags.cbKills=(G.flags.cbKills||0)+1;if(e._l){e._l.off=true;e._l=null;}if(AU.pb)AU.pb('p_hurt',{vol:.14,rate:.8,far:clamp(hyp(e.x-P.x,e.y-P.y)/900,0,1)});}
       if(e.irmao){G.flags.cbIrmao=true;const [x,y]=freeTileNear((e.x/TILE)|0,(e.y/TILE)|0,true);pickups.push({uid:'cbSeloCervoP',tx:x,ty:y,x:tc(x),y:tc(y),id:'cbSeloCervo',q:1,kind:'item'});pickOcc.add(idx(x,y));
         later(900,()=>playCut([{sfx:'static',v:.8},{say:'nico',m:'t',radio:true,t:'...'},{say:'nico',m:'t',radio:true,t:'Obrigado, Richard. Ele ia odiar ficar daquele jeito.'}]));}
-      if(e.type==='chifrudo')later(300,()=>cbBossDead(e));
+      if(e.type==='chifrudo'){G.flags.cbBoss=true;G.flags.cbSt=5;later(300,()=>cbBossDead(e));}
     }}catch(err){console.error(err);}
     return out;};
 })();
@@ -15666,7 +15696,7 @@ function cbMapTo(c){
   // carregar o jogo no meio do capítulo
   const aws=applyWorldState; applyWorldState=function(){aws();const F=G.flags;CB.vultos=[];CB.rits=[];CB.evT=40;CB.nicoCd=20;
     for(let i=CBD.length-1;i>=0;i--)if(CBD[i].tmp)CBD.splice(i,1);
-    if(F.cbBossOn&&!F.cbBoss){F.cbBossOn=false;}
+    if(F.cbBossOn&&!F.cbBoss){F.cbBossOn=false;F.cbBossSpawned=false;}
     if(F.cbPortal&&!F.cbBossOn){const g=gates.find(x=>x.id==='cbPortal');if(g&&!g.open)openGate(g);}
     for(const id of ['cbParoq','cbTorre','cbPorao'])if(F[id]){const g=gates.find(x=>x.id===id);if(g&&!g.open)openGate(g);}
     cbApplyNight();if(F.cbSolo&&!F.cbDone)G.comps=[];};
@@ -15713,66 +15743,66 @@ dbgExtra('1.12 · Camboriú (capítulo novo)',[['cb:call','Receber a chamada do 
 // e, se não for derrubado logo, toca o sino.
 function cbScopeStart(vig,done){
   const c=CBL.coreto;
-  G.scope={x:c.x,y:c.y-40,cx:c.x,cy:c.y-30,t:0,ammo:5,breath:3,hold:false,tg:vig.map(v=>v),alarm:null,done,res:null,shots:[],down:false,prevAim:false,kick:0,hint:0,zoom:1};
+  G.scope={x:c.x,y:c.y-40,cx:c.x,cy:c.y-30,t:0,ammo:10,max:10,breath:3,hold:false,tg:vig.map(v=>v),alarm:null,done,res:null,shots:[],down:false,prevAim:false,kick:0,hint:0,kills:0,idle:0};
   P.ang=Math.atan2(c.y-P.y,c.x-P.x); mouseDown=false;
-  G.banner={t:IN.touch?'Arraste para mirar · solte para atirar':'Mouse mira · clique atira · Shift segura a respiração',life:4.5};
-  later(1200,()=>bark('nico','n',vig.length>=3?'Começa pelo do meio, perto do coreto. Ele vê os dois.':'Devagar. Um de cada vez.',{radio:true,dur:2.6}));
+  // mais gente na praça: quem quiser derrubar, derruba
+  for(let i=0;i<5;i++){const a=i/5*6.283,e=makeEnemy('cult',c.x+Math.cos(a)*rr(140,320),c.y+Math.sin(a)*rr(90,170),null);e.cb=1;e.state='wander';enemies.push(e);}
+  G.banner={t:IN.touch?'Arraste para mirar · solte para atirar':'Mouse mira · clique atira · Shift prende o ar · Q sai',life:4.5};
+  later(1200,()=>bark('nico','n','Os vigias primeiro, os de sino. Depois é contigo: derruba quem tu quiser.',{radio:true,dur:2.8}));
 }
-function cbScopeEnd(res){const S=G.scope;if(!S||S.res)return;S.res=res;later(900,()=>{const d=S.done;G.scope=null;if(d)d(res);});}
-function cbScopeSway(S){const t=S.t,f=S.hold?.12:1,fear=1+(G.fear||0)*.8;return [(Math.sin(t*1.3)*11+Math.sin(t*3.1+1)*5)*f*fear,(Math.cos(t*1.1)*9+Math.sin(t*2.6)*5)*f*fear];}
+function cbScopeEnd(res){const S=G.scope;if(!S||S.res)return;S.res=res;later(700,()=>{const d=S.done;G.scope=null;if(d)d(res);});}
+function cbScopeSway(S){const t=S.t,f=S.hold?.1:.7,fear=1+(G.fear||0)*.4;return [(Math.sin(t*1.1)*8+Math.sin(t*2.7+1)*3)*f*fear,(Math.cos(t*.9)*6+Math.sin(t*2.2)*3)*f*fear];}
 function cbScopeTick(dt){
-  const S=G.scope; if(!S||S.res&&S.t>99)return; S.t+=dt; S.kick=Math.max(0,S.kick-dt*3); S.hint+=dt;
-  // respiração
-  const want=!!(KEYS.ShiftLeft||KEYS.ShiftRight)||(IN.touch&&TOUCH.aim.id===null&&S.relT>0);
-  if(want&&S.breath>0){S.hold=true;S.breath=Math.max(0,S.breath-dt);if(S.breath<=0){S.hold=false;S.gasp=1.2;AU.breath&&AU.breath(1,false);}}
-  else{S.hold=false;S.breath=Math.min(3,S.breath+dt*(S.gasp>0?.25:.6));}
-  S.gasp=Math.max(0,(S.gasp||0)-dt); S.relT=Math.max(0,(S.relT||0)-dt);
-  // mira: mouse (posição na tela), teclado e direcional do celular (velocidade)
+  const S=G.scope; if(!S||S.res)return; S.t+=dt; S.kick=Math.max(0,S.kick-dt*3); S.hint+=dt; S.idle+=dt;
+  G.flick=0; G.light=0;   // nada de piscar na luneta
+  const want=!!(KEYS.ShiftLeft||KEYS.ShiftRight)||(IN.touch&&TOUCH.aim.id===null&&TOUCH.move.id===null);
+  if(want&&S.breath>0){S.hold=true;S.breath=Math.max(0,S.breath-dt*.8);if(S.breath<=0){S.hold=false;S.gasp=1;}}
+  else{S.hold=false;S.breath=Math.min(3,S.breath+dt*(S.gasp>0?.3:.8));}
+  S.gasp=Math.max(0,(S.gasp||0)-dt);
   const z=view.z;
   if(IN.mouseOn&&!IN.touch){S.x=cam.x+IN.mouseX/z;S.y=cam.y+IN.mouseY/z;}
   let mx=0,my=0;if(KEYS.KeyA||KEYS.ArrowLeft)mx--;if(KEYS.KeyD||KEYS.ArrowRight)mx++;if(KEYS.KeyW||KEYS.ArrowUp)my--;if(KEYS.KeyS||KEYS.ArrowDown)my++;
-  if(TOUCH.aim.id!==null){const C=stickCenters();const dx=TOUCH.aim.x-C.aim.x,dy=TOUCH.aim.y-C.aim.y,d=hyp(dx,dy);if(d>6){mx=dx/STICK.r;my=dy/STICK.r;}S.aiming=true;}
-  if(TOUCH.move.id!==null){const C=stickCenters();const dx=TOUCH.move.x-C.move.x,dy=TOUCH.move.y-C.move.y,d=hyp(dx,dy);if(d>6){mx=dx/STICK.r;my=dy/STICK.r;}S.aiming=true;}
-  if(mx||my){S.x+=mx*420*dt;S.y+=my*420*dt;}
+  for(const T0 of [TOUCH.aim,TOUCH.move]){if(T0.id===null)continue;const C=stickCenters(),cc=T0===TOUCH.aim?C.aim:C.move;const dx=T0.x-cc.x,dy=T0.y-cc.y,d=hyp(dx,dy);if(d>6){mx=dx/STICK.r;my=dy/STICK.r;}S.aiming=true;}
+  if(mx||my){S.x+=mx*460*dt;S.y+=my*460*dt;}
   const vw=view.w/z,vh=view.h/z;S.x=clamp(S.x,S.cx-vw/2+20,S.cx+vw/2-20);S.y=clamp(S.y,S.cy-vh/2+20,S.cy+vh/2-20);
-  // atirar: clique, F/Enter, ou soltar o direcional no celular
   let fire=false;
   if(mouseDown&&!S.down)fire=true; S.down=mouseDown;
   if((KEYS.KeyF||KEYS.Enter)&&!S.kd)fire=true; S.kd=!!(KEYS.KeyF||KEYS.Enter);
-  const touching=TOUCH.aim.id!==null||TOUCH.move.id!==null; if(S.prevAim&&!touching&&S.aiming){fire=true;S.aiming=false;S.relT=2.2;} S.prevAim=touching;
-  if(fire&&!S.res&&S.ammo>0&&S.t>.6)cbScopeFire(S);
-  // o vigia desconfiado
-  if(S.alarm&&!S.res){const a=S.alarm;a.t-=dt;if(!a.e.alive){S.alarm=null;}else{a.e.face+=Math.sin(S.t*4)*dt*2;if(a.t<=0){S.alarm=null;AU.cbBell(a.e.x,a.e.y,1);G.flags.cbBell=true;
-      for(const o of enemies)if(o.alive&&(o.type==='cult'||o.type==='marc')&&hyp(o.x-a.e.x,o.y-a.e.y)<1200){o.state='investigate';o.nx=a.e.x+rr(-90,90);o.ny=a.e.y+rr(-90,90);o.it=18;}
-      bark('nico','s','O SINO! Ele tocou!',{radio:true,dur:1.6});cbScopeEnd('sino');}}}
-  if(!S.res){if(S.tg.every(v=>!v.alive))cbScopeEnd('ok');else if(S.ammo<=0)cbScopeEnd('bala');}
-  if(S.hint>14&&!S.res){S.hint=0;bark('nico','n',pick2(['Prende o ar antes. Shift.','Ele tá virando. Espera ele parar.','A cabeça, Richard. Só a cabeça.']),{radio:true,dur:2});}
-  // câmera aberta, fixa na praça
-  G.camF=lerp(G.camF||1,.5,Math.min(1,dt*2.2)); G.camTgt=.5;
+  const touching=TOUCH.aim.id!==null||TOUCH.move.id!==null; if(S.prevAim&&!touching&&S.aiming){fire=true;S.aiming=false;} S.prevAim=touching;
+  if(fire&&S.ammo>0&&S.t>.5){cbScopeFire(S);S.idle=0;}
+  if(KEYS.KeyQ){cbScopeEnd(S.tg.every(v=>!v.alive)?'ok':'sai');return;}
+  // vigia que viu: procura e toca o sino — e a praça enche de gente (mais alvo, não é game over)
+  if(S.alarm){const a=S.alarm;a.t-=dt;if(!a.e.alive)S.alarm=null;else if(a.t<=0){S.alarm=null;AU.cbBell(a.e.x,a.e.y,1);G.flags.cbBell=true;S.rang=true;
+      for(let i=0;i<4;i++){const sp={x:S.cx+rr(-500,500),y:S.cy+rr(120,260)};const e=makeEnemy('cult',sp.x,sp.y,null);e.cb=1;e.state='investigate';e.nx=a.e.x+rr(-90,90);e.ny=a.e.y+rr(-90,90);e.it=18;enemies.push(e);}
+      bark('nico','s','Tocou o sino! Tá vindo mais gente pra praça... Tem bala, Richard.',{radio:true,dur:2.2});}}
+  const vigsOk=S.tg.every(v=>!v.alive);
+  if(vigsOk&&!S.said){S.said=true;bark('nico','h','Os vigias caíram. O resto é contigo. Aperta Q quando quiser sair.',{radio:true,dur:2.6});}
+  if(S.ammo<=0)cbScopeEnd(vigsOk?'ok':'bala');
+  else if(vigsOk&&S.idle>(IN.touch?14:30))cbScopeEnd('ok');
+  if(S.hint>22){S.hint=0;bark('nico','n',pick2(['Prende o ar antes de atirar.','A cabeça, Richard. Só a cabeça.','Tem um de lanterna perto da igreja.']),{radio:true,dur:2});}
+  G.camF=lerp(G.camF||1,.46,Math.min(1,dt*2.2)); G.camTgt=.46;
   cam.x=lerp(cam.x,S.cx-vw/2,Math.min(1,dt*6)); cam.y=lerp(cam.y,S.cy-vh/2,Math.min(1,dt*6));
 }
 function cbScopeFire(S){
-  const [sx,sy]=cbScopeSway(S),px=S.x+sx,py=S.y+sy; S.ammo--; S.kick=1; G.shake+=2;
-  AU.pb&&AU.pb('shot_sil',{vol:.35,wet:.2,must:true}); AU.pb&&later(350,()=>AU.pb('shell',{vol:.08}));
+  const [sx,sy]=cbScopeSway(S),px=S.x+sx,py=S.y+sy; S.ammo--; S.kick=1; G.shake+=1.5;
+  AU.pb&&AU.pb('shot_sil',{vol:.35,wet:.2,must:true}); later(350,()=>AU.pb&&AU.pb('shell',{vol:.08}));
   if(typeof BR!=='undefined'&&BR.tracers)BR.tracers.push({x0:px+340,y0:py+620,x1:px,y1:py,life:.1});
   let hit=null,hd=1e9;
-  for(const e of enemies){if(!e.alive||!['vig','cult','marc'].includes(e.type))continue;const d=hyp(e.x-px,e.y-py);if(d<(e.r+7)&&d<hd){hd=d;hit=e;}}
+  for(const e of enemies){if(!e.alive||!['vig','cult','marc'].includes(e.type))continue;const d=hyp(e.x-px,e.y-py);if(d<(e.r+9)&&d<hd){hd=d;hit=e;}}
   S.shots.push({x:px,y:py,t:0,hit:!!hit});
-  if(hit){const head=hd<6;bloodBurst(hit.x,hit.y,14,Math.atan2(-620,-340));hurtEnemy(hit,9999,0,0,{});if(head)floaters.push({x:hit.x,y:hit.y-20,t:'NA CABEÇA',life:.9});
-    // quem viu o amigo cair?
-    for(const v of S.tg)if(v.alive&&v!==hit&&!S.alarm&&hyp(v.x-hit.x,v.y-hit.y)<1000&&los(v.x,v.y,hit.x,hit.y)&&Math.abs(angDiff(v.face||0,Math.atan2(hit.y-v.y,hit.x-v.x)))<1.4){
-      S.alarm={e:v,t:2.6};v.face=Math.atan2(hit.y-v.y,hit.x-v.x);bark('nico','s','O outro viu! Rápido, antes do sino!',{radio:true,dur:1.6});break;}
-    if(!S.alarm&&Math.random()<.5)later(400,()=>bark('nico','h',pick2(['Caiu.','Boa.','Nem gemeu.']),{radio:true,dur:1.2}));}
-  else{for(let i=0;i<8;i++)parts.push({k:'spark',x:px,y:py,vx:rr(-90,90),vy:rr(-90,90),life:.25,max:.25,s:2,c:'#ffd27a'});AU.click&&AU.click();
-    const near=S.tg.filter(v=>v.alive).sort((a,b)=>hyp(a.x-px,a.y-py)-hyp(b.x-px,b.y-py))[0];
-    if(near&&hyp(near.x-px,near.y-py)<260&&!S.alarm){S.alarm={e:near,t:3.2};near.face=Math.atan2(py-near.y,px-near.x);bark('nico','s','Errou perto dele! Ele tá procurando!',{radio:true,dur:1.6});}}
+  if(hit){const head=hd<7;bloodBurst(hit.x,hit.y,16,Math.atan2(-620,-340));hurtEnemy(hit,9999,0,0,{});S.kills++;
+    floaters.push({x:hit.x,y:hit.y-20,t:head?'NA CABEÇA':'ABATIDO',life:.9});
+    if(S.kills===4)later(500,()=>bark('nico','s','...Tu tá gostando disso, né?',{radio:true,dur:1.8}));
+    for(const v of S.tg)if(v.alive&&v!==hit&&!S.alarm&&!S.rang&&hyp(v.x-hit.x,v.y-hit.y)<1000&&los(v.x,v.y,hit.x,hit.y)&&Math.abs(angDiff(v.face||0,Math.atan2(hit.y-v.y,hit.x-v.x)))<1.2){
+      S.alarm={e:v,t:3.2};v.face=Math.atan2(hit.y-v.y,hit.x-v.x);bark('nico','s','O outro viu! Rápido, antes do sino!',{radio:true,dur:1.6});break;}}
+  else{for(let i=0;i<8;i++)parts.push({k:'spark',x:px,y:py,vx:rr(-90,90),vy:rr(-90,90),life:.25,max:.25,s:2,c:'#ffd27a'});}
 }
 function cbScopeDraw(){
   const S=G.scope; if(!S)return; const z=view.z, w=view.w, h=view.h;
   ctx.setTransform(dpr,0,0,dpr,0,0);
   const [sx,sy]=cbScopeSway(S), ax=(S.x+sx-cam.x)*z, ay=(S.y+sy-cam.y)*z-S.kick*14;
   // lupa: o canto superior direito mostra o alvo ampliado (copia da própria tela)
-  try{const R0=Math.min(105,w*.13),cxs=w-R0-22,cys=h-R0-50,mag=3.2,src=R0/mag;
+  try{const R0=Math.min(105,w*.13),cxs=w-R0-22,cys=h-R0-50,mag=3.2,src=R0/mag;if(hyp(ax-cxs,ay-cys)<R0+src+10)throw 0;
     ctx.save();ctx.beginPath();ctx.arc(cxs,cys,R0,0,6.283);ctx.clip();
     ctx.drawImage(cv,(ax-src)*dpr,(ay-src)*dpr,src*2*dpr,src*2*dpr,cxs-R0,cys-R0,R0*2,R0*2);
     ctx.fillStyle='rgba(60,90,70,.18)';ctx.fillRect(cxs-R0,cys-R0,R0*2,R0*2);
@@ -15800,8 +15830,8 @@ function cbScopeDraw(){
   ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,0,w,34);ctx.fillRect(0,h-34,w,34);
   ctx.textAlign='left';ctx.fillStyle='#e8e0c8';ctx.font=`700 13px ${FONT_UI}`;
   const dist=Math.round(hyp(S.x-P.x,S.y-P.y)/TILE*1.6);
-  ctx.fillText(`RIFLE .308 · SILENCIADOR · ${S.ammo}/5`,16,22);ctx.textAlign='right';ctx.fillText(`DIST ${dist} m · VENTO 2 km/h · DRONE: ${S.tg.filter(v=>v.alive).length} VIGIA(S)`,w-16,22);
-  ctx.textAlign='left';ctx.fillText(IN.touch?'Arraste para mirar · solte para atirar · solte e espere para prender o ar':'Clique atira · Shift segura a respiração · F também atira',16,h-12);
+  ctx.fillText(`RIFLE .308 · SILENCIADOR · ${S.ammo}/${S.max} · ABATIDOS ${S.kills}`,16,22);ctx.textAlign='right';ctx.fillText(`DIST ${dist} m · VENTO 2 km/h · DRONE: ${S.tg.filter(v=>v.alive).length} VIGIA(S)`,w-16,22);
+  ctx.textAlign='left';ctx.fillText(IN.touch?'Arraste para mirar · solte para atirar · parado prende o ar':'Clique atira · Shift prende o ar · Q sai da luneta',16,h-12);
   // respiração
   const bw=140;ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(w/2-bw/2,h-26,bw,8);ctx.fillStyle=S.gasp>0?'#d84a3a':ok?'#78e68c':'#c8c0a8';ctx.fillRect(w/2-bw/2,h-26,bw*S.breath/3,8);
   ctx.textAlign='center';ctx.fillStyle='#e8e0c8';ctx.font=`700 11px ${FONT_UI}`;ctx.fillText(S.gasp>0?'SEM AR':ok?'PRENDENDO O AR':'RESPIRAÇÃO',w/2,h-32);
@@ -15819,10 +15849,302 @@ function cbScopeDraw(){
   const vt=v16Tick; v16Tick=function(dt){vt(dt);
     if(G.scope){G._dkZone=.5;return;}
     // com o rifle na mão a câmera abre um pouco (dá pra ver longe)
-    if(G.mode==='play'&&!CUT.on&&!P.inCar&&WEAPONS[P.w]&&WEAPONS[P.w].id==='sniper'&&G.inB<0){G.camF=lerp(G.camF||1,.72,Math.min(1,dt*1.6));}
+    if(G.mode==='play'&&!CUT.on&&!P.inCar&&WEAPONS[P.w]&&WEAPONS[P.w].id==='sniper'&&G.inB<0){G.camF=lerp(G.camF||1,.52,Math.min(1,dt*1.6));}
   };
   const rs=resetState; resetState=function(d){rs(d);G.scope=null;};
+  if(typeof quickHeal==='function'){const qh=quickHeal;quickHeal=function(){if(G.scope)return;return qh.apply(this,arguments);};}
 })();
+// ===================== 1.13 · CAOS, MISSÕES E REGISTROS =====================
+// - Aba "Missões" na mochila: principal (onde ir, o que fazer, distância e direção) e secundárias.
+// - Registros: 5 slots, e exportar/importar o registro num arquivo (.pssave) para levar para outro PC.
+// - Depois do posto, Balneário em caos total: gente se matando, gente pegando fogo, corpos caindo,
+//   carros e casas explodindo. Casa que explode fica destruída e fechada para sempre (vai no registro).
+// - Os sobreviventes da rua (que não são da história) podem morrer pelas mãos do Richard. Ele sente.
+// - Camboriú: iluminação de tocha e braseiro, velas nas janelas, mais gente sendo morta.
+
+// ===================== MISSÕES NA MOCHILA =====================
+const MIS_CAP=[
+  {n:'A delegacia e o posto',done:F=>F.postoBoom},
+  {n:'Fuga pela Estrada da Rainha',done:F=>F.bloqWeak||F.metHelena},
+  {n:'A Clínica da Brava e a Dra. Helena',done:F=>F.clinicPower},
+  {n:'Universidade de BC',done:F=>F.uniDone===true},
+  {n:'Camboriú: a Congregação do Cervo',done:F=>F.cbDone,show:F=>F.cbCall||F.cbDone},
+  {n:'O inibidor V-7',done:F=>F.inibidorDone},
+  {n:'Itajaí',done:F=>F.alexMet||F.hospOut},
+  {n:'Hospital Santa Clara',done:F=>F.hospOut},
+  {n:'O porto e o heliponto',done:F=>F.bossDead},
+];
+function misWhere(at){
+  if(!at)return 'Sem lugar marcado: siga o que está escrito.';
+  const dx=at.x-P.x,dy=at.y-P.y,d=Math.round(hyp(dx,dy)/TILE*1.6),a=Math.atan2(dy,dx)*180/Math.PI;
+  const dirs=['leste','sudeste','sul','sudoeste','oeste','noroeste','norte','nordeste'],dir=dirs[((Math.round(a/45)%8)+8)%8];
+  const di=dAt((at.x/TILE)|0,(at.y/TILE)|0),dn=DISTRICTS[di]?DISTRICTS[di].name:'';
+  if(d<12)return `Aqui perto${dn?' · '+dn:''}.`;
+  return `${dn?dn+' · ':''}${d} m a ${dir}.`;
+}
+function misBody(){
+  const F=G.flags, o=objective()||{t:'—'};
+  let cur=-1; const caps=MIS_CAP.filter(c=>!c.show||c.show(F));
+  const rows=caps.map((c,i)=>{const done=!!c.done(F);if(!done&&cur<0)cur=i;const now=cur===i;
+    return `<div class="lrow mis${now?' now':''}"><span class="ln"><b>${done?'✓ ':now?'▶ ':''}${done||now?esc(c.n):'???'}</b>${now?`<small>${esc(o.t)}</small><small class="onde">${esc(misWhere(o.at))}</small>`:done?'<small>concluído</small>':'<small>ainda não</small>'}</span></div>`;}).join('');
+  // Camboriú: o que falta
+  let cb='';
+  if(F.cbCall&&!F.cbDone&&typeof cbHas==='function'){const it=(ok,t)=>`<li class="${ok?'ok':''}">${ok?'✓':'○'} ${t}</li>`;
+    cb=`<h3>Camboriú · o portal da Matriz</h3><ul class="chk">${it(F.cbSt>=3,'Encontrar o Nicolas no morro')}${it(cbHas('cbSeloSino')||F.cbPortal,'Selo do Sino (torre da Matriz)')}${it(cbHas('cbSeloVela')||F.cbPortal,'Selo da Vela (porão da Casa do Pregador)')}${it(cbHas('cbSeloCervo')||F.cbPortal,'Selo do Cervo (o irmão do Nicolas, no estádio)')}${it(F.cbBoss,'Derrubar o Cervo')}</ul>`;}
+  // secundárias
+  let side='';
+  if(typeof V19M!=='undefined'){
+    side=V19M.map(m=>{const s=v19St(m.id);if(!s)return `<div class="lrow"><span class="ln"><b>???</b><small>Ainda não encontrada. Fale com quem estiver pela cidade.</small></span></div>`;
+      const seg=F.v19seg===m.id,t=s===1&&typeof v19Target==='function'?v19Target(m.id):null;
+      return `<div class="lrow"><span class="ln"><b>${s===2?'✓ ':''}${esc(m.n)}${s===2?' · concluída':''}</b><small>${esc(m.onde)}${s===1?' · '+esc(v19Hint(m.id)):''}</small>${s===1?`<small class="onde">${esc(misWhere(t))}</small>`:''}</span>${s===1?`<button class="btn mini${seg?' primary':''}" data-a="misSeg" data-k="${m.id}">${seg?'Seguindo':'Seguir'}</button>`:''}</div>`;}).join('');
+    const n=V19M.filter(m=>v19St(m.id)===2).length;
+    side=`<h3>Missões secundárias · ${n} de ${V19M.length}</h3><p class="hint">A missão que você seguir aparece na seta quando a história não estiver apontando pra nenhum lugar.</p><div class="lista">${side}</div>`;}
+  return `<div class="misbox"><h3>Agora</h3><div class="agora"><b>${esc(o.t)}</b><span>${esc(misWhere(o.at))}</span>${o.at?'<button class="btn mini" data-a="tab" data-t="mapa">Ver no mapa</button>':''}</div>
+    <h3>História principal</h3><div class="lista">${rows}</div>${cb}${side}</div>`;
+}
+(function(){
+  const inv=UI.inv.bind(UI);
+  UI.inv=function(tab){
+    if(tab)this.tab=tab;
+    if(this.tab!=='missoes'){const r=inv(tab);misTabBtn();return r;}
+    const tabs=[['itens','Itens'],['mapa','Mapa'],['arquivos',`Arquivos ${G.files.size}/${DOCS.length}`],['missoes','Missões']];
+    this.open(`<div class="sheet wide inv">
+      <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" aria-selected="${this.tab===k}" class="tab${this.tab===k?' on':''}" data-a="tab" data-t="${k}">${l}</button>`).join('')}
+      <button class="btn ghost closebtn" data-a="close">Fechar</button></div>
+      <div class="tabbody">${misBody()}</div></div>`,'','inv');
+  };
+  function misTabBtn(){try{const t=OV.querySelector('.inv .tabs');if(!t||!t.insertBefore||t.querySelector('[data-t="missoes"]'))return;const b=document.createElement('button');b.className='tab';b.setAttribute('role','tab');b.dataset.a='tab';b.dataset.t='missoes';b.textContent='Missões';const c=t.querySelector('.closebtn');t.insertBefore(b,c);}catch(e){}}
+  const act=UI.act.bind(UI); UI.act=function(a,ds){
+    if(a==='misSeg'){G.flags.v19seg=ds.k;return this.inv('missoes');}
+    return act(a,ds);};
+  try{const st=document.createElement('style');st.textContent=`.misbox h3{margin:14px 0 6px}.misbox .agora{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:10px 12px;border:1px solid var(--line,#5a5040);background:rgba(0,0,0,.25)}
+    .misbox .agora b{flex:1 1 100%;font-size:15px}.misbox .agora span{color:var(--dim);font-size:13px}.lrow.mis.now{outline:1px solid var(--amber,#d9a33c)}.lrow small.onde{color:var(--amber,#d9a33c)}
+    .misbox ul.chk{list-style:none;padding:0;margin:0}.misbox ul.chk li{padding:3px 0;color:var(--dim)}.misbox ul.chk li.ok{color:#7ac08a}`;document.head.appendChild(st);}catch(e){}
+})();
+
+// ===================== REGISTROS: SLOTS E ARQUIVO =====================
+const SLOTS=5;
+function slotKey(n){return n<=1?SAVE_KEY:SAVE_KEY+'-s'+n;}
+let SLOT=1; try{SLOT=clamp(+(localStorage.getItem('ps-slot')||1)|0,1,SLOTS)||1;}catch(e){}
+function slotSet(n){SLOT=n;try{localStorage.setItem('ps-slot',String(n));}catch(e){}}
+function slotRead(n){try{const s=localStorage.getItem(slotKey(n));return s?JSON.parse(s):null;}catch(e){return null;}}
+function slotMeta(s){if(!s)return null;const m=s.meta||{};return m;}
+(function(){
+  const ser=serialize; serialize=function(){const s=ser.apply(this,arguments);try{let o='';try{o=(objective()||{}).t||'';}catch(e){}
+    const di=dAt((P.x/TILE)|0,(P.y/TILE)|0);s.meta={quando:new Date().toLocaleString('pt-BR'),onde:DISTRICTS[di]?DISTRICTS[di].name:'',obj:o.slice(0,120),hora:typeof clockStr==='function'?clockStr():'',dia:typeof dayNo==='function'?dayNo():1,v:(typeof NOTAS!=='undefined'&&NOTAS[0])?NOTAS[0].v:''};}catch(e){}return s;};
+  hasSave=function(){try{return !!localStorage.getItem(slotKey(SLOT));}catch(e){return false;}};
+  writeSave=(function(ws){return function(){if((typeof SN!=='undefined'&&SN.on)||(typeof RC!=='undefined'&&RC.on))return false;try{localStorage.setItem(slotKey(SLOT),JSON.stringify(serialize()));return true;}catch(e){return false;}};})(writeSave);
+  readSave=function(){return slotRead(SLOT);};
+})();
+function slotsHTML(mode){
+  let h='';for(let n=1;n<=SLOTS;n++){const s=slotRead(n),m=slotMeta(s);
+    h+=`<div class="lrow slot${n===SLOT?' now':''}"><span class="ln"><b>Registro ${n}${n===SLOT?' · atual':''}</b><small>${m?esc(`${m.onde||'—'} · ${m.hora||''} dia ${m.dia||1} · salvo em ${m.quando||'?'}`):s?'Registro antigo':'Vazio'}</small>${m&&m.obj?`<small class="onde">${esc(m.obj)}</small>`:''}</span>
+      <span class="sbtn">${mode==='save'?`<button class="btn mini primary" data-a="slotSave" data-n="${n}">Salvar aqui</button>`:''}${s?`<button class="btn mini" data-a="slotLoad" data-n="${n}">Carregar</button><button class="btn mini" data-a="slotExp" data-n="${n}">Exportar</button>`:''}
+      <button class="btn mini ghost" data-a="slotImp" data-n="${n}">Importar</button>${s&&mode!=='save'?`<button class="btn mini ghost" data-a="slotDel" data-n="${n}">Apagar</button>`:''}</span></div>`;}
+  return `<div class="lista slots">${h}</div><p class="hint">Exportar baixa um arquivo .pssave com o registro. Em outro computador, abra o jogo, vá em Registros e use Importar para colocar o arquivo num slot.</p>
+    <input type="file" id="slotFile" accept=".pssave,.json,application/json" hidden>`;
+}
+UI.slots=function(mode){this.slotMode=mode||'load';
+  this.open(`<div class="sheet wide"><div class="tabs"><p class="kick">${mode==='save'?'Abrigo · '+clockStr():'Porto Sombrio'}</p><h2 style="margin-right:auto">Registros</h2><button class="btn ghost" data-a="${mode==='save'?'close':'slotBack'}">${mode==='save'?'Fechar':'Voltar'}</button></div>${slotsHTML(mode)}</div>`,'','slots');};
+function slotExport(n){
+  const s=slotRead(n); if(!s){toast('Esse slot está vazio.');return;}
+  const txt=JSON.stringify({jogo:'porto-sombrio',slot:n,registro:s}), nome=`porto-sombrio-registro-${n}.pssave`;
+  try{const b=new Blob([txt],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=nome;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove&&a.remove();},1500);toast('Registro exportado: '+nome);}
+  catch(e){toast('Este aparelho não deixou baixar o arquivo.');}
+}
+function slotImportData(n,txt){
+  try{let o=JSON.parse(txt);if(o&&o.registro)o=o.registro;if(!o||!o.P||!o.flags)throw 0;localStorage.setItem(slotKey(n),JSON.stringify(o));toast(`Registro importado no slot ${n}.`);AU.save&&AU.save();return true;}
+  catch(e){toast('Esse arquivo não é um registro do Porto Sombrio.');AU.locked&&AU.locked();return false;}
+}
+(function(){
+  const act=UI.act.bind(UI); UI.act=function(a,ds){
+    const n=+ds.n||1;
+    if(a==='slotSave'){slotSet(n);G.saves++;const ok=writeSave();AU.save();toast(ok?`Progresso registrado no slot ${n}.`:'Não foi possível salvar neste aparelho.');return this.slots('save');}
+    if(a==='slotLoad'){const s=slotRead(n);if(!s)return;slotSet(n);loadState(s);this.close();G.mode='play';toast(`Registro ${n} carregado.`);const tc=document.getElementById('tc');if(tc)tc.hidden=!IN.touch;return;}
+    if(a==='slotExp'){slotExport(n);return;}
+    if(a==='slotDel'){if(this.delAsk!==n){this.delAsk=n;toast('Toque em Apagar de novo para confirmar.');return;}this.delAsk=null;try{localStorage.removeItem(slotKey(n));}catch(e){}toast(`Slot ${n} apagado.`);return this.slots(this.slotMode);}
+    if(a==='slotImp'){this.impSlot=n;const f=document.getElementById('slotFile');if(f&&f.click)f.click();return;}
+    if(a==='slotBack'){return this.title();}
+    if(a==='slotsMenu')return this.slots('load');
+    if(a==='slotsSave'){return this.slots('save');}
+    return act(a,ds);};
+  if(typeof OV!=='undefined'&&OV.addEventListener)OV.addEventListener('change',e=>{const t=e.target;if(!t||t.id!=='slotFile'||!t.files||!t.files[0])return;const n=UI.impSlot||1;const r=new FileReader();r.onload=()=>{slotImportData(n,String(r.result));UI.slots(UI.slotMode);};r.readAsText(t.files[0]);t.value='';});
+  // a máquina de escrever abre os slots; o título ganha "Registros"
+  const op=UI.open.bind(UI); UI.open=function(html,cls,name){
+    if(typeof html==='string'){
+      if(name==='save')html=html.replace('<button class="btn primary" data-a="dosave" data-focus>Salvar</button>',`<button class="btn primary" data-a="dosave" data-focus>Salvar no registro ${SLOT}</button><button class="btn" data-a="slotsSave">Outro registro / arquivo</button>`).replace('O registro anterior será substituído.',`O registro ${SLOT} será substituído. Você tem 5 registros e pode exportar para um arquivo.`);
+      if(name==='title'&&!html.includes('data-a="slotsMenu"'))html=html.replace(/(<button class="btn"[^>]*data-a="cont"[^>]*>[^<]*<\/button>)/,'$1<button class="btn" data-a="slotsMenu">Registros (slots e arquivo)</button>');
+    }
+    return op(html,cls,name);};
+  try{const st=document.createElement('style');st.textContent=`.slots .lrow{flex-wrap:wrap}.slots .sbtn{display:flex;flex-wrap:wrap;gap:6px}.slots .lrow.now{outline:1px solid var(--amber,#d9a33c)}`;document.head.appendChild(st);}catch(e){}
+})();
+
+// ===================== O RICHARD MATA GENTE (sobreviventes que não são da história) =====================
+const PK={lines:['Não... não, não, não. Ele era gente. Ele tava vivo.','O que eu fiz? O QUE EU FIZ?','Ele só queria sair daqui. Igual a mim.','Eu tô virando um deles. Sem precisar ser mordido.','Ninguém viu. Ninguém vai saber. Só eu.'],
+  bad:['Ele ia matar ela. Eu não tive escolha.','Ele mereceu. Não mereceu?']};
+function pedHurt(p,dmg,ang,o={}){
+  if(!p||!p.alive||p.st==='trapped')return;
+  p.hp-=dmg; p.hurt=.3; p.byPlayer=!o.chaos||p.byPlayer; bloodBurst(p.x,p.y,6,ang||0);
+  if(p.st!=='flee'&&p.st!=='cbv'&&!p.murderer){p.st='leave';p.fade=0;p.say={t:pick2(['NÃO ATIRA! NÃO ATIRA!','Tá maluco?!','SOCORRO! ELE TÁ ATIRANDO!']),life:1.6};}
+}
+function pedKilled(p){
+  if(!p.byPlayer||p.counted)return; p.counted=true;
+  const F=G.flags; F.pedKill=(F.pedKill||0)+(p.murderer?0:1);
+  G.shockT=Math.max(G.shockT||0,p.murderer?18:45); G.fear=Math.max(G.fear||0,p.murderer?.5:.8); G.shake+=3;
+  const L=p.murderer?PK.bad:PK.lines; later(700,()=>bark('rafa','s',L[Math.min(L.length-1,p.murderer?0:Math.max(0,(F.pedKill||1)-1))%L.length],{dur:2.6}));
+  if(!p.murderer)later(rr(9000,16000),()=>{try{psyFloat(p.x,p.y,pick2(['"...por quê?"','"eu tinha uma filha"','"a gente podia ter ido junto"']),{life:3,c:'#c8b8a8',whisper:true});AU.cry&&AU.cry('sussurro',p.x,p.y,1);}catch(e){}});
+  if(F.pedKill===3)later(4000,()=>bark('rafa','t','Minha mão não para de tremer. Não é medo deles. É medo de mim.',{dur:2.8}));
+}
+(function(){
+  // bala e flecha acertam os sobreviventes também
+  const up=updProjs; updProjs=function(dt){
+    for(const pr of projs){if(pr.dead||!(pr.k==='b'||pr.k==='a'||pr.k==='f'))continue;
+      for(const p of peds){if(!p.alive||p.turned&&p.alive===false||p.st==='trapped')continue;const r=(p.r||11)+(pr.k==='f'?(pr.r||8):3);
+        if(Math.abs(p.x-pr.x)<r&&Math.abs(p.y-pr.y)<r&&hyp(p.x-pr.x,p.y-pr.y)<r){pedHurt(p,pr.dmg||20,Math.atan2(pr.vy,pr.vx));if(pr.k!=='f')pr.dead=true;break;}}}
+    return up(dt);};
+  // faca, machado, cano: golpe na frente
+  const ml=melee; melee=function(){const r=ml.apply(this,arguments);try{const w=WEAPONS[P.w];const rg=(w&&w.range)||46;
+    for(const p of peds){if(!p.alive||p.st==='trapped')continue;const d=hyp(p.x-P.x,p.y-P.y);if(d<rg+p.r&&Math.abs(angDiff(P.ang,Math.atan2(p.y-P.y,p.x-P.x)))<.9){pedHurt(p,(w&&w.dmg)||20,P.ang);break;}}}catch(e){}return r;};
+  // explosão do jogador pega quem estiver perto
+  const ex=explode; explode=function(x,y,r,dmg){if(!CH.noBlame)for(const p of peds)if(p.alive&&hyp(p.x-x,p.y-y)<r)pedHurt(p,dmg,Math.atan2(p.y-y,p.x-x));return ex.apply(this,arguments);};
+  // quando morre: a culpa (e o assassino da briga pode virar alvo)
+  const upd=updPeds; updPeds=function(dt){const was=peds.filter(p=>p.alive);const r=upd(dt);for(const p of was)if(!p.alive)pedKilled(p);return r;};
+})();
+
+// ===================== CAOS TOTAL EM BALNEÁRIO (depois do posto) =====================
+const CH={t:30,noBlame:false,fx:[]};
+const CH_LOOT=new Set(['m9','cart','ervaV','ervaA','pilha','polv','garrafa','comb','spray','r762','m357','virote','pecas','gran','m38','r308','calmante']);
+function chOk(){const F=G.flags;return F.postoBoom&&G.mode==='play'&&!CUT.on&&!(typeof MP!=='undefined'&&MP.on)&&cbOn()&&!(typeof inCb==='function'&&inCb())&&!inZone()&&!inSew()&&typeof inBC==='function'&&inBC()&&!(typeof FB!=='undefined'&&FB.on)&&!G.heli&&!(G.wave>0);}
+function chHouseOk(b){
+  if(!b||b.safe||b.destroyed||b.kind!=='casa'||b.name||b.y>=H)return false;
+  if(P.x>tc(b.x-2)&&P.x<tc(b.x+b.w+2)&&P.y>tc(b.y-2)&&P.y<tc(b.y+b.h+2))return false;
+  const inB=(o)=>{const tx=o.tx!=null?o.tx:(o.x/TILE)|0,ty=o.ty!=null?o.ty:(o.y/TILE)|0;return tx>=b.x&&tx<b.x+b.w&&ty>=b.y&&ty<b.y+b.h;};
+  if(interacts.some(o=>inB(o)&&o.type!=='hide'&&o.type!=='janela'))return false;
+  if(npcs.some(n=>inB(n)))return false;
+  if(gates.some(g=>g.x>=b.x&&g.x<b.x+b.w&&g.y>=b.y&&g.y<b.y+b.h))return false;
+  if(pickups.some(p=>inB(p)&&(p.kind!=='item'||!CH_LOOT.has(p.id))))return false;
+  if(lights.some(l=>l.c==='safe'&&inB(l)))return false;
+  return true;
+}
+function chDestroy(b,live){
+  if(!b||b.destroyed)return; b.destroyed=true; b.roof='#15110e'; b.lit=false;
+  for(let j=b.y+1;j<b.y+b.h-1;j++)for(let i=b.x+1;i<b.x+b.w-1;i++)setT(i,j,T.RUBBLE);
+  for(const d of (b.doorT||[]))setT(d.x,d.y,T.RUBBLE);
+  for(let i=interacts.length-1;i>=0;i--){const o=interacts[i];if(o.tx>=b.x&&o.tx<b.x+b.w&&o.ty>=b.y&&o.ty<b.y+b.h)interacts.splice(i,1);}
+  for(let i=pickups.length-1;i>=0;i--){const p=pickups[i];if(p.tx>=b.x&&p.tx<b.x+b.w&&p.ty>=b.y&&p.ty<b.y+b.h){pickups.splice(i,1);}}
+  for(const e of enemies)if(e.alive&&e.x>tc(b.x)&&e.x<tc(b.x+b.w)&&e.y>tc(b.y)&&e.y<tc(b.y+b.h))e.alive=false;
+  const cx=tc(b.x+b.w/2),cy=tc(b.y+b.h/2);
+  for(let k=0;k<4;k++)GORE.push({k:'scorch',x:cx+rr(-b.w*10,b.w*10),y:cy+rr(-b.h*10,b.h*10),r:rr(30,60),rot:Math.random()*6,seed:Math.random()});
+  CH.fx.push({x:cx,y:cy,b:b.id}); if(CH.fx.length<=14&&typeof addFire==='function')addFire(cx+rr(-30,30),cy+rr(-30,30),rr(26,40),false);
+  if(typeof invalidateRect==='function')invalidateRect(b.x-1,b.y-1,b.w+2,b.h+2); flowTile=-1; if(typeof MAPV!=='undefined')MAPV++;
+  if(live){const F=G.flags;F.destr=F.destr||[];if(!F.destr.includes(b.id)&&F.destr.length<40)F.destr.push(b.id);}
+}
+function chFarSpot(minD,maxD){if(typeof spawnPoint==='function'){const s=spawnPoint(minD,maxD,undefined,false);if(s)return s;}return null;}
+function chMkPed(x,y,o={}){const look=pick2(PED_LOOK);const p={x,y,r:11,hp:o.hp||40,alive:true,st:o.st||'cbv',col:look[0],hair:look[1],skin:look[2],ang:0,walk:0,moving:true,t:0,say:null,shoutT:.5,saved:false,item:pick2(['m9','ervaV','pilha','cart']),help:['SOCORRO!','ME AJUDA!','NÃO! NÃO!'],thanks:['Obrigado... obrigado.'],...o};peds.push(p);return p;}
+const CH_EV=[
+  // uma casa explode (gás, fogo, alguém lá dentro): fica destruída pra sempre
+  {w:3,f(){const cands=buildings.filter(b=>chHouseOk(b)&&hyp(tc(b.x+b.w/2)-P.x,tc(b.y+b.h/2)-P.y)>360&&hyp(tc(b.x+b.w/2)-P.x,tc(b.y+b.h/2)-P.y)<900);if(!cands.length)return false;
+    const b=cands[(Math.random()*cands.length)|0],x=tc(b.x+b.w/2),y=tc(b.y+b.h/2);
+    CH.noBlame=true;try{G.light=Math.max(G.light||0,.6);G.boom={x,y,t:.5};G.shake+=14;AU.bigBoom&&AU.bigBoom();explodeFx&&explodeFx(x,y,1.6);}catch(e){}CH.noBlame=false;
+    chDestroy(b,true);alertNoise(x,y,1400);later(1200,()=>bark('rafa','s',pick2(['A casa inteira... foi pelos ares.','Tinha gente lá dentro? Tinha gente lá dentro?!','Gás. A cidade inteira vai explodir uma casa por vez.']),{dur:2.4}));return true;}},
+  // briga: um sobrevivente mata outro na rua
+  {w:3,f(){const s=chFarSpot(260,460);if(!s)return false;const v=chMkPed(s.x,s.y,{st:'cbv',hp:30}),a=chMkPed(s.x+rr(-90,90),s.y+rr(-90,90),{st:'cbk',hp:45,murderer:true});a.col='#2a2a2a';a.prey=v;a.say={t:pick2(['É MEU! A COMIDA É MINHA!','Tu foi mordido! Eu vi! EU VI!','Sai da minha casa!']),life:2};v.say={t:'NÃO! PARA!',life:1.6};AU.cry&&AU.cry('naonao',v.x,v.y,1);return true;}},
+  // alguém pegando fogo corre gritando
+  {w:2,f(){const s=chFarSpot(220,380);if(!s)return false;const p=chMkPed(s.x,s.y,{st:'cbfire',hp:60});p.burnT=6;p.say={t:'AAAAAH!',life:2};AU.cbVictim?AU.cbVictim(p.x,p.y,1):AU.scream(.6);return true;}},
+  // um corpo cai do prédio do lado
+  {w:2,f(){const s=chFarSpot(90,200);if(!s)return false;later(600,()=>{AU.thud(1);G.shake+=4;bloodBurst(s.x,s.y,20,Math.random()*6);addDecal({k:'corpse',x:s.x,y:s.y,rot:Math.random()*6,type:'zumbi',col:pick2(PED_LOOK)[0],skin:'#c8a890',r:11});addDecal({k:'blood',x:s.x,y:s.y,r:28,rot:0,seed:Math.random()});});
+    AU.cry&&AU.cry('grito',s.x,s.y,.8);later(1600,()=>bark('rafa','s',pick2(['Ele... pulou? Ou empurraram?','Caiu do lado de mim. Do lado.']),{dur:2}));return true;}},
+  // carro explode
+  {w:2,f(){for(let i=0;i<60;i++){const a=Math.random()*6.283,d=rr(300,700),tx=((P.x+Math.cos(a)*d)/TILE)|0,ty=((P.y+Math.sin(a)*d)/TILE)|0;if(!inb(tx,ty)||ty>=H||getT(tx,ty)!==T.CAR)continue;
+    const x=tc(tx),y=tc(ty);CH.noBlame=true;try{explode(x,y,90,60);}catch(e){}CH.noBlame=false;addFire&&addFire(x,y,30,false);return true;}return false;}},
+  // tiroteio longe e gritos (só som, raro)
+  {w:1,f(){const a=Math.random()*6.283;for(let i=0;i<4;i++)later(i*rr(180,420),()=>AU.pb&&AU.pb('shot_pistola',{vol:.06,far:.95,pan:Math.cos(a),wet:.6}));later(1800,()=>AU.cry&&AU.cry('socorro',P.x+Math.cos(a)*800,P.y+Math.sin(a)*800,1));return true;}},
+];
+function chTick(dt){
+  // os sobreviventes do caos (estados próprios)
+  for(const p of peds){if(!p.alive)continue;
+    if(p.st==='cbk'){const v=p.prey;if(!v||!v.alive){p.st='leave';p.fade=0;continue;}const d=hyp(v.x-p.x,v.y-p.y),a=Math.atan2(v.y-p.y,v.x-p.x);p.ang=a;p.moving=true;p.walk+=dt*12;
+      if(d>22)move(p,Math.cos(a)*118*dt,Math.sin(a)*118*dt,true);else{p.hitT=(p.hitT||0)-dt;if(p.hitT<=0){p.hitT=.55;v.hp-=12;v.hurt=.3;bloodBurst(v.x,v.y,6,a);AU.hit&&AU.hit();}}}
+    else if(p.st==='cbv'){let k=peds.find(o=>o.alive&&o.st==='cbk'&&o.prey===p);if(!k){p.st='leave';p.fade=0;continue;}const a=Math.atan2(p.y-k.y,p.x-k.x)+Math.sin(p.t*3)*.5;p.ang=a;p.moving=true;p.walk+=dt*12;move(p,Math.cos(a)*92*dt,Math.sin(a)*92*dt,true);
+      p.shoutT-=dt;if(p.shoutT<=0){p.shoutT=rr(1.6,2.6);p.say={t:pick2(['SOCORRO!','ALGUÉM!','NÃO! NÃO!']),life:1.4};}}
+    else if(p.st==='cbfire'){p.burnT-=dt;p.hp-=9*dt;const a=p.ang+Math.sin(p.t*5)*1.6;p.ang=a;p.moving=true;p.walk+=dt*14;move(p,Math.cos(a)*120*dt,Math.sin(a)*120*dt,true);
+      if(Math.random()<dt*30)parts.push({k:'fire',x:p.x+rr(-8,8),y:p.y+rr(-8,8),vx:rr(-20,20),vy:rr(-50,-10),life:.4,max:.4,s:rr(4,8),c:'#ff8a2a'});}
+  }
+  if(!chOk())return;
+  CH.t-=dt; if(CH.t>0)return; CH.t=rr(28,58)*(G.flags.caos>=2?.8:1);
+  const L=CH_EV; let s=L.reduce((a,e)=>a+e.w,0)*Math.random();
+  for(const e of L){s-=e.w;if(s<=0){if(!e.f())CH.t=5;return;}}
+}
+
+// ===================== CAMBORIÚ: TOCHAS, BRASEIROS, VELAS NAS JANELAS, MAIS MORTES =====================
+function cbLightsMedieval(){
+  if(!cbOn()||typeof CBL==='undefined'||!CBL.coreto)return;
+  const L=(x,y,r)=>lights.push({x,y,r,c:'fire',f:1,cb:1});
+  // braseiros nos cantos da praça e na escadaria da Matriz
+  for(const [x,y] of [[64,26],[111,26],[64,36],[111,36],[84,23],[92,23],[88,58],[160,40],[196,66]]){const px=tc(x)+16,py=tc(cbY(y))+16;CBD.push({k:'braseiro',x:px,y:py});L(px,py,190);}
+  // tochas na fachada da Matriz e ao longo da avenida
+  for(let x=74;x<=102;x+=7)CBD.push({k:'tocha',x:tc(x)+16,y:tc(cbY(21))+30}),L(tc(x)+16,tc(cbY(21))+34,120);
+  for(let x=8;x<=146;x+=13){for(const y of [37,42]){const px=tc(x)+16,py=tc(cbY(y))+(y===37?24:8);if(SOLID[getT(x,cbY(y))])continue;CBD.push({k:'tocha',x:px,y:py});L(px,py,115);}}
+  // uma vela em cada janela (a ordem do Pregador)
+  for(const b of buildings){if(b.y<CBY||b.safe||b.kind==='igreja'||!b.doorT||!b.doorT.length)continue;const d=b.doorT[0];const ox=d.side==='W'?-1:d.side==='E'?1:0,oy=d.side==='N'?-1:d.side==='S'?1:0;
+    const px=tc(d.x)+16+ox*14,py=tc(d.y)+16+oy*14;CBD.push({k:'vela',x:px,y:py,n:2});L(px,py,70);}
+  // gente que já foi oferecida: corpos com velas pela cidade, enforcados nas figueiras
+  for(const [x,y] of [[69,28],[95,28],[107,34],[72,34]])CBD.push({k:'enforcado',x:tc(x)+16,y:tc(cbY(y))+34});
+  for(const [x,y] of [[42,40],[124,24],[100,57],[20,57],[60,46],[132,43]]){const px=tc(x)+16,py=tc(cbY(y))+16;GORE.push({k:'corpse',x:px,y:py,rot:(x*7)%6,type:'cult',col:'#6a5a4a',skin:'#c8a888',r:11,cb:1});GORE.push({k:'blood',x:px,y:py,r:24,rot:0,seed:.3,cb:1});
+    for(let i=0;i<3;i++){const a=i/3*6.283;CBD.push({k:'vela',x:px+Math.cos(a)*22,y:py+Math.sin(a)*18,n:1});}}
+  for(const [x,y] of [[120,56],[52,40],[176,43]])CBD.push({k:'cabecas',x:tc(x)+16,y:tc(cbY(y))+16});
+}
+(function(){
+  const g=genV12; genV12=function(){g();try{cbLightsMedieval();}catch(e){console.error(e);}};
+  // desenho dos novos enfeites de Camboriú
+  const dd=cbDrawDeco; cbDrawDeco=function(){dd();if(!cbOn()||P.y<(CBY-30)*TILE)return;
+    const vx0=cam.x-80,vy0=cam.y-80,vx1=cam.x+view.w/view.z+80,vy1=cam.y+view.h/view.z+80;
+    for(const d of CBD){if(d.x<vx0||d.x>vx1||d.y<vy0||d.y>vy1)continue;
+      if(d.k==='tocha'){ctx.save();ctx.translate(d.x,d.y);ctx.fillStyle='#3a2a1a';ctx.fillRect(-1.5,-4,3,12);const f=Math.sin(renderT*13+d.x)*1.2;
+        ctx.fillStyle='rgba(255,150,50,.25)';ctx.beginPath();ctx.arc(0,-8,11,0,6.283);ctx.fill();ctx.fillStyle='#ff9a30';ctx.beginPath();ctx.ellipse(f*.5,-8,3.2,5.5,0,0,6.283);ctx.fill();ctx.fillStyle='#ffe0a0';ctx.beginPath();ctx.ellipse(f*.3,-7,1.4,2.6,0,0,6.283);ctx.fill();ctx.restore();
+        if(Math.random()<.04)parts.push({k:'fire',x:d.x+rr(-2,2),y:d.y-12,vx:rr(-6,6),vy:rr(-40,-20),life:.4,max:.4,s:2,c:'#ffb347'});}
+      else if(d.k==='braseiro'){ctx.save();ctx.translate(d.x,d.y);ctx.fillStyle='#2a2420';ctx.beginPath();ctx.arc(0,0,10,0,6.283);ctx.fill();ctx.strokeStyle='#5a5048';ctx.lineWidth=2;ctx.stroke();
+        for(let i=0;i<5;i++){const a=renderT*4+i*1.3;ctx.fillStyle=`rgba(255,${110+i*24},30,${.55+.3*Math.sin(a*2)})`;ctx.beginPath();ctx.ellipse(Math.sin(a)*3,-i*2.4,8-i,10-i*1.4,0,0,6.283);ctx.fill();}ctx.restore();
+        if(Math.random()<.12)parts.push({k:'fire',x:d.x+rr(-5,5),y:d.y-10,vx:rr(-10,10),vy:rr(-60,-30),life:.5,max:.5,s:rr(2,4),c:'#ffb347'});if(Math.random()<.03)parts.push({k:'smoke',x:d.x,y:d.y-14,vx:rr(-6,6),vy:rr(-30,-15),life:1.6,max:1.6,s:rr(8,12),c:'#2a2724'});}
+      else if(d.k==='cabecas'){ctx.save();ctx.translate(d.x,d.y);for(let i=-1;i<=1;i++){ctx.strokeStyle='#3a2a1a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(i*9,8);ctx.lineTo(i*9,-8);ctx.stroke();ctx.fillStyle=i?'#b8a088':'#a89078';ctx.beginPath();ctx.arc(i*9,-10,4.4,0,6.283);ctx.fill();ctx.fillStyle='rgba(110,16,12,.8)';ctx.fillRect(i*9-2.5,-6.5,5,4);}ctx.restore();}
+      else if(d.k==='estaca'){ctx.save();ctx.translate(d.x,d.y);ctx.strokeStyle='#2a1a0c';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,10);ctx.lineTo(0,-14);ctx.stroke();ctx.fillStyle='#1a1410';ctx.beginPath();ctx.ellipse(0,-6,6,9,0,0,6.283);ctx.fill();
+        const on=(d.t||0)<40;if(on){for(let i=0;i<6;i++){const a=renderT*5+i;ctx.fillStyle=`rgba(255,${120+i*20},40,${.5+.3*Math.sin(a*2)})`;ctx.beginPath();ctx.ellipse(Math.sin(a)*4,2-i*3.4,10-i,13-i*1.6,0,0,6.283);ctx.fill();}}ctx.restore();
+        d.t=(d.t||0)+(lastDt||.016);if(on&&Math.random()<.06)parts.push({k:'smoke',x:d.x,y:d.y-20,vx:rr(-8,8),vy:rr(-40,-20),life:2,max:2,s:rr(10,16),c:'#2a2724'});}
+    }};
+  // mais gente sendo morta em Camboriú
+  if(typeof CB_EVT!=='undefined'){
+    CB_EVT.push(
+      {w:3,f:()=>cbRitual()},
+      // alguém foge correndo, com cultistas e um Marcado atrás: dá pra salvar, se for rápido
+      {w:3,f:()=>{const s=cbSpot(260,420);if(!s)return false;const p=chMkPed(s.x,s.y,{st:'flee',hp:40,turned:true,help:['ELES VÃO ME OFERECER! SOCORRO!','ME TIRA DAQUI!','NÃO DEIXA ELES ME LEVAREM!'],thanks:['Obrigado... eu vou pro mato. Pro mato.']});
+        for(let i=0;i<3;i++){const e=makeEnemy(i?'cult':'marc',s.x+rr(-160,160),s.y+rr(-160,160),null);e.cb=1;e.prey=p;e.state='investigate';e.nx=s.x;e.ny=s.y;e.it=30;enemies.push(e);}
+        p.say={t:'SOCORRO!',life:1.6};return true;}},
+      // um oferecido queimando numa estaca
+      {w:2,f:()=>{const s=cbSpot(300,520);if(!s)return false;CBD.push({k:'estaca',x:s.x,y:s.y,tmp:1,t:0});const l={x:s.x,y:s.y,r:200,c:'fire',f:1,cb:1};lights.push(l);later(40000,()=>{l.off=true;});AU.cbVictim(s.x,s.y,1);
+        later(1400,()=>bark('rafa','s',pick2(['Tem alguém amarrado naquilo... pegando fogo.','Eles queimaram uma pessoa. Viva.']),{dur:2.2}));return true;}},
+      // cabeças em estacas no caminho
+      {w:1,f:()=>{const t=cbSpot(180,320);if(!t)return false;CBD.push({k:'cabecas',x:t.x,y:t.y,tmp:1});return true;}},
+    );
+  }
+  // tick e carregar
+  const vt=v16Tick; v16Tick=function(dt){vt(dt);if(G.mode!=='play')return;try{chTick(dt);}catch(e){console.error(e);}};
+  const aws=applyWorldState; applyWorldState=function(){aws();CH.fx=[];for(const id of (G.flags.destr||[]))chDestroy(buildings[id],false);};
+  const rs=resetState; resetState=function(d){rs(d);CH.t=30;CH.fx=[];};
+})();
+
+// ===================== MENU DE TESTE =====================
+dbgExtra('1.13 · Caos, missões e registros',[['v113:caos','Caos: evento agora'],['v113:casa','Caos: explodir uma casa perto'],['v113:briga','Caos: briga na rua'],['v113:fogo','Caos: alguém pegando fogo'],['v113:ped','Sobrevivente aqui (para testar matar)'],['v113:missoes','Abrir a aba Missões'],['v113:slots','Abrir os Registros']],
+  function(k){const close=()=>{if(UI.close)UI.close();G.mode='play';},F=G.flags;
+    if(!F.postoBoom&&['v113:caos','v113:casa','v113:briga','v113:fogo'].includes(k)){F.postoBoom=true;F.caos=Math.max(F.caos||0,1);}
+    switch(k){
+      case 'v113:caos':close();CH.t=0;return;
+      case 'v113:casa':close();return CH_EV[0].f()||toast('Nenhuma casa liberada por perto.');
+      case 'v113:briga':close();return CH_EV[1].f()||toast('Sem lugar aqui.');
+      case 'v113:fogo':close();return CH_EV[2].f()||toast('Sem lugar aqui.');
+      case 'v113:ped':close();{const p=chMkPed(P.x+Math.cos(P.ang)*90,P.y+Math.sin(P.ang)*90,{st:'calm',hp:40});p.saved=true;}return;
+      case 'v113:missoes':return UI.inv('missoes');
+      case 'v113:slots':return UI.slots('save');
+    }});
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;

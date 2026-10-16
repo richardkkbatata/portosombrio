@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.12",
+  "versao_atual": "1.13",
   "versoes": [
+    {
+      "versao": "1.13",
+      "data": "2026-10-16",
+      "titulo": "Caos, missões e registros",
+      "resumo": "Aba Missões na mochila: onde ir e o que fazer, na história principal e nas secundárias.",
+      "mudancas": [
+        "Aba Missões na mochila: onde ir e o que fazer, na história principal e nas secundárias.",
+        "5 registros de save, com exportar e importar arquivo para levar o jogo para outro computador.",
+        "Caos total em Balneário depois do posto: gente se matando, fogo, explosões e casas destruídas para sempre.",
+        "Camboriú mais medieval e cruel, luneta livre, sniper com visão mais ampla, sons mais sombrios e várias correções."
+      ]
+    },
     {
       "versao": "1.12",
       "data": "2026-10-16",

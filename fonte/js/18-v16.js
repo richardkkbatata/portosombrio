@@ -11,7 +11,7 @@ const LOOKS={
 // chuva (normal) · tempestade (abafa passos, mais escuro) · neblina do mar (ninguém enxerga longe) · apagão (postes do bairro apagam)
 const WX={chuva:{n:'Chuva fina',sight:1,noise:1,dk:0},tempestade:{n:'Tempestade',sight:.85,noise:.6,dk:.06},neblina:{n:'Neblina do mar',sight:.55,noise:1,dk:.02},apagao:{n:'Apagão no bairro',sight:1,noise:1,dk:.08}};
 function wxSet(k,quiet){
-  if(!WX[k])return; G.wx=k; G.wxT=rr(170,320); G.wxSight=WX[k].sight; G._dkWx=WX[k].dk;
+  if(!WX[k])return; G.wx=k; G.wxT=k==='neblina'?rr(60,120):rr(170,320); G.wxSight=WX[k].sight; G._dkWx=WX[k].dk;
   if(k==='apagao'){G.wxD=dAt((P.x/TILE)|0,(P.y/TILE)|0);}
   if(quiet)return;
   const msg={tempestade:'A chuva engrossou. O barulho abafa os seus passos... e os deles.',neblina:'A neblina subiu do mar. Não dá pra ver nada a dez metros.',apagao:'Os postes apagaram, um por um. O bairro inteiro ficou no escuro.',chuva:'A chuva afinou.'}[k];
@@ -34,9 +34,9 @@ function drawWx(){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   if(G.wx==='tempestade'&&G.inB<0){ctx.strokeStyle='rgba(170,190,210,.16)';ctx.lineWidth=1.2;ctx.beginPath();for(let i=0;i<90;i++){const x=((i*137+renderT*900)%(view.w+200))-100,y=((i*251+renderT*1400)%(view.h+60))-30;ctx.moveTo(x,y);ctx.lineTo(x-6,y-22);}ctx.stroke();}
   if(G.wx==='neblina'){
-    if(!WXFOG){WXFOG=document.createElement('canvas');WXFOG.width=256;WXFOG.height=256;const g=WXFOG.getContext('2d');for(let i=0;i<40;i++){const x=Math.random()*256,y=Math.random()*256,r=rr(30,80),gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(190,200,205,.14)');gr.addColorStop(1,'rgba(190,200,205,0)');g.fillStyle=gr;g.fillRect(0,0,256,256);}}
-    const ox=-(renderT*12+cam.x*.4)%256,oy=-(cam.y*.4)%256; ctx.globalAlpha=G.inB>=0?.35:.9;
-    for(let y=oy-256;y<view.h;y+=256)for(let x=ox-256;x<view.w;x+=256)ctx.drawImage(WXFOG,x,y);
+    if(!WXFOG){const S=512;WXFOG=document.createElement('canvas');WXFOG.width=S;WXFOG.height=S;const g=WXFOG.getContext('2d');for(let i=0;i<46;i++){const x=Math.random()*S,y=Math.random()*S,r=rr(70,170);for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const X=x+dx*S,Y=y+dy*S;if(X+r<0||Y+r<0||X-r>S||Y-r>S)continue;const gr=g.createRadialGradient(X,Y,0,X,Y,r);gr.addColorStop(0,'rgba(190,200,205,.11)');gr.addColorStop(1,'rgba(190,200,205,0)');g.fillStyle=gr;g.fillRect(X-r,Y-r,r*2,r*2);}}}
+    const T2=512,ox=-(renderT*10+cam.x*.4)%T2,oy=-(cam.y*.4)%T2; ctx.globalAlpha=G.inB>=0?.25:.6;
+    for(let y=oy-T2;y<view.h;y+=T2)for(let x=ox-T2;x<view.w;x+=T2)ctx.drawImage(WXFOG,x,y);
     ctx.globalAlpha=1; const g=ctx.createRadialGradient(view.w/2,view.h/2,Math.min(view.w,view.h)*.15,view.w/2,view.h/2,Math.max(view.w,view.h)*.6);g.addColorStop(0,'rgba(150,160,165,0)');g.addColorStop(1,`rgba(150,160,165,${G.inB>=0?.12:.38})`);ctx.fillStyle=g;ctx.fillRect(0,0,view.w,view.h);}
 }
 (function(){

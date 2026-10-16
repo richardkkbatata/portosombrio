@@ -192,7 +192,7 @@ function drawFov(){
       if(Math.random()<.2){GORE.splice(i,1);const e=makeEnemy(c.type==='corr'?'corr':'zumbi',c.x,c.y,null);e.state='chase';e.lx=P.x;e.ly=P.y;e.rising=.45;e.hunt=true;enemies.push(e);
         AU.roar();G.shake+=6;G.fear=Math.max(fear,.75);buzz&&buzz([60,30,90]);G.ev.fkT=rr(45,80);
         if(!F.fkTip){F.fkTip=true;later(900,()=>bark('rafa','s','Ele... tava morto. Eu juro que tava morto.',{dur:2.2}));}break;}}}
-  if(fear>.5&&!P.inCar&&Math.random()<dt*(fear-.4)*.6){G.flick=Math.max(G.flick||0,rr(.08,.22));if(Math.random()<.3)AU.static(.2,.15);}
+  if(fear>.6&&!P.inCar&&!G.scope&&Math.random()<dt*(fear-.5)*.25){G.flick=Math.max(G.flick||0,rr(.06,.14));if(Math.random()<.08)AU.static(.15,.12);}
   G.ev.ofT=(G.ev.ofT??rr(30,50))-dt;
   if(G.ev.ofT<=0){G.ev.ofT=rr(35,70);if(!capOn()&&!inSafe()&&!G.pSafe&&(isNight()||G.inB>=0)&&!(G.comps&&G.comps.length)&&!enemies.some(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<500)){
     const pan=-Math.cos(P.ang)*.7;AU.stepAt(pan,.55,0);AU.stepAt(pan,.5,.42);if(Math.random()<.4)AU.stepAt(-pan,.45,1.1);G.fear=Math.max(fear,.4);}}};}

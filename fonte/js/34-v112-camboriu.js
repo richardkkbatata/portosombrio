@@ -292,7 +292,7 @@ STORY.cbNicoTalk=function(n){
       {say:'rafa',m:'n',t:'Eu nunca atirei com um desses.'},
       {say:'nico',m:'n',t:'Segura a respiração antes de apertar. E começa pelo que enxerga os outros dois: se um vê o amigo caindo, ele toca o sino.'});
     playCut(steps,()=>cbScopeStart(vig,res=>{
-      const after=res==='ok'?[{say:'nico',m:'h',t:'Três. Limpo. Tu nasceu pra isso, hein.'}]:res==='sino'?[{say:'nico',m:'s',t:'Ele tocou o sino! Eles tão acordando lá embaixo... A praça vai ficar cheia. Vai pelas beiradas.'}]:[{say:'nico',m:'t',t:'Acabou a bala. Sobrou vigia lá embaixo. Vai com cuidado, desvia do olhar deles.'}];
+      const after=res==='ok'?[{say:'nico',m:'h',t:'Limpo. Tu nasceu pra isso, hein.'}]:res==='sai'?[{say:'nico',m:'t',t:'Ainda tem vigia lá embaixo. Desvia do olhar deles.'}]:res==='sino'?[{say:'nico',m:'s',t:'Ele tocou o sino! Eles tão acordando lá embaixo... A praça vai ficar cheia. Vai pelas beiradas.'}]:[{say:'nico',m:'t',t:'Acabou a bala. Sobrou vigia lá embaixo. Vai com cuidado, desvia do olhar deles.'}];
       playCut([{say:'nico',m:'n',t:'Me devolve. Daqui eu te cubro.'},...after],fim);}));}
   else{steps.push({say:'nico',m:'h',t:'...Tu já derrubou os vigias da praça? Respeito.'});playCut(steps,fim);}
 };
@@ -385,7 +385,7 @@ function cbBossTick(dt){
   const F=cbF(); if(!F.cbPortal||F.cbBoss)return;
   const inChurch=G.inB===CBL.igB&&P.y<CBL.portal.y-tc(3);
   if(!F.cbBossOn&&inChurch&&!CUT.on){F.cbBossOn=true;cbBossStart();}
-  if(F.cbBossOn&&!enemies.some(e=>e.alive&&e.type==='chifrudo')&&!CUT.on&&!F.cbBoss){const e=makeEnemy('chifrudo',CBL.altar.x,CBL.altar.y+40,null);e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;enemies.push(e);}
+  if(F.cbBossOn&&!F.cbBoss&&!F.cbBossSpawned&&!enemies.some(e=>e.alive&&e.type==='chifrudo')&&!CUT.on){F.cbBossSpawned=true;const e=makeEnemy('chifrudo',CBL.altar.x,CBL.altar.y+40,null);e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;enemies.push(e);}
 }
 function cbBossStart(){
   const g=gates.find(x=>x.id==='cbPortal'); if(g)closeGate(g);
@@ -400,7 +400,7 @@ function cbBossStart(){
     {do:()=>{for(const l of lights)if(l.ig)l.off=true;G.flick=.6;AU.cbBreath(CBL.altar.x,CBL.altar.y,1.3);}},
     {cam:{x:CBL.altar.x,y:CBL.altar.y},t:1.2},
     {spawn:'chifrudo',x:CBL.altar.x,y:CBL.altar.y,id:'cervo'},
-    {do:()=>{const e=CUT.actors.cervo;if(e){e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;e.face=Math.PI/2;}AU.roar();G.shake+=10;}},
+    {do:()=>{cbF().cbBossSpawned=true;const e=CUT.actors.cervo;if(e){e.cb=1;e.mode='stalk';e.mt=2;e.ph=1;e.face=Math.PI/2;}AU.roar();G.shake+=10;}},
     {say:'pregador',m:'s',t:'DE JOELHOS!'},{camFree:true},
     {do:()=>{for(const l of lights)if(l.ig)l.off=false;}}]);
 }
@@ -431,7 +431,7 @@ function cbChifrudoAI(e,dt){
   if(Math.random()<dt*.15)AU.cbBreath(e.x,e.y,.8);
 }
 function cbBossDead(e){
-  const F=cbF(); F.cbBoss=true; F.cbSt=5; ach&&ach('cbCervo');
+  const F=cbF(); if(F.cbBossFim)return; F.cbBossFim=true; F.cbBoss=true; F.cbSt=5; ach&&ach('cbCervo');
   const pr=npcs.find(n=>n.id==='cbPreg');
   for(const x of enemies)if(x.alive&&x.cb&&x.type==='marc')x.alive=false;
   playCut([{fx:'slow',v:.8},{wait:.8},{fx:'shake',v:12},
@@ -607,7 +607,7 @@ function cbEvTick(dt){
       if(e.type==='cult'||e.type==='vig'||e.type==='marc'){G.flags.cbKills=(G.flags.cbKills||0)+1;if(e._l){e._l.off=true;e._l=null;}if(AU.pb)AU.pb('p_hurt',{vol:.14,rate:.8,far:clamp(hyp(e.x-P.x,e.y-P.y)/900,0,1)});}
       if(e.irmao){G.flags.cbIrmao=true;const [x,y]=freeTileNear((e.x/TILE)|0,(e.y/TILE)|0,true);pickups.push({uid:'cbSeloCervoP',tx:x,ty:y,x:tc(x),y:tc(y),id:'cbSeloCervo',q:1,kind:'item'});pickOcc.add(idx(x,y));
         later(900,()=>playCut([{sfx:'static',v:.8},{say:'nico',m:'t',radio:true,t:'...'},{say:'nico',m:'t',radio:true,t:'Obrigado, Richard. Ele ia odiar ficar daquele jeito.'}]));}
-      if(e.type==='chifrudo')later(300,()=>cbBossDead(e));
+      if(e.type==='chifrudo'){G.flags.cbBoss=true;G.flags.cbSt=5;later(300,()=>cbBossDead(e));}
     }}catch(err){console.error(err);}
     return out;};
 })();
@@ -724,7 +724,7 @@ function cbMapTo(c){
   // carregar o jogo no meio do capítulo
   const aws=applyWorldState; applyWorldState=function(){aws();const F=G.flags;CB.vultos=[];CB.rits=[];CB.evT=40;CB.nicoCd=20;
     for(let i=CBD.length-1;i>=0;i--)if(CBD[i].tmp)CBD.splice(i,1);
-    if(F.cbBossOn&&!F.cbBoss){F.cbBossOn=false;}
+    if(F.cbBossOn&&!F.cbBoss){F.cbBossOn=false;F.cbBossSpawned=false;}
     if(F.cbPortal&&!F.cbBossOn){const g=gates.find(x=>x.id==='cbPortal');if(g&&!g.open)openGate(g);}
     for(const id of ['cbParoq','cbTorre','cbPorao'])if(F[id]){const g=gates.find(x=>x.id===id);if(g&&!g.open)openGate(g);}
     cbApplyNight();if(F.cbSolo&&!F.cbDone)G.comps=[];};
@@ -771,66 +771,66 @@ dbgExtra('1.12 · Camboriú (capítulo novo)',[['cb:call','Receber a chamada do 
 // e, se não for derrubado logo, toca o sino.
 function cbScopeStart(vig,done){
   const c=CBL.coreto;
-  G.scope={x:c.x,y:c.y-40,cx:c.x,cy:c.y-30,t:0,ammo:5,breath:3,hold:false,tg:vig.map(v=>v),alarm:null,done,res:null,shots:[],down:false,prevAim:false,kick:0,hint:0,zoom:1};
+  G.scope={x:c.x,y:c.y-40,cx:c.x,cy:c.y-30,t:0,ammo:10,max:10,breath:3,hold:false,tg:vig.map(v=>v),alarm:null,done,res:null,shots:[],down:false,prevAim:false,kick:0,hint:0,kills:0,idle:0};
   P.ang=Math.atan2(c.y-P.y,c.x-P.x); mouseDown=false;
-  G.banner={t:IN.touch?'Arraste para mirar · solte para atirar':'Mouse mira · clique atira · Shift segura a respiração',life:4.5};
-  later(1200,()=>bark('nico','n',vig.length>=3?'Começa pelo do meio, perto do coreto. Ele vê os dois.':'Devagar. Um de cada vez.',{radio:true,dur:2.6}));
+  // mais gente na praça: quem quiser derrubar, derruba
+  for(let i=0;i<5;i++){const a=i/5*6.283,e=makeEnemy('cult',c.x+Math.cos(a)*rr(140,320),c.y+Math.sin(a)*rr(90,170),null);e.cb=1;e.state='wander';enemies.push(e);}
+  G.banner={t:IN.touch?'Arraste para mirar · solte para atirar':'Mouse mira · clique atira · Shift prende o ar · Q sai',life:4.5};
+  later(1200,()=>bark('nico','n','Os vigias primeiro, os de sino. Depois é contigo: derruba quem tu quiser.',{radio:true,dur:2.8}));
 }
-function cbScopeEnd(res){const S=G.scope;if(!S||S.res)return;S.res=res;later(900,()=>{const d=S.done;G.scope=null;if(d)d(res);});}
-function cbScopeSway(S){const t=S.t,f=S.hold?.12:1,fear=1+(G.fear||0)*.8;return [(Math.sin(t*1.3)*11+Math.sin(t*3.1+1)*5)*f*fear,(Math.cos(t*1.1)*9+Math.sin(t*2.6)*5)*f*fear];}
+function cbScopeEnd(res){const S=G.scope;if(!S||S.res)return;S.res=res;later(700,()=>{const d=S.done;G.scope=null;if(d)d(res);});}
+function cbScopeSway(S){const t=S.t,f=S.hold?.1:.7,fear=1+(G.fear||0)*.4;return [(Math.sin(t*1.1)*8+Math.sin(t*2.7+1)*3)*f*fear,(Math.cos(t*.9)*6+Math.sin(t*2.2)*3)*f*fear];}
 function cbScopeTick(dt){
-  const S=G.scope; if(!S||S.res&&S.t>99)return; S.t+=dt; S.kick=Math.max(0,S.kick-dt*3); S.hint+=dt;
-  // respiração
-  const want=!!(KEYS.ShiftLeft||KEYS.ShiftRight)||(IN.touch&&TOUCH.aim.id===null&&S.relT>0);
-  if(want&&S.breath>0){S.hold=true;S.breath=Math.max(0,S.breath-dt);if(S.breath<=0){S.hold=false;S.gasp=1.2;AU.breath&&AU.breath(1,false);}}
-  else{S.hold=false;S.breath=Math.min(3,S.breath+dt*(S.gasp>0?.25:.6));}
-  S.gasp=Math.max(0,(S.gasp||0)-dt); S.relT=Math.max(0,(S.relT||0)-dt);
-  // mira: mouse (posição na tela), teclado e direcional do celular (velocidade)
+  const S=G.scope; if(!S||S.res)return; S.t+=dt; S.kick=Math.max(0,S.kick-dt*3); S.hint+=dt; S.idle+=dt;
+  G.flick=0; G.light=0;   // nada de piscar na luneta
+  const want=!!(KEYS.ShiftLeft||KEYS.ShiftRight)||(IN.touch&&TOUCH.aim.id===null&&TOUCH.move.id===null);
+  if(want&&S.breath>0){S.hold=true;S.breath=Math.max(0,S.breath-dt*.8);if(S.breath<=0){S.hold=false;S.gasp=1;}}
+  else{S.hold=false;S.breath=Math.min(3,S.breath+dt*(S.gasp>0?.3:.8));}
+  S.gasp=Math.max(0,(S.gasp||0)-dt);
   const z=view.z;
   if(IN.mouseOn&&!IN.touch){S.x=cam.x+IN.mouseX/z;S.y=cam.y+IN.mouseY/z;}
   let mx=0,my=0;if(KEYS.KeyA||KEYS.ArrowLeft)mx--;if(KEYS.KeyD||KEYS.ArrowRight)mx++;if(KEYS.KeyW||KEYS.ArrowUp)my--;if(KEYS.KeyS||KEYS.ArrowDown)my++;
-  if(TOUCH.aim.id!==null){const C=stickCenters();const dx=TOUCH.aim.x-C.aim.x,dy=TOUCH.aim.y-C.aim.y,d=hyp(dx,dy);if(d>6){mx=dx/STICK.r;my=dy/STICK.r;}S.aiming=true;}
-  if(TOUCH.move.id!==null){const C=stickCenters();const dx=TOUCH.move.x-C.move.x,dy=TOUCH.move.y-C.move.y,d=hyp(dx,dy);if(d>6){mx=dx/STICK.r;my=dy/STICK.r;}S.aiming=true;}
-  if(mx||my){S.x+=mx*420*dt;S.y+=my*420*dt;}
+  for(const T0 of [TOUCH.aim,TOUCH.move]){if(T0.id===null)continue;const C=stickCenters(),cc=T0===TOUCH.aim?C.aim:C.move;const dx=T0.x-cc.x,dy=T0.y-cc.y,d=hyp(dx,dy);if(d>6){mx=dx/STICK.r;my=dy/STICK.r;}S.aiming=true;}
+  if(mx||my){S.x+=mx*460*dt;S.y+=my*460*dt;}
   const vw=view.w/z,vh=view.h/z;S.x=clamp(S.x,S.cx-vw/2+20,S.cx+vw/2-20);S.y=clamp(S.y,S.cy-vh/2+20,S.cy+vh/2-20);
-  // atirar: clique, F/Enter, ou soltar o direcional no celular
   let fire=false;
   if(mouseDown&&!S.down)fire=true; S.down=mouseDown;
   if((KEYS.KeyF||KEYS.Enter)&&!S.kd)fire=true; S.kd=!!(KEYS.KeyF||KEYS.Enter);
-  const touching=TOUCH.aim.id!==null||TOUCH.move.id!==null; if(S.prevAim&&!touching&&S.aiming){fire=true;S.aiming=false;S.relT=2.2;} S.prevAim=touching;
-  if(fire&&!S.res&&S.ammo>0&&S.t>.6)cbScopeFire(S);
-  // o vigia desconfiado
-  if(S.alarm&&!S.res){const a=S.alarm;a.t-=dt;if(!a.e.alive){S.alarm=null;}else{a.e.face+=Math.sin(S.t*4)*dt*2;if(a.t<=0){S.alarm=null;AU.cbBell(a.e.x,a.e.y,1);G.flags.cbBell=true;
-      for(const o of enemies)if(o.alive&&(o.type==='cult'||o.type==='marc')&&hyp(o.x-a.e.x,o.y-a.e.y)<1200){o.state='investigate';o.nx=a.e.x+rr(-90,90);o.ny=a.e.y+rr(-90,90);o.it=18;}
-      bark('nico','s','O SINO! Ele tocou!',{radio:true,dur:1.6});cbScopeEnd('sino');}}}
-  if(!S.res){if(S.tg.every(v=>!v.alive))cbScopeEnd('ok');else if(S.ammo<=0)cbScopeEnd('bala');}
-  if(S.hint>14&&!S.res){S.hint=0;bark('nico','n',pick2(['Prende o ar antes. Shift.','Ele tá virando. Espera ele parar.','A cabeça, Richard. Só a cabeça.']),{radio:true,dur:2});}
-  // câmera aberta, fixa na praça
-  G.camF=lerp(G.camF||1,.5,Math.min(1,dt*2.2)); G.camTgt=.5;
+  const touching=TOUCH.aim.id!==null||TOUCH.move.id!==null; if(S.prevAim&&!touching&&S.aiming){fire=true;S.aiming=false;} S.prevAim=touching;
+  if(fire&&S.ammo>0&&S.t>.5){cbScopeFire(S);S.idle=0;}
+  if(KEYS.KeyQ){cbScopeEnd(S.tg.every(v=>!v.alive)?'ok':'sai');return;}
+  // vigia que viu: procura e toca o sino — e a praça enche de gente (mais alvo, não é game over)
+  if(S.alarm){const a=S.alarm;a.t-=dt;if(!a.e.alive)S.alarm=null;else if(a.t<=0){S.alarm=null;AU.cbBell(a.e.x,a.e.y,1);G.flags.cbBell=true;S.rang=true;
+      for(let i=0;i<4;i++){const sp={x:S.cx+rr(-500,500),y:S.cy+rr(120,260)};const e=makeEnemy('cult',sp.x,sp.y,null);e.cb=1;e.state='investigate';e.nx=a.e.x+rr(-90,90);e.ny=a.e.y+rr(-90,90);e.it=18;enemies.push(e);}
+      bark('nico','s','Tocou o sino! Tá vindo mais gente pra praça... Tem bala, Richard.',{radio:true,dur:2.2});}}
+  const vigsOk=S.tg.every(v=>!v.alive);
+  if(vigsOk&&!S.said){S.said=true;bark('nico','h','Os vigias caíram. O resto é contigo. Aperta Q quando quiser sair.',{radio:true,dur:2.6});}
+  if(S.ammo<=0)cbScopeEnd(vigsOk?'ok':'bala');
+  else if(vigsOk&&S.idle>(IN.touch?14:30))cbScopeEnd('ok');
+  if(S.hint>22){S.hint=0;bark('nico','n',pick2(['Prende o ar antes de atirar.','A cabeça, Richard. Só a cabeça.','Tem um de lanterna perto da igreja.']),{radio:true,dur:2});}
+  G.camF=lerp(G.camF||1,.46,Math.min(1,dt*2.2)); G.camTgt=.46;
   cam.x=lerp(cam.x,S.cx-vw/2,Math.min(1,dt*6)); cam.y=lerp(cam.y,S.cy-vh/2,Math.min(1,dt*6));
 }
 function cbScopeFire(S){
-  const [sx,sy]=cbScopeSway(S),px=S.x+sx,py=S.y+sy; S.ammo--; S.kick=1; G.shake+=2;
-  AU.pb&&AU.pb('shot_sil',{vol:.35,wet:.2,must:true}); AU.pb&&later(350,()=>AU.pb('shell',{vol:.08}));
+  const [sx,sy]=cbScopeSway(S),px=S.x+sx,py=S.y+sy; S.ammo--; S.kick=1; G.shake+=1.5;
+  AU.pb&&AU.pb('shot_sil',{vol:.35,wet:.2,must:true}); later(350,()=>AU.pb&&AU.pb('shell',{vol:.08}));
   if(typeof BR!=='undefined'&&BR.tracers)BR.tracers.push({x0:px+340,y0:py+620,x1:px,y1:py,life:.1});
   let hit=null,hd=1e9;
-  for(const e of enemies){if(!e.alive||!['vig','cult','marc'].includes(e.type))continue;const d=hyp(e.x-px,e.y-py);if(d<(e.r+7)&&d<hd){hd=d;hit=e;}}
+  for(const e of enemies){if(!e.alive||!['vig','cult','marc'].includes(e.type))continue;const d=hyp(e.x-px,e.y-py);if(d<(e.r+9)&&d<hd){hd=d;hit=e;}}
   S.shots.push({x:px,y:py,t:0,hit:!!hit});
-  if(hit){const head=hd<6;bloodBurst(hit.x,hit.y,14,Math.atan2(-620,-340));hurtEnemy(hit,9999,0,0,{});if(head)floaters.push({x:hit.x,y:hit.y-20,t:'NA CABEÇA',life:.9});
-    // quem viu o amigo cair?
-    for(const v of S.tg)if(v.alive&&v!==hit&&!S.alarm&&hyp(v.x-hit.x,v.y-hit.y)<1000&&los(v.x,v.y,hit.x,hit.y)&&Math.abs(angDiff(v.face||0,Math.atan2(hit.y-v.y,hit.x-v.x)))<1.4){
-      S.alarm={e:v,t:2.6};v.face=Math.atan2(hit.y-v.y,hit.x-v.x);bark('nico','s','O outro viu! Rápido, antes do sino!',{radio:true,dur:1.6});break;}
-    if(!S.alarm&&Math.random()<.5)later(400,()=>bark('nico','h',pick2(['Caiu.','Boa.','Nem gemeu.']),{radio:true,dur:1.2}));}
-  else{for(let i=0;i<8;i++)parts.push({k:'spark',x:px,y:py,vx:rr(-90,90),vy:rr(-90,90),life:.25,max:.25,s:2,c:'#ffd27a'});AU.click&&AU.click();
-    const near=S.tg.filter(v=>v.alive).sort((a,b)=>hyp(a.x-px,a.y-py)-hyp(b.x-px,b.y-py))[0];
-    if(near&&hyp(near.x-px,near.y-py)<260&&!S.alarm){S.alarm={e:near,t:3.2};near.face=Math.atan2(py-near.y,px-near.x);bark('nico','s','Errou perto dele! Ele tá procurando!',{radio:true,dur:1.6});}}
+  if(hit){const head=hd<7;bloodBurst(hit.x,hit.y,16,Math.atan2(-620,-340));hurtEnemy(hit,9999,0,0,{});S.kills++;
+    floaters.push({x:hit.x,y:hit.y-20,t:head?'NA CABEÇA':'ABATIDO',life:.9});
+    if(S.kills===4)later(500,()=>bark('nico','s','...Tu tá gostando disso, né?',{radio:true,dur:1.8}));
+    for(const v of S.tg)if(v.alive&&v!==hit&&!S.alarm&&!S.rang&&hyp(v.x-hit.x,v.y-hit.y)<1000&&los(v.x,v.y,hit.x,hit.y)&&Math.abs(angDiff(v.face||0,Math.atan2(hit.y-v.y,hit.x-v.x)))<1.2){
+      S.alarm={e:v,t:3.2};v.face=Math.atan2(hit.y-v.y,hit.x-v.x);bark('nico','s','O outro viu! Rápido, antes do sino!',{radio:true,dur:1.6});break;}}
+  else{for(let i=0;i<8;i++)parts.push({k:'spark',x:px,y:py,vx:rr(-90,90),vy:rr(-90,90),life:.25,max:.25,s:2,c:'#ffd27a'});}
 }
 function cbScopeDraw(){
   const S=G.scope; if(!S)return; const z=view.z, w=view.w, h=view.h;
   ctx.setTransform(dpr,0,0,dpr,0,0);
   const [sx,sy]=cbScopeSway(S), ax=(S.x+sx-cam.x)*z, ay=(S.y+sy-cam.y)*z-S.kick*14;
   // lupa: o canto superior direito mostra o alvo ampliado (copia da própria tela)
-  try{const R0=Math.min(105,w*.13),cxs=w-R0-22,cys=h-R0-50,mag=3.2,src=R0/mag;
+  try{const R0=Math.min(105,w*.13),cxs=w-R0-22,cys=h-R0-50,mag=3.2,src=R0/mag;if(hyp(ax-cxs,ay-cys)<R0+src+10)throw 0;
     ctx.save();ctx.beginPath();ctx.arc(cxs,cys,R0,0,6.283);ctx.clip();
     ctx.drawImage(cv,(ax-src)*dpr,(ay-src)*dpr,src*2*dpr,src*2*dpr,cxs-R0,cys-R0,R0*2,R0*2);
     ctx.fillStyle='rgba(60,90,70,.18)';ctx.fillRect(cxs-R0,cys-R0,R0*2,R0*2);
@@ -858,8 +858,8 @@ function cbScopeDraw(){
   ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,0,w,34);ctx.fillRect(0,h-34,w,34);
   ctx.textAlign='left';ctx.fillStyle='#e8e0c8';ctx.font=`700 13px ${FONT_UI}`;
   const dist=Math.round(hyp(S.x-P.x,S.y-P.y)/TILE*1.6);
-  ctx.fillText(`RIFLE .308 · SILENCIADOR · ${S.ammo}/5`,16,22);ctx.textAlign='right';ctx.fillText(`DIST ${dist} m · VENTO 2 km/h · DRONE: ${S.tg.filter(v=>v.alive).length} VIGIA(S)`,w-16,22);
-  ctx.textAlign='left';ctx.fillText(IN.touch?'Arraste para mirar · solte para atirar · solte e espere para prender o ar':'Clique atira · Shift segura a respiração · F também atira',16,h-12);
+  ctx.fillText(`RIFLE .308 · SILENCIADOR · ${S.ammo}/${S.max} · ABATIDOS ${S.kills}`,16,22);ctx.textAlign='right';ctx.fillText(`DIST ${dist} m · VENTO 2 km/h · DRONE: ${S.tg.filter(v=>v.alive).length} VIGIA(S)`,w-16,22);
+  ctx.textAlign='left';ctx.fillText(IN.touch?'Arraste para mirar · solte para atirar · parado prende o ar':'Clique atira · Shift prende o ar · Q sai da luneta',16,h-12);
   // respiração
   const bw=140;ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(w/2-bw/2,h-26,bw,8);ctx.fillStyle=S.gasp>0?'#d84a3a':ok?'#78e68c':'#c8c0a8';ctx.fillRect(w/2-bw/2,h-26,bw*S.breath/3,8);
   ctx.textAlign='center';ctx.fillStyle='#e8e0c8';ctx.font=`700 11px ${FONT_UI}`;ctx.fillText(S.gasp>0?'SEM AR':ok?'PRENDENDO O AR':'RESPIRAÇÃO',w/2,h-32);
@@ -877,7 +877,8 @@ function cbScopeDraw(){
   const vt=v16Tick; v16Tick=function(dt){vt(dt);
     if(G.scope){G._dkZone=.5;return;}
     // com o rifle na mão a câmera abre um pouco (dá pra ver longe)
-    if(G.mode==='play'&&!CUT.on&&!P.inCar&&WEAPONS[P.w]&&WEAPONS[P.w].id==='sniper'&&G.inB<0){G.camF=lerp(G.camF||1,.72,Math.min(1,dt*1.6));}
+    if(G.mode==='play'&&!CUT.on&&!P.inCar&&WEAPONS[P.w]&&WEAPONS[P.w].id==='sniper'&&G.inB<0){G.camF=lerp(G.camF||1,.52,Math.min(1,dt*1.6));}
   };
   const rs=resetState; resetState=function(d){rs(d);G.scope=null;};
+  if(typeof quickHeal==='function'){const qh=quickHeal;quickHeal=function(){if(G.scope)return;return qh.apply(this,arguments);};}
 })();

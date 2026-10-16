@@ -821,7 +821,7 @@ function renderLighting(sx,sy,showPlayer){
     punch(P.x,P.y,44,.3);
   } else if(showPlayer){
     punch(P.x,P.y,P.lamp&&P.bat>0?90:66,P.lamp&&P.bat>0?.74:.58);
-    if(Math.random()<.004)G.flick=.12+Math.random()*.15;
+    if(Math.random()<.0008&&!G.scope)G.flick=.1+Math.random()*.12;
     if(G.flick>0)G.flick-=lastDt;
     const lowBat=P.bat<20&&Math.sin(renderT*23)+Math.sin(renderT*7.7)>1.2;
     const lampOn=P.lamp&&P.bat>0&&!(G.flick>0)&&!lowBat;
