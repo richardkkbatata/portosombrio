@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.13",
+  "versao_atual": "1.13.1",
   "versoes": [
+    {
+      "versao": "1.13.1",
+      "data": "2026-10-16",
+      "titulo": "Revisão de falas e correções",
+      "resumo": "Ninguém fala mais de onde não está: quando o amigo não está do lado, quem fala é o Richard.",
+      "mudancas": [
+        "Ninguém fala mais de onde não está: quando o amigo não está do lado, quem fala é o Richard.",
+        "Em Camboriú não acontecem mais eventos de zumbi, e a seta de missão secundária não puxa você para fora.",
+        "O rojão só é 'do Nicolas' se você já conheceu ele; o final também.",
+        "Menu de teste: Nicolas leva ao morro de Camboriú."
+      ]
+    },
     {
       "versao": "1.13",
       "data": "2026-10-16",
