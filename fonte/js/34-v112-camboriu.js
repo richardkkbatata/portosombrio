@@ -3,7 +3,7 @@
 // ficam na Caçulinha do Marlon). Em Camboriú não tem zumbi: tem um culto, a Congregação do Cervo,
 // que adora o Espécime T-03 da Vértice ("o Cervo"). O Nicolas aparece aqui pela primeira vez (o encontro
 // na Brava saiu): ele está no morro com o rifle de precisão do irmão, que os cultistas levaram.
-// Vai e volta de itens no estilo Resident Evil clássico: 3 selos abrem a Igreja Matriz.
+// Vai e volta de itens no estilo clássico do survival horror: 3 selos abrem a Igreja Matriz.
 // O mapa usa as linhas NY..HT-1 (as mesmas do capítulo da Sonia, que redesenha tudo quando começa).
 // Tudo que é daqui tem uid/id começando com "cb" (pickups, portões, NPCs, inimigos).
 
