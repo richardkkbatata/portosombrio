@@ -1,6 +1,15 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.11',d:'16/10/2026',t:'O som do medo',itens:[
+    'Todos os sons do jogo foram refeitos. Acabou o som de videogame antigo: agora o jogo cria cada som com camadas, eco e variações logo que abre.',
+    'Tiros com estalo, pancada grave, eco batendo nos prédios e o estojo caindo no chão. Cada arma tem o seu som: pistola, .38, metralhadora, espingarda, cano duplo, Magnum, fuzil, rifle de precisão, silenciador, lança-granadas e besta.',
+    'Zumbis com voz rouca de verdade e gemidos diferentes: o comum, o corredor rosnando, os grandes bem graves, os rastejantes gorgolejando, o cão latindo e rosnando. O som vem do lado em que o zumbi está e fica abafado de longe.',
+    'Grito da Gritadeira, rugido dos chefes, gemido do Richard quando apanha, respiração, coração, passos, portas, madeira rangendo, vidro, explosões e trovão, tudo novo.',
+    'Ambiente em camadas: chuva, vento e um zumbido grave. Dentro dos prédios a chuva fica abafada. Barulhos ao longe, sem aviso: grito, uivo, tiro distante, metal rangendo, vidro quebrando, alguém batendo na parede, passos atrás de você quando o medo está alto.',
+    'Música de tensão: quando tem coisa te caçando, entram cordas desafinadas e um pulso de coração, que somem quando você despista.',
+    'Música nova no menu (piano e cordas) e nos chefes (tambor, metais e bateria).',
+  ]},
   {v:'1.10',d:'16/10/2026',t:'Mais medo, armas novas e amigos que lutam',itens:[
     'Visão em cone, inspirada em Darkwood: o que está atrás do Richard fica no escuro. Dá pra desligar em Opções.',
     'Falso morto: alguns corpos no chão levantam quando você passa do lado. Com muito medo, a mão treme na mira e a lanterna falha. No escuro, sozinho, dá pra ouvir passos que não são seus.',

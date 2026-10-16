@@ -1,7 +1,18 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.10",
+  "versao_atual": "1.11",
   "versoes": [
+    {
+      "versao": "1.11",
+      "data": "2026-10-16",
+      "titulo": "O som do medo",
+      "resumo": "Todos os sons do jogo foram refeitos: tiros com eco nos prédios, zumbis com voz rouca de verdade, grito, rugido, passos, portas, vidro, explosões e trovão.",
+      "mudancas": [
+        "Todos os sons do jogo foram refeitos: tiros com eco nos prédios, zumbis com voz rouca de verdade, grito, rugido, passos, portas, vidro, explosões e trovão.",
+        "Ambiente em camadas (chuva, vento, zumbido) e barulhos ao longe sem aviso: grito, uivo, tiro distante, metal rangendo, passos atrás de você.",
+        "Música de tensão quando tem coisa te caçando, e música nova no menu e nos chefes."
+      ]
+    },
     {
       "versao": "1.10",
       "data": "2026-10-16",
