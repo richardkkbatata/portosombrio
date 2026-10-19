@@ -1,7 +1,21 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.13.1",
+  "versao_atual": "1.14",
   "versoes": [
+    {
+      "versao": "1.14",
+      "data": "2026-10-19",
+      "titulo": "Camboriú 2.0: o Cervo desperto",
+      "resumo": "Camboriú maior: Tiro de Guerra, frigorífico, cemitério, rua nova e as casas das oferendas.",
+      "mudancas": [
+        "Camboriú maior: Tiro de Guerra, frigorífico, cemitério, rua nova e as casas das oferendas.",
+        "Sargento Valença: ache a maleta do pelotão e ele entra na luta final com você.",
+        "Furtividade: mate em silêncio por trás, esconda o corpo ou vista o manto e ande disfarçado.",
+        "A missa da meia-noite, as aparições do Pregador e o Cervo em duas formas, caçando você pela cidade.",
+        "Opções: intensidade do terror. No celular, guia dos controles na primeira vez.",
+        "Online: aviso quando você e quem criou a sala estão em versões diferentes."
+      ]
+    },
     {
       "versao": "1.13.1",
       "data": "2026-10-16",
