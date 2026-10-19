@@ -21,7 +21,8 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   ok(G.flags.cbMilCall,'1.14: Nicolas avisa do soldado');
   let o=A.objective();ok(/Tiro de Guerra/.test(o.t),'1.14: objetivo Tiro de Guerra: '+o.t);
   // furtividade: matar por trás, corpo, manto
-  R("enemies=enemies.filter(e=>!(e.alive&&['cult','vig','marc'].includes(e.type)&&hyp(e.x-P.x,e.y-P.y)<900))");
+  R("G.scope=null;CB2.drag=null;cbGo({x:tc(30),y:tc(cbY(39.5))});P.ang=0;P.lamp=false");
+  R("enemies=enemies.filter(e=>!(e.alive&&['cult','vig','marc'].includes(e.type)&&hyp(e.x-P.x,e.y-P.y)<1400))");
   R("(()=>{const a=0;const e=makeEnemy('cult',P.x+30,P.y,null);e.cb=1;e.face=0;e.state='wander';e.cbHold=99;e.tst=1;enemies.push(e);})()");
   let pr=R("findInteract()");ok(pr&&pr.o&&pr.o.type==='cbExec','1.14: prompt de matar em silêncio');
   R("(()=>{const pr=findInteract();G.prompt=pr;doInteract();})()");flush();
@@ -31,7 +32,7 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   ok(R("promptText(G.prompt)")==='Vestir o manto do cultista','1.14: prompt vestir manto: '+R("promptText(G.prompt)"));
   R("doInteract()");finishTalk();flush();ok(R('P.disf')===true&&R("P.lookO.look")==='manto','1.14: disfarçado');
   // disfarçado, o cultista não te persegue
-  R("(()=>{const e=makeEnemy('cult',P.x+90,P.y,null);e.cb=1;e.face=Math.PI;e.state='wander';e.tst2=1;enemies.push(e);P.lamp=false;})()");
+  R("(()=>{const e=makeEnemy('cult',P.x+90,P.y,null);e.cb=1;e.face=Math.PI;e.state='wander';e.cbHold=99;e.tst2=1;enemies.push(e);P.lamp=false;for(const b of CB2.bodies)b.found=true;CB2.alertT=0;})()");
   run(60);ok(R("enemies.find(e=>e.tst2).state")!=='chase'&&R('P.disf'),'1.14: disfarce engana o cultista');
   R("(()=>{const e=enemies.find(e=>e.tst2);e.x=P.x+90;e.y=P.y;e.state='wander';P.disf=true;})();P.running=true;P.moving=true;cb2DisfTick(.016)");ok(!R('P.disf'),'1.14: correr derruba o disfarce');R("P.running=false;P.moving=false");
   ok(R("enemies.find(e=>e.tst2).state")==='chase','1.14: depois do disfarce cair, ele persegue');
@@ -41,7 +42,7 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   R("doInteract()");ok(R("!!CB2.drag"),'1.14: arrastando');
   const x0=R('P.x');for(let i=0;i<30;i++){R("P.x+=2");run(1);}ok(R("hyp(CB2.drag.x-P.x,CB2.drag.y-P.y)")<40,'1.14: corpo vem junto');
   R("(()=>{G.prompt={k:'int',o:CB2.drag.it};doInteract();})()");ok(!R("CB2.drag"),'1.14: soltou o corpo');
-  R("(()=>{const b=CB2.bodies[CB2.bodies.length-1];b.found=false;b.x=P.x+60;b.y=P.y;const e=makeEnemy('cult',P.x+160,P.y,null);e.cb=1;e.face=Math.PI;e.state='wander';e.tst3=1;enemies.push(e);})()");
+  R("(()=>{enemies=enemies.filter(e=>!(e.alive&&['cult','vig','marc'].includes(e.type)&&hyp(e.x-P.x,e.y-P.y)<1400));cbGo({x:tc(30),y:tc(cbY(39.5))});const b=CB2.bodies[CB2.bodies.length-1];b.found=false;b.x=P.x+60;b.y=P.y;const e=makeEnemy('cult',P.x+160,P.y,null);e.cb=1;e.face=Math.PI;e.state='wander';e.cbHold=99;e.tst3=1;enemies.push(e);})()");
   R("CB2.bt=0;cb2BodyTick(.016)");ok(R("CB2.bodies[CB2.bodies.length-1].found")||R("cb2BodyHidden(CB2.bodies[CB2.bodies.length-1])"),'1.14: acharam o corpo');
   R("for(const e of enemies)if(e.tst3)e.alive=false");flush();
   // o Valença
@@ -80,10 +81,11 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   const vivos1=A.enemies.filter(e=>e.alive&&['cult','vig'].includes(e.type)).length;
   ok(vivos1<vivos0,'1.14: a cidade esvazia na missa ('+vivos0+' -> '+vivos1+')');
   o=A.objective();ok(/missa/.test(o.t),'1.14: objetivo da missa');
-  R("if(CB2.missa)CB2.missa.t=92.5");run(30);flush();
+  for(let k=0;k<5&&!G.flags.cbMissaDone;k++){R("if(CB2.missa)CB2.missa.t=92.5");run(30);flush();finishTalk();}
+  if(!G.flags.cbMissaDone)console.log("MISSA",R("JSON.stringify({m:!!CB2.missa,on:G.flags.cbMissaOn,cut:CUT.on,mode:G.mode,inCb:inCb(),cbOn:cbOn()})"));
   ok(G.flags.cbMissaDone&&!G.flags.cbMissaOn,'1.14: a missa acaba');
   // o Pregador aparece no caminho
-  R("G.flags.cbPA_a4=false;cbGo({x:CBL.cemit.x-tc(4),y:CBL.cemit.y})");R("CB2.pt=0");run(3);finishTalk();
+  R("for(const k of ['a1','a2','a3'])G.flags['cbPA_'+k]=true;if(CB2.preg){const i=npcs.indexOf(CB2.preg.n);if(i>=0)npcs.splice(i,1);CB2.preg=null;}G.flags.cbPA_a4=false;cbGo({x:CBL.cemit.x-tc(4),y:CBL.cemit.y})");R("CB2.pt=0");run(3);finishTalk();
   ok(G.flags.cbPA_a4,'1.14: Pregador no cemitério');run(60*11);flush();ok(!R("CB2.preg"),'1.14: Pregador some');
   // a luta: forma 1, transformação, forma 2
   R("for(const id of ['cbSeloSino','cbSeloVela','cbSeloCervo'])if(!cbHas(id)){const l=invAdd(id,1);if(l)boxAdd(id,l);}G.flags.cbIrmaoQuest=G.flags.cbIrmao=true");
