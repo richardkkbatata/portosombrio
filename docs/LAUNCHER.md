@@ -91,3 +91,78 @@ O launcher é um programa pequeno e fixo. O conteúdo de cada jogo (o HTML) fica
 4. sha256 errado: recusa e mantém a versão atual.
 5. Android: instalar por cima do APK antigo (mesma chave) sem perder o save; download só no Wi-Fi.
 6. Playwright no HTML baixado (PC e celular) sem erros no console.
+
+---
+
+# Sistema de contas (save na nuvem)
+
+> Pedido do Richard: o launcher (e o jogo) têm **conta de usuário num banco de dados**, que guarda o **save** e outras coisas.
+> Assim a pessoa entra com a conta em qualquer PC ou celular e continua de onde parou.
+
+## Onde fica (usar o que já temos na Cloudflare)
+
+- API dentro do Worker do site (`worker/index.js`), rotas novas em `/api/conta/*` (já estão no `run_worker_first` de `/api/*`).
+- Banco: **Cloudflare D1** (SQLite), binding `DB` no `wrangler.jsonc`. Igual ao KV do ranking: o binding vai no `wrangler.jsonc`, porque vincular pelo painel NÃO funciona. O ID do banco sai do painel (Armazenamento e bancos de dados > D1). Ensine o Richard clique por clique a criar o banco, e as tabelas pelo `wrangler d1 migrations` (pasta `worker/migrations/`).
+- Saves grandes: guardar no D1 se couber (até uns 100 KB por save). Se passar disso, usar **R2** (binding `SAVES`).
+- Teste local: `wrangler dev --port 8787` com D1 local (`--local`).
+
+## Tabelas (sugestão)
+
+```sql
+CREATE TABLE contas (
+  id TEXT PRIMARY KEY,            -- uuid
+  usuario TEXT UNIQUE NOT NULL,   -- nome de login (minúsculo)
+  email TEXT UNIQUE,              -- opcional, só para recuperar senha
+  senha_hash TEXT NOT NULL,       -- PBKDF2-SHA256 (WebCrypto), 100k+ iterações
+  senha_sal TEXT NOT NULL,
+  apelido TEXT,                   -- nome que aparece no ranking/online
+  criado INTEGER, ultimo_login INTEGER
+);
+CREATE TABLE sessoes (token_hash TEXT PRIMARY KEY, conta TEXT, expira INTEGER, aparelho TEXT);
+CREATE TABLE saves (
+  conta TEXT, jogo TEXT, slot INTEGER,      -- slot 1..5, o mesmo dos registros do jogo
+  dados TEXT, versao_jogo TEXT, atualizado INTEGER,
+  PRIMARY KEY (conta, jogo, slot)
+);
+CREATE TABLE extras (conta TEXT, jogo TEXT, chave TEXT, valor TEXT, PRIMARY KEY (conta, jogo, chave));
+-- extras: configurações, recorde da Horda, conquistas, jogos que a pessoa tem no launcher
+```
+
+## Rotas
+
+- `POST /api/conta/criar` {usuario, senha, email?} → cria a conta e devolve o token
+- `POST /api/conta/entrar` {usuario, senha} → token (valendo 90 dias)
+- `POST /api/conta/sair` → apaga a sessão
+- `GET /api/conta/eu` → dados da conta (sem senha)
+- `GET /api/saves?jogo=porto-sombrio` → lista dos slots (data, versão, capítulo)
+- `GET/PUT /api/saves/<jogo>/<slot>` → baixa ou envia o save
+- `GET/PUT /api/extras/<jogo>` → configurações e recordes
+- `DELETE /api/conta` → apaga a conta e tudo dela (obrigatório pela LGPD)
+- Token no cabeçalho `Authorization: Bearer <token>`. No banco fica só o **hash** do token.
+
+## No jogo e no launcher
+
+- O jogo NÃO é reescrito. Criar um arquivo novo `fonte/js/NN-conta.js` (passando pelo build e pelos testes de sempre) que:
+  - usa o formato de save que já existe (o mesmo do exportar `.pssave` e dos 5 slots da 1.13). Não inventar formato novo;
+  - depois de cada save local, envia o slot para a nuvem se a pessoa estiver logada. Sem internet, deixa na fila e manda depois;
+  - ao abrir: se o save da nuvem for mais novo que o local, pergunta "Usar o save da nuvem (data) ou o deste aparelho (data)?". Nunca sobrescrever sem perguntar;
+  - jogar sem conta continua funcionando igual a hoje. A conta é opcional.
+- Tela "Conta" no menu do jogo e no launcher: entrar, criar conta, sair, ver os saves.
+- No launcher, a conta é a mesma para todos os jogos da distribuidora.
+- O ranking da Horda pode usar o `apelido` da conta. O ranking anônimo atual tem que continuar funcionando.
+- Liberar na CSP do jogo (`ferramentas/integrar.py`) o `connect-src` para `https://nightgetaway.net.br/api/`, se ainda não estiver liberado.
+
+## Segurança (obrigatório)
+
+- Senha nunca em texto puro, nem em log. Hash com PBKDF2 + sal por conta.
+- Limitar as tentativas de login (por exemplo 10 a cada 15 min por IP/usuário). Pode guardar o contador no KV.
+- Só HTTPS. Validar tamanho e formato de tudo que chega (save com no máximo X KB, JSON válido).
+- Uma conta só lê e grava os próprios saves (sempre checar `conta` do token).
+- Página de privacidade do site: dizer o que é guardado (usuário, e-mail opcional, saves) e como apagar a conta. Isso é com a sessão do site.
+- Nunca pedir ao Richard senha de nada no chat. Ele cria o banco no painel, e o ID não é segredo.
+
+## Testes
+
+- `worker/test-conta.js`: criar, entrar, senha errada, limite de tentativas, salvar e ler o slot, outra conta NÃO lê, apagar a conta.
+- Playwright: salvar no PC A e carregar no "PC B" (outro perfil), conflito de saves (aparece a pergunta), jogo offline.
+- `wrangler deploy --dry-run` passando.
