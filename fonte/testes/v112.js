@@ -58,6 +58,10 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   if(boss)R("(()=>{const e=enemies.find(e=>e.alive&&e.type==='chifrudo');e.hp=e.max*.5;})()");run(30);
   ok(A.enemies.filter(e=>e.alive&&e.type==='marc'&&e.cb).length>=2,'1.12: fase 2 chama Marcados');
   R("(()=>{const e=enemies.find(e=>e.alive&&e.type==='chifrudo');if(e)hurtEnemy(e,99999,0,0,{});})()");flush();finishTalk();flush();
+  ok(G.flags.cbF1Down&&G.flags.cbF2&&A.enemies.some(e=>e.alive&&e.type==='cervo2'),'1.14: o Cervo se transforma e sai da igreja');
+  ok(!A.enemies.some(e=>e.alive&&e.type==='chifrudo'),'1.14: a forma da igreja some');
+  run(60,true);
+  R("(()=>{const e=enemies.find(e=>e.alive&&e.type==='cervo2');if(e)hurtEnemy(e,99999,0,0,{});})()");flush();finishTalk();flush();
   ok(G.flags.cbBoss&&gate('cbPortal').open,'1.12: Cervo derrotado, porta abre');
   ok(A.getPickups().some(p=>p.uid==='cbSnipeR'),'1.12: rifle do irmão na porta');
   ok(take('cbSnipeR')&&A.P.owned[R("WI('sniper')")],'1.12: pegou o rifle');

@@ -25,6 +25,6 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   R("dbgJump('cbBase')");finishTalk();R("G.flags.cbCall=true;G.flags.cbSt=3;cbGo(CBL.coreto)");for(const e of R("CB_EVT.length")?[0]:[]);
   R("for(const e of CB_EVT)try{e.f()}catch(x){throw x}");run(60*6,true);ok(true,'');
   // o Cervo não renasce
-  R("G.flags.cbPortal=true;G.flags.cbBossOn=true;G.flags.cbBossSpawned=true;const e=makeEnemy('chifrudo',P.x+100,P.y,null);e.cb=1;enemies.push(e);hurtEnemy(e,99999,0,0,{})");run(120);
+  R("G.flags.cbPortal=true;G.flags.cbBossOn=true;G.flags.cbBossSpawned=true;const e=makeEnemy('chifrudo',P.x+100,P.y,null);e.cb=1;enemies.push(e);hurtEnemy(e,99999,0,0,{})");finishTalk();for(let k=0;k<4;k++){for(const f of ctx.__timeouts.splice(0))try{f()}catch(x){};finishTalk();}run(120);R("for(const e of enemies)if(e.type==='cervo2')e.alive=false");
   ok(!A.enemies.some(e=>e.alive&&e.type==='chifrudo'),'1.13: o Cervo não nasce de novo');
 };

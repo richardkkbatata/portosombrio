@@ -1,6 +1,18 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.14',d:'19/10/2026',t:'Camboriú 2.0: o Cervo desperto',itens:[
+    'Camboriú maior: Tiro de Guerra, frigorífico, cemitério do lado da Matriz, uma rua nova no centro e as casas das "oferendas", com bilhetes de quem ficou.',
+    'Sargento Valença, do Exército: escondido e ferido no Tiro de Guerra. Ache a maleta do pelotão para ele e ele entra na luta final com você.',
+    'O frigorífico: a maleta está na câmara fria, e lá dentro mora uma coisa que não morre. Só dá para fugir, batendo as portas atrás de você. Ela aparece uma vez só.',
+    'Furtividade: chegue por trás de um cultista distraído e mate em silêncio. Arraste o corpo para esconder (se acharem, dão o alarme) ou vista o manto e ande disfarçado no meio deles.',
+    'A missa da meia-noite: o sino toca três vezes, a cidade inteira entra na Matriz com velas e o Pregador fala de você no alto-falante.',
+    'O Pregador aparece no seu caminho: na escadaria, no fim da rua, na porta da casa dele e no cemitério. E some.',
+    'O Cervo em duas formas: depois da luta na igreja vem uma transformação, o teto cai e ele sai pela parede, enorme, caçando você pela cidade. O Nicolas atira do morro e o Sargento Valença entra na luta.',
+    'Muito mais cutscenes no capítulo, sons demoníacos novos (rugido, coro ao contrário, grave que treme, coração, ossos, ganchos, sussurros) e, perto do fim da história, o drone do Nicolas mostra Camboriú depois do Cervo.',
+    'Opções: intensidade do terror (menos sustos, normal ou mais sustos). No celular: guia dos controles na primeira vez (e em Opções).',
+    'Online: aviso quando você e quem criou a sala estão em versões diferentes do jogo.',
+  ]},
   {v:'1.13.1',d:'16/10/2026',t:'Revisão de falas e correções',itens:[
     'Ninguém fala mais de onde não está: o Matheus e o Edu não comentam nada em Camboriú (ou em qualquer lugar em que não estejam com você). Quando o amigo não está do lado, quem fala é o Richard.',
     'Em Camboriú não acontecem mais eventos de zumbi (gente presa embaixo de carro, sobrevivente fugindo de zumbi, chuva de cinza etc.) e a seta de missão secundária não puxa mais você para fora da cidade.',
