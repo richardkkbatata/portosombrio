@@ -20,8 +20,8 @@ function adrUse(){
   return true;
 }
 function adrEnd(quiet){
-  if(P.adrBase!=null)DBG.speed=P.adrBase; P.adrBase=null; const was=adrOn(); P.adren=0;
-  if(was&&!quiet){P.st=Math.min(P.st,25);P.tired=true;toast('A adrenalina passou. Você está sem fôlego.');}
+  if(P.adrBase!=null)DBG.speed=P.adrBase; const was=P.adrBase!=null||adrOn(); P.adrBase=null; P.adren=0;
+  if(was&&!quiet){P.st=0;P.tired=true;toast('A adrenalina passou. Você está sem fôlego.');}
 }
 {const hw=healWith; healWith=function(id){if(id==='adren')return adrUse();return hw.apply(this,arguments);};}
 {const vt=v16Tick; v16Tick=function(dt){vt(dt);

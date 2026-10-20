@@ -25,7 +25,9 @@ function uniGen(){
   {const g=building(CX+117,CY+85,7,5,{floor:T.TILEF,roof:'#4a8a5a',name:'Guarita · Entrada de veículos',doors:[['S',2,2],['W',2,1]],kind:'guarita'});
     const n=npcs.find(x=>x.id==='ademir'); LM.uniGuaritaVelha=LM.uniGuarita; LM.uniGuarita={x:tc(CX+120),y:tc(CY+87)};
     if(n){n.x=LM.uniGuarita.x;n.y=LM.uniGuarita.y;}
-    lights.push({x:LM.uniGuarita.x,y:LM.uniGuarita.y,r:110,c:'lamp',f:1});}
+    lights.push({x:LM.uniGuarita.x,y:LM.uniGuarita.y,r:110,c:'lamp',f:1});
+    // o revólver do Seu Ademir vai junto pra guarita nova
+    for(const [u,dx] of [['w110rev',-1],['w110m38a',1]]){const p=pickups.find(q=>q.uid===u);if(!p)continue;pickOcc.delete(idx(p.tx,p.ty));const [x,y]=freeTileNear(CX+120+dx,CY+86,false);p.tx=x;p.ty=y;p.x=tc(x);p.y=tc(y);pickOcc.add(idx(x,y));}}
   // ---- a câmara fria do Bloco 5 (laboratórios) ----
   {setT(CX+8,CY+76,T.WALL);setT(CX+8,CY+77,T.WALL);
     addGate('uniLab',CX+3,CY+71,2,1,null,'#8a9aa0','Porta da câmara fria','Porta de aço com um teclado de quatro números. Tem alguém batendo do outro lado.',T.TILEF);
@@ -118,7 +120,7 @@ function uniBrunaFree(){
 PCH.locutor=PCH.locutor||{name:'Alto-falante',skin:'#c8946c',shade:'#9a6a4a',hair:'#2a2622',iris:'#2a1a10',bg:['#1a1a1a','#050505'],glow:'200,200,160',voice:130};
 // carregar o registro: a porta da câmara continua aberta, a Bruna continua na sala dos professores
 {const aws=applyWorldState; applyWorldState=function(){aws();const F=G.flags;
-  if(F.uniLab){const g=gates.find(x=>x.id==='uniLab');if(g&&!g.open)openGate(g);}
+  if(F.uniLab){const g=gates.find(x=>x.id==='uniLab');if(g&&!g.open)openGate(g);if(!F.brunaOk)later(800,uniBrunaFree);}
   if(F.brunaOk&&LM.uniSafe&&!npcs.some(n=>n.id==='brunaS'))npcs.push({id:'brunaS',name:'Bruna',x:LM.uniSafe.x+20,y:LM.uniSafe.y+10,ang:0,col:'#e8e6e0',hair:'#3a2418',skin:'#d8a888',cond:()=>G.flags.brunaOk&&!G.flags.uniDone});};}
 // missões: aparece na lista de secundárias da mochila
 if(typeof misBody==='function'){const mb=misBody; misBody=function(){let s=mb();const F=G.flags;if(!F.brunaCall)return s;
@@ -128,7 +130,7 @@ if(typeof misBody==='function'){const mb=misBody; misBody=function(){let s=mb();
 // objetivo: só quando a história não está pedindo nada naquele momento (depois da biblioteca, por exemplo)
 {const ob=objective; objective=function(){const o=ob();const F=G.flags;
   if(o&&o.t&&/guarita da entrada de pedestres/.test(o.t))o.t='Ache o Seu Ademir na guarita da entrada de veículos da Universidade de BC, do lado da biblioteca';
-  try{if(F.brunaCall&&!F.brunaOk&&uniCampus()&&(!o||!o.at||F.uniDone)){if(!F.uniLab)return {t:'Opcional: a senha da câmara fria do Bloco 5 está na lista de ramais da Secretaria (Bloco 3)',at:G.files&&G.files.has(DOC116)?LM.uniLab:LM.bloco3};}}catch(e){}
+  try{if(F.brunaCall&&!F.brunaOk&&uniCampus()&&(!o||!o.at||F.uniDone)){if(!F.uniLab)return {t:G.files&&G.files.has(DOC116)?'Opcional: abra a câmara fria do Bloco 5 com a senha da lista de ramais e tire a Bruna de lá':'Opcional: a senha da câmara fria do Bloco 5 está na lista de ramais da Secretaria (Bloco 3)',at:G.files&&G.files.has(DOC116)?LM.uniLab:LM.bloco3};}}catch(e){}
   return o;};}
 dbgExtra('1.16 · Universidade',[['uni:ademir','Ir até o Seu Ademir (guarita nova)'],['uni:bruna','Receber a chamada da Bruna'],['uni:lab','Ir até a câmara fria do Bloco 5'],['uni:livre','Soltar a Bruna']],function(k){
   const F=G.flags,close=()=>{if(UI.close)UI.close();G.mode='play';};
