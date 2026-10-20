@@ -153,3 +153,16 @@ Os screenshots (`launcher2-*.png`) ficam no diretório de rascunho.
   não existir na versão do runtime, o código cai sozinho em ler/gravar binário.
 - Antivírus/SmartScreen ao abrir dois `.exe` diferentes com o mesmo conteúdo.
 - O `neutralinojs.log` sendo gravado do lado do `NightGetaway.exe`.
+
+## 2.0.1 — build de diagnóstico (pendente de confirmação)
+
+A 2.0.0 (porta sorteada, uma página só, `tokenSecurity: one-time`) **ainda deu `NE_CL_IVCTOKN`** no PC do dono.
+Ou seja: a porta fixa não era a causa, ou não era a única.
+
+A 2.0.1 muda **uma coisa só**: `tokenSecurity` passa de `one-time` para `none`, para contornar o token
+enquanto a causa real não é conhecida. Risco aceito porque a porta é sorteada (`port: 0`), a
+`nativeAllowList` é mínima e o launcher fica aberto por pouco tempo.
+
+**Não publique a 2.0.1 no site sem o dono confirmar que abriu.** O site ainda oferece a 2.0.0.
+Se a 2.0.1 também falhar, o próximo passo é o `neutralinojs.log` (log já vem ligado) — sem ele é chute.
+Se a 2.0.1 funcionar, vale tentar voltar para `one-time` isoladamente para descobrir a causa de verdade.
