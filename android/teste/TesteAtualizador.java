@@ -45,6 +45,14 @@ public class TesteAtualizador {
     ok("tamanho lido", i != null && i.tamanho > 1000);
     ok("jogo que não existe no catálogo", Atualizador.lerCatalogo(json, "outro-jogo") == null);
 
+    // 1b. novidades da versão (as notas que a tela do launcher mostra)
+    ok("notas lidas do catálogo", i != null && i.notas.length > 0);
+    ok("nota não vem vazia", i != null && i.notas[0].length() > 10);
+    ok("notas nunca são null", Atualizador.notas("{\"sem\":1}").length == 0);
+    String[] n2 = Atualizador.notas("{\"notas\": [\"um\", \"dois \\\"três\\\"\"], \"x\": 1}");
+    ok("duas notas", n2.length == 2 && n2[0].equals("um"));
+    ok("aspas dentro da nota", n2.length == 2 && n2[1].equals("dois \"três\""));
+
     // 2. comparação de versões
     ok("1.14 > 1.13.1", Atualizador.maior("1.14", "1.13.1"));
     ok("1.9.2 > 1.9", Atualizador.maior("1.9.2", "1.9"));
@@ -60,6 +68,21 @@ public class TesteAtualizador {
         && texto(baixado).contains("Porto Sombrio") && texto(baixado).contains("app.js"));
     ok("o arquivo .tmp foi apagado", !tmp.exists());
     ok("o jogo ativo não foi mexido ainda", texto(ativo).contains("JOGO VELHO"));
+
+    // 3b. andamento do download (a barra de progresso da tela do launcher)
+    baixado.delete();
+    final long[] ultimo = {-1, 0, 0};   // último "feito", total, quantas vezes avisou
+    final boolean[] cresce = {true};
+    Atualizador.Progresso p = new Atualizador.Progresso() {
+      public void andou(long feito, long total) {
+        if (feito < ultimo[0]) cresce[0] = false;
+        ultimo[0] = feito; ultimo[1] = total; ultimo[2]++;
+      }
+    };
+    String vp = Atualizador.procurarEBaixar(base + "/catalogo.json", "porto-sombrio", "1.0", baixado, tmp, p);
+    ok("baixou avisando o andamento", vp != null && ultimo[2] > 0);
+    ok("o andamento só cresce", cresce[0]);
+    ok("terminou no tamanho do pacote", ultimo[0] == i.tamanho && ultimo[1] == i.tamanho);
 
     // 4. já está na versão do catálogo: não baixa nada
     baixado.delete();

@@ -45,12 +45,23 @@ public final class Atualizador {
 
   private Atualizador() { }
 
+  /**
+   * Quem quiser acompanhar o download (a barra de progresso da tela do launcher).
+   * "total" é 0 quando o servidor não diz o tamanho.
+   */
+  public interface Progresso {
+    void andou(long baixado, long total);
+  }
+
   /** O que o catálogo diz sobre um jogo. */
   public static final class Info {
     public final String versao, url, sha256;
     public final long tamanho;
-    Info(String versao, String url, String sha256, long tamanho) {
+    /** "Novidades desta versão" — as frases da updates.json. Nunca null (pode ser vazio). */
+    public final String[] notas;
+    Info(String versao, String url, String sha256, long tamanho, String[] notas) {
       this.versao = versao; this.url = url; this.sha256 = sha256; this.tamanho = tamanho;
+      this.notas = notas == null ? new String[0] : notas;
     }
     public String toString() { return versao + " " + url + " " + sha256 + " " + tamanho; }
   }
@@ -79,7 +90,27 @@ public final class Atualizador {
     if (url == null || sha == null) return null;
     long t = 0;
     try { t = Long.parseLong(tam); } catch (Exception e) { }
-    return new Info(versao, url, sha.toLowerCase(), t);
+    return new Info(versao, url, sha.toLowerCase(), t, notas(trecho));
+  }
+
+  /** Tira a lista "notas": ["...","..."] do trecho do jogo no catálogo. */
+  public static String[] notas(String trecho) {
+    try {
+      int i = trecho.indexOf("\"notas\"");
+      if (i < 0) return new String[0];
+      int a = trecho.indexOf('[', i), f = trecho.indexOf(']', a);
+      if (a < 0 || f < 0) return new String[0];
+      String dentro = trecho.substring(a + 1, f);
+      java.util.ArrayList<String> lista = new java.util.ArrayList<String>();
+      Matcher m = Pattern.compile("\"((?:[^\"\\\\]|\\\\.)*)\"").matcher(dentro);
+      while (m.find() && lista.size() < 20) {
+        String s = m.group(1).replace("\\\"", "\"").replace("\\n", " ").replace("\\/", "/").replace("\\\\", "\\");
+        if (s.trim().length() > 0) lista.add(s.trim());
+      }
+      return lista.toArray(new String[0]);
+    } catch (Throwable t) {
+      return new String[0];
+    }
   }
 
   private static String campo(String s, String nome) {
@@ -143,15 +174,26 @@ public final class Atualizador {
 
   /** Baixa um arquivo. Devolve false (e apaga o pedaço baixado) se falhar. */
   public static boolean baixarArquivo(String url, File destino, int espera) {
+    return baixarArquivo(url, destino, espera, null, 0);
+  }
+
+  /**
+   * O mesmo, avisando o andamento (para a barra de progresso). "totalDica" é o tamanho
+   * que o catálogo prometeu, usado quando o servidor não manda o tamanho.
+   */
+  public static boolean baixarArquivo(String url, File destino, int espera, Progresso p, long totalDica) {
     HttpURLConnection c = null;
     OutputStream fora = null;
     try {
       c = abrir(url, espera);
       if (c.getResponseCode() != 200) return false;
       destino.getParentFile().mkdirs();
+      long total = c.getContentLength();
+      if (total <= 0) total = totalDica;
       fora = new FileOutputStream(destino);
-      copiar(c.getInputStream(), fora, LIMITE_PACOTE);
+      copiar(c.getInputStream(), fora, LIMITE_PACOTE, p, total);
       fora.close(); fora = null;
+      if (p != null) p.andou(destino.length(), total > 0 ? total : destino.length());
       return true;
     } catch (Exception e) {
       fechar(fora);
@@ -164,13 +206,20 @@ public final class Atualizador {
   }
 
   private static void copiar(InputStream in, OutputStream fora, long limite) throws IOException {
+    copiar(in, fora, limite, null, 0);
+  }
+
+  private static void copiar(InputStream in, OutputStream fora, long limite, Progresso p, long total)
+      throws IOException {
     byte[] b = new byte[32 * 1024];
-    long total = 0;
+    long feito = 0, avisado = 0;
     int n;
     while ((n = in.read(b)) > 0) {
-      total += n;
-      if (total > limite) throw new IOException("arquivo grande demais");
+      feito += n;
+      if (feito > limite) throw new IOException("arquivo grande demais");
       fora.write(b, 0, n);
+      // avisa no máximo a cada 64 KB, para não atrapalhar o download
+      if (p != null && feito - avisado >= 64 * 1024) { avisado = feito; p.andou(feito, total); }
     }
     fora.flush();
   }
@@ -293,12 +342,18 @@ public final class Atualizador {
    */
   public static String procurarEBaixar(String urlCatalogo, String idJogo, String versaoLocal,
                                        File baixado, File tmp) {
+    return procurarEBaixar(urlCatalogo, idJogo, versaoLocal, baixado, tmp, null);
+  }
+
+  /** O mesmo, avisando o andamento do download. */
+  public static String procurarEBaixar(String urlCatalogo, String idJogo, String versaoLocal,
+                                       File baixado, File tmp, Progresso p) {
     try {
       String json = baixarTexto(urlCatalogo, ESPERA);
       if (json == null) return null;
       Info info = lerCatalogo(json, idJogo);
       if (info == null || !maior(info.versao, versaoLocal)) return null;
-      if (!baixarArquivo(info.url, tmp, ESPERA_PACOTE)) return null;
+      if (!baixarArquivo(info.url, tmp, ESPERA_PACOTE, p, info.tamanho)) return null;
       if (info.tamanho > 0 && tmp.length() != info.tamanho) { tmp.delete(); return null; }
       if (!info.sha256.equals(sha256(tmp))) { tmp.delete(); return null; }   // zip trocado/estragado
       boolean ok = extrairIndex(tmp, baixado);

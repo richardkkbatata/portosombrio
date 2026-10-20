@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>NightGetaway</title>
+<link rel="stylesheet" href="launcher.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="marca"><b>NightGetaway</b><small>Distribuidora &middot; jogos</small></div>
+  <div class="protocolo">
+    <div><span class="rec">REC</span> <span id="relogio">--:--:--</span></div>
+    <div>Linha: <span id="estado-linha">conferindo...</span></div>
+  </div>
+</header>
+
+<main class="folha">
+  <div class="papel">
+    <span class="fita e" aria-hidden="true"></span>
+    <span class="fita d" aria-hidden="true"></span>
+
+    <div class="cabecalho-doc">
+      <span>Pasta: <b>jogos instalados</b></span>
+      <span>Aparelho: <b>Android</b></span>
+    </div>
+
+    <div id="avisos"></div>
+
+    <section class="jogo">
+      <div class="capa" aria-hidden="true"><span class="capa-titulo">Porto<br>Sombrio</span></div>
+      <div class="dados">
+        <span class="carimbo" id="carimbo" hidden>Versão nova</span>
+        <h2 id="nome">Porto Sombrio</h2>
+        <p class="linha-ver">
+          Instalada: <b id="versao">—</b>
+          <span id="linha-nova" hidden> &middot; Disponível: <b id="versao-nova">—</b></span>
+        </p>
+
+        <div class="progresso" id="progresso" hidden>
+          <div class="barra"><i id="barra-cheia"></i></div>
+          <p class="barra-texto" id="barra-texto">Baixando...</p>
+        </div>
+
+        <div id="bloco-notas" hidden>
+          <p class="notas-titulo">Novidades desta versão</p>
+          <ul class="notas" id="notas"></ul>
+        </div>
+
+        <div class="acoes">
+          <button class="bt" id="bt-jogar" type="button">Jogar</button>
+          <button class="bt vermelho" id="bt-atualizar" type="button" hidden>Atualizar</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="rodape">
+  <span>NightGetaway &middot; nightgetaway.net.br</span>
+  <span>Aplicativo <span id="versao-app">—</span></span>
+</footer>
+
+<script src="launcher.js"></script>
+</body>
+</html>

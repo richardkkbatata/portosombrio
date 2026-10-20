@@ -7,6 +7,7 @@
   <string name="pronta_fim">). Ela entra na próxima vez que você abrir o jogo.</string>
   <string name="atualizado">Jogo atualizado para a versão</string>
   <string name="voltou">A atualização não abriu. Voltamos para a versão anterior do jogo.</string>
+  <string name="dica_voltar">Para sair do jogo e voltar ao NightGetaway, segure o botão voltar.</string>
   <string name="so_wifi_1">Tem versão nova do jogo (</string>
   <string name="so_wifi_2">), mas você não está no Wi-Fi. Toque aqui para baixar pelos dados móveis.</string>
 </resources>
