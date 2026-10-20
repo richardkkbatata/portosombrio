@@ -4,11 +4,13 @@ CATÁLOGO DO LAUNCHER — o arquivo que o launcher NightGetaway lê para saber s
 
 Gera:
   site/launcher/catalogo.json                         -> lista dos jogos e a versão atual de cada um
-  site/launcher/porto-sombrio/<versão>-windows.zip    -> o HTML do jogo (Windows), zipado
+  site/launcher/porto-sombrio/<versão>-windows.zip    -> o resources.neu do jogo (Windows), zipado
   site/launcher/porto-sombrio/<versão>-android.zip    -> o HTML preparado pro app Android, zipado
 
-O launcher baixa o pacote, confere o sha256 e troca só o arquivo do jogo: ninguém
-precisa baixar zip nem APK novo a cada versão.
+No Windows o launcher baixa esse pacote, confere o sha256 e troca o resources.neu
+que fica do lado do "Porto Sombrio.exe" na pasta de jogos. O jogo continua sendo
+aberto pelo .exe dele (o mesmo de hoje), então o save não muda de lugar.
+No Android o pacote continua sendo só o index.html (o app usa o HTML direto).
 
 Roda sozinho dentro do gerar_site.py (e, por tabela, do atualizar_jogo.py).
 Também dá pra rodar na mão:  python3 ferramentas/gerar_catalogo.py
@@ -22,7 +24,7 @@ SITE = RAIZ / 'site'
 LAN = SITE / 'launcher'
 JOGO = RAIZ / 'jogo-original' / 'porto-sombrio.html'
 DISTRIBUIDORA = 'NightGetaway'
-LAUNCHER_MIN = '1.0.0'   # versão mínima do launcher que entende este catálogo
+LAUNCHER_MIN = '2.0.0'   # versão mínima do launcher que entende este catálogo (2.0 = pacote com resources.neu)
 
 
 def dominio():
@@ -35,18 +37,65 @@ def sha256(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
 
 
-def zipar(destino: Path, html: str):
-    """Um zip com um index.html só. Data fixa pra não mudar o sha256 à toa."""
+def zipar(destino: Path, nome_dentro: str, dados: bytes):
+    """Um zip com um arquivo só. Data fixa pra não mudar o sha256 à toa."""
     destino.parent.mkdir(parents=True, exist_ok=True)
-    dados = html.encode('utf-8')
     buf = destino.with_suffix('.tmp')
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
-        info = zipfile.ZipInfo('index.html', date_time=(2026, 1, 1, 0, 0, 0))
+        info = zipfile.ZipInfo(nome_dentro, date_time=(2026, 1, 1, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED
         info.external_attr = 0o644 << 16
         z.writestr(info, dados)
     buf.replace(destino)
     return destino
+
+
+def config_do_jogo(versao: str) -> bytes:
+    """
+    A configuração do jogo no Windows. Sai do resources.neu que já funciona
+    (o do zip de downloads), só trocando o número da versão. Se não achar o zip,
+    usa a configuração padrão do jogo (porta sorteada, sem API nativa).
+    """
+    padrao = {
+        'applicationId': 'js.richard.portosombrio', 'version': versao,
+        'defaultMode': 'window', 'port': 0, 'documentRoot': '/resources/', 'url': '/',
+        'enableServer': True, 'enableNativeAPI': False, 'tokenSecurity': 'one-time',
+        'logging': {'enabled': False, 'writeToLogFile': False},
+        'modes': {'window': {'title': 'Porto Sombrio', 'width': 1280, 'height': 800,
+                             'minWidth': 640, 'minHeight': 400, 'fullScreen': True,
+                             'center': True, 'resizable': True, 'enableInspector': False,
+                             'exitProcessOnClose': True}},
+        'cli': {'binaryName': 'PortoSombrio', 'resourcesPath': '/resources/'},
+    }
+    cfg = padrao
+    zips = sorted((SITE / 'downloads').glob('porto-sombrio-*-windows.zip'))
+    if zips:
+        sys.path.insert(0, str(AQUI))
+        import gerar_launcher                      # mesma leitura/escrita de asar do launcher
+        with zipfile.ZipFile(zips[-1]) as zf:
+            nomes = [n for n in zf.namelist() if n.endswith('resources.neu')]
+            if nomes:
+                tmp = LAN / '.neu-do-zip.tmp'
+                tmp.parent.mkdir(parents=True, exist_ok=True)
+                tmp.write_bytes(zf.read(nomes[0]))
+                try:
+                    arq = gerar_launcher.ler_asar(tmp)
+                    cfg = json.loads(arq['neutralino.config.json'])
+                finally:
+                    tmp.unlink(missing_ok=True)
+    cfg['version'] = versao
+    return json.dumps(cfg, indent=2).encode('utf-8')
+
+
+def montar_neu(destino: Path, versao: str, html: str) -> bytes:
+    """Monta o resources.neu do jogo (config + resources/index.html) e devolve os bytes."""
+    sys.path.insert(0, str(AQUI))
+    import gerar_launcher
+    gerar_launcher.escrever_asar(destino, {
+        'neutralino.config.json': config_do_jogo(versao),
+        'resources/index.html': html.encode('utf-8'),
+    })
+    return destino.read_bytes()
 
 
 def gerar():
@@ -66,11 +115,21 @@ def gerar():
     # limpa pacotes de versões antigas (fica só a atual + a anterior, pra reserva)
     antigos = sorted(pasta.glob('*-windows.zip')) + sorted(pasta.glob('*-android.zip'))
     pacotes = {}
-    for marca, html in (('windows', html_win), ('android', html_and)):
-        p = zipar(pasta / f'{versao}-{marca}.zip', html)
+    pasta.mkdir(parents=True, exist_ok=True)
+    # Windows: o resources.neu inteiro (o launcher troca ele do lado do .exe do jogo)
+    neu_tmp = pasta / '.resources.neu.tmp'
+    try:
+        neu = montar_neu(neu_tmp, versao, html_win)
+    finally:
+        neu_tmp.unlink(missing_ok=True)
+    conteudo = {'windows': ('resources.neu', neu),
+                'android': ('index.html', html_and.encode('utf-8'))}
+    for marca, (nome_dentro, bytes_dentro) in conteudo.items():
+        p = zipar(pasta / f'{versao}-{marca}.zip', nome_dentro, bytes_dentro)
         b = p.read_bytes()
         pacotes[marca] = {'url': f'{base}/launcher/porto-sombrio/{p.name}',
-                          'tamanho': len(b), 'sha256': sha256(b)}
+                          'tamanho': len(b), 'sha256': sha256(b),
+                          'arquivo': nome_dentro}
     guardar = {f'{versao}-windows.zip', f'{versao}-android.zip'}
     for p in antigos:
         if p.name not in guardar and p.exists():

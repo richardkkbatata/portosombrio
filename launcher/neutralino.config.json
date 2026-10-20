@@ -1,30 +1,33 @@
 {
   "applicationId": "br.net.nightgetaway.launcher",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "defaultMode": "window",
-  "port": 42071,
+  "port": 0,
   "documentRoot": "/resources/",
   "url": "/",
   "enableServer": true,
   "enableNativeAPI": true,
   "tokenSecurity": "one-time",
   "nativeAllowList": [
-    "app.*",
-    "window.*",
+    "app.exit",
+    "app.killProcess",
+    "window.setTitle",
+    "window.minimize",
     "os.getEnv",
+    "os.execCommand",
     "filesystem.readFile",
     "filesystem.writeFile",
     "filesystem.readBinaryFile",
     "filesystem.writeBinaryFile",
+    "filesystem.copy",
     "filesystem.createDirectory",
     "filesystem.remove",
     "filesystem.move",
-    "filesystem.getStats",
-    "filesystem.readDirectory"
+    "filesystem.getStats"
   ],
   "logging": {
-    "enabled": false,
-    "writeToLogFile": false
+    "enabled": true,
+    "writeToLogFile": true
   },
   "modes": {
     "window": {

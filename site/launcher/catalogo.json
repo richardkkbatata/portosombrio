@@ -1,6 +1,6 @@
 {
   "distribuidora": "NightGetaway",
-  "launcher_min": "1.0.0",
+  "launcher_min": "2.0.0",
   "gerado": "2026-10-20",
   "jogos": [
     {
@@ -12,13 +12,15 @@
       "site": "https://nightgetaway.net.br/",
       "pacote_windows": {
         "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.15-windows.zip",
-        "tamanho": 540256,
-        "sha256": "5c667b27403dbd73fd637234f5ed577ef395ae1816b88c513526450693f7ddb6"
+        "tamanho": 540649,
+        "sha256": "501be48c705a5ea7e804dd33f8c218a68abe111871b0e441585edbf2cfd49361",
+        "arquivo": "resources.neu"
       },
       "pacote_android": {
         "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.15-android.zip",
         "tamanho": 540211,
-        "sha256": "1fb77ab9033b0ed91ebf0dd680c6dfdbcbcbd0d17fc7bda3d8cb9081483aafb9"
+        "sha256": "1fb77ab9033b0ed91ebf0dd680c6dfdbcbcbd0d17fc7bda3d8cb9081483aafb9",
+        "arquivo": "index.html"
       },
       "notas": [
         "Conta na nuvem (opcional): o seu registro fica guardado também na internet e você continua a partida em outro aparelho.",

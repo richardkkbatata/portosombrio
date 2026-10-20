@@ -4,14 +4,19 @@
    Como rodar (na raiz do projeto):
      env -u HTTPS_PROXY -u https_proxy node launcher/teste/teste.js
 
+   Arquitetura testada (launcher 2.0): o launcher NÃO roda o jogo dentro dele.
+   Ele troca o resources.neu da pasta de jogos e ABRE o "Porto Sombrio.exe".
+
    O teste:
-     - monta uma pasta de mentira com o launcher + catálogos + pacotes .zip;
+     - monta uma pasta de mentira com o launcher + catálogos + pacotes .zip
+       (cada pacote tem um resources.neu de verdade, no formato asar);
      - sobe um servidor na porta 8792;
-     - abre o launcher no Chromium e testa:
-         1. sem internet                 5. clique em JOGAR (e o save continua)
-         2. tem versão nova              6. nada instalado
-         3. sha256 errado                7. launcher velho (launcher_min)
-         4. download interrompido        8. versão que não abriu -> volta na reserva
+     - abre o launcher no Chromium (UMA única página, sem navegar) e testa:
+         1. sem internet                 6. primeira instalação (copia o .exe)
+         2. tem versão nova              7. launcher velho (launcher_min)
+         3. sha256 errado                8. versão que não abriu -> volta na reserva
+         4. download interrompido        9. pacote que não é um resources.neu
+         5. clique em JOGAR (confere o comando e o caminho exatos)
      - tira os screenshots e termina com TUDO OK (ou lista os erros).
    ===================================================================== */
 'use strict';
@@ -29,22 +34,49 @@ const PORTA = 8792;
 const BASE = `http://127.0.0.1:${PORTA}`;
 const LOCAL = 'C:\\Users\\Richard\\AppData\\Local';
 const PASTA = LOCAL + '\\NightGetaway\\jogos\\porto-sombrio';
+const EXE = PASTA + '\\Porto Sombrio.exe';
+const EXE_LAUNCHER = 'C:\\Program Files\\NightGetaway\\runtime\\Porto Sombrio.exe';
+const CMD_ESPERADO = '"' + EXE + '"';
 
 let falhas = [];
 const ok = (t) => console.log('   ok  ' + t);
 function conferir(cond, t) { if (cond) ok(t); else { falhas.push(t); console.log('  ERRO ' + t); } }
 
-/* ------------------------------------------------- jogo de mentira e zips */
+/* ------------------------------------------------- resources.neu de mentira */
 function jogoFalso(versao) {
   return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">' +
     `<title>Porto Sombrio ${versao}</title></head><body>` +
     `<h1 id="marca-jogo">JOGO ${versao} RODANDO</h1>` +
-    '<!-- ' + 'x'.repeat(8000) + ' -->' +
-    '<script>document.title="Porto Sombrio ' + versao + '";</scr' + 'ipt></body></html>';
+    '<!-- ' + 'x'.repeat(150000) + ' -->' +
+    '</body></html>';
 }
 
+/** Monta um .neu (formato asar), igual ao que o gerar_catalogo.py publica. */
+function neuFalso(versao) {
+  const cfg = Buffer.from(JSON.stringify({
+    applicationId: 'js.richard.portosombrio', version: versao, port: 0,
+    enableNativeAPI: false, tokenSecurity: 'one-time',
+  }, null, 2), 'utf8');
+  const html = Buffer.from(jogoFalso(versao), 'utf8');
+  const hdr = {
+    files: {
+      'neutralino.config.json': { offset: '0', size: cfg.length },
+      resources: { files: { 'index.html': { offset: String(cfg.length), size: html.length } } },
+    },
+  };
+  const js = Buffer.from(JSON.stringify(hdr), 'utf8');
+  const pad = (4 - (js.length % 4)) % 4;
+  const js2 = Buffer.concat([js, Buffer.alloc(pad)]);
+  const cab = Buffer.alloc(16);
+  cab.writeUInt32LE(4, 0); cab.writeUInt32LE(js2.length + 8, 4);
+  cab.writeUInt32LE(js2.length + 4, 8); cab.writeUInt32LE(js.length, 12);
+  return Buffer.concat([cab, js2, cfg, html]);
+}
+/** O texto como o Neutralino de mentira guarda o binário no "disco". */
+const comoNoDisco = (buf) => buf.toString('latin1');
+
 function zipar(nome, conteudo) {
-  const dados = Buffer.from(conteudo, 'utf8');
+  const dados = Buffer.isBuffer(conteudo) ? conteudo : Buffer.from(conteudo, 'utf8');
   const comp = zlib.deflateRawSync(dados, { level: 9 });
   const crc = (function (b) { // crc32
     let c, t = [];
@@ -84,16 +116,21 @@ function montar() {
   }
   fs.copyFileSync(path.join(__dirname, 'mock.js'), path.join(SERVE, 'mock.js'));
   // troca os scripts do Neutralino pelo de mentira
-  for (const f of ['index.html', 'jogo.html']) {
-    let s = fs.readFileSync(path.join(SERVE, f), 'utf8');
-    s = s.replace('<script src="__neutralino_globals.js"></script>', '<script src="mock.js"></script>')
-         .replace('<script src="neutralino.js"></script>', '');
-    fs.writeFileSync(path.join(SERVE, f), s);
+  let s = fs.readFileSync(path.join(SERVE, 'index.html'), 'utf8');
+  s = s.replace('<script src="__neutralino_globals.js"></script>', '<script src="mock.js"></script>')
+       .replace('<script src="neutralino.js"></script>', '');
+  fs.writeFileSync(path.join(SERVE, 'index.html'), s);
+  if (fs.existsSync(path.join(SERVE, 'jogo.html'))) {
+    throw new Error('launcher/resources/jogo.html não deveria mais existir (arquitetura nova)');
   }
-  // pacote da 1.14 (bom) e um pedaço dele (download cortado)
-  const z = zipar('index.html', jogoFalso('1.14'));
+
+  // pacote da 1.14 (bom), um pedaço dele (download cortado) e um pacote errado
+  const neu = neuFalso('1.14');
+  const z = zipar('resources.neu', neu);
   fs.writeFileSync(path.join(SERVE, '1.14-windows.zip'), z);
   fs.writeFileSync(path.join(SERVE, 'curto.zip'), z.subarray(0, Math.floor(z.length / 2)));
+  const zruim = zipar('resources.neu', Buffer.from('nao sou um asar '.repeat(10000), 'utf8'));
+  fs.writeFileSync(path.join(SERVE, 'ruim.zip'), zruim);
 
   const notas = ['Camboriú maior: Tiro de Guerra, frigorífico, cemitério e as casas das oferendas.',
     'Sargento Valença entra na luta final com você.',
@@ -101,44 +138,62 @@ function montar() {
   const jogo = (extra) => Object.assign({
     id: 'porto-sombrio', nome: 'Porto Sombrio', versao: '1.14',
     capa: '', site: BASE + '/', notas: notas,
-    pacote_windows: { url: BASE + '/1.14-windows.zip', tamanho: z.length, sha256: sha(z) },
+    pacote_windows: { url: BASE + '/1.14-windows.zip', tamanho: z.length, sha256: sha(z), arquivo: 'resources.neu' },
   }, extra || {});
   const cat = (nome, c) => fs.writeFileSync(path.join(SERVE, nome), JSON.stringify(c, null, 2));
-  cat('catalogo.json', { distribuidora: 'NightGetaway', launcher_min: '1.0.0', jogos: [jogo()] });
+  cat('catalogo.json', { distribuidora: 'NightGetaway', launcher_min: '2.0.0', jogos: [jogo()] });
   cat('catalogo-sha.json', {
-    launcher_min: '1.0.0', jogos: [jogo({
+    launcher_min: '2.0.0', jogos: [jogo({
       pacote_windows: { url: BASE + '/1.14-windows.zip', tamanho: z.length, sha256: 'f'.repeat(64) },
     })],
   });
   cat('catalogo-curto.json', {
-    launcher_min: '1.0.0', jogos: [jogo({
+    launcher_min: '2.0.0', jogos: [jogo({
       pacote_windows: { url: BASE + '/curto.zip', tamanho: z.length, sha256: sha(z) },
     })],
   });
-  cat('catalogo-min.json', { launcher_min: '2.0.0', jogos: [jogo()] });
-  return z;
+  cat('catalogo-ruim.json', {
+    launcher_min: '2.0.0', jogos: [jogo({
+      pacote_windows: { url: BASE + '/ruim.zip', tamanho: zruim.length, sha256: sha(zruim) },
+    })],
+  });
+  cat('catalogo-min.json', { launcher_min: '9.0.0', jogos: [jogo()] });
+  return neu;
 }
 
 /* ------------------------------------------------- discos de mentira */
-function discoInstalado(versao, extra) {
+/** O launcher instalado (com o runtime do jogo junto) e nada na pasta de jogos. */
+function discoVazio() {
   const d = {};
-  d[PASTA + '\\index.html'] = jogoFalso(versao);
+  d[EXE_LAUNCHER] = 'MZ PROGRAMA DO JOGO (runtime)';
+  return d;
+}
+function discoInstalado(versao, extra) {
+  const d = discoVazio();
+  d[EXE] = 'MZ PROGRAMA DO JOGO (runtime)';
+  d[PASTA + '\\resources.neu'] = comoNoDisco(neuFalso(versao));
   d[PASTA + '\\estado.json'] = JSON.stringify(Object.assign({
     id: 'porto-sombrio', nome: 'Porto Sombrio', versao: versao,
-    notas: ['Versão instalada no computador.'], versao_anterior: null, tentativa: null,
+    notas: ['Versão instalada no computador.'], versao_anterior: null,
+    tentativa: null, lancou: true,
   }, extra || {}));
   return d;
 }
+/** O resources.neu gravado no disco é da versão X? */
+function discoTemVersao(disco, arquivo, versao) {
+  const s = disco[arquivo] || '';
+  return s.indexOf('JOGO ' + versao + ' RODANDO') >= 0;
+}
 
 /* ------------------------------------------------- ajuda */
-async function abrir(ctx, cat, seed, query) {
+async function abrir(ctx, cat, seed) {
   const page = await ctx.newPage();
   const erros = [];
   page.on('console', m => { if (m.type() === 'error') erros.push(m.text()); });
   page.on('pageerror', e => erros.push(String(e)));
   await page.addInitScript(({ c, s }) => { window.NG_CAT = c; window.NG_FS_SEED = s; },
     { c: BASE + '/' + cat, s: seed || {} });
-  await page.goto(BASE + '/index.html' + (query || ''), { waitUntil: 'load' });
+  await page.goto(BASE + '/index.html', { waitUntil: 'load' });
   await page.waitForSelector('#lista .jogo, #avisos .aviso', { timeout: 8000 }).catch(() => { });
   await page.waitForTimeout(350);
   page.erros = erros;
@@ -147,7 +202,7 @@ async function abrir(ctx, cat, seed, query) {
 const txt = (p) => p.textContent('body');
 
 async function main() {
-  const zbom = montar();
+  montar();
   const srv = spawn('python3', ['-m', 'http.server', String(PORTA), '--bind', '127.0.0.1'],
     { cwd: SERVE, stdio: 'ignore' });
   await new Promise(r => setTimeout(r, 900));
@@ -166,11 +221,16 @@ async function main() {
     conferir(/1\.13\.1/.test(t), 'mostra a versão instalada (1.13.1)');
     conferir(!(await p.isDisabled('[data-jogar]')), 'o botão JOGAR continua funcionando');
     conferir(await p.isHidden('[data-atualizar]'), 'não oferece atualizar sem catálogo');
-    // o 404 do catálogo é de propósito neste teste; o resto do console tem que estar limpo
     const sobrou = p.erros.filter(e => !/404|Failed to fetch|ERR_/.test(e));
     conferir(sobrou.length === 0, 'sem erros de verdade no console (' + sobrou.join(' | ') + ')');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-sem-internet.png'), fullPage: true });
-    tiros.push('launcher-sem-internet.png');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-sem-internet.png'), fullPage: true });
+    tiros.push('launcher2-sem-internet.png');
+    // JOGAR sem internet: abre o programa do jogo que já está instalado
+    await p.click('[data-jogar]');
+    await p.waitForFunction(() => /Jogo aberto|Não consegui abrir/.test(document.body.textContent), null, { timeout: 8000 });
+    let exec = await p.evaluate(() => window.NG_VER_EXEC());
+    conferir(exec.length === 1 && exec[0].cmd === CMD_ESPERADO,
+      'sem internet, JOGAR abre o exe da pasta de jogos (' + JSON.stringify(exec) + ')');
     await ctx.close();
 
     /* ---------- 2. versão nova: baixa, confere e troca ---------- */
@@ -179,39 +239,45 @@ async function main() {
     p = await abrir(ctx, 'catalogo.json', discoInstalado('1.13.1'));
     t = await txt(p);
     conferir(/nova no servidor/.test(t) && /1\.14/.test(t), 'avisa que tem versão nova');
-    conferir(/VERSÃO NOVA|versão nova/i.test(await p.textContent('.carimbo')), 'carimbo "versão nova"');
+    conferir(/versão nova/i.test(await p.textContent('.carimbo')), 'carimbo "versão nova"');
     conferir(/Sargento Valença/.test(t), 'mostra as Novidades (notas do catálogo)');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-versao-nova.png'), fullPage: true });
-    tiros.push('launcher-versao-nova.png');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-versao-nova.png'), fullPage: true });
+    tiros.push('launcher2-versao-nova.png');
     await p.click('[data-atualizar]');
-    await p.waitForFunction(() => /Pronto: versão|Não deu para atualizar/.test(document.body.textContent), null, { timeout: 15000 });
+    await p.waitForFunction(() => /Pronto: versão|Não deu para atualizar/.test(document.body.textContent), null, { timeout: 20000 });
     t = await txt(p);
     conferir(/Pronto: versão 1\.14 instalada/.test(t), 'baixou, conferiu o sha256 e instalou');
     let disco = await p.evaluate(() => window.NG_VER_DISCO());
-    conferir(/JOGO 1\.14 RODANDO/.test(disco[PASTA + '\\index.html'] || ''), 'o index.html no disco agora é a 1.14');
-    conferir(/JOGO 1\.13\.1 RODANDO/.test(disco[PASTA + '\\anterior.html'] || ''), 'a 1.13.1 ficou guardada em anterior.html');
-    conferir(!(PASTA + '\\index.html.tmp' in disco), 'o .tmp não sobrou (troca atômica)');
+    conferir(discoTemVersao(disco, PASTA + '\\resources.neu', '1.14'), 'o resources.neu no disco agora é a 1.14');
+    conferir(discoTemVersao(disco, PASTA + '\\anterior.neu', '1.13.1'), 'a 1.13.1 ficou guardada em anterior.neu');
+    conferir(!(PASTA + '\\resources.neu.tmp' in disco), 'o .tmp não sobrou (troca atômica)');
     let est = JSON.parse(disco[PASTA + '\\estado.json']);
-    conferir(est.versao === '1.14' && est.versao_anterior === '1.13.1' && est.tentativa === '1.14',
-      'estado.json: versão 1.14, anterior 1.13.1, marcada como tentativa');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-instalado.png'), fullPage: true });
-    tiros.push('launcher-instalado.png');
+    conferir(est.versao === '1.14' && est.versao_anterior === '1.13.1' && est.tentativa === '1.14' && est.lancou === false,
+      'estado.json: versão 1.14, anterior 1.13.1, marcada como tentativa e ainda não aberta');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-instalado.png'), fullPage: true });
+    tiros.push('launcher2-instalado.png');
 
-    /* ---------- 5. clicar em JOGAR (na mesma aba, save mantido) ---------- */
-    console.log('\n5) Clique em JOGAR (mesma origem, save do jogador mantido)');
-    await p.evaluate(() => localStorage.setItem('ps-save-1', 'MEU SAVE'));
+    /* ---------- 5. clicar em JOGAR ---------- */
+    console.log('\n5) Clique em JOGAR (abre o programa do jogo)');
     await p.click('[data-jogar]');
-    await p.waitForFunction(() => /JOGO 1\.14 RODANDO|Não consegui abrir/.test(document.body.textContent), null, { timeout: 8000 });
+    await p.waitForFunction(() => /Jogo aberto|Não consegui abrir/.test(document.body.textContent), null, { timeout: 8000 });
     t = await txt(p);
-    conferir(/JOGO 1\.14 RODANDO/.test(t), 'o jogo abriu (HTML do disco injetado em jogo.html)');
-    conferir(await p.evaluate(() => localStorage.getItem('ps-save-1')) === 'MEU SAVE',
-      'o save do jogador (localStorage) continua lá depois da troca de versão');
+    conferir(/Jogo aberto numa janela só dele/.test(t), 'avisa que o jogo abriu em janela própria');
+    exec = await p.evaluate(() => window.NG_VER_EXEC());
+    conferir(exec.length === 1, 'mandou abrir um programa só (' + exec.length + ')');
+    conferir(exec[0] && exec[0].cmd === CMD_ESPERADO,
+      'o comando é exatamente o exe da pasta de jogos: ' + (exec[0] ? exec[0].cmd : '—'));
+    conferir(exec[0] && exec[0].background === true, 'abre em segundo plano (não trava o launcher)');
+    conferir(!/catalogo|http|\.zip/.test(exec[0] ? exec[0].cmd : ''), 'o comando não vem do catálogo nem da internet');
+    conferir(/A versão 1\.14 é nova aqui/.test(t), 'pergunta se a versão nova abriu direito');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-jogo-aberto.png'), fullPage: true });
+    tiros.push('launcher2-jogo-aberto.png');
+    await p.click('[data-abriu]');
+    await p.waitForFunction(() => /está funcionando/.test(document.body.textContent), null, { timeout: 5000 });
     disco = await p.evaluate(() => window.NG_VER_DISCO());
     est = JSON.parse(disco[PASTA + '\\estado.json']);
-    conferir(est.tentativa === null, 'abriu de verdade: a marca de tentativa saiu do estado.json');
+    conferir(est.tentativa === null, '"abriu, está funcionando" tira a marca de tentativa');
     conferir(p.erros.length === 0, 'sem erros no console (' + p.erros.join(' | ') + ')');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-jogo-aberto.png') });
-    tiros.push('launcher-jogo-aberto.png');
     await ctx.close();
 
     /* ---------- 3. sha256 errado ---------- */
@@ -219,16 +285,16 @@ async function main() {
     ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
     p = await abrir(ctx, 'catalogo-sha.json', discoInstalado('1.13.1'));
     await p.click('[data-atualizar]');
-    await p.waitForFunction(() => /Não deu para atualizar|Pronto: versão/.test(document.body.textContent), null, { timeout: 15000 });
+    await p.waitForFunction(() => /Não deu para atualizar|Pronto: versão/.test(document.body.textContent), null, { timeout: 20000 });
     t = await txt(p);
     conferir(/Não deu para atualizar/.test(t) && /sha256/.test(t), 'recusa o pacote e explica o motivo');
     conferir(/continua com a versão 1\.13\.1/.test(t), 'avisa que nada foi trocado');
     disco = await p.evaluate(() => window.NG_VER_DISCO());
-    conferir(/JOGO 1\.13\.1 RODANDO/.test(disco[PASTA + '\\index.html'] || ''), 'o jogo no disco continua a 1.13.1');
-    conferir(!(PASTA + '\\index.html.tmp' in disco), 'não deixou lixo .tmp no disco');
+    conferir(discoTemVersao(disco, PASTA + '\\resources.neu', '1.13.1'), 'o jogo no disco continua a 1.13.1');
+    conferir(!(PASTA + '\\resources.neu.tmp' in disco), 'não deixou lixo .tmp no disco');
     conferir(JSON.parse(disco[PASTA + '\\estado.json']).versao === '1.13.1', 'estado.json intacto');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-sha-errado.png'), fullPage: true });
-    tiros.push('launcher-sha-errado.png');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-sha-errado.png'), fullPage: true });
+    tiros.push('launcher2-sha-errado.png');
     await ctx.close();
 
     /* ---------- 4. download interrompido ---------- */
@@ -236,52 +302,92 @@ async function main() {
     ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
     p = await abrir(ctx, 'catalogo-curto.json', discoInstalado('1.13.1'));
     await p.click('[data-atualizar]');
-    await p.waitForFunction(() => /Não deu para atualizar|Pronto: versão/.test(document.body.textContent), null, { timeout: 15000 });
+    await p.waitForFunction(() => /Não deu para atualizar|Pronto: versão/.test(document.body.textContent), null, { timeout: 20000 });
     t = await txt(p);
     conferir(/Não deu para atualizar/.test(t) && /interrompido/.test(t), 'percebe o download cortado');
     disco = await p.evaluate(() => window.NG_VER_DISCO());
-    conferir(/JOGO 1\.13\.1 RODANDO/.test(disco[PASTA + '\\index.html'] || ''), 'o jogo no disco continua a 1.13.1');
+    conferir(discoTemVersao(disco, PASTA + '\\resources.neu', '1.13.1'), 'o jogo no disco continua a 1.13.1');
     await ctx.close();
 
-    /* ---------- 6. nada instalado ---------- */
-    console.log('\n6) Primeira vez (nada instalado)');
+    /* ---------- 9. pacote que não é um resources.neu ---------- */
+    console.log('\n9) Pacote com sha256 certo mas conteúdo errado');
     ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
-    p = await abrir(ctx, 'catalogo.json', {});
+    p = await abrir(ctx, 'catalogo-ruim.json', discoInstalado('1.13.1'));
+    await p.click('[data-atualizar]');
+    await p.waitForFunction(() => /Não deu para atualizar|Pronto: versão/.test(document.body.textContent), null, { timeout: 20000 });
+    t = await txt(p);
+    conferir(/Não deu para atualizar/.test(t) && /formato certo|pequeno demais|configuração/.test(t),
+      'recusa um pacote que não é o arquivo do jogo');
+    disco = await p.evaluate(() => window.NG_VER_DISCO());
+    conferir(discoTemVersao(disco, PASTA + '\\resources.neu', '1.13.1'), 'o jogo no disco continua a 1.13.1');
+    await ctx.close();
+
+    /* ---------- 6. primeira instalação (copia o .exe) ---------- */
+    console.log('\n6) Primeira vez (nada instalado: tem que copiar o programa do jogo)');
+    ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
+    p = await abrir(ctx, 'catalogo.json', discoVazio());
     t = await txt(p);
     conferir(/nenhuma/.test(t), 'diz que não tem versão instalada');
     conferir(await p.isDisabled('[data-jogar]'), 'JOGAR fica desligado até baixar');
     conferir(/Baixar e instalar/.test(await p.textContent('[data-atualizar]')), 'botão "Baixar e instalar"');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-primeira-vez.png'), fullPage: true });
-    tiros.push('launcher-primeira-vez.png');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-primeira-vez.png'), fullPage: true });
+    tiros.push('launcher2-primeira-vez.png');
     await p.click('[data-atualizar]');
-    await p.waitForFunction(() => /Pronto: versão|Não deu/.test(document.body.textContent), null, { timeout: 15000 });
+    await p.waitForFunction(() => /Pronto: versão|Não deu/.test(document.body.textContent), null, { timeout: 20000 });
     conferir(/Pronto: versão 1\.14 instalada/.test(await txt(p)), 'instala do zero');
+    disco = await p.evaluate(() => window.NG_VER_DISCO());
+    conferir(/MZ PROGRAMA DO JOGO/.test(disco[EXE] || ''), 'copiou o "Porto Sombrio.exe" para a pasta de jogos');
+    conferir(!(EXE + '.tmp' in disco), 'não sobrou .exe.tmp');
+    conferir(discoTemVersao(disco, PASTA + '\\resources.neu', '1.14'), 'gravou o resources.neu da 1.14');
+    conferir(!(PASTA + '\\anterior.neu' in disco), 'na primeira vez não existe reserva');
+    await p.click('[data-jogar]');
+    await p.waitForFunction(() => /Jogo aberto|Não consegui abrir/.test(document.body.textContent), null, { timeout: 8000 });
+    exec = await p.evaluate(() => window.NG_VER_EXEC());
+    conferir(exec.length === 1 && exec[0].cmd === CMD_ESPERADO, 'depois de instalar, JOGAR abre o exe certo');
     await ctx.close();
 
     /* ---------- 7. launcher velho ---------- */
-    console.log('\n7) Launcher velho (launcher_min 2.0.0)');
+    console.log('\n7) Launcher velho (launcher_min 9.0.0)');
     ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
     p = await abrir(ctx, 'catalogo-min.json', discoInstalado('1.13.1'));
     t = await txt(p);
     conferir(/Tem um launcher novo/.test(t), 'avisa que o launcher está velho');
     conferir(!(await p.isDisabled('[data-jogar]')), 'mesmo assim deixa jogar');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-min.png'), fullPage: true });
-    tiros.push('launcher-min.png');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-min.png'), fullPage: true });
+    tiros.push('launcher2-min.png');
     await ctx.close();
 
     /* ---------- 8. versão que não abriu -> volta na reserva ---------- */
     console.log('\n8) A versão nova não abriu -> volta para a reserva');
+    // 8a. automático: ficou marcada como tentativa, o jogador já tinha mandado abrir
     ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
-    const d = discoInstalado('1.14', { versao_anterior: '1.13.1', tentativa: '1.14' });
-    d[PASTA + '\\anterior.html'] = jogoFalso('1.13.1');
+    let d = discoInstalado('1.14', { versao_anterior: '1.13.1', tentativa: '1.14', lancou: true });
+    d[PASTA + '\\anterior.neu'] = comoNoDisco(neuFalso('1.13.1'));
     p = await abrir(ctx, 'catalogo.json', d);
     t = await txt(p);
     conferir(/A versão 1\.14 não abriu/.test(t) && /1\.13\.1/.test(t), 'avisa que voltou para a anterior');
     disco = await p.evaluate(() => window.NG_VER_DISCO());
-    conferir(/JOGO 1\.13\.1 RODANDO/.test(disco[PASTA + '\\index.html'] || ''), 'o disco voltou para a 1.13.1');
+    conferir(discoTemVersao(disco, PASTA + '\\resources.neu', '1.13.1'), 'o disco voltou para a 1.13.1');
     conferir(JSON.parse(disco[PASTA + '\\estado.json']).versao === '1.13.1', 'estado.json voltou para a 1.13.1');
-    await p.screenshot({ path: path.join(SCRATCH, 'launcher-reserva.png'), fullPage: true });
-    tiros.push('launcher-reserva.png');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-reserva.png'), fullPage: true });
+    tiros.push('launcher2-reserva.png');
+    await ctx.close();
+
+    // 8b. na mão: o jogador clica em "não abriu"
+    console.log('   (e no botão "não abriu")');
+    ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
+    d = discoInstalado('1.14', { versao_anterior: '1.13.1', tentativa: '1.14', lancou: false });
+    d[PASTA + '\\anterior.neu'] = comoNoDisco(neuFalso('1.13.1'));
+    p = await abrir(ctx, 'catalogo.json', d);
+    await p.click('[data-jogar]');
+    await p.waitForFunction(() => /é nova aqui/.test(document.body.textContent), null, { timeout: 8000 });
+    await p.click('[data-nao-abriu]');
+    await p.waitForFunction(() => /Voltei para a versão/.test(document.body.textContent), null, { timeout: 5000 });
+    disco = await p.evaluate(() => window.NG_VER_DISCO());
+    conferir(discoTemVersao(disco, PASTA + '\\resources.neu', '1.13.1'), 'o botão "não abriu" devolve a 1.13.1');
+    conferir(JSON.parse(disco[PASTA + '\\estado.json']).tentativa === null, 'e limpa a marca de tentativa');
+    await p.screenshot({ path: path.join(SCRATCH, 'launcher2-nao-abriu.png'), fullPage: true });
+    tiros.push('launcher2-nao-abriu.png');
     await ctx.close();
   } finally {
     await navegador.close();

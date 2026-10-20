@@ -119,6 +119,10 @@ button{font-family:var(--f-maquina);cursor:pointer}
   transition:width .18s linear}
 .barra-texto{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-2);margin-top:4px}
 
+/* ---------------- confirmação da versão nova (papel carbono) ---------------- */
+.confirma{margin:14px 0 2px;border:1.5px dashed var(--tinta-3);padding:10px 14px;background:var(--papel-2)}
+.confirma p{margin:0 0 10px;font-size:14px}
+
 /* ---------------- rodapé ---------------- */
 .rodape{max-width:1040px;margin:0 auto;padding:0 28px 26px;font-size:12px;letter-spacing:.1em;
   text-transform:uppercase;color:#2f2718;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 18px}
