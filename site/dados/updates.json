@@ -1,7 +1,18 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.14",
+  "versao_atual": "1.15",
   "versoes": [
+    {
+      "versao": "1.15",
+      "data": "2026-10-20",
+      "titulo": "Conta na nuvem e launcher",
+      "resumo": "Conta na nuvem (opcional): o seu registro fica guardado também na internet e você continua a partida em outro aparelho.",
+      "mudancas": [
+        "Conta na nuvem (opcional): o seu registro fica guardado também na internet e você continua a partida em outro aparelho.",
+        "Celular: o aplicativo se atualiza sozinho pelo Wi-Fi. Não precisa mais baixar o APK a cada versão.",
+        "Windows: launcher NightGetaway, que instala uma vez e traz o jogo novo sozinho."
+      ]
+    },
     {
       "versao": "1.14",
       "data": "2026-10-19",

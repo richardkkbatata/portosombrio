@@ -243,7 +243,7 @@ UI.nuConf=function(n,tsLocal,info){
   // botão no título, depois de Registros
   const tt=UI.title.bind(UI); UI.title=function(){tt();try{const m=OV.querySelector('.menu');if(!m||m.querySelector('[data-a=nuvem]'))return;
     const b=document.createElement('button');b.className='btn';b.dataset.a='nuvem';b.dataset.from='title';
-    b.textContent=nuLogado()?`Conta na nuvem: ${NU.apelido||NU.usuario}`:'Conta na nuvem (opcional)';
+    b.textContent=nuLogado()?`Conta na nuvem: ${NU.apelido||NU.usuario}`:'Conta na nuvem';
     const ref=m.querySelector('[data-a=slotsMenu]');if(ref&&ref.parentNode===m&&m.insertBefore)m.insertBefore(b,ref.nextSibling);else m.appendChild(b);
   }catch(e){}};
   try{const st=document.createElement('style');st.textContent=`.nuvem .nu-form{display:flex;flex-direction:column;gap:10px;margin:12px 0}

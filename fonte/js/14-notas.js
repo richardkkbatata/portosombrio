@@ -1,6 +1,11 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.15',d:'20/10/2026',t:'Conta na nuvem e launcher',itens:[
+    'Conta na nuvem (opcional): no título, botão Conta na nuvem. Quem entra numa conta tem o registro guardado também na internet, e continua a partida em outro computador ou celular. Sem internet o registro fica na fila e sobe depois. Se o registro da nuvem for mais novo que o do aparelho, o jogo pergunta qual usar. Sem conta tudo continua igual, com o registro só no aparelho.',
+    'Celular: o aplicativo agora se atualiza sozinho. Quando sai versão nova do jogo, ele baixa no Wi-Fi e troca na próxima vez que você abrir. Não precisa mais baixar o APK a cada atualização.',
+    'Windows: launcher NightGetaway. Instala uma vez e o jogo novo chega sozinho pela internet, com as novidades de cada versão na tela.',
+    'Menu de teste: seção 1.15 com a tela da Conta, envio do registro, a pergunta do conflito e a fila de envio.']},
   {v:'1.14',d:'19/10/2026',t:'Camboriú 2.0: o Cervo desperto',itens:[
     'Camboriú maior: Tiro de Guerra, frigorífico, cemitério do lado da Matriz, uma rua nova no centro e as casas das "oferendas", com bilhetes de quem ficou.',
     'Sargento Valença, do Exército: escondido e ferido no Tiro de Guerra. Ache a maleta do pelotão para ele e ele entra na luta final com você.',
@@ -12,7 +17,6 @@ const NOTAS=[
     'Muito mais cutscenes no capítulo, sons demoníacos novos (rugido, coro ao contrário, grave que treme, coração, ossos, ganchos, sussurros) e, perto do fim da história, o drone do Nicolas mostra Camboriú depois do Cervo.',
     'Opções: intensidade do terror (menos sustos, normal ou mais sustos). No celular: guia dos controles na primeira vez (e em Opções).',
     'Online: aviso quando você e quem criou a sala estão em versões diferentes do jogo.',
-    'Conta na nuvem (opcional): no título, botão Conta na nuvem. Quem entra numa conta tem o registro guardado também na internet, e continua a partida em outro computador ou celular. Sem internet o registro fica na fila e sobe depois. Se o registro da nuvem for mais novo que o do aparelho, o jogo pergunta qual usar. Sem conta tudo continua igual, com o registro só no aparelho.',
   ]},
   {v:'1.13.1',d:'16/10/2026',t:'Revisão de falas e correções',itens:[
     'Ninguém fala mais de onde não está: o Matheus e o Edu não comentam nada em Camboriú (ou em qualquer lugar em que não estejam com você). Quando o amigo não está do lado, quem fala é o Richard.',

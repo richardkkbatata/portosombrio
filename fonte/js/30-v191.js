@@ -17,6 +17,7 @@
   .title .lede{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 }
 @media (orientation:portrait) and (max-height:880px){.title{gap:8px;padding-block:6px}.title .menu{gap:4px}.title .menu .btn{min-height:34px;font-size:13px;padding:4px 12px}.title .foot{display:none}.title .lede{font-size:13px}}
+@media (orientation:portrait) and (max-height:700px){.title h1{font-size:clamp(30px,8.5vh,44px)}.title .lede{display:none}.title{gap:5px}.title .menu{gap:3px}.title .menu .btn{min-height:30px;font-size:12.5px;padding:3px 10px}}
 @media (max-height:380px){.title .menu .btn{min-height:30px;font-size:13px;padding:3px 12px}.title{gap:6px}}
 @media (max-height:340px){.title .lede{display:none}.title h1{font-size:clamp(28px,10vh,40px)}}
 `;try{(document.head||document.body).appendChild(st);}catch(e){}}
