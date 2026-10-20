@@ -207,6 +207,11 @@ def main():
     import integrar
     vj, nh, _ = integrar.integrar()
     print(f'Jogo integrado (versão {vj}, {nh} hashes na CSP).')
+
+    # catálogo do launcher NightGetaway (toda versão nova atualiza sozinha)
+    import gerar_catalogo
+    vc, pc = gerar_catalogo.gerar()
+    print(f'Catálogo do launcher: {vc} (Windows {pc["windows"]["tamanho"] // 1024} KB, Android {pc["android"]["tamanho"] // 1024} KB).')
     print(f'Pronto. Domínio: {dominio} · versão: {versao} · AdSense: {"configurado" if ads.startswith("google") else "placeholder (anúncios invisíveis)"}')
 
 

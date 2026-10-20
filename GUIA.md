@@ -141,3 +141,42 @@ O "assistir um anúncio para continuar depois de morrer" usa o **H5 Games Ads**,
 - Senha forte e diferente para GoDaddy, Google e GitHub (use um gerenciador de senhas).
 - Desconfie de e-mail dizendo que o domínio vai expirar, que o AdSense foi suspenso ou pedindo para "confirmar dados" por um link. Entre sempre digitando o endereço do site no navegador.
 - Ninguém da GoDaddy, do Google ou o Claude vai pedir a sua senha ou código de verificação.
+
+---
+
+## E) Ligar as contas com save na nuvem (banco D1 da Cloudflare)
+
+Isso faz a pessoa entrar com usuário e senha e continuar o jogo em qualquer PC ou celular.
+É de graça no plano Free. **Nenhum passo aqui pede senha sua para ninguém.**
+
+### 1. Criar o banco
+1. Entre em **dash.cloudflare.com**.
+2. No menu da esquerda, clique em **Armazenamento e bancos de dados** (Storage & Databases) e depois em **D1 SQL Database**.
+3. Clique em **Criar** (Create).
+4. Nome do banco: escreva exatamente **portosombrio** e clique em **Criar**.
+
+### 2. Copiar o ID do banco
+1. Clique no banco **portosombrio** que você acabou de criar.
+2. Procure **Database ID** (ID do banco). É um código comprido, tipo `a1b2c3d4-...`.
+3. Clique no ícone de copiar do lado dele.
+4. **Cole aqui na conversa e me mande.** Esse código não é segredo, pode mandar sem medo.
+
+### 3. O que eu faço depois
+Com esse código eu ligo o banco no projeto, crio as tabelas e testo. Você não precisa fazer mais nada.
+
+### Se algo der errado
+- Não acha **D1**? Procure por "D1" na busca do painel, lá em cima.
+- Já existe um banco com esse nome? Pode usar o que já está lá: só me mande o ID dele.
+
+---
+
+## F) Launcher NightGetaway (atualiza o jogo sozinho)
+
+O launcher é um programa que a pessoa instala **uma vez**. Depois disso, toda versão nova do jogo
+chega sozinha pelo Wi-Fi, sem precisar baixar zip nem APK de novo.
+
+**Já está pronto (parte do site):** o catálogo em `nightgetaway.net.br/launcher/catalogo.json`.
+Ele é refeito sozinho a cada versão nova e diz qual é a versão atual e onde baixar o jogo.
+
+**Ainda falta** o programa em si, no Windows e no Android. Quando chegar a hora, eu faço e te mando
+o instalador para testar. Você não precisa configurar nada para isso.

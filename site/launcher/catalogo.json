@@ -1,0 +1,33 @@
+{
+  "distribuidora": "NightGetaway",
+  "launcher_min": "1.0.0",
+  "gerado": "2026-10-19",
+  "jogos": [
+    {
+      "id": "porto-sombrio",
+      "nome": "Porto Sombrio",
+      "versao": "1.14",
+      "titulo_versao": "Camboriú 2.0: o Cervo desperto",
+      "capa": "https://nightgetaway.net.br/img/og.png",
+      "site": "https://nightgetaway.net.br/",
+      "pacote_windows": {
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.14-windows.zip",
+        "tamanho": 534062,
+        "sha256": "0ef3fd3d9b76e52d7d215ffd6f62e54b32ca50cfe28fe186eaf78f59573bc315"
+      },
+      "pacote_android": {
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.14-android.zip",
+        "tamanho": 534020,
+        "sha256": "f0db8a902fef2161cc2eb4b563de083233e8603ce17b3b3b9f71b26b3f9c8ee8"
+      },
+      "notas": [
+        "Camboriú maior: Tiro de Guerra, frigorífico, cemitério, rua nova e as casas das oferendas.",
+        "Sargento Valença: ache a maleta do pelotão e ele entra na luta final com você.",
+        "Furtividade: mate em silêncio por trás, esconda o corpo ou vista o manto e ande disfarçado.",
+        "A missa da meia-noite, as aparições do Pregador e o Cervo em duas formas, caçando você pela cidade.",
+        "Opções: intensidade do terror. No celular, guia dos controles na primeira vez.",
+        "Online: aviso quando você e quem criou a sala estão em versões diferentes."
+      ]
+    }
+  ]
+}

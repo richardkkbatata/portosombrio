@@ -1,6 +1,7 @@
 // Worker do site: entrega os arquivos de site/ (ativos estáticos), responde /api/ranking
 // e é o servidor do multiplayer (/ws, salas num Durable Object perto do Brasil; /health).
 import { Salas } from './salas.js';
+import { contas } from './contas.js';
 export { Salas };
 // O ranking guarda no KV ligado como RANKING (ver wrangler.jsonc). Sem KV, responde lista vazia.
 const CORS = { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS', 'access-control-allow-headers': 'content-type' };
@@ -48,6 +49,8 @@ export default {
     }
     if (url.pathname === '/health')
       return new Response('ok', { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', ...CORS } });
+    if (url.pathname.startsWith('/api/conta') || url.pathname.startsWith('/api/saves') || url.pathname.startsWith('/api/extras'))
+      return contas(url, request, env);
     if (url.pathname === '/api/ranking' || url.pathname === '/api/ranking/') {
       const c = { request, env, ctx };
       if (request.method === 'OPTIONS') return opcoes(c);

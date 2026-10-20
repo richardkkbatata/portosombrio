@@ -13,6 +13,8 @@
   // multiplayer: as salas ficam num Durable Object (grátis no plano Free, tipo SQLite)
   "durable_objects": { "bindings": [{ "name": "SALAS", "class_name": "Salas" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Salas"] }]
+  // contas e save na nuvem: depois de criar o banco D1 "portosombrio" na Cloudflare, cole o ID aqui:
+  // ,"d1_databases": [{ "binding": "DB", "database_name": "portosombrio", "database_id": "COLE_O_ID_AQUI", "migrations_dir": "worker/migrations" }]
   // ranking: depois de criar o KV "ranking" na Cloudflare, cole o ID aqui:
   // ,"kv_namespaces": [{ "binding": "RANKING", "id": "COLE_O_ID_AQUI" }]
 }
