@@ -1,6 +1,10 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.16',d:'20/10/2026',t:'Adrenalina e correções',itens:[
+    'Injeção de adrenalina: poucas espalhadas pelo mapa. Por 25 segundos você corre um pouco mais rápido e não cansa. Tem um indicador no canto da tela com o tempo que falta. Quando acaba, o Richard fica sem fôlego.',
+    'Som nas lutas de chefe corrigido: a música não liga e desliga mais toda hora (ela recomeçava do zero sempre que o chefe se afastava), e não dá mais estouro depois de um travadinha.',
+  ]},
   {v:'1.15',d:'20/10/2026',t:'Conta na nuvem e launcher',itens:[
     'Conta na nuvem (opcional): no título, botão Conta na nuvem. Quem entra numa conta tem o registro guardado também na internet, e continua a partida em outro computador ou celular. Sem internet o registro fica na fila e sobe depois. Se o registro da nuvem for mais novo que o do aparelho, o jogo pergunta qual usar. Sem conta tudo continua igual, com o registro só no aparelho.',
     'Celular: o aplicativo agora se atualiza sozinho. Quando sai versão nova do jogo, ele baixa no Wi-Fi e troca na próxima vez que você abrir. Não precisa mais baixar o APK a cada atualização.',
