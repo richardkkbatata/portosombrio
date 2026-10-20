@@ -51,6 +51,23 @@ async function corpo(request, max = MAX_SAVE + 4096) {
   try { return JSON.parse(t || '{}'); } catch { return { _erro: 'json' }; }
 }
 
+// ---------- tabelas (cria sozinho na primeira vez, uma vez por isolate) ----------
+const TABELAS = [
+  `CREATE TABLE IF NOT EXISTS contas (id TEXT PRIMARY KEY, usuario TEXT UNIQUE NOT NULL, email TEXT,
+     senha_hash TEXT NOT NULL, senha_sal TEXT NOT NULL, apelido TEXT, criado INTEGER, ultimo_login INTEGER)`,
+  `CREATE TABLE IF NOT EXISTS sessoes (token_hash TEXT PRIMARY KEY, conta TEXT NOT NULL, expira INTEGER NOT NULL, aparelho TEXT)`,
+  `CREATE INDEX IF NOT EXISTS idx_sessoes_conta ON sessoes(conta)`,
+  `CREATE TABLE IF NOT EXISTS saves (conta TEXT NOT NULL, jogo TEXT NOT NULL, slot INTEGER NOT NULL, dados TEXT NOT NULL,
+     versao_jogo TEXT, atualizado INTEGER, resumo TEXT, PRIMARY KEY (conta, jogo, slot))`,
+  `CREATE TABLE IF NOT EXISTS extras (conta TEXT NOT NULL, jogo TEXT NOT NULL, chave TEXT NOT NULL, valor TEXT,
+     PRIMARY KEY (conta, jogo, chave))`,
+];
+let prontas = null;
+function garantirTabelas(env) {
+  if (!prontas) prontas = env.DB.batch(TABELAS.map(t => env.DB.prepare(t))).catch(e => { prontas = null; throw e; });
+  return prontas;
+}
+
 // ---------- limite de tentativas (usa o KV do ranking, se existir) ----------
 async function barrado(env, chave) {
   if (!env.RANKING) return false;
@@ -208,6 +225,7 @@ async function gravarExtras({ request, env, sess, jogo }) {
 export async function contas(url, request, env) {
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
   if (!env.DB) return json({ ok: false, erro: 'contas ainda não ligadas' }, 503);
+  try { await garantirTabelas(env); } catch (e) { return json({ ok: false, erro: 'banco' }, 503); }
   const p = url.pathname.replace(/\/+$/, '');
   const met = request.method;
   const ctx = { request, env };
