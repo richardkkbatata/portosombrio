@@ -587,3 +587,10 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
   .modo-selo{top:52px}
 }
 @media (max-width:420px){.modo-selo{position:static;align-self:flex-start;margin:0 0 12px}}
+
+/* caixa recomendada da página Baixar (launcher) */
+.caixa.destaque{outline:3px double var(--carimbo);outline-offset:6px}
+.caixa.destaque .lacre-faixa{background:var(--carimbo);color:var(--papel)}
+.selo-recomendado{display:inline-block;font:400 20px/1 var(--f-titulo);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--carimbo);border:2px solid var(--carimbo);padding:4px 8px 2px;transform:rotate(-2deg);margin:0 0 10px}
+.aviso-caixa{font-size:14px;line-height:1.5;border-top:1px dashed var(--tinta-3);padding-top:10px;margin:12px 0 0;color:var(--tinta-2)}

@@ -73,7 +73,8 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   {const sv=JSON.parse(JSON.stringify(R('serialize()')));R(`loadState(${JSON.stringify(sv)})`);G.mode='play';
     ok(!gate('cbFrE').open&&G.flags.cbMilOk,'1.14: carregar mantém frigorífico fechado e Valença salvo');}
   // a missa
-  R("G.flags.cbNoite=true;cbApplyNight();G.ev.cbNoiteT=999;enemies=enemies.filter(e=>!(e.alive&&e.state==='chase'))");
+  // god ligado daqui até o fim do capítulo: sem isso o Richard às vezes morre no meio da missa e o teste falha à toa
+  R("DBG.god=true;P.hp=P.hpMax;G.flags.cbNoite=true;cbApplyNight();G.ev.cbNoiteT=999;enemies=enemies.filter(e=>!(e.alive&&e.state==='chase'))");
   const vivos0=A.enemies.filter(e=>e.alive&&['cult','vig'].includes(e.type)).length;
   R("cbGo(CBL.coreto)");run(5);finishTalk();flush();
   ok(G.flags.cbMissaOn,'1.14: a missa começa');

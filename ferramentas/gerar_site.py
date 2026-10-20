@@ -41,7 +41,11 @@ def downloads():
         mb = f.stat().st_size / 1024 / 1024
         return '/downloads/' + f.name, (f'{mb:.1f} MB' if mb >= 1 else f'{max(1, round(mb * 1024))} KB').replace('.', ',')
     w, a = achar('porto-sombrio-*-windows.zip'), achar('porto-sombrio-*-android.apk')
-    return {'win_url': w[0], 'win_tam': w[1], 'apk_url': a[0], 'apk_tam': a[1]}
+    lan = achar('nightgetaway-launcher-*-windows.zip')
+    import re as _re
+    mv = _re.search(r'launcher-([\d.]+)-windows', lan[0])
+    return {'win_url': w[0], 'win_tam': w[1], 'apk_url': a[0], 'apk_tam': a[1],
+            'lan_url': lan[0], 'lan_tam': lan[1], 'lan_versao': mv.group(1) if mv else '1.0.0'}
 
 
 ABAS = [
