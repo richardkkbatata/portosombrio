@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources><string name="nome">Porto Sombrio</string></resources>
+<resources>
+  <string name="nome">Porto Sombrio</string>
+  <!-- avisos do launcher (aparecem pequenos no canto de baixo, sem atrapalhar o jogo) -->
+  <string name="baixando">Baixando atualização do jogo…</string>
+  <string name="pronta">Atualização baixada (versão</string>
+  <string name="pronta_fim">). Ela entra na próxima vez que você abrir o jogo.</string>
+  <string name="atualizado">Jogo atualizado para a versão</string>
+  <string name="voltou">A atualização não abriu. Voltamos para a versão anterior do jogo.</string>
+  <string name="so_wifi_1">Tem versão nova do jogo (</string>
+  <string name="so_wifi_2">), mas você não está no Wi-Fi. Toque aqui para baixar pelos dados móveis.</string>
+</resources>
