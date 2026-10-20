@@ -5,3 +5,5 @@ __pycache__/
 server/node_modules/
 .wrangler/
 .claude/worktrees/
+entregas/launcher-windows/
+entregas/nightgetaway-launcher-*.zip

@@ -1,0 +1,129 @@
+/* =====================================================================
+   NIGHTGETAWAY — LAUNCHER
+   Pasta de arquivo da Defesa Civil: papelão, folha datilografada,
+   carimbo, fita adesiva e monitor de CFTV. Mesmas cores e fontes do site.
+   ===================================================================== */
+
+@font-face{font-family:'Special Elite';src:url(fonts/special-elite.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Caveat';src:url(fonts/caveat.woff2) format('woff2');font-weight:400 700;font-display:swap}
+@font-face{font-family:'League Gothic';src:url(fonts/league-gothic.woff2) format('woff2');font-weight:400;font-display:swap}
+
+:root{
+  --pasta:#b89a62; --pasta-esc:#8f7445;
+  --papel:#ece4cd; --papel-2:#e3d7b8; --papel-3:#d8c9a3;
+  --tinta:#1d1a15; --tinta-2:#3b352b; --tinta-3:#5d5546;
+  --carimbo:#a8231b; --carimbo-2:#c4372c;
+  --monitor:#8dffa8; --tela:#0b120d;
+  --caneta:#1f3a8a;
+  --f-maquina:'Special Elite','Courier New',Courier,monospace;
+  --f-mao:'Caveat','Comic Sans MS',cursive;
+  --f-titulo:'League Gothic','Arial Narrow','Impact',sans-serif;
+  --ruido:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .16 0 0 0 0 .1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fibra:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .12 0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  color-scheme:light;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{
+  min-height:100vh;color:var(--tinta);font:400 16px/1.6 var(--f-maquina);
+  background-color:var(--pasta);
+  background-image:var(--fibra),var(--ruido),radial-gradient(120% 80% at 30% 0%,#c7aa70 0%,var(--pasta) 50%,var(--pasta-esc) 100%);
+  overflow-x:hidden;-webkit-user-select:none;user-select:none;
+}
+/* linhas de varredura de fita VHS, bem discretas */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.035) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
+h1,h2,h3{font-family:var(--f-titulo);font-weight:400;text-transform:uppercase;letter-spacing:.02em;line-height:.98;margin:0}
+button{font-family:var(--f-maquina);cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:3px dashed var(--carimbo);outline-offset:3px}
+
+/* ---------------- cabeçalho: etiqueta da pasta ---------------- */
+.topo{max-width:1040px;margin:0 auto;padding:18px 18px 0;display:flex;flex-wrap:wrap;
+  align-items:flex-end;justify-content:space-between;gap:10px 20px}
+.marca{display:inline-block;transform:rotate(-1.6deg);background:#efe9d8;padding:6px 18px 4px;
+  box-shadow:1px 2px 0 rgba(0,0,0,.25);position:relative}
+.marca::before{content:"";position:absolute;inset:0;background:var(--ruido);opacity:.5}
+.marca b{display:block;font:400 clamp(32px,5vw,46px)/.9 var(--f-titulo);letter-spacing:.04em}
+.marca small{display:block;font:11.5px/1.2 var(--f-maquina);letter-spacing:.14em;color:var(--tinta-2)}
+.protocolo{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#2a2215;text-align:right;line-height:1.5}
+.protocolo span{background:rgba(255,255,255,.18);padding:0 4px}
+.rec{color:var(--carimbo);font-weight:700}
+.rec::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--carimbo);margin-right:6px;vertical-align:1px;animation:pisca 1.6s steps(1,end) infinite}
+@keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:.15}}
+
+/* ---------------- folha ---------------- */
+.folha{position:relative;max-width:1040px;margin:16px auto 30px;padding:0 10px}
+.papel{position:relative;min-height:calc(100vh - 190px);background:var(--papel);
+  background-image:var(--ruido),linear-gradient(180deg,rgba(255,255,255,.25),rgba(0,0,0,.03));
+  padding:clamp(18px,3vw,34px) clamp(16px,3.4vw,40px) 40px;
+  box-shadow:0 1px 0 rgba(0,0,0,.2),3px 6px 0 -2px rgba(70,50,20,.25);
+  clip-path:polygon(0 0,100% 0,100% 99.2%,97% 100%,92% 99.4%,84% 100%,73% 99.5%,61% 100%,48% 99.3%,36% 100%,22% 99.5%,11% 100%,4% 99.4%,0 100%)}
+.fita{position:absolute;width:132px;height:30px;background:rgba(226,214,176,.72);
+  box-shadow:0 1px 2px rgba(0,0,0,.25);border-left:1px solid rgba(255,255,255,.4);
+  border-right:1px solid rgba(0,0,0,.08)}
+.fita.e{left:-28px;top:-13px;transform:rotate(-7deg)}
+.fita.d{right:-28px;top:-13px;transform:rotate(6deg)}
+.cabecalho-doc{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;
+  border-bottom:1.5px solid var(--tinta);padding-bottom:8px;margin-bottom:20px;
+  font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-2)}
+.cabecalho-doc b{color:var(--tinta);font-weight:400}
+
+/* ---------------- aviso de estado (sem internet, erro, etc) ---------------- */
+.aviso{border:1.5px dashed var(--tinta-3);padding:10px 14px;margin:0 0 20px;font-size:14.5px;
+  background:rgba(255,255,255,.3)}
+.aviso b{font-weight:400;letter-spacing:.08em;text-transform:uppercase}
+.aviso.ruim{border-color:var(--carimbo);color:#5a1410}
+.aviso .mao{font-family:var(--f-mao);font-size:1.3em;color:var(--caneta)}
+
+/* ---------------- ficha de cada jogo ---------------- */
+.jogo{display:grid;grid-template-columns:168px 1fr;gap:18px 22px;align-items:start;
+  border:1.5px solid var(--tinta);padding:16px;margin-bottom:22px;background:rgba(255,255,255,.22);position:relative}
+.jogo + .jogo{margin-top:6px}
+.capa{position:relative;border:1px solid var(--tinta-3);background:var(--papel-3);aspect-ratio:16/10;overflow:hidden}
+.capa img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.35) contrast(1.05)}
+.capa::after{content:"CAM 03";position:absolute;left:5px;bottom:4px;font:10px var(--f-maquina);
+  letter-spacing:.14em;color:var(--monitor);background:rgba(0,0,0,.55);padding:1px 4px}
+.jogo h2{font-size:clamp(28px,4vw,40px)}
+.linha-ver{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-2);margin:2px 0 12px}
+.linha-ver b{color:var(--tinta);font-weight:400}
+.carimbo{position:absolute;right:10px;top:8px;transform:rotate(-8deg);
+  border:2.5px solid var(--carimbo);color:var(--carimbo);padding:3px 9px 1px;
+  font:400 18px/1 var(--f-titulo);letter-spacing:.08em;opacity:.85}
+.notas{margin:0 0 14px;padding:0;list-style:none;font-size:14.5px}
+.notas li{padding-left:16px;position:relative;margin-bottom:3px}
+.notas li::before{content:"—";position:absolute;left:0;color:var(--tinta-3)}
+.notas-titulo{font:400 13px var(--f-maquina);letter-spacing:.24em;text-transform:uppercase;color:var(--tinta-2);margin:0 0 4px}
+
+/* ---------------- botões ---------------- */
+.acoes{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.bt{font:400 24px/1 var(--f-titulo);letter-spacing:.06em;text-transform:uppercase;
+  background:var(--tinta);color:var(--papel);border:none;padding:11px 22px 9px;
+  box-shadow:2px 2px 0 rgba(0,0,0,.3)}
+.bt:hover{background:#000}
+.bt:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.bt.vermelho{background:var(--carimbo)}
+.bt.vermelho:hover{background:var(--carimbo-2)}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.vazio{background:transparent;color:var(--tinta);border:1.5px solid var(--tinta);box-shadow:none;
+  font-family:var(--f-maquina);font-size:13px;letter-spacing:.1em;padding:9px 14px}
+.bt.vazio:hover{background:rgba(0,0,0,.07);color:var(--tinta)}
+
+/* ---------------- barra de progresso (fita de impressora) ---------------- */
+.progresso{margin:4px 0 12px;max-width:440px}
+.barra{height:16px;border:1.5px solid var(--tinta);background:var(--papel-2);padding:2px}
+.barra i{display:block;height:100%;width:0;background:var(--tinta);
+  background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.25) 0 3px,transparent 3px 7px);
+  transition:width .18s linear}
+.barra-texto{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-2);margin-top:4px}
+
+/* ---------------- rodapé ---------------- */
+.rodape{max-width:1040px;margin:0 auto;padding:0 28px 26px;font-size:12px;letter-spacing:.1em;
+  text-transform:uppercase;color:#2f2718;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 18px}
+
+@media (max-width:620px){
+  .jogo{grid-template-columns:1fr}
+  .capa{max-width:260px}
+}

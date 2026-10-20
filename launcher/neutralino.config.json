@@ -1,0 +1,47 @@
+{
+  "applicationId": "br.net.nightgetaway.launcher",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 42071,
+  "documentRoot": "/resources/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "tokenSecurity": "one-time",
+  "nativeAllowList": [
+    "app.*",
+    "window.*",
+    "os.getEnv",
+    "filesystem.readFile",
+    "filesystem.writeFile",
+    "filesystem.readBinaryFile",
+    "filesystem.writeBinaryFile",
+    "filesystem.createDirectory",
+    "filesystem.remove",
+    "filesystem.move",
+    "filesystem.getStats",
+    "filesystem.readDirectory"
+  ],
+  "logging": {
+    "enabled": false,
+    "writeToLogFile": false
+  },
+  "modes": {
+    "window": {
+      "title": "NightGetaway",
+      "width": 1080,
+      "height": 760,
+      "minWidth": 720,
+      "minHeight": 520,
+      "fullScreen": false,
+      "center": true,
+      "resizable": true,
+      "enableInspector": false,
+      "exitProcessOnClose": true
+    }
+  },
+  "cli": {
+    "binaryName": "NightGetaway",
+    "resourcesPath": "/resources/"
+  }
+}

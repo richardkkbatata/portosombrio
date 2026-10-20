@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Porto Sombrio</title>
+<style>
+  html,body{margin:0;height:100%;background:#0b0a08;color:#ece4cd;
+    font:16px/1.6 'Special Elite','Courier New',monospace}
+  .meio{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:24px}
+  h1{font-family:'League Gothic','Arial Narrow',sans-serif;font-weight:400;text-transform:uppercase;
+    font-size:48px;letter-spacing:.06em;margin:0 0 6px}
+  p{max-width:46ch;color:#c9bfa4}
+  .acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+  button{font:400 22px/1 'League Gothic','Arial Narrow',sans-serif;text-transform:uppercase;
+    letter-spacing:.06em;background:#a8231b;color:#ece4cd;border:none;padding:11px 22px 9px;cursor:pointer}
+  button.vazio{background:transparent;color:#ece4cd;border:1.5px solid #6d655a;
+    font:13px 'Special Elite','Courier New',monospace;letter-spacing:.1em;padding:10px 14px}
+</style>
+</head>
+<body>
+<div class="meio" id="abertura">
+  <h1>Porto Sombrio</h1>
+  <p id="recado">Carregando o arquivo do jogo...</p>
+  <div class="acoes">
+    <button id="voltar" hidden>Marcar esta versão como ruim</button>
+    <button class="vazio" id="launcher" hidden>Voltar para o launcher</button>
+  </div>
+</div>
+
+<script src="__neutralino_globals.js"></script>
+<script src="neutralino.js"></script>
+<script>
+/*
+  ABRIDOR DO JOGO
+  Lê o HTML instalado em %LOCALAPPDATA%\NightGetaway\jogos\<id>\index.html e
+  injeta no documento desta mesma janela. A origem continua sendo
+  http://localhost:42071 (porta fixa no neutralino.config.json), então o
+  localStorage do jogo (slots de save, recorde da Horda, opções) é o mesmo
+  em todas as versões.
+  Antes de injetar, o acesso nativo é retirado da página: o HTML do jogo
+  roda sem poder mexer em arquivos.
+*/
+(function () {
+  var recado = document.getElementById('recado');
+  var id = new URLSearchParams(location.search).get('id') || 'porto-sombrio';
+  var N = window.Neutralino;
+
+  function problema(txt) {
+    recado.textContent = txt;
+    document.getElementById('voltar').hidden = false;
+    document.getElementById('launcher').hidden = false;
+  }
+  document.getElementById('launcher').addEventListener('click', function () { location.href = 'index.html'; });
+
+  (async function () {
+    var pasta = '';
+    try {
+      if (N && N.init) { try { N.init(); } catch (e) {} }
+      var local = await N.os.getEnv('LOCALAPPDATA');
+      pasta = (local || 'C:\\NightGetaway') + '\\NightGetaway\\jogos\\' + id;
+      var html = await N.filesystem.readFile(pasta + '\\index.html');
+      if (!html || html.length < 5000 || !/<html/i.test(html)) throw new Error('o arquivo do jogo está quebrado');
+
+      // deu certo: tira a marca de "tentativa" para o launcher não voltar na reserva
+      try {
+        var est = JSON.parse(await N.filesystem.readFile(pasta + '\\estado.json'));
+        if (est && est.tentativa) {
+          est.tentativa = null;
+          est.abriu = new Date().toISOString();
+          await N.filesystem.writeFile(pasta + '\\estado.json', JSON.stringify(est, null, 2));
+        }
+      } catch (e) { /* estado.json é só controle: se faltar, o jogo abre igual */ }
+
+      try { await N.window.setTitle('Porto Sombrio'); } catch (e) {}
+      try { await N.window.setFullScreen(); } catch (e) {}
+
+      try { delete window.Neutralino; delete window.NL_TOKEN; } catch (e) {}
+      document.open();
+      document.write(html);
+      document.close();
+    } catch (e) {
+      problema('Não consegui abrir o jogo: ' + (e && e.message ? e.message : e) + '.');
+      document.getElementById('voltar').addEventListener('click', async function () {
+        try {
+          var est = JSON.parse(await N.filesystem.readFile(pasta + '\\estado.json'));
+          est.tentativa = est.versao;        // o launcher vê isso e volta na reserva
+          await N.filesystem.writeFile(pasta + '\\estado.json', JSON.stringify(est, null, 2));
+          recado.textContent = 'Pronto. Volte para o launcher: ele vai pôr de volta a versão anterior.';
+        } catch (e2) {
+          recado.textContent = 'Não deu. Volte para o launcher e tente atualizar de novo.';
+        }
+      });
+    }
+  })();
+})();
+</script>
+</body>
+</html>

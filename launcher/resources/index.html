@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NightGetaway</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="marca"><b>NightGetaway</b><small>Distribuidora &middot; jogos</small></div>
+  <div class="protocolo">
+    <div><span class="rec">REC</span> <span id="relogio">--:--:--</span></div>
+    <div>Launcher <span id="versao-launcher">—</span></div>
+  </div>
+</header>
+
+<main class="folha">
+  <div class="papel">
+    <span class="fita e" aria-hidden="true"></span>
+    <span class="fita d" aria-hidden="true"></span>
+
+    <div class="cabecalho-doc">
+      <span>Pasta: <b>jogos instalados</b></span>
+      <span>Estado da linha: <b id="estado-linha">conferindo...</b></span>
+    </div>
+
+    <div id="avisos"></div>
+    <div id="lista"></div>
+  </div>
+</main>
+
+<footer class="rodape">
+  <span>NightGetaway &middot; nightgetaway.net.br</span>
+  <span id="pasta-jogos">Jogos em: —</span>
+</footer>
+
+<script src="__neutralino_globals.js"></script>
+<script src="neutralino.js"></script>
+<script src="launcher.js"></script>
+</body>
+</html>
