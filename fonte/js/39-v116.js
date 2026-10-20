@@ -36,7 +36,7 @@ function adrEnd(quiet){
 function adrDraw(){
   if(!adrOn()||G.mode!=='play'||CUT.on)return;
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  const f=typeof hudF==='function'?hudF():1, x=(SAFE.l||0)+10, y=(SAFE.t||0)+(IN.touch?78:56)*f, w=140*f, h=20*f, k=clamp(P.adren/ADR.dur,0,1);
+  const f=typeof hudF==='function'?hudF():1, x=(SAFE.l||0)+10, y=(SAFE.t||0)+(IN.touch?(view.h>view.w?86:56):56)*f, w=140*f, h=20*f, k=clamp(P.adren/ADR.dur,0,1);
   const pul=.75+.25*Math.sin(renderT*9);
   ctx.fillStyle='rgba(8,8,8,.78)';ctx.fillRect(x,y,w,h);ctx.fillStyle=`rgba(216,72,58,${pul})`;ctx.fillRect(x,y,3*f,h);
   ctx.fillStyle='rgba(216,72,58,.35)';ctx.fillRect(x+3*f,y+h-4*f,(w-3*f)*k,4*f);

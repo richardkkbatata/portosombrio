@@ -1132,18 +1132,19 @@ function drawHUDTouch(){
   ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(bx+bw*.66,Tp+30*f,bw*.34,3*f);ctx.fillStyle=P.tired?'#b0493a':'rgba(221,214,198,.6)';ctx.fillRect(bx+bw*.66,Tp+30*f,bw*.34*P.st/100,3*f);
   ctx.globalAlpha=1;
   // relógio: hora do jogo, lua de noite e sol de dia
-  const cw=Math.round(80*f), chh=Math.round(22*f), cx0=L+sw+6;
-  {const night=isNight(), dl=daylight(); ctx.globalAlpha=calm?.6:.9; panel(cx0,Tp,cw,chh);
-   const ix=cx0+11*f, iy=Tp+chh/2;
+  const cw=Math.round(80*f), chh=Math.round(22*f), cx0=portrait?view.w-SAFE.r-10-cw:L+sw+6;
+  // em pé, os botões de cima ocupam essa faixa: o relógio vai para a direita da linha do objetivo
+  {const cTp=portrait?Tp+sh+6+Math.round((26*f-chh)/2):Tp;const night=isNight(), dl=daylight(); ctx.globalAlpha=calm?.6:.9; panel(cx0,cTp,cw,chh);
+   const ix=cx0+11*f, iy=cTp+chh/2;
    if(dl>.3){ctx.fillStyle='#d9b45a';ctx.beginPath();ctx.arc(ix,iy,4*f,0,6.283);ctx.fill();ctx.strokeStyle='#d9b45a';ctx.lineWidth=1.2;for(let k=0;k<8;k++){const an=k*Math.PI/4;ctx.beginPath();ctx.moveTo(ix+Math.cos(an)*5.6*f,iy+Math.sin(an)*5.6*f);ctx.lineTo(ix+Math.cos(an)*7.4*f,iy+Math.sin(an)*7.4*f);ctx.stroke();}}
    else{ctx.fillStyle='#c8cfdc';ctx.beginPath();ctx.arc(ix,iy,5*f,0,6.283);ctx.fill();ctx.fillStyle='#14161a';ctx.beginPath();ctx.arc(ix+2.4*f,iy-1.4*f,4.4*f,0,6.283);ctx.fill();}
-   ctx.fillStyle=night?'#c8cfdc':'#ddd6c6';ctx.font=`700 ${Math.round(12.5*f)}px ${FONT_UI}`;ctx.textAlign='left';ctx.fillText(clockStr(),cx0+21*f,Tp+chh/2+4.5*f);
-   ctx.fillStyle='rgba(221,214,198,.45)';ctx.font=`600 ${Math.round(8.5*f)}px ${FONT_UI}`;ctx.textAlign='right';ctx.fillText('D'+dayNo(),cx0+cw-5*f,Tp+chh/2+4*f);ctx.globalAlpha=1;}
+   ctx.fillStyle=night?'#c8cfdc':'#ddd6c6';ctx.font=`700 ${Math.round(12.5*f)}px ${FONT_UI}`;ctx.textAlign='left';ctx.fillText(clockStr(),cx0+21*f,cTp+chh/2+4.5*f);
+   ctx.fillStyle='rgba(221,214,198,.45)';ctx.font=`600 ${Math.round(8.5*f)}px ${FONT_UI}`;ctx.textAlign='right';ctx.fillText('D'+dayNo(),cx0+cw-5*f,cTp+chh/2+4*f);ctx.globalAlpha=1;}
   // objetivo numa linha só
   const ob=objective();
   ctx.font=`600 ${Math.round(13*f)}px ${FONT_UI}`;
   let ox,oy,ow; const nb=3+(invCount('detector')>0?1:0)+(canFS()&&!isFS()&&!standalone()&&IN.touch?1:0), btnW=(38*nb+6*(nb-1))*f+16;
-  if(portrait){ox=L;oy=Tp+sh+6;ow=view.w-L-10-SAFE.r;}
+  if(portrait){ox=L;oy=Tp+sh+6;ow=view.w-L-10-SAFE.r-cw-6;}
   else{ow=Math.min(440*f,view.w-2*Math.max(cx0+cw+10,btnW+SAFE.r+10));ox=view.w/2-ow/2;oy=Tp;}
   const oh=Math.round(26*f);
   if(ob.t!==G.objTxt){G.objTxt=ob.t;G.objT=0;} G.objT=(G.objT||0)+(G.mode==='play'?lastDt:0);

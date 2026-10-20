@@ -732,7 +732,7 @@ function boxWeaponAdd(i){G.box.push({id:'_w',w:i,q:P.mags[i]||0});P.owned[i]=fal
 UI.itensBody=function(){
   const r=P.hp/P.max, st=r>=.6?['Bem','ok']:r>=.3?['Cuidado','warn']:['Perigo','bad'];
   const pack=packMaleta(maletaItems())||{}; const mw=G.mw||8, mh=G.mh||6;
-  const cell=`min(38px, calc((100vw - 64px) / ${mw}))`;
+  const cell=`min(38px, calc((100vw - 112px - ${2*(mw-1)}px) / ${mw}))`;
   let cells='';
   for(const k in pack){const p=pack[k];let inner='',lab='',sel=false,da='';
     if(k[0]==='w'){const i=+k.slice(1),w=WEAPONS[i];sel=this.wsel===i;da=`data-a="wsel" data-w="${i}"`;const url=weaponIconURL(i);

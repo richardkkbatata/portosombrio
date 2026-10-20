@@ -108,7 +108,7 @@ function itemIconURL(id,w,h){
 UI.itensBody=function(){
   mSync();
   const r=P.hp/P.max, st=r>=.6?['Bem','ok']:r>=.3?['Cuidado','warn']:['Perigo','bad'];
-  const mw=G.mw||8, mh=G.mh||6, cell=`min(40px, calc((100vw - 64px) / ${mw}))`;
+  const mw=G.mw||8, mh=G.mh||6, cell=`min(40px, calc((100vw - 112px - ${2*(mw-1)}px) / ${mw}))`;
   const mv=this.mmove||null, rot=!!this.mrot;
   let cells='';
   // o fundo: uma casinha clicável por posição (para soltar o que está sendo movido)

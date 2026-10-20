@@ -3,6 +3,7 @@
 const NOTAS=[
   {v:'1.16',d:'20/10/2026',t:'Adrenalina e correções',itens:[
     'Injeção de adrenalina: poucas espalhadas pelo mapa. Por 25 segundos você corre um pouco mais rápido e não cansa. Tem um indicador no canto da tela com o tempo que falta. Quando acaba, o Richard fica sem fôlego.',
+    'Celular: o relógio não fica mais escondido atrás dos botões de cima, e a grade da maleta cabe inteira na tela. Em Camboriú, as lanternas de cultista que sumia não ficam mais acesas no chão.',
     'Som nas lutas de chefe corrigido: a música não liga e desliga mais toda hora (ela recomeçava do zero sempre que o chefe se afastava), e não dá mais estouro depois de um travadinha.',
   ]},
   {v:'1.15',d:'20/10/2026',t:'Conta na nuvem e launcher',itens:[
