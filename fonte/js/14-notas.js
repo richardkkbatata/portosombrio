@@ -12,6 +12,7 @@ const NOTAS=[
     'Muito mais cutscenes no capítulo, sons demoníacos novos (rugido, coro ao contrário, grave que treme, coração, ossos, ganchos, sussurros) e, perto do fim da história, o drone do Nicolas mostra Camboriú depois do Cervo.',
     'Opções: intensidade do terror (menos sustos, normal ou mais sustos). No celular: guia dos controles na primeira vez (e em Opções).',
     'Online: aviso quando você e quem criou a sala estão em versões diferentes do jogo.',
+    'Conta na nuvem (opcional): no título, botão Conta na nuvem. Quem entra numa conta tem o registro guardado também na internet, e continua a partida em outro computador ou celular. Sem internet o registro fica na fila e sobe depois. Se o registro da nuvem for mais novo que o do aparelho, o jogo pergunta qual usar. Sem conta tudo continua igual, com o registro só no aparelho.',
   ]},
   {v:'1.13.1',d:'16/10/2026',t:'Revisão de falas e correções',itens:[
     'Ninguém fala mais de onde não está: o Matheus e o Edu não comentam nada em Camboriú (ou em qualquer lugar em que não estejam com você). Quando o amigo não está do lado, quem fala é o Richard.',
