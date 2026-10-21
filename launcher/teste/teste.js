@@ -217,7 +217,7 @@ async function main() {
     let ctx = await navegador.newContext({ viewport: { width: 1080, height: 760 } });
     let p = await abrir(ctx, 'nao-existe.json', discoInstalado('1.13.1'));
     let t = await txt(p);
-    conferir(/Sem internet agora/.test(t), 'mostra o aviso de sem internet');
+    conferir(/Não consegui falar com o site/.test(t), 'mostra o aviso de sem internet');
     conferir(/1\.13\.1/.test(t), 'mostra a versão instalada (1.13.1)');
     conferir(!(await p.isDisabled('[data-jogar]')), 'o botão JOGAR continua funcionando');
     conferir(await p.isHidden('[data-atualizar]'), 'não oferece atualizar sem catálogo');

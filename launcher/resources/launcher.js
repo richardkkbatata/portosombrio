@@ -407,8 +407,14 @@ async function principal() {
   document.getElementById('estado-linha').textContent = catalogo ? 'conectado' : 'sem internet';
 
   if (erroRede) {
-    aviso('<b>Sem internet agora.</b> Abrindo a versão que já está instalada no computador. ' +
-          'Quando a internet voltar, abra o launcher de novo para conferir se tem versão nova.');
+    // TypeError vindo do fetch = não deu nem pra falar com o site (sem internet, firewall,
+    // ou o site não autorizou este programa a ler o catálogo). Separar ajuda a achar o problema.
+    const detalhe = String((erroRede && erroRede.message) || erroRede || '');
+    const naoFalou = erroRede instanceof TypeError || /fetch|network|failed/i.test(detalhe);
+    aviso('<b>Não consegui falar com o site.</b> Abrindo a versão que já está instalada no ' +
+          'computador. Pode ser internet fora do ar, antivírus ou firewall bloqueando. ' +
+          'Abra o launcher de novo quando quiser tentar outra vez.' +
+          (naoFalou ? '' : ' Detalhe: ' + detalhe));
   }
   if (catalogo && catalogo.launcher_min && cmpVersao(catalogo.launcher_min, LAUNCHER_VERSAO) > 0) {
     aviso('<b>Tem um launcher novo.</b> Este é o ' + LAUNCHER_VERSAO + ' e os jogos já pedem o ' +

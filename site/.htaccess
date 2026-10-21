@@ -89,3 +89,10 @@ AddCharset utf-8 .html .css .js .json .txt .xml .webmanifest
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript text/javascript application/json application/manifest+json image/svg+xml
 </IfModule>
+
+# O launcher do Windows roda em http://localhost:<porta> e precisa ler o catálogo
+<IfModule mod_headers.c>
+  <FilesMatch "^(catalogo\.json|.*-(windows|android)\.zip)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>

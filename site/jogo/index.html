@@ -4440,18 +4440,19 @@ function drawHUDTouch(){
   ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(bx+bw*.66,Tp+30*f,bw*.34,3*f);ctx.fillStyle=P.tired?'#b0493a':'rgba(221,214,198,.6)';ctx.fillRect(bx+bw*.66,Tp+30*f,bw*.34*P.st/100,3*f);
   ctx.globalAlpha=1;
   // relógio: hora do jogo, lua de noite e sol de dia
-  const cw=Math.round(80*f), chh=Math.round(22*f), cx0=L+sw+6;
-  {const night=isNight(), dl=daylight(); ctx.globalAlpha=calm?.6:.9; panel(cx0,Tp,cw,chh);
-   const ix=cx0+11*f, iy=Tp+chh/2;
+  const cw=Math.round(80*f), chh=Math.round(22*f), cx0=portrait?view.w-SAFE.r-10-cw:L+sw+6;
+  // em pé, os botões de cima ocupam essa faixa: o relógio vai para a direita da linha do objetivo
+  {const cTp=portrait?Tp+sh+6+Math.round((26*f-chh)/2):Tp;const night=isNight(), dl=daylight(); ctx.globalAlpha=calm?.6:.9; panel(cx0,cTp,cw,chh);
+   const ix=cx0+11*f, iy=cTp+chh/2;
    if(dl>.3){ctx.fillStyle='#d9b45a';ctx.beginPath();ctx.arc(ix,iy,4*f,0,6.283);ctx.fill();ctx.strokeStyle='#d9b45a';ctx.lineWidth=1.2;for(let k=0;k<8;k++){const an=k*Math.PI/4;ctx.beginPath();ctx.moveTo(ix+Math.cos(an)*5.6*f,iy+Math.sin(an)*5.6*f);ctx.lineTo(ix+Math.cos(an)*7.4*f,iy+Math.sin(an)*7.4*f);ctx.stroke();}}
    else{ctx.fillStyle='#c8cfdc';ctx.beginPath();ctx.arc(ix,iy,5*f,0,6.283);ctx.fill();ctx.fillStyle='#14161a';ctx.beginPath();ctx.arc(ix+2.4*f,iy-1.4*f,4.4*f,0,6.283);ctx.fill();}
-   ctx.fillStyle=night?'#c8cfdc':'#ddd6c6';ctx.font=`700 ${Math.round(12.5*f)}px ${FONT_UI}`;ctx.textAlign='left';ctx.fillText(clockStr(),cx0+21*f,Tp+chh/2+4.5*f);
-   ctx.fillStyle='rgba(221,214,198,.45)';ctx.font=`600 ${Math.round(8.5*f)}px ${FONT_UI}`;ctx.textAlign='right';ctx.fillText('D'+dayNo(),cx0+cw-5*f,Tp+chh/2+4*f);ctx.globalAlpha=1;}
+   ctx.fillStyle=night?'#c8cfdc':'#ddd6c6';ctx.font=`700 ${Math.round(12.5*f)}px ${FONT_UI}`;ctx.textAlign='left';ctx.fillText(clockStr(),cx0+21*f,cTp+chh/2+4.5*f);
+   ctx.fillStyle='rgba(221,214,198,.45)';ctx.font=`600 ${Math.round(8.5*f)}px ${FONT_UI}`;ctx.textAlign='right';ctx.fillText('D'+dayNo(),cx0+cw-5*f,cTp+chh/2+4*f);ctx.globalAlpha=1;}
   // objetivo numa linha só
   const ob=objective();
   ctx.font=`600 ${Math.round(13*f)}px ${FONT_UI}`;
   let ox,oy,ow; const nb=3+(invCount('detector')>0?1:0)+(canFS()&&!isFS()&&!standalone()&&IN.touch?1:0), btnW=(38*nb+6*(nb-1))*f+16;
-  if(portrait){ox=L;oy=Tp+sh+6;ow=view.w-L-10-SAFE.r;}
+  if(portrait){ox=L;oy=Tp+sh+6;ow=view.w-L-10-SAFE.r-cw-6;}
   else{ow=Math.min(440*f,view.w-2*Math.max(cx0+cw+10,btnW+SAFE.r+10));ox=view.w/2-ow/2;oy=Tp;}
   const oh=Math.round(26*f);
   if(ob.t!==G.objTxt){G.objTxt=ob.t;G.objT=0;} G.objT=(G.objT||0)+(G.mode==='play'?lastDt:0);
@@ -9519,7 +9520,7 @@ function boxWeaponAdd(i){G.box.push({id:'_w',w:i,q:P.mags[i]||0});P.owned[i]=fal
 UI.itensBody=function(){
   const r=P.hp/P.max, st=r>=.6?['Bem','ok']:r>=.3?['Cuidado','warn']:['Perigo','bad'];
   const pack=packMaleta(maletaItems())||{}; const mw=G.mw||8, mh=G.mh||6;
-  const cell=`min(38px, calc((100vw - 64px) / ${mw}))`;
+  const cell=`min(38px, calc((100vw - 112px - ${2*(mw-1)}px) / ${mw}))`;
   let cells='';
   for(const k in pack){const p=pack[k];let inner='',lab='',sel=false,da='';
     if(k[0]==='w'){const i=+k.slice(1),w=WEAPONS[i];sel=this.wsel===i;da=`data-a="wsel" data-w="${i}"`;const url=weaponIconURL(i);
@@ -10410,6 +10411,13 @@ if(typeof ACH!=='undefined')ACH.push({id:'univali',n:'Turma reunida',d:'Encontre
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.16',d:'20/10/2026',t:'Adrenalina e correções',itens:[
+    'Injeção de adrenalina: poucas espalhadas pelo mapa. Por 25 segundos você corre um pouco mais rápido e não cansa. Tem um indicador no canto da tela com o tempo que falta. Quando acaba, o Richard fica sem fôlego.',
+    'Universidade de BC menor e mais apertada: o Seu Ademir agora fica na guarita da entrada de veículos, do lado da biblioteca (quase metade da caminhada), e o gramado do norte virou mata fechada e área isolada pela Defesa Civil.',
+    'Missão nova na Universidade (opcional): a Bruna, de Biomedicina, chama pelo interfone. Ela está presa na câmara fria do Bloco 5, e a senha está na lista de ramais da Secretaria. Os alto-falantes do campus repetem o aviso de evacuação.',
+    'Celular: o relógio não fica mais escondido atrás dos botões de cima, e a grade da maleta cabe inteira na tela. Em Camboriú, as lanternas de cultista que sumia não ficam mais acesas no chão.',
+    'Som nas lutas de chefe corrigido: a música não liga e desliga mais toda hora (ela recomeçava do zero sempre que o chefe se afastava), e não dá mais estouro depois de um travadinha.',
+  ]},
   {v:'1.15',d:'20/10/2026',t:'Conta na nuvem e launcher',itens:[
     'Conta na nuvem (opcional): no título, botão Conta na nuvem. Quem entra numa conta tem o registro guardado também na internet, e continua a partida em outro computador ou celular. Sem internet o registro fica na fila e sobe depois. Se o registro da nuvem for mais novo que o do aparelho, o jogo pergunta qual usar. Sem conta tudo continua igual, com o registro só no aparelho.',
     'Celular: o aplicativo agora se atualiza sozinho. Quando sai versão nova do jogo, ele baixa no Wi-Fi e troca na próxima vez que você abrir. Não precisa mais baixar o APK a cada atualização.',
@@ -10855,7 +10863,7 @@ function itemIconURL(id,w,h){
 UI.itensBody=function(){
   mSync();
   const r=P.hp/P.max, st=r>=.6?['Bem','ok']:r>=.3?['Cuidado','warn']:['Perigo','bad'];
-  const mw=G.mw||8, mh=G.mh||6, cell=`min(40px, calc((100vw - 64px) / ${mw}))`;
+  const mw=G.mw||8, mh=G.mh||6, cell=`min(40px, calc((100vw - 112px - ${2*(mw-1)}px) / ${mw}))`;
   const mv=this.mmove||null, rot=!!this.mrot;
   let cells='';
   // o fundo: uma casinha clicável por posição (para soltar o que está sendo movido)
@@ -17488,6 +17496,238 @@ if(typeof dbgExtra==='function')dbgExtra('1.14 · Conta na nuvem',[['nu:tela','A
       case 'nu:esquece':{nuEsquecer();toast('Token esquecido.');return;}
     }
   });
+// ===================== 1.16 · ADRENALINA E O SOM DAS LUTAS =====================
+// - Injeção de adrenalina: poucas espalhadas pelo mapa. Por 25 segundos o Richard corre um pouco mais
+//   rápido e não cansa (fôlego infinito). Indicador no canto da tela com o tempo que falta.
+// - Som nas lutas de chefe: a música de chefe ligava e desligava toda vez que o chefe passava da
+//   distância de 760 (o Cervo desperto, as investidas), recomeçando do zero e "engasgando".
+//   Agora ela fica ligada enquanto a luta dura. E se o jogo travar um instante, a música não
+//   despeja de uma vez todas as notas atrasadas (dava um estouro).
+
+// ---------- a injeção ----------
+ITEMS.adren={n:'Injeção de adrenalina',s:'ADRENA',c:'#d8483a',st:2,k:'heal',h:0,d:'Seringa de adrenalina de uma ambulância. Por 25 segundos você corre mais rápido e não cansa. Depois, o corpo cobra.'};
+const ADR={dur:25,mul:1.18};
+function adrOn(){return (P.adren||0)>0;}
+function adrUse(){
+  if(adrOn()){toast('Você já está com adrenalina no sangue.');return false;}
+  if(!invRemove('adren',1))return false;
+  P.adren=ADR.dur; P.adrBase=DBG.speed; DBG.speed=P.adrBase*ADR.mul; P.st=100; P.tired=false;
+  AU.heal&&AU.heal(); G.shake+=2; buzz&&buzz([30,40,30]); G.fear=Math.max(0,(G.fear||0)-.3);
+  toast('Adrenalina! Por 25 segundos você corre mais e não cansa.');
+  if(!G.flags.adrTip){G.flags.adrTip=true;later(500,()=>bark('rafa','a','Meu coração... tá na boca. Eu consigo correr pra sempre.',{dur:2.2}));}
+  return true;
+}
+function adrEnd(quiet){
+  if(P.adrBase!=null)DBG.speed=P.adrBase; const was=P.adrBase!=null||adrOn(); P.adrBase=null; P.adren=0;
+  if(was&&!quiet){P.st=0;P.tired=true;toast('A adrenalina passou. Você está sem fôlego.');}
+}
+{const hw=healWith; healWith=function(id){if(id==='adren')return adrUse();return hw.apply(this,arguments);};}
+{const vt=v16Tick; v16Tick=function(dt){vt(dt);
+  if(!adrOn()||G.mode!=='play')return;
+  P.adren-=dt; P.st=100; P.tired=false;
+  if(P.adrBase!=null&&DBG.speed!==P.adrBase*ADR.mul)DBG.speed=P.adrBase*ADR.mul;   // o menu de teste pode ter mexido
+  G.ev.adrHb=(G.ev.adrHb||0)-dt; if(G.ev.adrHb<=0){G.ev.adrHb=.5;AU.cbHeart&&AU.cbHeart(.5,1.25);}
+  if(P.adren<=0)adrEnd(false);};}
+{const rs=resetState; resetState=function(d){if(P&&P.adrBase!=null)DBG.speed=P.adrBase;rs(d);P.adren=0;P.adrBase=null;};}
+{const ls=loadState; loadState=function(){adrEnd(true);return ls.apply(this,arguments);};}
+// o indicador: logo embaixo do painel de saúde
+function adrDraw(){
+  if(!adrOn()||G.mode!=='play'||CUT.on)return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const f=typeof hudF==='function'?hudF():1, x=(SAFE.l||0)+10, y=(SAFE.t||0)+(IN.touch?(view.h>view.w?86:56):56)*f, w=140*f, h=20*f, k=clamp(P.adren/ADR.dur,0,1);
+  const pul=.75+.25*Math.sin(renderT*9);
+  ctx.fillStyle='rgba(8,8,8,.78)';ctx.fillRect(x,y,w,h);ctx.fillStyle=`rgba(216,72,58,${pul})`;ctx.fillRect(x,y,3*f,h);
+  ctx.fillStyle='rgba(216,72,58,.35)';ctx.fillRect(x+3*f,y+h-4*f,(w-3*f)*k,4*f);
+  ctx.fillStyle='#e9e1cc';ctx.font=`700 ${11*f}px ${FONT_UI}`;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(`ADRENALINA · ${Math.ceil(P.adren)}s`,x+9*f,y+h/2-1*f);ctx.textBaseline='alphabetic';
+  // as bordas da tela pulsam de leve
+  const g=ctx.createRadialGradient(view.w/2,view.h/2,Math.min(view.w,view.h)*.42,view.w/2,view.h/2,Math.max(view.w,view.h)*.75);g.addColorStop(0,'rgba(140,20,14,0)');g.addColorStop(1,`rgba(140,20,14,${.12*pul*(k<.2?.5:1)})`);ctx.fillStyle=g;ctx.fillRect(0,0,view.w,view.h);
+}
+{const dh=drawHUD; drawHUD=function(){const r=dh.apply(this,arguments);try{adrDraw();}catch(e){}return r;};}
+// poucas no mapa: dentro de prédios com saque, longe umas das outras (e uma em Camboriú)
+function adrSpread(){
+  const old=rnd; rnd=mulberry32(11616); const got=[];
+  const okTile=(x,y)=>{if(!inb(x,y))return false;const k=idx(x,y);return !SOLID[map[k]]&&reach[k]&&!pickOcc.has(k)&&!safeMask[k];};
+  const cand=buildings.filter(b=>b.loot&&!b.safe&&b.y<H-2&&b.w>=6&&b.h>=6);
+  for(let t=0;t<400&&got.length<6&&cand.length;t++){const b=cand[(R()*cand.length)|0],x=b.x+1+((R()*(b.w-2))|0),y=b.y+1+((R()*(b.h-2))|0);
+    if(!okTile(x,y)||got.some(p=>Math.abs(p[0]-x)+Math.abs(p[1]-y)<45))continue;got.push([x,y]);}
+  got.forEach(([x,y],i)=>{pickups.push({uid:'adr'+i,tx:x,ty:y,x:tc(x),y:tc(y),id:'adren',q:1,kind:'item'});pickOcc.add(idx(x,y));});
+  if(typeof CBL!=='undefined'&&CBL.tgB!=null){const [x,y]=freeTileNear(77,cbY(51),true);if(okTile(x,y)){pickups.push({uid:'cbAdr',tx:x,ty:y,x:tc(x),y:tc(y),id:'adren',q:1,kind:'item'});pickOcc.add(idx(x,y));}}
+  rnd=old;
+}
+{const g=genV12; genV12=function(){g();try{adrSpread();}catch(e){console.error('adrenalina',e);}};}
+// o capítulo da Sonia redesenha a parte de baixo do mapa: a de Camboriú sai junto
+if(typeof genNav==='function'){const gn=genNav;genNav=function(){for(let i=pickups.length-1;i>=0;i--)if(pickups[i].uid==='cbAdr')pickups.splice(i,1);return gn.apply(this,arguments);};}
+
+// ---------- música de chefe estável ----------
+{const mm=musicMode; musicMode=function(){
+  const m=mm();
+  if(G.mode!=='play'){return m;}
+  const boss=enemies.find(e=>e.alive&&e.t&&e.t.boss&&e.type!=='ouvinte'&&hyp(e.x-P.x,e.y-P.y)<1800);
+  if(m==='boss'){MUS.bossT=G.time;return m;}
+  // a luta continua enquanto o chefe estiver perto, ou por alguns segundos depois de sumir da vista
+  if(m==null&&boss&&MUS.bossT!=null&&(G.time-MUS.bossT<10||(boss.state==='chase'&&hyp(boss.x-P.x,boss.y-P.y)<1400))){if(boss.state==='chase')MUS.bossT=G.time;return 'boss';}
+  return m;};}
+{const mt=AU.musicTick; AU.musicTick=function(mode){
+  try{const c=this.ctx;if(c&&MUS.mode===mode&&MUS.t<c.currentTime-.1)MUS.t=c.currentTime+.05;}catch(e){}
+  return mt.apply(this,arguments);};}
+
+// ---------- menu de teste ----------
+dbgExtra('1.16 · Adrenalina',[['adr:dar','Ganhar 2 injeções de adrenalina'],['adr:usar','Usar uma injeção agora'],['adr:fim','Acabar o efeito']],function(k){
+  const close=()=>{if(UI.close)UI.close();G.mode='play';};
+  if(k==='adr:dar'){const l=invAdd('adren',2);if(l)boxAdd('adren',l);return toast('2 injeções de adrenalina.');}
+  if(k==='adr:usar'){close();if(invCount('adren')<=0)invAdd('adren',1);return adrUse();}
+  if(k==='adr:fim'){close();return adrEnd(false);}
+});
+
+// ---------- Camboriú: lanterna de quem sumiu não fica acesa boiando ----------
+// (só a morte por tiro/golpe apagava a luz; quem sumia na procissão, na missa ou na volta deixava a luz no chão)
+{const vt=v16Tick; v16Tick=function(dt){vt(dt);
+  if(G.mode!=='play'||typeof cbOn!=='function'||!cbOn())return;
+  for(const e of enemies)if(e._l&&e.alive)e._l.dono=e;
+  for(let i=lights.length-1;i>=0;i--){const l=lights[i];if(l.dono&&!l.dono.alive){if(l.dono._l===l)l.dono._l=null;lights.splice(i,1);}}};}
+// ===================== 1.16 · UNIVERSIDADE DE BC MENOR E COM MAIS COISA =====================
+// O campus era grande e vazio, e a história fazia você atravessar ele inteiro duas vezes: do túnel
+// (leste) até a guarita do Seu Ademir (sudoeste) e de volta até a biblioteca (leste).
+// - O Seu Ademir agora fica na guarita da entrada de veículos, do lado da biblioteca do 6A.
+// - O gramado do norte e do nordeste virou mata fechada e área isolada pela Defesa Civil: o campus
+//   ficou mais apertado, com menos chão vazio (os prédios e as missões continuam no mesmo lugar).
+// - Missão nova: a Bruna, de Biomedicina, presa na câmara fria do Bloco 5 (Laboratórios). Ela chama
+//   pelo interfone do campus; a senha da câmara está na lista de ramais da Secretaria (Bloco 3).
+// - Alto-falantes do campus repetindo o aviso de evacuação.
+
+const UNI={CX:12,get CY(){return ZY+18;}};
+Object.assign(ITEMS,{});
+PCH.bruna={name:'Bruna',skin:'#d8a888',shade:'#a87a5e',hair:'#3a2418',iris:'#3a2a1a',bg:['#16242a','#04080a'],glow:'150,200,210',voice:215};
+const DOC116=DOCS.length;
+DOCS.push(
+  {t:'Lista de ramais da Secretaria',b:`UNIVERSIDADE DE BC · CAMPUS BALNEÁRIO CAMBORIÚ\nRAMAIS INTERNOS\n\nSecretaria Acadêmica .......... 2101\nBiblioteca (6A) ................. 2160\nCantina Bloco 6 ............... 2166\nLaboratórios (Bloco 5) ........ 2150\n   câmara fria (senha da porta): 0451 — NÃO PASSAR PARA ALUNO\nGuarita veículos ................ 2199\n\nCaneta vermelha, embaixo: "a menina da biomedicina ficou trancada lá. ninguém foi buscar."`},
+  {t:'Aviso de evacuação (transcrição)',b:`Alto-falante do campus, repetindo a cada dois minutos:\n\n"Atenção, alunos, professores e funcionários. Por determinação da Defesa Civil, o campus está sendo evacuado. Dirijam-se com calma ao estacionamento sul. Não retornem às salas. Não tentem ajudar pessoas feridas. Repetindo..."\n\nNinguém desligou. O estacionamento sul está cheio de carros com as portas abertas.`},
+);
+Object.assign(INT_LABEL,{uniInterfone:'Interfone do campus'});
+if(typeof ACH!=='undefined')ACH.push({id:'uniBruna',n:'Senha 0451',d:'Tire a Bruna da câmara fria do Bloco 5.'});
+
+function uniGen(){
+  const CX=UNI.CX, CY=UNI.CY, old=rnd; rnd=mulberry32(11617);
+  // ---- a guarita nova: entrada de veículos, do lado da biblioteca ----
+  {const g=building(CX+117,CY+85,7,5,{floor:T.TILEF,roof:'#4a8a5a',name:'Guarita · Entrada de veículos',doors:[['S',2,2],['W',2,1]],kind:'guarita'});
+    const n=npcs.find(x=>x.id==='ademir'); LM.uniGuaritaVelha=LM.uniGuarita; LM.uniGuarita={x:tc(CX+120),y:tc(CY+87)};
+    if(n){n.x=LM.uniGuarita.x;n.y=LM.uniGuarita.y;}
+    lights.push({x:LM.uniGuarita.x,y:LM.uniGuarita.y,r:110,c:'lamp',f:1});
+    // o revólver do Seu Ademir vai junto pra guarita nova
+    for(const [u,dx] of [['w110rev',-1],['w110m38a',1]]){const p=pickups.find(q=>q.uid===u);if(!p)continue;pickOcc.delete(idx(p.tx,p.ty));const [x,y]=freeTileNear(CX+120+dx,CY+86,false);p.tx=x;p.ty=y;p.x=tc(x);p.y=tc(y);pickOcc.add(idx(x,y));}}
+  // ---- a câmara fria do Bloco 5 (laboratórios) ----
+  {setT(CX+8,CY+76,T.WALL);setT(CX+8,CY+77,T.WALL);
+    addGate('uniLab',CX+3,CY+71,2,1,null,'#8a9aa0','Porta da câmara fria','Porta de aço com um teclado de quatro números. Tem alguém batendo do outro lado.',T.TILEF);
+    LM.uniLab={x:tc(CX+4),y:tc(CY+69)}; LM.uniLabIn={x:tc(CX+4),y:tc(CY+79)};
+    npcs.push({id:'bruna',name:'Bruna',x:LM.uniLabIn.x,y:LM.uniLabIn.y,ang:-Math.PI/2,col:'#e8e6e0',hair:'#3a2418',skin:'#d8a888',crouch:true,cond:()=>!G.flags.brunaOk});
+    for(const [x,y] of [[CX+5,CY+64],[CX+3,CY+67]])initEnemies.push({uid:'ulab'+x+'_'+y,type:'zumbi',x:tc(x),y:tc(y),col:UNI_COL,dorm:true});
+    lights.push({x:LM.uniLabIn.x,y:LM.uniLabIn.y,r:70,c:'lamp',f:1});
+    addPick(CX+5,CY+82,'adren',1);addPick(CX+2,CY+80,'cart',4);}
+  // a lista de ramais na Secretaria (Bloco 3) e o aviso de evacuação
+  if(LM.bloco3){const [x,y]=freeTileNear(((LM.bloco3.x/TILE)|0)+2,((LM.bloco3.y/TILE)|0)+1,false);pickups.push({uid:'uniRamais',tx:x,ty:y,x:tc(x),y:tc(y),id:DOC116,q:1,kind:'file'});pickOcc.add(idx(x,y));}
+  {const [x,y]=freeTileNear(CX+64,CY+56,false);pickups.push({uid:'uniAviso',tx:x,ty:y,x:tc(x),y:tc(y),id:DOC116+1,q:1,kind:'file'});pickOcc.add(idx(x,y));}
+  // interfone na parede do Bloco 2 (perto da praça)
+  {const it=addInteract(CX+70,CY+43,'uniInterfone',22);LM.uniInterfone={x:it.x,y:it.y-36};}
+  // ---- o campus fica mais apertado: mata fechada e área isolada no norte ----
+  const keep=(x,y)=>{const px=tc(x),py=tc(y);
+    for(const p of pickups)if(Math.abs(p.tx-x)<=3&&Math.abs(p.ty-y)<=3)return true;
+    for(const n of npcs)if(hyp(n.x-px,n.y-py)<110)return true;
+    for(const i of interacts)if(Math.abs(i.tx-x)<=3&&Math.abs(i.ty-y)<=3)return true;
+    for(const g of gates)if(x>=g.x-3&&x<=g.x+g.w+2&&y>=g.y-3&&y<=g.y+g.h+2)return true;
+    for(const k in LM){const L=LM[k];if(L&&L.x!=null&&hyp(L.x-px,L.y-py)<110)return true;}
+    for(const b of buildings){if(!b.doorT)continue;for(const d of b.doorT)if(Math.abs(d.x-x)<=2&&Math.abs(d.y-y)<=2)return true;}
+    return false;};
+  const block=(x0,y0,x1,y1)=>{for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){if(!inb(x,y))continue;const k=idx(x,y);if(bmap[k]>=0)continue;const t=map[k];
+      if(t!==T.GRASS&&t!==T.SIDE&&t!==T.CONC&&t!==T.TREE)continue;if(keep(x,y))continue;setT(x,y,R()<.18?T.TREE:T.FOREST);}};
+  block(CX+28,CY+0,CX+33,CY+19); block(CX+60,CY+0,CX+93,CY+16); block(CX+95,CY+0,CX+127,CY+19);
+  // a cerca da Defesa Civil marcando o fim da área aberta
+  for(let x=CX+60;x<=CX+127;x++){const y=x<=CX+93?CY+17:CY+20,k=idx(x,y);if(bmap[k]<0&&!SOLID[map[k]]&&!keep(x,y))setT(x,y,T.FENCE);}
+  graf(CX+76,CY+19,'ÁREA ISOLADA · DEFESA CIVIL',{rot:0,c:'#d8c050'});
+  rnd=old;
+}
+function uniFix(){
+  const y0=ZY,y1=HZO-1;
+  // alcance da região refeito do zero
+  for(let y=y0;y<=y1;y++)for(let x=0;x<W;x++)reach[idx(x,y)]=0;
+  zoneReach(); if(typeof cbReach==='function'){/* Camboriú tem o próprio alcance, fica como está */}
+  {const k=idx(7,273);reach[k]=1;}
+  if(LM.cbIr){const k=idx((LM.cbIr.x/TILE)|0,(LM.cbIr.y/TILE)|0);reach[k]=1;}
+  // o que ficou dentro da mata vai para o chão livre mais perto
+  for(const p of pickups){if(p.ty<y0||p.ty>y1)continue;const k=idx(p.tx,p.ty);if(!SOLID[map[k]]&&reach[k])continue;pickOcc.delete(k);const [x,y]=freeTileNear(p.tx,p.ty,true);p.tx=x;p.ty=y;p.x=tc(x);p.y=tc(y);pickOcc.add(idx(x,y));}
+  for(let i=initEnemies.length-1;i>=0;i--){const e=initEnemies[i],tx=(e.x/TILE)|0,ty=(e.y/TILE)|0;if(ty<y0||ty>y1)continue;const k=idx(tx,ty);if(SOLID[map[k]]||!reach[k])initEnemies.splice(i,1);}
+  if(typeof invalidateRect==='function')invalidateRect(0,y0,W,y1-y0+1);
+}
+(function(){const g=genV12; genV12=function(){g();try{uniGen();uniFix();}catch(e){console.error('universidade 1.16',e);}};})();
+
+// ---------- a Bruna ----------
+LOCKS.uniLab={n:4,code:'0451',kick:'Bloco 5 · Laboratórios',t:'Câmara fria do laboratório',hint:'Quatro números. Talvez na lista de ramais da Secretaria.',
+  open(){const g=gates.find(x=>x.id==='uniLab');if(g&&!g.open){openGate(g);G.flags.uniLab=true;AU.unlock();toast('A trava abriu com um estalo. Ar gelado no rosto.');later(500,uniBrunaFree);}}};
+{const ug=useGate; useGate=function(g){if(g&&g.id==='uniLab'&&!g.open){if(!G.flags.uniLabSeen){G.flags.uniLabSeen=true;later(300,()=>bark('rafa','s','Tem alguém batendo do outro lado. Gente viva.'));}UI.code='';return UI.keypad('uniLab');}return ug(g);};}
+function uniCampus(){const CX=UNI.CX,CY=UNI.CY,tx=(P.x/TILE)|0,ty=(P.y/TILE)|0;return inZone()&&tx>=CX-2&&tx<=CX+130&&ty>=CY-2&&ty<=CY+92&&!(typeof inCb==='function'&&inCb());}
+function uniBrunaCall(){
+  const F=G.flags; if(F.brunaCall)return; F.brunaCall=true;
+  playCut([{sfx:'static',v:1},
+    {say:'bruna',m:'s',radio:true,t:'...alguém? Alguém tá ouvindo esse interfone? Por favor...'},
+    {say:'rafa',m:'s',t:'Tem alguém falando no alto-falante.'},
+    {say:'bruna',m:'t',radio:true,t:'Meu nome é Bruna, eu sou da Biomedicina. Eu tô na câmara fria do laboratório, no Bloco 5. Eu me tranquei aqui de tarde.'},
+    {say:'bruna',m:'t',radio:true,t:'Tem dois deles do lado de fora da porta. Eu ouço eles respirando. Eu não sinto mais os pés.'},
+    {say:'bruna',m:'s',radio:true,t:'A senha da porta tá na lista de ramais da secretaria, no Bloco 3. Por favor. Por favor, não me deixa aqui.'},
+    {sfx:'static',v:.6}],()=>{toast('Missão nova (opcional): a Bruna, na câmara fria do Bloco 5.');});
+}
+function uniBrunaFree(){
+  const F=G.flags; if(F.brunaOk)return;
+  const n=npcs.find(x=>x.id==='bruna'); if(!n){F.brunaOk=true;return;}
+  playCut([{npc:n,id:'bruna'},{cam:n,t:.8},{startle:'bruna'},
+    {say:'bruna',m:'s',t:'Não! Não... tu é gente. Tu é gente de verdade.'},
+    {say:'rafa',m:'n',t:'Richard. Calma. Tu consegue andar?'},
+    {say:'bruna',m:'t',t:'Mais ou menos. Eu tô congelando. Eu fiquei seis horas ouvindo eles arranharem essa porta.'},
+    {say:'bruna',m:'n',t:'Toma. Eu achei na maleta da professora. É adrenalina. Eu ia usar se eles entrassem.'},
+    {do:()=>{const l=invAdd('adren',1);if(l)boxAdd('adren',l);const m=invAdd('m9',10);if(m)boxAdd('m9',m);AU.pickup();toast('A Bruna te deu 1 injeção de adrenalina e munição de 9 mm.');}},
+    {say:'bruna',m:'t',t:'Eu vou pra sala dos professores, no Bloco 1. Tem a máquina de escrever lá, a luz verde. Eu me tranco e espero o Exército.'},
+    {say:'rafa',m:'t',think:true,t:'O Exército não vem. Mas eu não tenho coragem de falar isso pra ela.',dur:2.6},
+    {camFree:true}],()=>{F.brunaOk=true;ach('uniBruna');
+      if(LM.uniSafe)npcs.push({id:'brunaS',name:'Bruna',x:LM.uniSafe.x+20,y:LM.uniSafe.y+10,ang:0,col:'#e8e6e0',hair:'#3a2418',skin:'#d8a888',cond:()=>G.flags.brunaOk&&!G.flags.uniDone});});
+}
+{const sn=STORY.npc; STORY.npc=function(n){
+  if(n&&n.id==='bruna')return bark('bruna','s',G.flags.uniLab?'Eu tô aqui!':'Abre a porta! A senha tá na secretaria! No Bloco 3!',{radio:!G.flags.uniLab});
+  if(n&&n.id==='brunaS')return bark('bruna','n',pick2(['Obrigada, Richard. De verdade.','Eu vou ficar quietinha aqui. Volta se der.','A biblioteca é no 6A. Tem gente lá também, eu ouvi.']));
+  return sn.call(STORY,n);};}
+{const vi=v12Interact; v12Interact=function(o){
+  if(o.type==='uniInterfone'){const F=G.flags;if(!F.brunaCall)return uniBrunaCall();
+    if(!F.uniLab)return playCut([{sfx:'static',v:.8},{say:'bruna',m:'s',radio:true,t:'Tu ainda tá aí? A senha, a lista de ramais, no Bloco 3! Corre!'}]);
+    return toast('Só chiado. O aviso de evacuação volta a tocar.');}
+  return vi(o);};}
+// interfone toca sozinho quando você está no campus e já falou com o Seu Ademir
+{const vt=v16Tick; v16Tick=function(dt){vt(dt);
+  if(G.mode!=='play'||CUT.on||(typeof MP!=='undefined'&&MP.on)||(typeof FB!=='undefined'&&FB.on))return;
+  const F=G.flags; if(!uniCampus())return;
+  if(!F.brunaCall&&F.ademirTalk&&!F.uniDone){G.ev.brT=(G.ev.brT||0)+dt;if(G.ev.brT>20&&!enemies.some(e=>e.alive&&e.state==='chase'&&hyp(e.x-P.x,e.y-P.y)<450))uniBrunaCall();}
+  // alto-falante: o aviso de evacuação, de vez em quando
+  G.ev.avT=(G.ev.avT??30)-dt; if(G.ev.avT<=0){G.ev.avT=rr(80,140);if(!F.uniDone||Math.random()<.5){AU.static&&AU.static(.25,.5);bark('locutor','n','"Atenção. Por determinação da Defesa Civil, o campus está sendo evacuado. Dirijam-se ao estacionamento sul. Não tentem ajudar pessoas feridas."',{radio:true,dur:4});}}};}
+PCH.locutor=PCH.locutor||{name:'Alto-falante',skin:'#c8946c',shade:'#9a6a4a',hair:'#2a2622',iris:'#2a1a10',bg:['#1a1a1a','#050505'],glow:'200,200,160',voice:130};
+// carregar o registro: a porta da câmara continua aberta, a Bruna continua na sala dos professores
+{const aws=applyWorldState; applyWorldState=function(){aws();const F=G.flags;
+  if(F.uniLab){const g=gates.find(x=>x.id==='uniLab');if(g&&!g.open)openGate(g);if(!F.brunaOk)later(800,uniBrunaFree);}
+  if(F.brunaOk&&LM.uniSafe&&!npcs.some(n=>n.id==='brunaS'))npcs.push({id:'brunaS',name:'Bruna',x:LM.uniSafe.x+20,y:LM.uniSafe.y+10,ang:0,col:'#e8e6e0',hair:'#3a2418',skin:'#d8a888',cond:()=>G.flags.brunaOk&&!G.flags.uniDone});};}
+// missões: aparece na lista de secundárias da mochila
+if(typeof misBody==='function'){const mb=misBody; misBody=function(){let s=mb();const F=G.flags;if(!F.brunaCall)return s;
+  const it=(ok,t)=>`<li class="${ok?'ok':''}">${ok?'✓':'○'} ${t}</li>`;
+  const h=`<h3>Universidade de BC · a Bruna (opcional)</h3><ul class="chk">${it(G.files&&G.files.has(DOC116),'Achar a senha na lista de ramais (Secretaria, Bloco 3)')}${it(F.uniLab,'Abrir a câmara fria do Bloco 5 (Laboratórios)')}${it(F.brunaOk,'Tirar a Bruna de lá')}</ul>`;
+  const i=s.lastIndexOf('</div>');return i<0?s+h:s.slice(0,i)+h+s.slice(i);};}
+// objetivo: só quando a história não está pedindo nada naquele momento (depois da biblioteca, por exemplo)
+{const ob=objective; objective=function(){const o=ob();const F=G.flags;
+  if(o&&o.t&&/guarita da entrada de pedestres/.test(o.t))o.t='Ache o Seu Ademir na guarita da entrada de veículos da Universidade de BC, do lado da biblioteca';
+  try{if(F.brunaCall&&!F.brunaOk&&uniCampus()&&(!o||!o.at||F.uniDone)){if(!F.uniLab)return {t:G.files&&G.files.has(DOC116)?'Opcional: abra a câmara fria do Bloco 5 com a senha da lista de ramais e tire a Bruna de lá':'Opcional: a senha da câmara fria do Bloco 5 está na lista de ramais da Secretaria (Bloco 3)',at:G.files&&G.files.has(DOC116)?LM.uniLab:LM.bloco3};}}catch(e){}
+  return o;};}
+dbgExtra('1.16 · Universidade',[['uni:ademir','Ir até o Seu Ademir (guarita nova)'],['uni:bruna','Receber a chamada da Bruna'],['uni:lab','Ir até a câmara fria do Bloco 5'],['uni:livre','Soltar a Bruna']],function(k){
+  const F=G.flags,close=()=>{if(UI.close)UI.close();G.mode='play';};
+  if(!inZone())dbgJump('bc2');
+  if(k==='uni:ademir'){close();P.x=LM.uniGuarita.x;P.y=LM.uniGuarita.y+50;snapCamera();return;}
+  if(k==='uni:bruna'){close();F.brunaCall=false;return uniBrunaCall();}
+  if(k==='uni:lab'){close();P.x=LM.uniLab.x;P.y=LM.uniLab.y;snapCamera();return;}
+  if(k==='uni:livre'){close();F.brunaCall=true;P.x=LM.uniLab.x;P.y=LM.uniLab.y;snapCamera();return LOCKS.uniLab.open();}
+});
 // ===================== LAÇO PRINCIPAL =====================
 const RM = (()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){return false;}})();
 let attractT=0, lastFrame=0;

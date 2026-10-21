@@ -1,6 +1,6 @@
 {
   "applicationId": "br.net.nightgetaway.launcher",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "defaultMode": "window",
   "port": 0,
   "documentRoot": "/resources/",

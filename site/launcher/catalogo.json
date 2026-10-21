@@ -12,14 +12,14 @@
       "site": "https://nightgetaway.net.br/",
       "pacote_windows": {
         "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.15-windows.zip",
-        "tamanho": 540649,
-        "sha256": "501be48c705a5ea7e804dd33f8c218a68abe111871b0e441585edbf2cfd49361",
+        "tamanho": 549149,
+        "sha256": "7cffc49e9798604683cbccda5e9b0a1237a42ec70c89882086dea09c7fc2f2c0",
         "arquivo": "resources.neu"
       },
       "pacote_android": {
         "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.15-android.zip",
-        "tamanho": 540211,
-        "sha256": "1fb77ab9033b0ed91ebf0dd680c6dfdbcbcbd0d17fc7bda3d8cb9081483aafb9",
+        "tamanho": 548673,
+        "sha256": "3d0d4dcc236b5fd18f6076ba8cb2dc541d249965d22fb79bc9ffdba3ec4d66fd",
         "arquivo": "index.html"
       },
       "notas": [

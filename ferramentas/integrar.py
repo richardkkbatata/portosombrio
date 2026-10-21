@@ -138,7 +138,10 @@ def escrever_headers_cloudflare(csp_jogo):
         '/img/*\n  Cache-Control: public, max-age=31536000\n'
         '/fonts/*\n  Cache-Control: public, max-age=31536000\n'
         '/favicon.ico\n  Cache-Control: public, max-age=31536000\n'
-        '/dados/*\n  Cache-Control: no-cache\n',
+        '/dados/*\n  Cache-Control: no-cache\n'
+        # o launcher do Windows roda em http://localhost:<porta> e busca o catálogo aqui:
+        # sem este cabeçalho o navegador embutido bloqueia e o launcher acha que está sem internet
+        '/launcher/*\n  Access-Control-Allow-Origin: *\n  Cache-Control: no-cache\n',
         encoding='utf-8')
 
 
