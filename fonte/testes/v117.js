@@ -5,7 +5,8 @@ module.exports=(A,R,ok,step,finishTalk,vm,ctx)=>{
   ok(R("CRATES.every(c=>{const it=c.it;return [[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>reach[idx(c.tx+a,c.ty+b)]&&!SOLID[map[idx(c.tx+a,c.ty+b)]]);})"),'1.17: caixas alcançáveis');
   // sem nada: cai o que falta
   R("UI.dbgAct('drop:vazio',{})");
-  const L=R("dropNeeds().map(n=>n.id)");ok(L.includes('m9')&&L.includes('ervaV'),'1.17: precisa de munição da pistola e cura: '+L.join(','));
+  const L=R("dropNeeds().map(n=>n.id)");ok(L.includes('m9')&&(L.includes('ervaV')||L.includes('spray')),'1.17: precisa de munição da pistola e cura: '+L.join(','));
+  // cura pode vir como erva OU spray (com a vida muito baixa e sem erva no bolso, o jogo sorteia spray): aceitar as duas
   ok(!L.includes('cart')||R("P.owned[WI('escopeta')]||P.owned[WI('cano')]"),'1.17: não pede munição de arma que você não tem');
   let got={},n=0;for(let i=0;i<200;i++){const p=R("(()=>{const p=dropRoll({x:P.x+60,y:P.y,max:30,type:'zumbi'});if(p){pickups.splice(pickups.indexOf(p),1);return p.id;}return null;})()");if(p){n++;got[p]=(got[p]||0)+1;}}
   ok(n>40&&!got.grana,'1.17: apertado, cai bastante ('+n+'/200)');
