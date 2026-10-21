@@ -6,8 +6,11 @@ const NOTAS=[
     'Lutas de chefe: se você está apertado de munição ou de vida, de tempos em tempos aparece suprimento no chão perto de você. Em Camboriú quem joga é o Sargento Valença ou o drone do Nicolas. E quando a luta começa aparecem caixas perto do chefe.',
     'Caixas de madeira espalhadas pela cidade: quebre com E (ou USAR). Dentro, o mesmo cálculo: o que você estiver precisando.',
     'Chute: inimigo atordoado (depois de um golpe, de um tiro de escopeta de perto ou de um tiro na cabeça) pode levar um chute. Derruba quem estiver do lado também.',
+    'Chute com animação: passo pra frente, a perna estica, poeira e uma paradinha no impacto.',
+    'Botijões de gás espalhados pela cidade (e alguns perto dos chefes): um tiro e eles explodem, levando quem estiver perto. Um explode o outro.',
+    'Ao pegar munição ou cura aparece quanto você pegou ("+6 9MM"), e "ÚLTIMO PENTE" quando você recarrega a última munição da arma.',
     'Item que caiu no chão brilha e some depois de um tempo se você não pegar.',
-    'Som da segunda forma do Cervo: não toca mais dois corações fora de tempo nem a pancada repetida de cada coisa que ele quebra.',
+    'Som da segunda forma do Cervo: o rugido e o grave dele estavam tão altos que o áudio do jogo "sumia" por uns segundos. Agora o rugido é mais baixo e sem aquele grave que trava o som, e não toca mais dois corações fora de tempo nem a pancada repetida de cada coisa que ele quebra.',
   ]},
   {v:'1.16',d:'20/10/2026',t:'Adrenalina e correções',itens:[
     'Injeção de adrenalina: poucas espalhadas pelo mapa. Por 25 segundos você corre um pouco mais rápido e não cansa. Tem um indicador no canto da tela com o tempo que falta. Quando acaba, o Richard fica sem fôlego.',

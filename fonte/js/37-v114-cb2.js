@@ -142,14 +142,14 @@ function genCamb2(){
   // rugido: três vozes graves desafinadas, uma oitava embaixo, e um sub que treme
   ['cb_roar2',()=>{const D=SND.dsp,d=3.2,n=D.len(d),x=new Float32Array(n);
     for(const [f,v,g] of [[62,['a','o','u'],1],[47,['o','u','o'],.8],[93,['a','a','o'],.45],[31,['u','o','u'],.6]])D.add(x,D.voice({dur:d,f0:(u,t)=>f*(1.15-.3*u)*(1+.05*Math.sin(t*23)),v,rough:1,br:.45,jit:.09,q:[3,4,5],fs:.62,sat:3.4,gurg:11,env:(u,t)=>Math.min(1,t/.12)*Math.pow(1-u,.7)}),0,g);
-    for(let i=0;i<n;i++){const t=i/44100;x[i]+=Math.sin(6.283*(34-8*t/d)*t)*.7*Math.min(1,t/.2)*Math.pow(1-t/d,.8);}
-    return D.fadeOut(D.norm(D.sat(x,1.8)),.3);},2],
+    for(let i=0;i<n;i++){const t=i/44100;x[i]+=Math.sin(6.283*(58-10*t/d)*t)*.18*Math.min(1,t/.2)*Math.pow(1-t/d,.8);}
+    D.F(x,'hp',55,.7,2);return D.fadeOut(D.norm(D.sat(x,1.5),.8),.3);},2],
   // coro ao contrário: acorde de vozes, invertido no tempo (cresce e corta)
   ['cb_rev',()=>{const D=SND.dsp,d=3.4,n=D.len(d),x=new Float32Array(n);
     for(const [f,v] of [[110,'o'],[130.8,'a'],[164.8,'u'],[82.4,'o']])D.add(x,D.voice({dur:d,f0:(u,t)=>f*(1+.006*Math.sin(t*5+f)),v:[v,v==='o'?'a':'o',v],rough:.08,br:.18,jit:.02,q:[7,9,11],env:u=>Math.pow(Math.sin(Math.PI*Math.min(1,u*1.1)),.6),sat:1.3}),0,.28);
     x.reverse();for(let i=0;i<n;i++){const u=i/n;x[i]*=Math.pow(u,1.6);}return D.fadeOut(D.norm(x),.04);},2],
   // sub grave que se sente mais do que se ouve
-  ['cb_sub',()=>{const D=SND.dsp,d=2.8,n=D.len(d),x=new Float32Array(n);for(let i=0;i<n;i++){const t=i/44100;x[i]=Math.sin(6.283*(42*Math.exp(-t*.4)+18)*t)*Math.exp(-t*1.1)*Math.min(1,t/.01);}
+  ['cb_sub',()=>{const D=SND.dsp,d=2.8,n=D.len(d),x=new Float32Array(n);for(let i=0;i<n;i++){const t=i/44100;x[i]=Math.sin(6.283*(62*Math.exp(-t*.4)+30)*t)*Math.exp(-t*1.6)*Math.min(1,t/.01);}
     D.add(x,D.ex(D.F(D.N(D.len(.4)),'lp',180,1,2),8),0,.5);return D.fadeOut(D.norm(D.sat(x,1.4)),.2);},1],
   // coração
   ['cb_heart',()=>{const D=SND.dsp,d=.62,n=D.len(d),x=new Float32Array(n);for(const [o,a] of [[0,1],[.2,.7]]){const k=D.len(o);for(let i=0;i<n-k;i++){const t=i/44100;x[i+k]+=Math.sin(6.283*(58*Math.exp(-t*14)+32)*t)*Math.exp(-t*22)*a;}}
@@ -170,9 +170,9 @@ function genCamb2(){
 );
 (function(){
   const has=n=>SND.b[n]&&SND.b[n].length;
-  AU.cbRoar2=function(x,y,v=1){if(has('cb_roar2'))this.pbAt('cb_roar2',x,y,{vol:.62*v,wet:.6,maxD:2400,jit:.05,must:true});else this.roar&&this.roar();if(has('cb_sub'))this.pb('cb_sub',{vol:.5*v,wet:.2});};
+  AU.cbRoar2=function(x,y,v=1){const t=(this.ctx&&this.ctx.currentTime)||0;if(t-(this.r2T||-9)<1.2)return;this.r2T=t;if(has('cb_roar2'))this.pbAt('cb_roar2',x,y,{vol:.34*v,wet:.5,maxD:2400,jit:.05,must:true});else this.roar&&this.roar();};
   AU.cbRev=function(v=1){if(has('cb_rev'))this.pb('cb_rev',{vol:.36*v,wet:.8,jit:.02,must:true});};
-  AU.cbSub=function(v=1){if(has('cb_sub'))this.pb('cb_sub',{vol:.55*v,wet:.25,must:true});else this.thud&&this.thud(v);};
+  AU.cbSub=function(v=1){const t=(this.ctx&&this.ctx.currentTime)||0;if(t-(this.subT||-9)<1.5)return;this.subT=t;if(has('cb_sub'))this.pb('cb_sub',{vol:.2*v,wet:.25,must:true});else this.thud&&this.thud(v);};
   AU.cbHeart=function(v=1,rate=1){if(has('cb_heart'))this.pb('cb_heart',{vol:.42*v,wet:.05,rate,jit:0});};
   AU.cbCrack=function(x,y,v=1){if(has('cb_crack'))this.pbAt('cb_crack',x,y,{vol:.5*v,wet:.35,maxD:1200,must:true});};
   AU.cbHook=function(x,y,v=1){if(has('cb_hook'))this.pbAt('cb_hook',x,y,{vol:.32*v,wet:.6,maxD:900});};
