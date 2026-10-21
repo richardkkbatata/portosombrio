@@ -1,4 +1,4 @@
-// ===================== 1.17 · O JOGO SABE DO QUE VOCÊ PRECISA (DROPS ESTILO RE4) =====================
+// ===================== 1.17 · O JOGO SABE DO QUE VOCÊ PRECISA (DROPS QUE OLHAM A MALETA) =====================
 // - Drops inteligentes: quando um inimigo morre, o jogo olha a sua maleta. Munição só das armas que você
 //   tem, e mais da que está acabando; cura se a vida está baixa e você não tem com o que curar; pilha se
 //   a lanterna está morrendo. Se você está bem servido de tudo, não cai nada.
@@ -140,7 +140,7 @@ dbgExtra('1.17 · Drops e caixas',[['drop:vazio','Ficar sem munição e com pouc
   if(k==='drop:sup'){close();DSUP.t=0;return toast(dropBoss()?'Suprimento chegando (se você precisar).':'Só funciona perto de um chefe.');}
 });
 
-// ---------- chute no tonto (como no RE4): inimigo atordoado perto de você leva um chute ----------
+// ---------- chute no tonto (estilo survival horror clássico): inimigo atordoado perto de você leva um chute ----------
 Object.assign(INT_LABEL,{chute:'Chutar'});
 function chuteAlvo(){
   if(P.inCar||P.hidden||CUT.on||G.mode!=='play'||(typeof MP!=='undefined'&&MP.on&&MP.role==='guest'))return null;

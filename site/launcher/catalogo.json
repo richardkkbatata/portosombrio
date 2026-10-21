@@ -12,18 +12,18 @@
       "site": "https://nightgetaway.net.br/",
       "pacote_windows": {
         "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17-windows.zip",
-        "tamanho": 557226,
-        "sha256": "9c79ddfc6ff330ce1ea68b0fb39a346af1f4dd6e642474ce671eb968026f6555",
+        "tamanho": 557235,
+        "sha256": "3e1f842c3584221654a12e2ef39b19cafb1a494faf6239ead5eadbbe8a5cf44f",
         "arquivo": "resources.neu"
       },
       "pacote_android": {
         "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17-android.zip",
-        "tamanho": 556783,
-        "sha256": "8ce8b1b0c8bf8c08f18c0c5d02dfcf7fcac8e4dc518a946d70dad3b15f458bae",
+        "tamanho": 556792,
+        "sha256": "0924dab89fbadbcd99e0139b6809ccb505dd9a64c9c2d28abd7e40c42be6a68e",
         "arquivo": "index.html"
       },
       "notas": [
-        "Drops inteligentes, como no Resident Evil 4: cai munição das armas que você tem e cura quando você precisa; bem servido, não cai nada.",
+        "Drops inteligentes, no estilo clássico do survival horror: cai munição das armas que você tem e cura quando você precisa; bem servido, não cai nada.",
         "Lutas de chefe: suprimento no chão quando você está apertado, caixas e botijões de gás perto do chefe.",
         "Caixas de madeira para quebrar, chute animado no inimigo atordoado e botijões de gás que explodem com um tiro.",
         "O rugido do Cervo desperto não trava mais o som do jogo."

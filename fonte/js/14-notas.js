@@ -2,7 +2,7 @@
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
   {v:'1.17',d:'21/10/2026',t:'O jogo sabe do que você precisa',itens:[
-    'Drops inteligentes, como no Resident Evil 4: quando um inimigo morre, o jogo olha a sua maleta. Cai munição só das armas que você tem (mais da que está acabando), cura quando a vida está baixa e você não tem com o que curar, pilha quando a lanterna está morrendo. Se você está bem servido, não cai nada.',
+    'Drops inteligentes, no estilo clássico do survival horror: quando um inimigo morre, o jogo olha a sua maleta. Cai munição só das armas que você tem (mais da que está acabando), cura quando a vida está baixa e você não tem com o que curar, pilha quando a lanterna está morrendo. Se você está bem servido, não cai nada.',
     'Lutas de chefe: se você está apertado de munição ou de vida, de tempos em tempos aparece suprimento no chão perto de você. Em Camboriú quem joga é o Sargento Valença ou o drone do Nicolas. E quando a luta começa aparecem caixas perto do chefe.',
     'Caixas de madeira espalhadas pela cidade: quebre com E (ou USAR). Dentro, o mesmo cálculo: o que você estiver precisando.',
     'Chute: inimigo atordoado (depois de um golpe, de um tiro de escopeta de perto ou de um tiro na cabeça) pode levar um chute. Derruba quem estiver do lado também.',
