@@ -1,6 +1,10 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.17.1',d:'21/10/2026',t:'O som da luta do Cervo',itens:[
+    'Luta com o Cervo desperto: o rugido e a respiração dele tinham muito grave, e em vários fones e caixas (principalmente Bluetooth e no Windows) isso fazia o próprio aparelho abaixar ou cortar o som por uns segundos. Agora os sons dele não têm mais aquele grave forte, tocam mais baixo, com mais espaço entre um e outro e nunca dois ao mesmo tempo.',
+    'A música das lutas agenda as notas com mais folga: uma travadinha da tela não faz mais a música parar.',
+  ]},
   {v:'1.17',d:'21/10/2026',t:'O jogo sabe do que você precisa',itens:[
     'Drops inteligentes, no estilo clássico do survival horror: quando um inimigo morre, o jogo olha a sua maleta. Cai munição só das armas que você tem (mais da que está acabando), cura quando a vida está baixa e você não tem com o que curar, pilha quando a lanterna está morrendo. Se você está bem servido, não cai nada.',
     'Lutas de chefe: se você está apertado de munição ou de vida, de tempos em tempos aparece suprimento no chão perto de você. Em Camboriú quem joga é o Sargento Valença ou o drone do Nicolas. E quando a luta começa aparecem caixas perto do chefe.',
