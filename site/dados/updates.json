@@ -1,7 +1,19 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.16",
+  "versao_atual": "1.17",
   "versoes": [
+    {
+      "versao": "1.17",
+      "data": "2026-10-21",
+      "titulo": "O jogo sabe do que você precisa",
+      "resumo": "Drops inteligentes, como no Resident Evil 4: cai munição das armas que você tem e cura quando você precisa; bem servido, não cai nada.",
+      "mudancas": [
+        "Drops inteligentes, como no Resident Evil 4: cai munição das armas que você tem e cura quando você precisa; bem servido, não cai nada.",
+        "Lutas de chefe: suprimento no chão quando você está apertado, caixas e botijões de gás perto do chefe.",
+        "Caixas de madeira para quebrar, chute animado no inimigo atordoado e botijões de gás que explodem com um tiro.",
+        "O rugido do Cervo desperto não trava mais o som do jogo."
+      ]
+    },
     {
       "versao": "1.16",
       "data": "2026-10-21",

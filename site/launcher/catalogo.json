@@ -6,28 +6,27 @@
     {
       "id": "porto-sombrio",
       "nome": "Porto Sombrio",
-      "versao": "1.16",
-      "titulo_versao": "Adrenalina e correções",
+      "versao": "1.17",
+      "titulo_versao": "O jogo sabe do que você precisa",
       "capa": "https://nightgetaway.net.br/img/og.png",
       "site": "https://nightgetaway.net.br/",
       "pacote_windows": {
-        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.16-windows.zip",
-        "tamanho": 549149,
-        "sha256": "66894d5e0e37d4b627667dc0fd59c997e30fd9057ce051affc98a654c5e32bbc",
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17-windows.zip",
+        "tamanho": 557226,
+        "sha256": "9c79ddfc6ff330ce1ea68b0fb39a346af1f4dd6e642474ce671eb968026f6555",
         "arquivo": "resources.neu"
       },
       "pacote_android": {
-        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.16-android.zip",
-        "tamanho": 548673,
-        "sha256": "3d0d4dcc236b5fd18f6076ba8cb2dc541d249965d22fb79bc9ffdba3ec4d66fd",
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17-android.zip",
+        "tamanho": 556783,
+        "sha256": "8ce8b1b0c8bf8c08f18c0c5d02dfcf7fcac8e4dc518a946d70dad3b15f458bae",
         "arquivo": "index.html"
       },
       "notas": [
-        "Injeção de adrenalina: por 25 segundos você corre mais rápido e não cansa, com indicador na tela.",
-        "Universidade de BC menor: o Seu Ademir agora fica na guarita, perto da biblioteca.",
-        "Missão nova na Universidade (opcional): a Bruna presa na câmara fria do Bloco 5.",
-        "Celular: o relógio não fica mais escondido e a maleta cabe inteira na tela.",
-        "Som das lutas de chefe corrigido: a música não liga e desliga mais toda hora."
+        "Drops inteligentes, como no Resident Evil 4: cai munição das armas que você tem e cura quando você precisa; bem servido, não cai nada.",
+        "Lutas de chefe: suprimento no chão quando você está apertado, caixas e botijões de gás perto do chefe.",
+        "Caixas de madeira para quebrar, chute animado no inimigo atordoado e botijões de gás que explodem com um tiro.",
+        "O rugido do Cervo desperto não trava mais o som do jogo."
       ]
     }
   ]
