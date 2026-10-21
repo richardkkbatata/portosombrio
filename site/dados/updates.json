@@ -1,7 +1,17 @@
 {
   "_como_editar": "Cada versão é um bloco { }. A mais nova fica em cima. 'data' no formato AAAA-MM-DD (pode deixar vazio). 'mudancas' é uma lista de frases. Depois de editar, confira se não sobrou vírgula no fim da lista. (Estas notas são as mesmas que o jogo mostra em 'Notas da versão'.)",
-  "versao_atual": "1.17",
+  "versao_atual": "1.17.1",
   "versoes": [
+    {
+      "versao": "1.17.1",
+      "data": "2026-10-21",
+      "titulo": "O som da luta do Cervo",
+      "resumo": "Os sons do Cervo desperto não têm mais o grave forte que fazia fone e caixa cortarem o áudio por uns segundos.",
+      "mudancas": [
+        "Os sons do Cervo desperto não têm mais o grave forte que fazia fone e caixa cortarem o áudio por uns segundos.",
+        "A música das lutas não para mais numa travadinha da tela."
+      ]
+    },
     {
       "versao": "1.17",
       "data": "2026-10-21",

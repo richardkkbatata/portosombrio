@@ -6,27 +6,25 @@
     {
       "id": "porto-sombrio",
       "nome": "Porto Sombrio",
-      "versao": "1.17",
-      "titulo_versao": "O jogo sabe do que você precisa",
+      "versao": "1.17.1",
+      "titulo_versao": "O som da luta do Cervo",
       "capa": "https://nightgetaway.net.br/img/og.png",
       "site": "https://nightgetaway.net.br/",
       "pacote_windows": {
-        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17-windows.zip",
-        "tamanho": 557235,
-        "sha256": "3e1f842c3584221654a12e2ef39b19cafb1a494faf6239ead5eadbbe8a5cf44f",
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17.1-windows.zip",
+        "tamanho": 558704,
+        "sha256": "5430939308bf48b1979a072fa85d8e558f5761e48493ae56f0b8132bebd7bbeb",
         "arquivo": "resources.neu"
       },
       "pacote_android": {
-        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17-android.zip",
-        "tamanho": 556792,
-        "sha256": "0924dab89fbadbcd99e0139b6809ccb505dd9a64c9c2d28abd7e40c42be6a68e",
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.17.1-android.zip",
+        "tamanho": 558258,
+        "sha256": "08e9c6ed33d7b547b85c611a64da8af7778aac087c9545d9b2f941247cb41715",
         "arquivo": "index.html"
       },
       "notas": [
-        "Drops inteligentes, no estilo clássico do survival horror: cai munição das armas que você tem e cura quando você precisa; bem servido, não cai nada.",
-        "Lutas de chefe: suprimento no chão quando você está apertado, caixas e botijões de gás perto do chefe.",
-        "Caixas de madeira para quebrar, chute animado no inimigo atordoado e botijões de gás que explodem com um tiro.",
-        "O rugido do Cervo desperto não trava mais o som do jogo."
+        "Os sons do Cervo desperto não têm mais o grave forte que fazia fone e caixa cortarem o áudio por uns segundos.",
+        "A música das lutas não para mais numa travadinha da tela."
       ]
     }
   ]
