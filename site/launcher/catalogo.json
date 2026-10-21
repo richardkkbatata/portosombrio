@@ -1,31 +1,33 @@
 {
   "distribuidora": "NightGetaway",
   "launcher_min": "2.0.0",
-  "gerado": "2026-10-20",
+  "gerado": "2026-10-21",
   "jogos": [
     {
       "id": "porto-sombrio",
       "nome": "Porto Sombrio",
-      "versao": "1.15",
-      "titulo_versao": "Conta na nuvem e launcher",
+      "versao": "1.16",
+      "titulo_versao": "Adrenalina e correções",
       "capa": "https://nightgetaway.net.br/img/og.png",
       "site": "https://nightgetaway.net.br/",
       "pacote_windows": {
-        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.15-windows.zip",
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.16-windows.zip",
         "tamanho": 549149,
-        "sha256": "7cffc49e9798604683cbccda5e9b0a1237a42ec70c89882086dea09c7fc2f2c0",
+        "sha256": "66894d5e0e37d4b627667dc0fd59c997e30fd9057ce051affc98a654c5e32bbc",
         "arquivo": "resources.neu"
       },
       "pacote_android": {
-        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.15-android.zip",
+        "url": "https://nightgetaway.net.br/launcher/porto-sombrio/1.16-android.zip",
         "tamanho": 548673,
         "sha256": "3d0d4dcc236b5fd18f6076ba8cb2dc541d249965d22fb79bc9ffdba3ec4d66fd",
         "arquivo": "index.html"
       },
       "notas": [
-        "Conta na nuvem (opcional): o seu registro fica guardado também na internet e você continua a partida em outro aparelho.",
-        "Celular: o aplicativo se atualiza sozinho pelo Wi-Fi. Não precisa mais baixar o APK a cada versão.",
-        "Windows: launcher NightGetaway, que instala uma vez e traz o jogo novo sozinho."
+        "Injeção de adrenalina: por 25 segundos você corre mais rápido e não cansa, com indicador na tela.",
+        "Universidade de BC menor: o Seu Ademir agora fica na guarita, perto da biblioteca.",
+        "Missão nova na Universidade (opcional): a Bruna presa na câmara fria do Bloco 5.",
+        "Celular: o relógio não fica mais escondido e a maleta cabe inteira na tela.",
+        "Som das lutas de chefe corrigido: a música não liga e desliga mais toda hora."
       ]
     }
   ]
