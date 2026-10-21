@@ -598,7 +598,7 @@ function cb2Smash(e,tx,ty,charge){
   const cx=e.x+tx*30,cy=e.y+ty*30,ctx0=(cx/TILE)|0,cty=(cy/TILE)|0;let any=false;
   for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++){const x=ctx0+i,y=cty+j;if(!inb(x,y)||y<=CBY)continue;const k=idx(x,y);if(bmap[k]>=0)continue;const t=map[k];
     if(t===T.TREE||t===T.PROP||(charge&&t===T.FENCE)){const u=under[k]&&!SOLID[under[k]]?under[k]:T.GRASS;setT(x,y,u);any=true;
-      for(let q=0;q<8;q++)parts.push({k:'debris',x:tc(x),y:tc(y),vx:rr(-140,140),vy:rr(-140,140),life:.5,max:.5,s:rr(2,4),c:t===T.TREE?'#2a3a1e':'#5a4a3a'});AU.thud(.5);}
+      for(let q=0;q<8;q++)parts.push({k:'debris',x:tc(x),y:tc(y),vx:rr(-140,140),vy:rr(-140,140),life:.5,max:.5,s:rr(2,4),c:t===T.TREE?'#2a3a1e':'#5a4a3a'});if(G.time-(CB2.thT||0)>.45){CB2.thT=G.time;AU.thud(.5);}}
     else if(t===T.CAR){const car=cars.find(c=>x>=c.x&&x<c.x+c.w&&y>=c.y&&y<c.y+c.h);if(car){for(let jj=0;jj<car.h;jj++)for(let ii=0;ii<car.w;ii++){const kk=idx(car.x+ii,car.y+jj);setT(car.x+ii,car.y+jj,under[kk]&&!SOLID[under[kk]]?under[kk]:T.ROAD);}cars.splice(cars.indexOf(car),1);
         const bx=tc(car.x)+(car.w-1)*16,by=tc(car.y)+(car.h-1)*16;explodeFx(bx,by,1.2);AU.boom&&AU.boom(.8);G.shake+=10;GORE.push({k:'scorch',x:bx,y:by,r:60,rot:0,seed:.5,cb:1});
         if(hyp(P.x-bx,P.y-by)<110)hurtPlayer(18,bx,by);any=true;}}}
@@ -716,7 +716,8 @@ if(typeof falaPresente==='function'){const fp=falaPresente;falaPresente=function
 function cb2Heart(dt){
   let d=1e9; for(const e of enemies)if(e.alive&&(e.type==='chifrudo'||e.type==='cervo2'||e.type==='carniceiro'))d=Math.min(d,hyp(e.x-P.x,e.y-P.y));
   for(const v of CB.vultos)d=Math.min(d,hyp(v.x-P.x,v.y-P.y)+150);
-  if(d>620)return; CB2.hb-=dt; if(CB2.hb>0)return; const k=d/620; CB2.hb=lerp(.42,1.15,k); AU.cbHeart(lerp(1.2,.45,k),lerp(1.15,.95,k));
+  // na luta o coração do próprio jogo (perigo/vida baixa) já bate: dois corações fora de tempo soavam como defeito
+  if(d>620||cb2Fight()||G.heartT>-0.6&&(P.hp<P.max*.35||(G.fear||0)>.55))return; CB2.hb-=dt; if(CB2.hb>0)return; const k=d/620; CB2.hb=lerp(.42,1.15,k); AU.cbHeart(lerp(1.2,.45,k),lerp(1.15,.95,k));
 }
 (function(){
   const vt=v16Tick; v16Tick=function(dt){

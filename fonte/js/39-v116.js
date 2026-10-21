@@ -28,7 +28,7 @@ function adrEnd(quiet){
   if(!adrOn()||G.mode!=='play')return;
   P.adren-=dt; P.st=100; P.tired=false;
   if(P.adrBase!=null&&DBG.speed!==P.adrBase*ADR.mul)DBG.speed=P.adrBase*ADR.mul;   // o menu de teste pode ter mexido
-  G.ev.adrHb=(G.ev.adrHb||0)-dt; if(G.ev.adrHb<=0){G.ev.adrHb=.5;AU.cbHeart&&AU.cbHeart(.5,1.25);}
+  G.ev.adrHb=(G.ev.adrHb||0)-dt; if(G.ev.adrHb<=0){G.ev.adrHb=.5;const danger=P.hp<P.max*.35||(G.fear||0)>.55||(typeof musicMode==='function'&&musicMode()==='boss');if(!danger)AU.cbHeart&&AU.cbHeart(.5,1.25);}
   if(P.adren<=0)adrEnd(false);};}
 {const rs=resetState; resetState=function(d){if(P&&P.adrBase!=null)DBG.speed=P.adrBase;rs(d);P.adren=0;P.adrBase=null;};}
 {const ls=loadState; loadState=function(){adrEnd(true);return ls.apply(this,arguments);};}

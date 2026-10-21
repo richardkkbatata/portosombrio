@@ -1,6 +1,14 @@
 // ===================== NOTAS DA VERSÃO =====================
 // Toda atualização entra aqui em cima. A primeira da lista é a versão atual do jogo.
 const NOTAS=[
+  {v:'1.17',d:'21/10/2026',t:'O jogo sabe do que você precisa',itens:[
+    'Drops inteligentes, como no Resident Evil 4: quando um inimigo morre, o jogo olha a sua maleta. Cai munição só das armas que você tem (mais da que está acabando), cura quando a vida está baixa e você não tem com o que curar, pilha quando a lanterna está morrendo. Se você está bem servido, não cai nada.',
+    'Lutas de chefe: se você está apertado de munição ou de vida, de tempos em tempos aparece suprimento no chão perto de você. Em Camboriú quem joga é o Sargento Valença ou o drone do Nicolas. E quando a luta começa aparecem caixas perto do chefe.',
+    'Caixas de madeira espalhadas pela cidade: quebre com E (ou USAR). Dentro, o mesmo cálculo: o que você estiver precisando.',
+    'Chute: inimigo atordoado (depois de um golpe, de um tiro de escopeta de perto ou de um tiro na cabeça) pode levar um chute. Derruba quem estiver do lado também.',
+    'Item que caiu no chão brilha e some depois de um tempo se você não pegar.',
+    'Som da segunda forma do Cervo: não toca mais dois corações fora de tempo nem a pancada repetida de cada coisa que ele quebra.',
+  ]},
   {v:'1.16',d:'20/10/2026',t:'Adrenalina e correções',itens:[
     'Injeção de adrenalina: poucas espalhadas pelo mapa. Por 25 segundos você corre um pouco mais rápido e não cansa. Tem um indicador no canto da tela com o tempo que falta. Quando acaba, o Richard fica sem fôlego.',
     'Universidade de BC menor e mais apertada: o Seu Ademir agora fica na guarita da entrada de veículos, do lado da biblioteca (quase metade da caminhada), e o gramado do norte virou mata fechada e área isolada pela Defesa Civil.',
